@@ -1,4 +1,5 @@
-FROM node:18-bullseye
+FROM node:20-bullseye
+
 
 # Install Chromium dependencies, including libgbm1
 RUN apt-get update && apt-get install -y \
