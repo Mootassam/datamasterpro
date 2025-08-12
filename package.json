@@ -1,0 +1,54 @@
+{
+  "name": "my-electron-app",
+  "version": "1.0.0",
+  "description": "Electron app with React (Vite) frontend and Node.js (TypeScript) backend",
+  "main": "electron/main.js",
+  "author": "Your Name",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "start:dev": "cross-env NODE_ENV=development electron .",
+    "build:brain": "cd brain  && npm run pkg",
+    "build:react": "cd robot007 && npm run build",
+    "build": "npm run build:brain && npm run build:react && electron-builder build",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.yourcompany.yourapp",
+    "productName": "CYBER007",
+    "directories": {
+      "output": "dist_electron"
+    },
+    "files": [
+      "electron/**/*",
+      "robot007/dist/**/*",
+      "backend.exe"
+    ],
+    "extraResources": [
+      {
+        "from": "backend.exe",
+        "to": "backend.exe"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+    "electron-log": "^5.0.0",
+    "electron-updater": "^6.1.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.1",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0",
+    "typescript": "^5.4.0",
+    "ts-node": "^10.9.2",
+    "vite": "^5.2.0"
+  }
+}

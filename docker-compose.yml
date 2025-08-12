@@ -1,0 +1,25 @@
+version: "3.3"
+
+services:
+  backend:
+    build: ./brain
+    image: brain_backend:latest
+    ports:
+      - 8082:8082
+    restart: unless-stopped
+
+
+  webs:
+    build: ./robot007
+    image: robot007_web:latest
+    ports:
+      - 3050:80
+    restart: unless-stopped
+    volumes:
+      - "./admin:/app"
+      - "/app/node_modules"
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+

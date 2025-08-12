@@ -1,0 +1,9 @@
+version: 2
+authtoken: 2YtbiwxfGx0czWvlLXmB0dBS7R3_6cAprRqXbrCLvvos1xMLM
+tunnels:
+  first:
+    addr: 203.161.50.129:8082
+    proto: http
+  second:
+    addr: localhost:5173
+    proto: http

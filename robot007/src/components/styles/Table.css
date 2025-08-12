@@ -1,0 +1,358 @@
+/* Results Panel */
+.results-panel {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.panel-title {
+  font-size: 1.4rem;
+  color: #2d3748;
+  margin: 0;
+}
+
+.controls-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+/* Filter Tabs */
+
+
+.filter-tab {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: #718096;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.filter-tab:hover {
+  color: #4a5568;
+}
+
+.filter-tab.active {
+  background: #ffffff;
+  color: #2d3748;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+}
+
+.filter-icon {
+  font-size: 0.9rem;
+}
+
+/* Bulk Message Button */
+.bulk-message-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bulk-message-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.service-icon {
+  font-size: 1.1rem;
+}
+
+/* Table Styles */
+.results-table-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #edf2f7;
+}
+
+.table-header {
+  display: flex;
+  background: #f8fafc;
+  padding: 12px 15px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.header-cell {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4a5568;
+  text-align: left;
+}
+
+.header-cell:first-child {
+  flex: 0.5;
+  max-width: 60px;
+}
+
+.header-cell:last-child {
+  flex: 0.5;
+  max-width: 100px;
+}
+
+.table-body {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.virtualized-row {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #f0f4f8;
+  transition: all 0.2s;
+}
+
+.virtualized-row.hovered {
+  background: #f8fafc;
+}
+
+.cell {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #4a5568;
+}
+
+.cell.index {
+  flex: 0.5;
+  max-width: 60px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.cell.number {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 500;
+}
+
+.cell.status {
+  display: flex;
+}
+
+.cell.actions {
+  flex: 0.5;
+  max-width: 100px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status-badge.registered {
+  background: #f0fff4;
+  color: #38a169;
+}
+
+.status-badge.rejected {
+  background: #fff5f5;
+  color: #e53e3e;
+}
+
+.status-badge.pending {
+  background: #fffaf0;
+  color: #dd6b20;
+}
+
+.status-icon {
+  font-size: 0.9rem;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  color: #718096;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 6px;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #2d3748;
+}
+
+.view-btn {
+  color: #4299e1;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  gap: 15px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(66, 153, 225, 0.2);
+  border-radius: 50%;
+  border-top-color: #4299e1;
+  animation: spin 1s linear infinite;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  gap: 15px;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: #cbd5e0;
+}
+
+.empty-state h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1.2rem;
+}
+
+.empty-state p {
+  margin: 0;
+  color: #718096;
+  max-width: 300px;
+}
+
+/* Animations */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .controls-container {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .filter-tabs {
+    flex-grow: 1;
+  }
+  
+  .bulk-message-btn {
+    flex-shrink: 0;
+  }
+  
+  .header-cell {
+    font-size: 0.8rem;
+  }
+  
+  .cell {
+    font-size: 0.85rem;
+  }
+  
+  .status-badge {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+}
+
+
+/* Existing filter-tabs styles (unchanged) */
+.filter-tabs {
+  display: flex;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 4px;
+  overflow-x: auto; /* Allows horizontal scrolling if needed */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Mobile-first adjustments */
+@media (max-width: 768px) {
+
+
+  .filter-tab {
+    padding: 8px 12px; /* Smaller padding */
+    font-size: 0.8rem; /* Smaller text */
+    white-space: nowrap; /* Prevent text wrapping */
+    flex-shrink: 0; /* Prevent tabs from shrinking */
+  }
+
+  .filter-icon {
+    font-size: 0.8rem; /* Smaller icons */
+  }
+}
+
+/* Optional: Hide icons on very small screens to save space */
+@media (max-width: 480px) {
+  .filter-tab span {
+    display: none; /* Hide text, show only icons */
+  }
+  .filter-tab {
+    padding: 8px; /* Square buttons */
+  }
+}
+
+
+@media (max-width: 768px) {
+  .filter-tabs {
+    flex-wrap: wrap; /* Allow tabs to wrap */
+    gap: 4px;
+    padding: 4px;
+  }
+  .filter-tab {
+    flex: 1; /* Equal width for all tabs */
+    min-width: calc(50% - 8px); /* 2 tabs per row */
+    text-align: center;
+  }
+}

@@ -1,0 +1,638 @@
+
+/* Progress Section */
+.progress-section {
+  margin-bottom: 20px;
+}
+
+.progress-bar-container {
+  height: 10px;
+  background-color: #e2e8f0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+  transition: width 0.3s ease;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.current-number {
+  background-color: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 15px 0;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.current-number strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-top: 5px;
+  color: #1e293b;
+}
+
+/* Stats Grid */
+.stats-grids {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.stat-cards {
+  background-color: white;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4f46e5;
+  display: block;
+}
+
+.stat-labels {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Delay Control */
+.auto-adjust-note {
+  font-size: 0.75rem;
+  color: #64748b;
+  display: block;
+  margin-top: 3px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  /* display: flex; */
+  gap: 10px;
+}
+
+.start-btn,
+.resume-btn {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+}
+
+.pause-btn {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: white;
+}
+
+.stop-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+/* Button Base Styles */
+.start-btn,
+.pause-btn,
+.resume-btn,
+.stop-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.start-btn:hover,
+.resume-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+}
+
+.pause-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+}
+
+.stop-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+.start-btn:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+
+/* Progress Modal Styles */
+.progress-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.progress-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+.progress-modal:hover {
+  transform: translateY(-5px);
+}
+
+.modal-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-header .completed {
+  color: #fff;
+}
+
+.modal-header .in-progress {
+  color: #fff;
+}
+
+.modal-header .icon {
+  font-size: 1.2rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  color: #1f2937;
+  transform: rotate(90deg);
+}
+
+.modal-content {
+  padding: 25px;
+}
+
+/* Circular Progress */
+.circular-progress {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 25px;
+}
+
+.progress-ring {
+  width: 100%;
+  height: 100%;
+}
+
+.progress-ring-track {
+  transition: stroke 0.3s;
+}
+
+.progress-ring-fill {
+  transition: stroke-dasharray 0.6s ease-out;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.progress-text span {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.progress-text small {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Stats Grid */
+.stats-grids {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.stat-cards {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f3f4f6;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.stat-icon.batches {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+}
+
+.stat-icon.registered {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.stat-icon.rejected {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #1f2937;
+}
+
+.stat-labels {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* Batch Progress */
+.batch-progress {
+  margin: 30px 0;
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.batch-track {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  padding: 0 15px;
+}
+
+.batch-track::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  right: 15px;
+  height: 3px;
+  background: #e5e7eb;
+  transform: translateY(-50%);
+  z-index: 1;
+  border-radius: 3px;
+}
+
+.batch-step {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.batch-step.completed {
+  border-color: #10b981;
+  background: #10b981;
+  color: white;
+}
+
+.batch-step.active {
+  border-color: #4f46e5;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.batch-number {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.batch-icon {
+  font-size: 0.8rem;
+}
+
+/* Current Batch */
+.current-batch {
+  margin-top: 25px;
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 15px;
+  border: 1px solid #e5e7eb;
+}
+
+.batch-header {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.number-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+}
+
+.number-badge {
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 6px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Footer */
+.modal-footer {
+  padding: 15px 25px;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: center;
+}
+
+/* 
+End setup modal  */
+
+
+
+
+/* Responsive Breakpoints */
+@media (max-width: 640px) {
+  .circular-progress {
+    width: 7rem;
+    height: 7rem;
+  }
+
+  .stats-grids {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .stat-cards {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .stat-icon {
+    margin-bottom: 0;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .batch-track {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding: 0;
+  }
+
+  .batch-track::before {
+    display: none;
+  }
+
+  .batch-step {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-header h2 {
+    font-size: 1rem;
+  }
+
+  .progress-text span {
+    font-size: 1.5rem;
+  }
+
+  .number-grid {
+    grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
+  }
+}
+
+@media (max-width: 360px) {
+  .modal-content {
+    padding: 1rem;
+  }
+
+  .circular-progress {
+    width: 6rem;
+    height: 6rem;
+  }
+
+  .number-grid {
+    grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
+  }
+}
+
+
+
+/* Batch Progress Container */
+.batch-progress {
+  margin: 1.5rem 0;
+  width: 100%;
+}
+
+.batch-track-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+/* Track with conditional scrolling */
+.batch-track-scroll {
+  /* display: flex; */
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #c7d2fe #f3f4f6;
+  padding: 1rem 0;
+  justify-content: center;
+}
+
+/* When few batches - use all width */
+.batch-track-scroll.few-batches {
+  overflow-x: visible;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+/* Hide scrollbar when not needed */
+.batch-track-scroll.few-batches::-webkit-scrollbar {
+  display: none;
+}
+
+/* Batch Track */
+.batch-track {
+  display: inline-flex;
+  gap: 0.75rem;
+  position: relative;
+  min-width: min-content;
+  padding: 0 0.5rem;
+}
+
+/* Connector line - only shown when not scrolling */
+.batch-track-scroll.few-batches .batch-track::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #e5e7eb;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .batch-track-scroll {
+    justify-content: flex-start;
+  }
+
+  .batch-track-scroll.few-batches {
+    justify-content: space-between;
+  }
+}
+
+
+
+
+
+
+
+
+.dismiss-btn {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 25px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  max-width: 200px;
+}
+
+.dismiss-btn.success {
+  background: #10b981;
+}
+
+.dismiss-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.spinning {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

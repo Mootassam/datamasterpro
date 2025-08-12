@@ -1,0 +1,997 @@
+/* Design System Variables */
+:root {
+  /* Colors */
+  --dm-primary-bg: #1a1a2e;
+  --dm-secondary-bg: #16213e;
+  --dm-text-color: #ffffff;
+  --dm-text-secondary: #a1a1a1;
+  --dm-whatsapp: #25D366;
+  --dm-telegram: #0088cc;
+  --dm-email: #DB4437;
+  --dm-osint: #6e40c9;
+  --dm-success: #4CD964;
+  --dm-error: #ff4757;
+  --dm-warning: #FF9500;
+  --dm-border-color: rgba(255, 255, 255, 0.1);
+  --dm-overlay-color: rgba(0, 0, 0, 0.7);
+  
+  /* Spacing */
+  --dm-space-xs: 4px;
+  --dm-space-sm: 8px;
+  --dm-space-md: 16px;
+  --dm-space-lg: 24px;
+  --dm-space-xl: 32px;
+  
+  /* Border Radius */
+  --dm-radius-sm: 4px;
+  --dm-radius-md: 8px;
+  --dm-radius-lg: 12px;
+  --dm-radius-circle: 50%;
+  --dm-radius-pill: 9999px;
+  
+  /* Shadows */
+  --dm-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --dm-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --dm-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
+  --dm-shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.3);
+  
+  /* Transitions */
+  --dm-transition-fast: 0.15s;
+  --dm-transition-normal: 0.3s;
+  --dm-transition-slow: 0.5s;
+  
+  /* Z-index */
+  --dm-z-dropdown: 1000;
+  --dm-z-header: 100;
+  --dm-z-overlay: 90;
+  --dm-z-mobile-nav: 95;
+}
+
+/* Base Header Styles */
+.dm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--dm-space-md);
+  height: 70px;
+  background: var(--dm-primary-bg);
+  color: var(--dm-text-color);
+  position: sticky;
+  top: 0;
+  z-index: var(--dm-z-header);
+  box-shadow: var(--dm-shadow-md);
+  border-bottom: 1px solid var(--dm-border-color);
+}
+
+.dm-account-phone{ 
+  color: black;
+}
+/* Logo Styles */
+.dm-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--dm-space-sm);
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--dm-transition-fast);
+  z-index: calc(var(--dm-z-header) + 1);
+}
+
+.dm-logo:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.dm-logo-icon {
+  font-size: 1.5rem;
+  color: var(--dm-whatsapp);
+  flex-shrink: 0;
+  transition: transform var(--dm-transition-fast);
+}
+
+.dm-logo:hover .dm-logo-icon {
+  transform: rotate(15deg);
+}
+
+.dm-logo-text {
+  white-space: nowrap;
+  background: linear-gradient(90deg, #ffffff, #e0e0e0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+/* Mobile Menu Button */
+.dm-mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--dm-text-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: var(--dm-space-sm);
+  transition: all var(--dm-transition-fast);
+  z-index: calc(var(--dm-z-header) + 1);
+  position: relative;
+}
+
+.dm-mobile-menu-btn:hover {
+  transform: scale(1.1);
+}
+
+.dm-mobile-menu-btn:focus {
+  outline: 2px solid var(--dm-whatsapp);
+  outline-offset: 2px;
+}
+
+.dm-menu-icon {
+  display: block;
+  transition: transform var(--dm-transition-normal);
+}
+
+.dm-mobile-menu-btn[aria-expanded="true"] .dm-menu-icon {
+  transform: rotate(90deg);
+}
+
+/* Service Navigation */
+.dm-service-nav {
+  flex-grow: 1;
+  margin: 0 var(--dm-space-md);
+  transition: all var(--dm-transition-normal) ease;
+}
+
+.dm-service-tabs {
+  display: flex;
+  gap: var(--dm-space-sm);
+}
+
+.dm-service-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dm-space-sm);
+  padding: var(--dm-space-sm) var(--dm-space-md);
+  border-radius: var(--dm-radius-pill);
+  background: transparent;
+  color: var(--dm-text-color);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--dm-transition-normal) ease;
+  font-weight: 500;
+  min-width: 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.dm-service-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--dm-transition-normal) ease;
+}
+
+.dm-service-tab:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.dm-service-tab:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--dm-shadow-sm);
+}
+
+.dm-tab-active {
+  color: var(--dm-text-color);
+  transform: translateY(0);
+  font-weight: 600;
+}
+
+.dm-tab-active::after {
+  transform: scaleX(1);
+}
+
+.dm-service-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.dm-tab-label {
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header Controls */
+.dm-header-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--dm-space-md);
+}
+
+/* Account Dropdown */
+.dm-account-dropdown {
+  position: relative;
+}
+
+.dm-account-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--dm-space-sm);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: var(--dm-text-color);
+  padding: var(--dm-space-sm) var(--dm-space-md);
+  border-radius: var(--dm-radius-pill);
+  cursor: pointer;
+  transition: all var(--dm-transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.dm-account-trigger::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05)
+  );
+  opacity: 0;
+  transition: opacity var(--dm-transition-fast);
+}
+
+.dm-account-trigger:hover::before {
+  opacity: 1;
+}
+
+.dm-account-trigger:focus {
+  outline: 2px solid var(--dm-whatsapp);
+  outline-offset: 2px;
+}
+
+.dm-account-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--dm-space-sm);
+  position: relative;
+  z-index: 1;
+}
+
+.dm-users-icon {
+  font-size: 1rem;
+}
+
+.dm-account-count {
+  white-space: nowrap;
+}
+
+.dm-dropdown-arrow {
+  transition: transform var(--dm-transition-normal);
+  margin-left: var(--dm-space-xs);
+  position: relative;
+  z-index: 1;
+}
+
+.dm-arrow-rotate {
+  transform: rotate(180deg);
+}
+
+/* Account Dropdown Menu */
+.dm-account-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--dm-space-sm));
+  width: 320px;
+  max-width: calc(100vw - var(--dm-space-md) * 2);
+  background: white;
+  border-radius: var(--dm-radius-md);
+  box-shadow: var(--dm-shadow-xl);
+  padding: var(--dm-space-md);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all var(--dm-transition-normal) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: var(--dm-z-dropdown);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dm-account-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dm-dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--dm-space-md);
+  padding-bottom: var(--dm-space-sm);
+  border-bottom: 1px solid #eee;
+}
+
+.dm-dropdown-title {
+  margin: 0;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.dm-account-list {
+  max-height: 50vh;
+  overflow-y: auto;
+  /* margin: var(--dm-space-sm) 0; */
+  scrollbar-width: thin;
+  scrollbar-color: var(--dm-whatsapp) transparent;
+}
+
+.dm-account-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dm-account-list::-webkit-scrollbar-thumb {
+  background-color: var(--dm-whatsapp);
+  border-radius: 3px;
+}
+
+.dm-account-item {
+  display: flex;
+  align-items: center;
+  padding: var(--dm-space-sm);
+  border-radius: var(--dm-radius-sm);
+  transition: all var(--dm-transition-normal) ease;
+  margin-bottom: var(--dm-space-xs);
+  position: relative;
+}
+
+.dm-account-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: var(--dm-space-sm);
+  right: var(--dm-space-sm);
+  height: 1px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.dm-account-item:last-child::after {
+  display: none;
+}
+
+.dm-account-item:last-child {
+  margin-bottom: 0;
+}
+
+.dm-account-item:hover {
+  background: #f5f5f5;
+  /* transform: translateX(5px); */
+  box-shadow: var(--dm-shadow-sm);
+}
+
+.dm-account-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--dm-radius-circle);
+  object-fit: cover;
+  margin-right: var(--dm-space-sm);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  transition: transform var(--dm-transition-fast);
+}
+
+.dm-account-item:hover .dm-account-avatar {
+  transform: scale(1.1);
+}
+
+.dm-account-info {
+  flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dm-account-name {
+  font-weight: 500;
+  color: #333;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dm-account-status {
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: var(--dm-space-xs);
+  color: #666;
+}
+
+.dm-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--dm-radius-circle);
+  display: inline-block;
+  animation: dm-pulse 2s infinite;
+}
+
+.dm-account-actions {
+  display: flex;
+  gap: var(--dm-space-xs);
+  margin-left: var(--dm-space-sm);
+}
+
+.dm-account-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: var(--dm-space-xs);
+  border-radius: var(--dm-radius-circle);
+  transition: all var(--dm-transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.dm-account-action:hover {
+  transform: scale(1.1);
+}
+
+.dm-account-action:focus {
+  outline: 2px solid var(--dm-whatsapp);
+  outline-offset: 2px;
+}
+
+.dm-logout-btn {
+  color: var(--dm-error);
+  background: rgba(255, 71, 87, 0.1);
+}
+
+.dm-logout-btn:hover {
+  background: rgba(255, 71, 87, 0.2);
+}
+
+.dm-no-accounts {
+  text-align: center;
+  padding: var(--dm-space-md);
+  color: #666;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.dm-dropdown-footer {
+  border-top: 1px solid #eee;
+  padding-top: var(--dm-space-sm);
+  margin-top: var(--dm-space-sm);
+}
+
+.dm-logout-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dm-space-xs);
+  background: none;
+  border: none;
+  color: var(--dm-error);
+  cursor: pointer;
+  font-size: 0.9rem;
+  width: 100%;
+  padding: var(--dm-space-sm);
+  border-radius: var(--dm-radius-sm);
+  transition: all var(--dm-transition-fast);
+  font-weight: 500;
+}
+
+.dm-logout-all:hover {
+  background: #fff0f0;
+  transform: translateY(-1px);
+}
+
+.dm-logout-all:focus {
+  outline: 2px solid var(--dm-error);
+  outline-offset: 2px;
+}
+
+/* Connect Button */
+.dm-connect-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dm-space-sm);
+  padding: var(--dm-space-sm) var(--dm-space-md);
+  border-radius: var(--dm-radius-pill);
+  border: none;
+  color: var(--dm-text-color);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--dm-transition-normal);
+  position: relative;
+  overflow: hidden;
+  min-width: 100px;
+  background: var(--dm-whatsapp);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dm-connect-btn.dm-connected {
+  background: var(--dm-success);
+}
+
+.dm-connect-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.dm-connect-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--dm-shadow-md);
+}
+
+.dm-connect-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0)
+  );
+  transform: rotate(30deg);
+  transition: all var(--dm-transition-slow);
+}
+
+.dm-connect-btn:hover::after {
+  left: 100%;
+}
+
+.dm-btn-text {
+  margin-left: var(--dm-space-xs);
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+.dm-spin-icon {
+  animation: dm-spin 1s linear infinite;
+}
+
+/* Mobile Menu Overlay */
+.dm-mobile-overlay {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--dm-overlay-color);
+  z-index: var(--dm-z-overlay);
+  animation: dm-fadeIn var(--dm-transition-fast) ease-out forwards;
+  backdrop-filter: blur(2px);
+}
+
+/* Mobile Navigation Styles */
+@media (max-width: 768px) {
+  .dm-mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .dm-service-nav {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: var(--dm-primary-bg);
+    padding: var(--dm-space-md);
+    transform: translateY(-100%);
+    transition: all var(--dm-transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: var(--dm-z-mobile-nav);
+    box-shadow: var(--dm-shadow-md);
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .dm-service-nav.dm-nav-open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .dm-service-tabs {
+    flex-direction: column;
+    gap: var(--dm-space-sm);
+  }
+  
+  .dm-service-tab {
+    justify-content: flex-start;
+    border-radius: var(--dm-radius-sm);
+    width: 100%;
+  }
+  
+  .dm-service-tab::after {
+    display: none;
+  }
+  
+  .dm-logo-text {
+    display: none;
+  }
+  
+  .dm-account-count {
+    display: none;
+  }
+  
+  .dm-btn-text {
+    display: none;
+  }
+  
+  .dm-connect-btn {
+    min-width: auto;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--dm-radius-circle);
+    padding: 0;
+  }
+  
+  /* Mobile Account Dropdown */
+  .dm-account-dropdown {
+    position: static;
+  }
+  
+  .dm-account-dropdown-menu {
+    position: fixed;
+    top: 70px;
+    left: var(--dm-space-md);
+    right: var(--dm-space-md);
+    width: auto;
+    max-width: none;
+    transform: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--dm-transition-normal) ease, transform var(--dm-transition-normal) ease;
+    transform: translateY(-20px);
+  }
+  
+  .dm-account-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  
+  .dm-account-list {
+    max-height: 60vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .dm-header {
+    padding: 0 var(--dm-space-sm);
+  }
+  
+  .dm-account-dropdown-menu {
+    left: var(--dm-space-sm);
+    right: var(--dm-space-sm);
+    padding: var(--dm-space-sm);
+  }
+  
+  .dm-account-item {
+    padding: var(--dm-space-sm) var(--dm-space-xs);
+  }
+  
+  .dm-account-avatar {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .dm-account-name {
+    font-size: 0.9rem;
+  }
+  
+  .dm-account-status {
+    font-size: 0.75rem;
+  }
+}
+
+/* Animations */
+@keyframes dm-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes dm-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes dm-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Micro-interactions */
+.dm-service-tab:hover .dm-service-icon {
+  animation: dm-bounce 0.5s ease;
+}
+
+@keyframes dm-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.dm-account-trigger:hover .dm-users-icon {
+  animation: dm-shake 0.5s ease;
+}
+
+@keyframes dm-shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+.dm-services-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dm-modal-content {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: white;
+}
+
+.dm-services-list {
+  margin: 15px 0;
+  padding-left: 20px;
+}
+
+.dm-services-list li {
+  margin-bottom: 10px;
+}
+
+.dm-email-button {
+  display: inline-block;
+  background: #DB4437;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.dm-close-modal {
+    display: inline-block;
+  background: #333;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-top: 15px;
+  cursor: pointer;
+
+  
+}
+
+
+/* Telegram-specific styles - mostly handled by variables, but add these if needed */
+
+/* Telegram connect button */
+.dm-connect-btn[data-service="telegram"] {
+  background: var(--dm-telegram);
+}
+
+/* Telegram dropdown header accent */
+.dm-account-dropdown-menu[data-service="telegram"] .dm-dropdown-header {
+  border-bottom: 2px solid var(--dm-telegram);
+}
+
+/* Telegram status dot animation */
+.dm-account-dropdown-menu[data-service="telegram"] .dm-status-dot {
+  background: var(--dm-telegram);
+  animation: dm-pulse-telegram 2s infinite;
+}
+
+@keyframes dm-pulse-telegram {
+  0% { box-shadow: 0 0 0 0 rgba(0, 136, 204, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 136, 204, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 136, 204, 0); }
+}
+
+/* Telegram account hover effect */
+.dm-account-dropdown-menu[data-service="telegram"] .dm-account-item:hover {
+  background: rgba(0, 136, 204, 0.05);
+}
+
+
+
+
+/* Telegram Modal Styles */
+.dm-telegram-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(3px);
+}
+
+.dm-telegram-modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 136, 204, 0.3);
+  animation: dm-modal-enter 0.3s ease-out;
+}
+
+.dm-telegram-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.dm-telegram-modal-close:hover {
+  color: #0088cc;
+}
+
+.dm-telegram-modal-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.dm-telegram-icon {
+  font-size: 48px;
+  color: #0088cc;
+  margin-bottom: 12px;
+}
+
+.dm-telegram-modal-header h3 {
+  color: #333;
+  margin: 0;
+  font-size: 20px;
+}
+
+.dm-telegram-phone-step,
+.dm-telegram-code-step {
+  margin-bottom: 24px;
+}
+
+.dm-telegram-phone-step p,
+.dm-telegram-code-step p {
+  color: #555;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.dm-telegram-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s;
+  margin-bottom: 16px;
+}
+
+.dm-telegram-input:focus {
+  border-color: #0088cc;
+  box-shadow: 0 0 0 2px rgba(0, 136, 204, 0.2);
+  outline: none;
+}
+
+.dm-telegram-back-btn {
+  background: none;
+  border: none;
+  color: #0088cc;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px;
+  margin-top: 8px;
+  transition: color 0.2s;
+}
+
+.dm-telegram-back-btn:hover {
+  color: #006699;
+  text-decoration: underline;
+}
+
+.dm-telegram-modal-footer {
+  display: flex;
+  justify-content: center;
+}
+
+.dm-telegram-connect-btn {
+  background: #0088cc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.dm-telegram-connect-btn:hover:not(:disabled) {
+  background: #0077b3;
+  transform: translateY(-1px);
+}
+
+.dm-telegram-connect-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.dm-telegram-connect-btn.dm-loading {
+  background: #006699;
+}
+
+/* Animation */
+@keyframes dm-modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .dm-telegram-modal-content {
+    width: 90%;
+    padding: 20px;
+  }
+  
+  .dm-telegram-icon {
+    font-size: 40px;
+  }
+}
