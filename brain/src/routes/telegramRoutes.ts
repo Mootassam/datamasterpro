@@ -1,8 +1,7 @@
 import express, { Request, Response, Router } from "express";
 import TelegramController from "../controllers/TelegramController";
-import { Server } from "socket.io";
 
-const telegramRoutes = (io: Server) => {
+const telegramRoutes = (io) => {
   const router: Router = express.Router();
 
   // Login route - Send verification code
@@ -113,7 +112,7 @@ const telegramRoutes = (io: Server) => {
   // Export group members
   router.post("/export-group-members", async (req: Request, res: Response) => {
     try {
-      await TelegramController.exportGroupMembers(req, res);
+      await TelegramController.exportGroupMembers(req, res, io);
       // Response is handled in the controller as it streams a CSV file
     } catch (error) {
       console.error("Export group members error:", error);
@@ -126,11 +125,11 @@ const telegramRoutes = (io: Server) => {
   // Upload CSV file with phone numbers
   router.post("/upload-csv", TelegramController.getUploadMiddleware(), async (req: Request, res: Response) => {
     try {
-      if (!req.file) {
+      if (!('file' in req)) {
         return res.status(400).json({ error: "No file uploaded" });
       }
       
-      const phoneNumbers = await TelegramController.processCSVFile(req.file);
+      const phoneNumbers = await TelegramController.processCSVFile(req.file as any);
       res.status(200).json({ phoneNumbers });
     } catch (error) {
       console.error("Upload CSV error:", error);

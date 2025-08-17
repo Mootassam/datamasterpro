@@ -127,21 +127,7 @@ class TelegramErrorHandler {
             message: 'Message wait failed',
             action: 'retry'
         },
-        'NETWORK_MIGRATE': {
-            code: 303,
-            message: 'Network migrated',
-            action: 'retry_on_new_dc'
-        },
-        'PHONE_MIGRATE': {
-            code: 303,
-            message: 'Phone migrated to different DC',
-            action: 'retry_on_new_dc'
-        },
-        'USER_MIGRATE': {
-            code: 303,
-            message: 'User migrated to different DC',
-            action: 'retry_on_new_dc'
-        },
+    
 
         // General errors
         'INTERNAL_SERVER_ERROR': {

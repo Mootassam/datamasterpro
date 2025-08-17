@@ -1,0 +1,264 @@
+/* Telegram Export Modal Styles */
+.tg-export-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: tg-modal-fadeIn 0.3s ease-out;
+}
+
+@keyframes tg-modal-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.tg-export-modal-container {
+  width: 90%;
+  max-width: 500px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  animation: tg-modal-slideIn 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@keyframes tg-modal-slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.tg-export-modal-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tg-export-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.tg-export-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s;
+}
+
+.tg-export-modal-close:hover {
+  color: #333;
+}
+
+.tg-export-modal-body {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.tg-export-meta {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.tg-export-meta-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.tg-export-meta-label {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.tg-export-meta-value {
+  font-weight: 500;
+  color: #333;
+}
+
+.tg-export-strategy {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+.tg-export-strategy-label {
+  font-weight: 500;
+  color: #555;
+}
+
+.tg-export-strategy-value {
+  font-weight: 600;
+  color: #1a73e8;
+}
+
+.tg-export-progress-container {
+  margin-bottom: 20px;
+}
+
+.tg-export-progress-bar {
+  height: 12px;
+  background: #e9ecef;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.tg-export-progress-fill {
+  height: 100%;
+  background: #1a73e8;
+  border-radius: 6px;
+  transition: width 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.tg-export-progress-text {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.tg-export-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.tg-export-stat {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.tg-export-stat-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.tg-export-stat-value {
+  display: block;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.tg-export-message {
+  padding: 12px;
+  border-radius: 8px;
+  background: #e8f4fe;
+  color: #1a73e8;
+  font-weight: 500;
+  margin: 15px 0;
+  text-align: center;
+}
+
+.tg-export-error-details {
+  background: #fef0f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 15px;
+}
+
+.tg-export-error-title {
+  font-weight: 600;
+  color: #d93025;
+  margin-bottom: 5px;
+}
+
+.tg-export-error-text {
+  color: #d93025;
+  margin-bottom: 5px;
+}
+
+.tg-export-error-code {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.tg-export-modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.tg-export-download-btn {
+  padding: 8px 20px;
+  background: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.tg-export-download-btn:hover {
+  background: #0d62d9;
+}
+
+.tg-export-close-btn {
+  padding: 8px 20px;
+  background: #f8f9fa;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.tg-export-close-btn:hover {
+  background: #e9ecef;
+}
+
+/* Status-specific colors */
+.tg-export-progress .tg-export-progress-fill {
+  background: #1a73e8;
+}
+
+.tg-export-success .tg-export-progress-fill {
+  background: #34a853;
+}
+
+.tg-export-success .tg-export-message {
+  background: #e8f6ef;
+  color: #34a853;
+}
+
+.tg-export-error .tg-export-progress-fill {
+  background: #d93025;
+}
+
+.tg-export-error .tg-export-modal-header {
+  background: #fef0f0;
+}
+
+.tg-export-warning .tg-export-progress-fill {
+  background: #f9ab00;
+}
+
+.tg-export-warning .tg-export-modal-header {
+  background: #fef7e0;
+}

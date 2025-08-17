@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
 const authAxios = Axios.create({
-  baseURL: 'http://203.161.50.129:8082/api',
+  baseURL: 'http://localhost:8082/api',
 });
 
 // Request interceptor

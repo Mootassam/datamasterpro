@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import io, { Socket } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
@@ -55,6 +56,7 @@ import TelegramChatModal from "./Modal/TelegramChatModal";
 import EmailManagementModal from "./Modal/EmailManagementModal";
 import { verifyTelegramNumbers } from "../store/telegram/TelegramActions";
 import { selectConnectedAccounts } from "../store/telegram/TelegramSelectors";
+import TelegramExportProgressModal from "./Modal/TelegramExportProgress";
 interface User {
   name: string;
   email: string;
@@ -118,6 +120,25 @@ interface VerificationCompleteData {
     formattedWaitTime: string;
   }>;
 }
+
+// types.ts
+export interface ExportProgress {
+  operationId: string;
+  status: 'started' | 'progress' | 'completed' | 'error' | 'cancelled' | 'warning';
+  accountId: string;
+  groupId: string;
+  progress?: number;
+  currentCount?: number;
+  total?: number | string;
+  message?: string;
+  error?: string;
+  code?: number;
+  batchSize?: number;
+  currentStrategy?: string;
+  uniqueMembers?: number;
+  duration?: number;
+  partialCount?: number;
+}
 function WhatsAppNumberGenerator() {
   const dispatch: ThunkDispatch<any, void, AnyAction> = useDispatch();
   const [filter, setFilter] = useState<
@@ -140,6 +161,8 @@ function WhatsAppNumberGenerator() {
     rejectedCount: 0,
     eta: "",
   });
+    const [telegramExportProgress, setTelegramExportProgress] = useState<ExportProgress | null>(null);
+
   const [chatModalOpen, setChatModalOpen] = useState(false);
   const [EmailModalOpen, setEmailModalOpen] = useState(false);
 const [tvPaused, setTvPaused] = useState<VerificationPausedData | null>(null);
@@ -211,6 +234,51 @@ const [tvNotification, setTvNotification] = useState<{
 
   // Mock download function
 
+// Remove the first handler (lines 1079-1094) and keep only this one:
+const handleTelegramExportProgress = (data: ExportProgress) => {
+  console.log('Telegram export progress:', data);
+  setTelegramExportProgress(data);
+  
+  // Handle notifications
+  if (data.status === 'completed') {
+    toast.success(
+      <div className="custom-toast">
+        <strong>Export Completed</strong>
+        <p>{data.message || 'Group members exported successfully'}</p>
+      </div>,
+      { autoClose: 3000 }
+    );
+    setTimeout(() => setTelegramExportProgress(null), 5000);
+  } 
+  else if (data.status === 'error') {
+    toast.error(
+      <div className="custom-toast">
+        <strong>Export Failed</strong>
+        <p>{data.message || 'Failed to export group members'}</p>
+      </div>,
+      { autoClose: 8000 }
+    );
+    setTimeout(() => setTelegramExportProgress(null), 10000);
+  }
+};
+  
+const handleDownloadExport  = () => {
+  if (!telegramExportProgress) return;
+  
+  const { groupId, accountId } = telegramExportProgress;
+  const url = `/api/export/download?groupId=${groupId}&accountId=${accountId}`;
+  
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `telegram_${groupId}_members.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  setTelegramExportProgress(null);
+};
+
+
   const handleStartVerification = (config) => {
     setVerificationConfig(config);
     setModalState("progress");
@@ -243,8 +311,15 @@ useEffect(() => {
     let newSocket: Socket | null = null;
     
     try {
+
+
+
+
+
+
+
       // Create socket with better error handling and reconnection settings
-      newSocket = io("http://203.161.50.129:8082", {
+      newSocket = io("http://localhost:8082", {
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
@@ -325,12 +400,7 @@ useEffect(() => {
     };
     
     // Handle Telegram export progress updates
-    const handleTelegramExportProgress = (data: any) => {
-      console.log('Telegram export progress:', data);
-      if (data && data.operationId) {
-        // dispatch(updateExportProgress(data));
-      }
-    };
+
 
     const handleDisplaySuccess = (data: any) => {
       if (!data) {
@@ -580,7 +650,6 @@ useEffect(() => {
     // Application events
     newSocket.on("display-error", handleDisplayError);
     newSocket.on("display-success", handleDisplaySuccess);
-    newSocket.on("telegram-export-progress", handleTelegramExportProgress);
     newSocket.on("scan-qrcode", handleScanQrCode);
     newSocket.on("client-connect", handleClientConnect);
     newSocket.on("client-disconnect", handleClientDisconnect);
@@ -588,7 +657,8 @@ useEffect(() => {
     newSocket.on("verification-blocked", handleVerificationBlocked);
     newSocket.on("done", handleDone);
     newSocket.on("data-updated", handleDataUpdated);
-    
+
+
     // Telegram verification events
     newSocket.on("verification-paused", handleTvPaused);
     newSocket.on("operation-failed", handleTvFailed);
@@ -751,6 +821,9 @@ useEffect(() => {
         newSocket.off("account-flood-wait");
         newSocket.off("account-flood-wait-update");
         newSocket.off("account-flood-wait-complete");
+
+              newSocket.off("telegram-export-progress", handleTelegramExportProgress);
+
         
         // Disconnect socket
         newSocket.disconnect();
@@ -1222,6 +1295,14 @@ useEffect(() => {
           socket={socket}
         />
       )}
+
+
+         <TelegramExportProgressModal 
+        progressData={telegramExportProgress}
+        onClose={() => setTelegramExportProgress(null)}
+      onDownload={handleDownloadExport}
+
+      />
 
 
 
