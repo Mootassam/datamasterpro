@@ -27,7 +27,7 @@ interface TelegramExportProgressModalProps {
 const TelegramExportProgressModal: React.FC<TelegramExportProgressModalProps> = ({ 
   progressData, 
   onClose,
-  onDownload
+
 }) => {
   if (!progressData) return null;
 

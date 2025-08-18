@@ -79,9 +79,9 @@ interface TelegramAccount {
 
 class TelegramController {
   private static accounts: Map<string, TelegramAccount> = new Map();
-  private static verificationProcess: NodeJS.Timeout | null = null;
   private static scheduledMessages: ScheduledMessage[] = [];
-
+    private static activeOperations = new Map<string, AbortController>();
+    private static currentOperationId: string | null = null;
   private static getSessionPath(phoneNumber: string): string {
     let sessionPath: string;
     
@@ -368,379 +368,477 @@ class TelegramController {
     });
   }
 
-  static async cancelCurrentOperation(): Promise<void> {
-    if (this.verificationProcess) {
-      clearTimeout(this.verificationProcess);
-      this.verificationProcess = null;
-    }
-  }
-static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
-    const { phoneNumbers, config } = req.body;
-    const selectedAccounts = config.selectedAccounts || [];
-    
-    const usersArray = Array.isArray(phoneNumbers) ? phoneNumbers : [];
-    const result: PhoneNumberResult = {
-      phoneNumberRegistred: [],
-      phoneNumberRejected: [],
-      totalPhoneNumber: []
-    };
+    static cancelCurrentOperation(): boolean {
+        if (!this.currentOperationId) return false;
+        console.log("cancel the process");
 
-    if (usersArray.length === 0 || selectedAccounts.length === 0) {
+        const controller = this.activeOperations.get(this.currentOperationId);
+        if (controller) {
+            controller.abort();
+            this.activeOperations.delete(this.currentOperationId);
+            this.currentOperationId = null;
+            return true;
+        }
+        return false;
+    }
+static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
+  const { phoneNumbers, config } = req.body;
+  const selectedAccounts = config.selectedAccounts || [];
+    let validAccounts: TelegramAccount[] = [];
+
+  // Create unique operation ID and abort controller
+  const operationId = Math.random().toString(36).substring(2, 15);
+  this.currentOperationId = operationId;
+  const abortController = new AbortController();
+  this.activeOperations.set(operationId, abortController);
+
+  const usersArray = Array.isArray(phoneNumbers) ? phoneNumbers : [];
+  const result: PhoneNumberResult = {
+    phoneNumberRegistred: [],
+    phoneNumberRejected: [],
+    totalPhoneNumber: []
+  };
+
+  if (usersArray.length === 0 || selectedAccounts.length === 0) {
+    io.emit("display-error", {
+      code: 400,
+      message: "Phone numbers and accounts required",
+      action: "provide_data"
+    });
+    return result;
+  }
+
+  const processedPhoneNumbers = new Set<string>();
+  let cancellationEmitted = false;
+
+  try {
+    // Load and validate accounts
+    const validAccounts: TelegramAccount[] = [];
+    for (const accountId of selectedAccounts) {
+      // Check cancellation before each account validation
+      if (abortController.signal.aborted && !cancellationEmitted) {
+        io.emit("process-cancelled", {
+          reason: "Process cancelled by user",
+          partialResults: result
+        });
+        cancellationEmitted = true;
+        break;
+      }
+      
+      const account = await this.getAccountById(accountId);
+      if (account && account.mtproto && account.connected) {
+        validAccounts.push(account);
+      }
+    }
+
+    // Handle cancellation during account validation
+    if (abortController.signal.aborted && !cancellationEmitted) {
+      io.emit("process-cancelled", {
+        reason: "Process cancelled by user",
+        partialResults: result
+      });
+      cancellationEmitted = true;
+    }
+    if (cancellationEmitted) return result;
+
+    if (validAccounts.length === 0) {
       io.emit("display-error", {
         code: 400,
-        message: "Phone numbers and accounts required",
-        action: "provide_data"
+        message: "No valid accounts selected",
+        action: "select_accounts"
       });
       return result;
     }
 
-    // Track which phone numbers have been processed
-    const processedPhoneNumbers = new Set<string>();
-    // Track the current position in the phone numbers array
-    let currentPosition = 0;
+    const startTime = Date.now();
+    const batchSize = config.batchSize || 25;
+    const totalBatches = Math.ceil(usersArray.length / batchSize);
 
-    try {
-      // Load and validate accounts
-      const validAccounts: TelegramAccount[] = [];
-      for (const accountId of selectedAccounts) {
-        const account = await this.getAccountById(accountId);
-        if (account && account.mtproto && account.connected) {
-          validAccounts.push(account);
+    io.emit("progress", {
+      progress: 0,
+      batchesCompleted: 0,
+      totalBatches,
+      registered: 0,
+      rejected: 0,
+    });
+
+    this.emitAccountsStatus(validAccounts, io);
+    
+    // Process batches
+    for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+      // PRIMARY CANCELLATION CHECKPOINT - Before each batch
+      if (abortController.signal.aborted && !cancellationEmitted) {
+        io.emit("process-cancelled", {
+          reason: "Process cancelled by user",
+          partialResults: result
+        });
+        cancellationEmitted = true;
+        break;
+      }
+      if (cancellationEmitted) break;
+      
+      // Find available account
+      let account = this.findAvailableAccount(validAccounts);
+      
+      // Handle flood wait
+      if (!account) {
+        this.emitAccountsStatus(validAccounts, io);
+        
+        let minWaitTime = Infinity;
+        let accountWithMinWait ;
+        
+        for (const acc of validAccounts) {
+          const waitTime = this.getFloodWaitTimeRemaining(acc.id);
+          if (waitTime < minWaitTime) {
+            minWaitTime = waitTime;
+            accountWithMinWait = acc;
+          }
+        }
+        
+        if (accountWithMinWait) {
+          io.emit("verification-paused", {
+            message: `All accounts are rate limited. Waiting for ${this.formatETA(minWaitTime)} before continuing...`,
+            waitTime: minWaitTime,
+            nextAvailableAccount: {
+              id: accountWithMinWait?.id || '',
+              phoneNumber: accountWithMinWait?.phoneNumber || '',
+              availableAt: new Date(Date.now() + minWaitTime * 1000).toISOString()
+            }
+          });
+          
+          // Wait with cancellation check
+          await new Promise(resolve => setTimeout(resolve, minWaitTime * 1000 + 1000));
+          
+          // Check cancellation after waiting
+          if (abortController.signal.aborted && !cancellationEmitted) {
+            io.emit("process-cancelled", {
+              reason: "Process cancelled by user",
+              partialResults: result
+            });
+            cancellationEmitted = true;
+            break;
+          }
+          if (cancellationEmitted) break;
+          
+          account = accountWithMinWait;
+          this.emitAccountsStatus(validAccounts, io);
+        } else {
+          throw new Error("No accounts available");
+        }
+      }
+      
+      // Process phone numbers
+      const currentBatch = usersArray.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
+      const batchResult: PhoneNumberResult = {
+        phoneNumberRegistred: [],
+        phoneNumberRejected: [],
+        totalPhoneNumber: []
+      };
+
+      for (let i = 0; i < currentBatch.length; i++) {
+        // SECONDARY CANCELLATION CHECKPOINT - Before each number
+        if (abortController.signal.aborted && !cancellationEmitted) {
+          io.emit("process-cancelled", {
+            reason: "Process cancelled by user",
+            partialResults: result
+          });
+          cancellationEmitted = true;
+          break;
+        }
+        if (cancellationEmitted) break;
+        
+        const phoneNumber = currentBatch[i];
+        if (processedPhoneNumbers.has(phoneNumber)) continue;
+
+        try {
+          // Apply delay between numbers
+          if (i > 0 && config.delayBetweenNumbers > 0) {
+            await new Promise(resolve => setTimeout(resolve, config.delayBetweenNumbers));
+            
+            // Check cancellation after delay
+            if (abortController.signal.aborted && !cancellationEmitted) {
+              io.emit("process-cancelled", {
+                reason: "Process cancelled by user",
+                partialResults: result
+              });
+              cancellationEmitted = true;
+              break;
+            }
+            if (cancellationEmitted) break;
+          }
+
+          // Account availability check (existing logic)
+          if (account && this.isAccountInFloodWait(account.id)) {
+            this.emitAccountsStatus(validAccounts, io);
+            const newAccount = this.findAvailableAccount(validAccounts);
+            
+            if (newAccount) {
+              io.emit("account-switched", {
+                oldAccountId: account?.id || '',
+                oldAccountPhone: account?.phoneNumber,
+                newAccountId: newAccount.id,
+                newAccountPhone: newAccount.phoneNumber,
+                reason: "flood_wait",
+                waitTime: account?.id ? this.getFloodWaitTimeRemaining(account.id) : 0,
+                formattedWaitTime: account ? this.formatETA(this.getFloodWaitTimeRemaining(account.id)) : '0s',
+                timestamp: new Date().toISOString()
+              });
+              account = newAccount;
+            } else {
+              const waitTime = this.getFloodWaitTimeRemaining(account.id);
+              io.emit("verification-paused", {
+                message: `All accounts are rate limited. Waiting for ${this.formatETA(waitTime)} before continuing...`,
+                waitTime,
+                nextAvailableAccount: {
+                  id: account.id,
+                  phoneNumber: account.phoneNumber,
+                  availableAt: new Date(Date.now() + waitTime * 1000).toISOString()
+                },
+                timestamp: new Date().toISOString()
+              });
+              
+              await new Promise(resolve => setTimeout(resolve, waitTime * 1000 + 1000));
+              
+              // Check cancellation after flood wait
+              if (abortController.signal.aborted && !cancellationEmitted) {
+                io.emit("process-cancelled", {
+                  reason: "Process cancelled by user",
+                  partialResults: result
+                });
+                cancellationEmitted = true;
+                break;
+              }
+              if (cancellationEmitted) break;
+              
+              this.emitAccountsStatus(validAccounts, io);
+            }
+          }
+
+          // Existing phone number processing logic
+          if (!account || !account.mtproto) {
+            throw new Error('Account or MTProto instance not available');
+          }
+          const mtproto = account.mtproto;
+          const cleanPhone = phoneNumber.replace(/\D/g, '');
+          batchResult.totalPhoneNumber.push(phoneNumber);
+          
+          const clientId = Date.now();
+          const importResult = await this.callWithDcMigration(mtproto, 'contacts.importContacts', {
+            contacts: [{
+              _: 'inputPhoneContact',
+              client_id: clientId,
+              phone: cleanPhone,
+              first_name: 'Check',
+              last_name: 'User'
+            }]
+          }, 0, account.id, io);
+          
+          processedPhoneNumbers.add(phoneNumber);
+          
+          // Log the raw import result for debugging
+          console.log(`Raw import result for ${phoneNumber}:`, JSON.stringify(importResult, null, 2));
+
+          // Determine registration status
+          let isRegistered = false;
+          
+          if (importResult.users && importResult.users.length > 0 && 
+              importResult.imported && importResult.imported.length > 0) {
+              
+              // Get the imported contact
+              const importedContact = importResult.imported[0];
+              
+              // Check if the imported contact has a valid user_id
+              if (importedContact && importedContact.user_id) {
+                  // Find the corresponding user in the users array
+                  const matchingUser = importResult.users.find(user => user.id === importedContact.user_id);
+                  
+                  // If we found a matching user, the number is registered
+                  isRegistered = !!matchingUser;
+              }
+          }
+
+          // Log the import result for debugging
+          console.log(`Import result for ${phoneNumber}:`, JSON.stringify({
+            imported: importResult.imported?.length || 0,
+            users: importResult.users?.length || 0,
+            retryContacts: importResult.retry_contacts?.length || 0
+          }));
+          
+          if (isRegistered) {
+            console.log(`Phone number ${phoneNumber} is registered on Telegram`);
+            batchResult.phoneNumberRegistred.push(phoneNumber);
+            
+            // Emit real-time update for registered number
+            io.emit("number-verified", {
+              phoneNumber,
+              status: "registered",
+              timestamp: new Date().toISOString(),
+              accountId: account.id
+            });
+          } else {
+            batchResult.phoneNumberRejected.push(phoneNumber);
+            
+            // Emit real-time update for rejected number
+            io.emit("number-verified", {
+              phoneNumber,
+              status: "not_registered",
+              timestamp: new Date().toISOString(),
+              accountId: account.id
+            });
+          }
+
+          // Cleanup: Delete imported contact if it was added
+          try {
+            if (isRegistered) {
+              // Find the user object for the imported contact
+              const importedContact = importResult.imported[0];
+              const user = importResult.users.find(u => 
+                u && u.id === importedContact.user_id && u.access_hash
+              );
+
+              if (user) {
+                await this.callWithDcMigration(mtproto, 'contacts.deleteContacts', {
+                  id: [{
+                    _: 'inputUser',
+                    user_id: user.id,
+                    access_hash: user.access_hash
+                  }]
+                }, 0, account.id, io);
+              }
+            }
+          } catch (cleanupError) {
+            console.warn(`Cleanup failed for ${phoneNumber}:`, cleanupError);
+          }
+        } catch (error:any) {
+          // Check if this is a FLOOD_WAIT error
+          if (error.message && error.message.includes('FLOOD_WAIT_ACCOUNT_ROTATION')) {
+            throw new Error(`Account ${account?.id} is in flood wait. Will retry ${phoneNumber} with another account.`)
+            // Don't mark this phone number as processed so it will be retried
+            i--; // Retry this index
+            continue;
+          }
+          
+          console.error(`Error processing ${phoneNumber}:`, error);
+          // Log detailed error information
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          io.emit("verification-error", {
+            phoneNumber,
+            error: errorMessage,
+            timestamp: new Date().toISOString(),
+            accountId: account?.id
+          });
+          // Mark this phone number as processed to avoid infinite retries
+          processedPhoneNumbers.add(phoneNumber);
+          // Any error means the number is rejected
+          batchResult.phoneNumberRejected.push(phoneNumber);
         }
       }
 
-      if (validAccounts.length === 0) {
-        io.emit("display-error", {
-          code: 400,
-          message: "No valid accounts selected",
-          action: "select_accounts"
-        });
-        return result;
-      }
+      // Break if cancellation occurred in inner loop
+      if (cancellationEmitted) break;
 
-      const startTime = Date.now();
-      const batchSize = config.batchSize || 25;
-      const totalBatches = Math.ceil(usersArray.length / batchSize);
+      // Aggregate batch results
+      result.phoneNumberRegistred.push(...batchResult.phoneNumberRegistred);
+      result.phoneNumberRejected.push(...batchResult.phoneNumberRejected);
+      result.totalPhoneNumber.push(...batchResult.totalPhoneNumber);
+
+      const progress = Math.round(((batchIndex + 1) / totalBatches) * 100);
+      const now = Date.now();
+      const elapsedMs = now - startTime;
+      const batchesRemaining = totalBatches - (batchIndex + 1);
+      const avgTimePerBatch = elapsedMs / (batchIndex + 1);
+      const etaMs = avgTimePerBatch * batchesRemaining;
+      const etaSeconds = Math.round(etaMs / 1000);
 
       io.emit("progress", {
-        progress: 0,
-        batchesCompleted: 0,
+        progress,
+        batchesCompleted: batchIndex + 1,
         totalBatches,
-        registered: 0,
-        rejected: 0,
+        registered: result.phoneNumberRegistred.length,
+        rejected: result.phoneNumberRejected.length,
+        eta: this.formatETA(etaSeconds),
+        etaSeconds,
+        currentAccount: account?.id
       });
 
-      // Send initial account status update
-      this.emitAccountsStatus(validAccounts, io);
-      
-      // Process batches with account rotation and flood wait handling
-      for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
-        // Find an available account (not in flood wait)
-        let account = this.findAvailableAccount(validAccounts);
+      io.emit("data-updated", {
+        phoneNumberRegistred: result.phoneNumberRegistred,
+        phoneNumberRejected: result.phoneNumberRejected,
+        totalPhoneNumber: result.totalPhoneNumber,
+        progress
+      });
+
+      // TERTIARY CANCELLATION CHECKPOINT - Before batch delay
+      if (abortController.signal.aborted && !cancellationEmitted) {
+        io.emit("process-cancelled", {
+          reason: "Process cancelled by user",
+          partialResults: result
+        });
+        cancellationEmitted = true;
+        break;
+      }
+      if (cancellationEmitted) break;
+
+      if (batchIndex < totalBatches - 1 && config.delayBetweenBatches > 0) {
+        await new Promise(resolve => setTimeout(resolve, config.delayBetweenBatches));
         
-        // If all accounts are in flood wait, wait for the one with the shortest remaining time
-        if (!account) {
-          // Send updated account status
-          this.emitAccountsStatus(validAccounts, io);
-          
+        // Check cancellation after batch delay
+        if (abortController.signal.aborted && !cancellationEmitted) {
+          io.emit("process-cancelled", {
+            reason: "Process cancelled by user",
+            partialResults: result
+          });
+          cancellationEmitted = true;
+          break;
+        }
+        if (cancellationEmitted) break;
+      }
+      
+      // Check if any accounts are available for the next batch
+      if (batchIndex < totalBatches - 1) {
+        const nextAccount = this.findAvailableAccount(validAccounts);
+        if (!nextAccount) {
+          // If no accounts are available, find the one with the shortest wait time
           let minWaitTime = Infinity;
-          let accountWithMinWait = null;
+          let accountWithMinWait ;
           
           for (const acc of validAccounts) {
             const waitTime = this.getFloodWaitTimeRemaining(acc.id);
             if (waitTime < minWaitTime) {
               minWaitTime = waitTime;
-accountWithMinWait = acc;
+              accountWithMinWait = acc;
             }
           }
           
-          if (accountWithMinWait) {
+          if (accountWithMinWait && minWaitTime > 0) {
             // Notify that we're waiting for an account to become available
             io.emit("verification-paused", {
-              message: `All accounts are rate limited. Waiting for ${this.formatETA(minWaitTime)} before continuing...`,
+              message: `All accounts are rate limited. Waiting for ${this.formatETA(minWaitTime)} before continuing with the next batch...`,
               waitTime: minWaitTime,
-              nextAvailableAccount: {
-                id: accountWithMinWait?.id || '',
-                phoneNumber: accountWithMinWait?.phoneNumber || '',
-                availableAt: new Date(Date.now() + minWaitTime * 1000).toISOString()
-              }
+              batchesCompleted: batchIndex + 1,
+              totalBatches
             });
             
             // Wait for the account with the shortest wait time
-            await new Promise(resolve => setTimeout(resolve, minWaitTime * 1000 + 1000)); // Add 1 second buffer
-            account = accountWithMinWait;
+            await new Promise(resolve => setTimeout(resolve, minWaitTime * 1000 + 1000));
             
-            // Send updated account status after wait
-            this.emitAccountsStatus(validAccounts, io);
-          } else {
-            throw new Error("No accounts available and no accounts in flood wait. This should never happen.");
-          }
-        }
-        
-        // Get the current batch of phone numbers
-        const currentBatch = usersArray.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
-        const batchResult: PhoneNumberResult = {
-          phoneNumberRegistred: [],
-          phoneNumberRejected: [],
-          totalPhoneNumber: []
-        };
-
-        // Process each phone number in the batch
-        for (let i = 0; i < currentBatch.length; i++) {
-          const phoneNumber = currentBatch[i];
-          
-          // Skip already processed numbers
-          if (processedPhoneNumbers.has(phoneNumber)) {
-            continue;
-          }
-          
-          try {
-            // Apply delay between numbers if configured
-            if (i > 0 && config.delayBetweenNumbers > 0) {
-              await new Promise(resolve => setTimeout(resolve, config.delayBetweenNumbers));
-            }
-
-            // Check if the current account is still available (not in flood wait)
-             if (this.isAccountInFloodWait(account.id)) {
-               // Send updated account status
-               this.emitAccountsStatus(validAccounts, io);
-               
-               // Find another available account
-               const newAccount = this.findAvailableAccount(validAccounts);
-               
-               if (newAccount) {
-                 io.emit("account-switched", {
-                   oldAccountId: account.id,
-                   oldAccountPhone: account.phoneNumber,
-                   newAccountId: newAccount.id,
-                   newAccountPhone: newAccount.phoneNumber,
-                   reason: "flood_wait",
-                   waitTime: this.getFloodWaitTimeRemaining(account.id),
-                   formattedWaitTime: this.formatETA(this.getFloodWaitTimeRemaining(account.id)),
-                   timestamp: new Date().toISOString()
-                 });
-                 account = newAccount;
-               } else {
-                 // If no accounts are available, wait for the current account's flood wait to expire
-                 const waitTime = this.getFloodWaitTimeRemaining(account.id);
-                 io.emit("verification-paused", {
-                   message: `All accounts are rate limited. Waiting for ${this.formatETA(waitTime)} before continuing...`,
-                   waitTime,
-                   nextAvailableAccount: {
-                     id: account.id,
-                     phoneNumber: account.phoneNumber,
-                     availableAt: new Date(Date.now() + waitTime * 1000).toISOString()
-                   },
-                   timestamp: new Date().toISOString()
-                 });
-                 
-                 await new Promise(resolve => setTimeout(resolve, waitTime * 1000 + 1000)); // Add 1 second buffer
-                 
-                 // Send updated account status after wait
-                 this.emitAccountsStatus(validAccounts, io);
-               }
-             }
-
-            const mtproto = account.mtproto!;
-            const cleanPhone = phoneNumber.replace(/\D/g, '');
-            
-            // Always add to total numbers
-            batchResult.totalPhoneNumber.push(phoneNumber);
-            
-            // Import contact to check registration
-            // console.log(`Attempting to import contact for ${cleanPhone} using account ${account.id}...`);
-            const clientId = Date.now();
-            const importResult = await this.callWithDcMigration(mtproto, 'contacts.importContacts', {
-              contacts: [{
-                _: 'inputPhoneContact',
-                client_id: clientId,
-                phone: cleanPhone,
-                first_name: 'Check',
-                last_name: 'User'
-              }]
-            }, 0, account.id, io);
-            
-            // Mark this phone number as processed
-            processedPhoneNumbers.add(phoneNumber);
-            
-            // Log the raw import result for debugging
-            console.log(`Raw import result for ${phoneNumber}:`, JSON.stringify(importResult, null, 2));
-
-            // Determine if the phone number is registered on Telegram
-            // Multiple checks to ensure accurate detection:
-            // 1. Check if users array contains entries (registered users)
-            // 2. Check if imported array contains entries with valid user_id
-            // 3. Verify that retry_contacts is empty (no failed imports)
-            // 4. Ensure the imported contact has a valid user_id that matches a user in the users array
-            
-            let isRegistered = false;
-            
-            if (importResult.users && importResult.users.length > 0 && 
-                importResult.imported && importResult.imported.length > 0) {
-                
-                // Get the imported contact
-                const importedContact = importResult.imported[0];
-                
-                // Check if the imported contact has a valid user_id
-                if (importedContact && importedContact.user_id) {
-                    // Find the corresponding user in the users array
-                    const matchingUser = importResult.users.find(user => user.id === importedContact.user_id);
-                    
-                    // If we found a matching user, the number is registered
-                    isRegistered = !!matchingUser;
-                }
-            }
-
-            // Log the import result for debugging
-            console.log(`Import result for ${phoneNumber}:`, JSON.stringify({
-              imported: importResult.imported?.length || 0,
-              users: importResult.users?.length || 0,
-              retryContacts: importResult.retry_contacts?.length || 0
-            }));
-            
-            if (isRegistered) {
-              console.log(`Phone number ${phoneNumber} is registered on Telegram`);
-              batchResult.phoneNumberRegistred.push(phoneNumber);
-              
-              // Emit real-time update for registered number
-              io.emit("number-verified", {
-                phoneNumber,
-                status: "registered",
-                timestamp: new Date().toISOString(),
-                accountId: account.id
+            // Check cancellation after waiting
+            if (abortController.signal.aborted && !cancellationEmitted) {
+              io.emit("process-cancelled", {
+                reason: "Process cancelled by user",
+                partialResults: result
               });
-            } else {
-              // console.log(`Phone number ${phoneNumber} is NOT registered on Telegram`);
-              batchResult.phoneNumberRejected.push(phoneNumber);
-              
-              // Emit real-time update for rejected number
-              io.emit("number-verified", {
-                phoneNumber,
-                status: "not_registered",
-                timestamp: new Date().toISOString(),
-                accountId: account.id
-              });
+              cancellationEmitted = true;
+              break;
             }
-
-            // Cleanup: Delete imported contact if it was added
-            try {
-              if (isRegistered) {
-                // Find the user object for the imported contact
-                const importedContact = importResult.imported[0];
-                const user = importResult.users.find(u => 
-                  u && u.id === importedContact.user_id && u.access_hash
-                );
-
-                if (user) {
-                  await this.callWithDcMigration(mtproto, 'contacts.deleteContacts', {
-                    id: [{
-                      _: 'inputUser',
-                      user_id: user.id,
-                      access_hash: user.access_hash
-                    }]
-                  }, 0, account.id, io);
-                }
-              }
-            } catch (cleanupError) {
-              console.warn(`Cleanup failed for ${phoneNumber}:`, cleanupError);
-              // Cleanup failure doesn't affect verification result
-            }
-          } catch (error:any) {
-            // Check if this is a FLOOD_WAIT error
-            if (error.message && error.message.includes('FLOOD_WAIT_ACCOUNT_ROTATION')) {
-              // This error is thrown by callWithDcMigration when a FLOOD_WAIT occurs
-              // The account has already been marked as in flood wait
-              // We'll retry this phone number in the next iteration with a different account
-              // console.log(`Account ${account.id} is in flood wait. Will retry ${phoneNumber} with another account.`);
-               throw new Error(`Account ${account.id} is in flood wait. Will retry ${phoneNumber} with another account.`)
-              // Don't mark this phone number as processed so it will be retried
-              i--; // Retry this index
-              continue;
-            }
-            
-            console.error(`Error processing ${phoneNumber}:`, error);
-            // Log detailed error information
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            io.emit("verification-error", {
-              phoneNumber,
-              error: errorMessage,
-              timestamp: new Date().toISOString(),
-              accountId: account.id
-            });
-            // Mark this phone number as processed to avoid infinite retries on permanent errors
-            processedPhoneNumbers.add(phoneNumber);
-            // Any error means the number is rejected
-            batchResult.phoneNumberRejected.push(phoneNumber);
-          }
-        }
-
-        // Aggregate batch results
-        result.phoneNumberRegistred.push(...batchResult.phoneNumberRegistred);
-        result.phoneNumberRejected.push(...batchResult.phoneNumberRejected);
-        result.totalPhoneNumber.push(...batchResult.totalPhoneNumber);
-
-        const progress = Math.round(((batchIndex + 1) / totalBatches) * 100);
-        const now = Date.now();
-        const elapsedMs = now - startTime;
-        const batchesRemaining = totalBatches - (batchIndex + 1);
-        const avgTimePerBatch = elapsedMs / (batchIndex + 1);
-        const etaMs = avgTimePerBatch * batchesRemaining;
-        const etaSeconds = Math.round(etaMs / 1000);
-
-        io.emit("progress", {
-          progress,
-          batchesCompleted: batchIndex + 1,
-          totalBatches,
-          registered: result.phoneNumberRegistred.length,
-          rejected: result.phoneNumberRejected.length,
-          eta: this.formatETA(etaSeconds),
-          etaSeconds,
-          currentAccount: account.id
-        });
-
-        io.emit("data-updated", {
-          phoneNumberRegistred: result.phoneNumberRegistred,
-          phoneNumberRejected: result.phoneNumberRejected,
-          totalPhoneNumber: result.totalPhoneNumber,
-          progress
-        });
-
-        if (batchIndex < totalBatches - 1 && config.delayBetweenBatches > 0) {
-          await new Promise(resolve => setTimeout(resolve, config.delayBetweenBatches));
-        }
-        
-        // Check if any accounts are available for the next batch
-        if (batchIndex < totalBatches - 1) {
-          const nextAccount = this.findAvailableAccount(validAccounts);
-          if (!nextAccount) {
-            // If no accounts are available, find the one with the shortest wait time
-            let minWaitTime = Infinity;
-            let accountWithMinWait = null;
-            
-            for (const acc of validAccounts) {
-              const waitTime = this.getFloodWaitTimeRemaining(acc.id);
-              if (waitTime < minWaitTime) {
-                minWaitTime = waitTime;
-                accountWithMinWait = acc;
-              }
-            }
-            
-            if (accountWithMinWait && minWaitTime > 0) {
-              // Notify that we're waiting for an account to become available
-              io.emit("verification-paused", {
-                message: `All accounts are rate limited. Waiting for ${this.formatETA(minWaitTime)} before continuing with the next batch...`,
-                waitTime: minWaitTime,
-                batchesCompleted: batchIndex + 1,
-                totalBatches
-              });
-              
-              // Wait for the account with the shortest wait time
-              await new Promise(resolve => setTimeout(resolve, minWaitTime * 1000 + 1000)); // Add 1 second buffer
-            }
+            if (cancellationEmitted) break;
           }
         }
       }
+    }
 
+    // Only run completion logic if not cancelled
+    if (!cancellationEmitted) {
       // Final validation of results
       console.log('Final verification results:', {
         registered: result.phoneNumberRegistred.length,
@@ -807,26 +905,27 @@ accountWithMinWait = acc;
       // Send final account status update
       this.emitAccountsStatus(validAccounts, io);
       
-      // Schedule a follow-up account status update after 1 minute to show updated flood wait times
+      // Schedule a follow-up account status update after 1 minute
       setTimeout(() => {
         this.emitAccountsStatus(validAccounts, io);
       }, 60000);
+    }
 
-      return result;
-    } catch (error :any) {
-      // Provide detailed error information
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error('SaveUsers operation failed:', error);
-      
-      // Check if any phone numbers were processed successfully
-      const processedCount = processedPhoneNumbers.size;
-      const totalCount = usersArray.length;
-      const successRate = totalCount > 0 ? Math.round((processedCount / totalCount) * 100) : 0;
-      
-      // console.log(`Verification process interrupted. Progress: ${successRate}% (${processedCount}/${totalCount} numbers processed)`);
-      
-      // Check for accounts in flood wait
-      const floodedAccounts = validAccounts ? validAccounts.filter(acc => this.isAccountInFloodWait(acc.id)) : [];
+    return result;
+  } catch (error:any) {
+    // Provide detailed error information
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('SaveUsers operation failed:', error);
+    
+    // Check if any phone numbers were processed successfully
+    const processedCount = processedPhoneNumbers.size;
+    const totalCount = usersArray.length;
+    const successRate = totalCount > 0 ? Math.round((processedCount / totalCount) * 100) : 0;
+    
+    // Check for accounts in flood wait
+    let floodedAccounts: TelegramAccount[] = [];
+    try {
+      const floodedAccounts = Array.from(this.accounts.values()).filter(acc => this.isAccountInFloodWait(acc.id));
       if (floodedAccounts.length > 0) {
         console.warn(`${floodedAccounts.length} accounts are in flood wait:`);
         for (const acc of floodedAccounts) {
@@ -834,49 +933,61 @@ accountWithMinWait = acc;
           console.warn(`- Account ${acc.id} (${acc.phoneNumber}): ${waitTime} seconds remaining (${this.formatETA(waitTime)})`); 
         }
       }
-      
-      io.emit("operation-failed", {
-        operation: "saveUsers",
-        error: errorMessage,
-        timestamp: new Date().toISOString(),
-        progress: {
-          processed: processedCount,
-          total: totalCount,
-          successRate: successRate
-        },
-        floodedAccounts: floodedAccounts ? floodedAccounts.map(acc => ({
-          id: acc.id,
-          phoneNumber: acc.phoneNumber,
-          waitTimeSeconds: this.getFloodWaitTimeRemaining(acc.id),
-          formattedWaitTime: this.formatETA(this.getFloodWaitTimeRemaining(acc.id))
-        })) : []
-      });
-      
-      // Include partial results in the return value
-      result.phoneNumberRegistred = [...new Set(result.phoneNumberRegistred)];
-      result.phoneNumberRejected = [...new Set(result.phoneNumberRejected)];
-      result.totalPhoneNumber = [...new Set(result.totalPhoneNumber)];
-      
-      // Send account status update even in error case
-      if (validAccounts && validAccounts.length > 0) {
-        this.emitAccountsStatus(validAccounts, io);
-        
-        // Schedule a follow-up account status update after 1 minute
-        setTimeout(() => {
+    } catch (e) {
+      console.error('Error getting flooded accounts:', e);
+    }
+    
+    io.emit("operation-failed", {
+      operation: "saveUsers",
+      error: errorMessage,
+      timestamp: new Date().toISOString(),
+      progress: {
+        processed: processedCount,
+        total: totalCount,
+        successRate: successRate
+      },
+      floodedAccounts: floodedAccounts ? floodedAccounts.map(acc => ({
+        id: acc.id,
+        phoneNumber: acc.phoneNumber,
+        waitTimeSeconds: this.getFloodWaitTimeRemaining(acc.id),
+        formattedWaitTime: this.formatETA(this.getFloodWaitTimeRemaining(acc.id))
+      })) : []
+    });
+    
+    // Include partial results in the return value
+    result.phoneNumberRegistred = [...new Set(result.phoneNumberRegistred)];
+    result.phoneNumberRejected = [...new Set(result.phoneNumberRejected)];
+    result.totalPhoneNumber = [...new Set(result.totalPhoneNumber)];
+    
+    // Send account status update even in error case
+    if (result && result.totalPhoneNumber.length > 0) {
+      try {
 // Skip emitting account status if validAccounts is not defined
-if (validAccounts && Array.isArray(validAccounts)) {
+if (typeof validAccounts !== 'undefined') {
 // Skip emitting account status if validAccounts is not defined
 if (typeof validAccounts !== 'undefined') {
   this.emitAccountsStatus(validAccounts, io);
 }
 }
+        
+        // Schedule a follow-up account status update after 1 minute
+        setTimeout(() => {
+          if (validAccounts) {
+            this.emitAccountsStatus(validAccounts, io);
+          }
         }, 60000);
+      } catch (e) {
+        console.error('Error emitting account status:', e);
       }
-      
-      this.displayError(error, io);
-      return result;
     }
+    
+    return result;
+  } finally {
+    // Cleanup operation - runs whether successful or failed or cancelled
+    this.activeOperations.delete(operationId);
+    this.currentOperationId = null;
   }
+}
 
   static async getGroups(req: Request): Promise<GroupInfo[]> {
     const { accountId } = req.body;
@@ -1617,6 +1728,7 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
         const currentBatch = phoneNumbers.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
 
         for (const [index, phoneNumber] of currentBatch.entries()) {
+          
           try {
             if (index > 0 && delayBetweenMessages > 0) {
               await new Promise(resolve => setTimeout(resolve, delayBetweenMessages));
