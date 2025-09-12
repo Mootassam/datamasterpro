@@ -5,7 +5,7 @@ services:
     build: ./brain
     image: brain_backend:latest
     ports:
-      - 8082:8082
+      - 8088:8088
     restart: unless-stopped
 
 
@@ -13,7 +13,7 @@ services:
     build: ./robot007
     image: robot007_web:latest
     ports:
-      - 3050:80
+      - 3020:80
     restart: unless-stopped
     volumes:
       - "./admin:/app"

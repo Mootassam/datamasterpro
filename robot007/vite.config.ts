@@ -10,7 +10,7 @@ export default defineConfig({
     host: '0.0.0.0', // Crucial change
     hmr: {
       protocol: 'ws',
-      host: 'localhost'
+      host: '199.192.21.96'
     },
     cors: true
   }

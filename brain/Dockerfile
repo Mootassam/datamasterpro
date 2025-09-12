@@ -38,6 +38,6 @@ RUN npm install
 # Copy app source code
 COPY . .
 
-EXPOSE 8082
+EXPOSE 8088
 
 CMD ["npm", "start"]

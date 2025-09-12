@@ -176,7 +176,7 @@ const SettingsModal = ({ onClose, telegramApis, setTelegramApis, proxies, dispat
                       type="text"
                       value={newProxy.port}
                       onChange={(e) => setNewProxy({ ...newProxy, port: e.target.value })}
-                      placeholder="8082"
+                      placeholder="8088"
                       className="modern-input"
                     />
                   </label>

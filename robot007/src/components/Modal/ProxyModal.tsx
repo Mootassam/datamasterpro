@@ -202,7 +202,7 @@ const ProxyModal = ({
                   name="port"
                   value={newProxy.port}
                   onChange={(e) => setNewProxy({...newProxy, port: e.target.value})}
-                  placeholder="8082"
+                  placeholder="8088"
                   className={validationErrors.port ? 'error' : ''}
                 />
                 {validationErrors.port && (

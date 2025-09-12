@@ -1140,7 +1140,7 @@ const Gambia = (carrier) => {
 const Ghana = (carrier) => {
   const areaCode = "233";
   const validcarrieres = ["20", "23", "24", "26", "27", "28", "50", "53", "54", "55", "56", "57", "58"];
-  const number = Math.floor(Math.random() * 1000000).toString().padStart(6, "0");
+  const number = Math.floor(Math.random() * 10000000).toString().padStart(7, "0");
   return areaCode + carrier + number;
 };
 
