@@ -40,12 +40,36 @@ const France = (carrier) => {
   return areaCode + carrier + number; // Total: 33 + carrier (1) + 8 = 11 digits
 };
 
-// Italy: 10 digits total (3 digit carrier + 7 digits number)
-const Italy = (carrier) => {
+const Italy = (carrier = "3") => {
   const areaCode = "39"; // Italy country code
-  const number = Math.floor(Math.random() * 9000000) + 1000000; // 7-digit number
-  return areaCode + carrier + number; // Total: 39 + carrier (3) + 7 = 12 digits
+
+
+  // Weighted first digit for the subscriber number (after "3")
+  const weightedFirstDigit = () => {
+    const r = Math.random();
+    if (r < 0.35) return "4";   // 35% chance
+    if (r < 0.6) return "5";    // 25% chance
+    if (r < 0.75) return "3";   // 15% chance
+    if (r < 0.9) return "2";    // 15% chance
+    return "6";                  // 10% chance for remaining
+  };
+
+  const firstDigit = weightedFirstDigit();
+
+  // Generate remaining 8 digits
+  const rest = Math.floor(Math.random() * 100000000)
+    .toString()
+    .padStart(8, "0");
+
+  const number = firstDigit + rest; // total 9 digits after carrier
+
+  return areaCode + carrier + number; 
+  // Example: 3934XXXXXXXX (12 digits total)
 };
+
+// Example usage
+
+
 
 // Spain: 9 digits total (1 digit carrier + 8 digits number)
 const Spain = (carrier) => {
