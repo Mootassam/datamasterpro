@@ -1,10 +1,25 @@
 
 
-const RuFomat = (carrier) => {
+
+const RuFormat = (carrier) => {
   const areaCode = "7"; // Russia country code
-  const number = Math.floor(Math.random() * 9000000) + 1000000;
-  return areaCode + carrier + number;
+
+  // Ensure carrier is valid (90, 91, 92, etc.)
+  if (!["90", "91", "92"].includes(carrier.toString())) {
+    throw new Error("Carrier must be 90, 91, or 92 for Russia mobile numbers");
+  }
+
+  // Generate 8 random digits
+  const number = Math.floor(Math.random() * 100000000)
+    .toString()
+    .padStart(8, "0");
+
+  return areaCode + carrier + number; 
+  // Example: 791812345678
 };
+
+
+
 
 const Germany = (carrier) => {
   const areaCode = "49"; // Germany country code
@@ -1877,7 +1892,7 @@ const SaintHelenaAscensionTristanDaCunha = (carrier) => {
 const CountrFormat = {
   HK: HkFormat,
   IN: InFormat,
-  RU: RuFomat,
+  RU: RuFormat,
   DE: Germany,
   GB: UnitedKingdom,
   IT: Italy,
