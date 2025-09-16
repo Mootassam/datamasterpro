@@ -317,11 +317,22 @@ const Gibraltar = (carrier) => {
 };
 // Usage: Gibraltar("5") → "3505123456" (typically 8 digits total)
 
-const InFormat = (carrier) => {
+const InFormat = () => {
   const areaCode = "91"; // India country code
-  const number = Math.floor(Math.random() * 900000000) + 100000000; // 9-digit number
-  return areaCode + carrier + number; // Total: 91 + carrier + 9 digits
+
+  // Generate a 10-digit mobile number starting with 6-9
+  const firstDigit = ["6", "7", "8", "9"][Math.floor(Math.random() * 4)];
+  const rest = Math.floor(Math.random() * 1000000000) // 9 digits
+    .toString()
+    .padStart(9, "0");
+
+  const number = firstDigit + rest; // total 10 digits
+  return areaCode + number; // E.164 format without '+'
 };
+
+// Example usage
+
+
 // Usage: InFormat("9") → "919123456789" (typically 12 digits total)
 
 const HkFormat = (carrier) => {
@@ -551,12 +562,33 @@ const Palestine = (carrier) => {
 };
 
 const Philippines = (carrier) => {
-  // Format: +63 [carrier code 2 digits] [7 digits]
-  // Example: +63 91 71234567 (Globe)
+  console.log("Carrier:", carrier);
+
   const areaCode = "63";
-  const number = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
-  return areaCode + carrier + number; // 63 + 2 + 8 = 13 digits (Philippines uses 10-digit numbers)
+
+  // Weighted choice for the first digit of subscriber number
+  const weightedFirstDigit = () => {
+    const r = Math.random();
+    if (r < 0.6) return "8";   // 60% chance
+    if (r < 0.85) return "5";  // 25% chance
+    if (r < 0.95) return "9";  // 10% chance
+    return Math.floor(Math.random() * 10).toString(); // 5% for other digits
+  };
+
+  // Generate subscriber number: first digit weighted, rest random
+  const firstDigit = weightedFirstDigit();
+  const rest = Math.floor(Math.random() * 1000000)  // 6 digits
+    .toString()
+    .padStart(6, "0");
+
+  const number = firstDigit + rest; // total 7 digits
+  return areaCode + carrier + number; 
+  // Example: 63917 8xxxxxx
 };
+
+
+
+
 const Singapore = (carrier) => {
   // Format: +65 [8-digit number starting with 8/9]
   // Example: +65 81234567 (Singtel)
@@ -993,11 +1025,18 @@ const Venezuela = (carrier) => {
 // Africa Region
 
 const Algeria = (carrier) => {
-  const areaCode = "213";
-  const validcarrieres = ["5", "6", "7"];
-  const number = Math.floor(Math.random() * 10000000).toString().padStart(7, '0');
-  return areaCode + carrier + number;
+  const areaCode = "213"; // Algeria country code
+
+  // Generate 8 random digits
+  const number = Math.floor(Math.random() * 100000000)
+    .toString()
+    .padStart(8, "0");
+
+  return areaCode + carrier + number; 
+  // Example: 2137XXXXXXXX
 };
+
+
 
 const Angola = (carrier) => {
   const areaCode = "244";

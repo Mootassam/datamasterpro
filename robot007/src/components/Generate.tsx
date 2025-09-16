@@ -319,7 +319,7 @@ useEffect(() => {
 
 
       // Create socket with better error handling and reconnection settings
-      newSocket = io("http://199.192.21.96:8088", {
+      newSocket = io("http://localhost:8088", {
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,

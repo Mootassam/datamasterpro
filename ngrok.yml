@@ -5,5 +5,5 @@ tunnels:
     addr: 203.161.50.129:8088
     proto: http
   second:
-    addr: 199.192.21.96:5173
+    addr: localhost:5173
     proto: http

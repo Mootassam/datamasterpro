@@ -7,6 +7,7 @@ import { confirmTelegram2FA, confirmTelegramOTP, loginTelegram } from "../../sto
 const TelegramAuthModal = ({
   isOpen,
   onClose,
+ 
   dispatch
 }) => {
 
