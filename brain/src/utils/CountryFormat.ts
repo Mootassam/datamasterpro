@@ -707,9 +707,6 @@ const Yemen = (carrier) => {
 
 const UnitedStates = (state) => {
   const areaCode = "1"; // United States country code
-
-
-
   const number = Math.floor(Math.random() * 9000000) + 1000000; // Random 7-digit number
   return areaCode + state + number;
 };
