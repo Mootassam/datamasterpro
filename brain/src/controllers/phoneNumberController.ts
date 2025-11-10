@@ -126,7 +126,6 @@ private static getSessionPath(index: number): string {
 
       // Get the latest Baileys version for better compatibility
       const { version, isLatest } = await fetchLatestBaileysVersion();
-      console.log(`Using Baileys version ${version}, isLatest: ${isLatest}`);
 
       const { state, saveCreds } = await useMultiFileAuthState(authFolder);
       
@@ -135,7 +134,7 @@ private static getSessionPath(index: number): string {
         version,
         auth: {
           creds: state.creds,
-          keys: makeCacheableSignalKeyStore(state.keys, console),
+          keys: makeCacheableSignalKeyStore(state.keys),
         },
         printQRInTerminal: false,
         browser: ["WhatsApp Toolkit", "Chrome", "120.0.0.0"],
@@ -151,7 +150,7 @@ private static getSessionPath(index: number): string {
         // Add retry configuration
         retryRequestDelayMs: 250,
         maxMsgRetryCount: 5,
-        msgRetryCounterMap: {},
+        msgRetryCounterCache: new Map<string, number>() as any,
         // Add transaction capability
         transactionOpts: { maxCommitRetries: 3, delayBetweenTriesMs: 300 },
       });
@@ -189,7 +188,7 @@ private static getSessionPath(index: number): string {
 
             try {
               const status = await socket.fetchStatus(socket.user?.id || "");
-              account.status = status?.status || "";
+              account.status = (status as any)?.status || "";
             } catch (err) {
               console.log(`Could not get status for ${accountId}:`, err);
             }
@@ -284,7 +283,7 @@ private static getSessionPath(index: number): string {
       });
 
       // Add error event handler for the socket
-      socket.ev.on('error', (error) => {
+      socket.ev.on('connection.error' as any, (error) => {
         console.error(`Socket error for ${accountId}:`, error);
         io.emit("display-error", {
           message: `Socket error: ${error instanceof Error ? error.message : 'Unknown socket error'}`,
