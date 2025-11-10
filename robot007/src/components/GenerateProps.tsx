@@ -178,6 +178,7 @@ const GenerateProps = ({
                       className="react-select"
                       classNamePrefix="select"
                       placeholder="Select country..."
+                     
                     />
                   </div>
                   {activeService === "email" && (  <div className="form-group">
@@ -240,13 +241,17 @@ const GenerateProps = ({
                     <label>Number Count</label>
                     <div className="number-input-wrapper">
                       <input
-                        type="number"
-                        min="1"
-                        max="1000"
-                        value={matchCount}
-                        onChange={(e) => setMatchCount(e.target.value)}
-                        placeholder="Enter count..."
-                      />
+  type="number"
+  min={1}
+
+  value={matchCount}
+  onChange={(e) => {
+    const value = Math.min(Number(e.target.value)); // Prevent > 1000
+    setMatchCount(value);
+  }}
+  placeholder="Enter count..."
+/>
+
                       <span className="input-suffix">numbers</span>
                     </div>
                   </div>

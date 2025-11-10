@@ -11,7 +11,15 @@ if (!globalThis.crypto) {
 
 // Set up crypto for both environments
 
-import { makeWASocket, useMultiFileAuthState, DisconnectReason, WASocket, downloadMediaMessage } from '@whiskeysockets/baileys';
+import { 
+  makeWASocket, 
+  useMultiFileAuthState, 
+  DisconnectReason, 
+  WASocket, 
+  downloadMediaMessage,
+  fetchLatestBaileysVersion,
+  makeCacheableSignalKeyStore
+} from '@whiskeysockets/baileys';
 import PhoneNumberGenerator from "../utils/phoneNumberGenerator";
 import Error400 from "../errors/Error400";
 import streamifier from "streamifier";
@@ -109,20 +117,44 @@ private static getSessionPath(index: number): string {
 
   static async initializeAccount(io, index: number): Promise<WhatsAppAccount | null> {
     try {
-const authFolder = this.getSessionPath(index);
-        const { state, saveCreds } = await useMultiFileAuthState(authFolder);
-    if (!fs.existsSync(authFolder)) {
-      fs.mkdirSync(authFolder, { recursive: true });
-    }
-const socket = makeWASocket({
-  auth: state,
-  printQRInTerminal: false,
-  // Add browser version emulation
-  browser: ["WhatsApp Toolkit", "Chrome", "4.0.0"],
-  // Enable retries for initial connection
-  connectTimeoutMs: 60_000,
-  keepAliveIntervalMs: 30_000,
-});
+      const authFolder = this.getSessionPath(index);
+      
+      // Ensure auth folder exists
+      if (!fs.existsSync(authFolder)) {
+        fs.mkdirSync(authFolder, { recursive: true });
+      }
+
+      // Get the latest Baileys version for better compatibility
+      const { version, isLatest } = await fetchLatestBaileysVersion();
+      console.log(`Using Baileys version ${version}, isLatest: ${isLatest}`);
+
+      const { state, saveCreds } = await useMultiFileAuthState(authFolder);
+      
+      // Create a more robust socket configuration
+      const socket = makeWASocket({
+        version,
+        auth: {
+          creds: state.creds,
+          keys: makeCacheableSignalKeyStore(state.keys, console),
+        },
+        printQRInTerminal: false,
+        browser: ["WhatsApp Toolkit", "Chrome", "120.0.0.0"],
+        connectTimeoutMs: 60_000,
+        keepAliveIntervalMs: 30_000,
+        generateHighQualityLinkPreview: true,
+        markOnlineOnConnect: false,
+        fireInitQueries: true,
+        shouldIgnoreJid: (jid) => {
+          // Ignore broadcast and status broadcasts
+          return jid === 'status@broadcast' || jid.endsWith('@broadcast');
+        },
+        // Add retry configuration
+        retryRequestDelayMs: 250,
+        maxMsgRetryCount: 5,
+        msgRetryCounterMap: {},
+        // Add transaction capability
+        transactionOpts: { maxCommitRetries: 3, delayBetweenTriesMs: 300 },
+      });
 
       const accountId = `account-${index}`;
       const account: WhatsAppAccount = {
@@ -132,38 +164,36 @@ const socket = makeWASocket({
         socket: socket
       };
 
-          this.accounts.set(accountId, account);
-
+      this.accounts.set(accountId, account);
 
       socket.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect, qr } = update;
 
         if (qr) {
+          console.log(`📱 QR code received for ${accountId}`);
           io.emit("scan-qrcode", { qr, accountId });
         }
 
         if (connection === 'open') {
           try {
-            // Get account info once connected
             const phoneNumber = socket.user?.id?.split(':')[0] || "";
             account.phoneNumber = phoneNumber;
             account.connected = true;
 
-            // Try to get profile picture and status
+            // Try to get profile information
             try {
               account.profilePicUrl = await socket.profilePictureUrl(socket.user?.id || "");
             } catch (err) {
-              console.log(`Could not get profile picture for ${accountId}`);
+              console.log(`Could not get profile picture for ${accountId}:`, err);
             }
 
             try {
               const status = await socket.fetchStatus(socket.user?.id || "");
-              account.status = status?.toString() || "";
+              account.status = status?.status || "";
             } catch (err) {
-              console.log(`Could not get status for ${accountId}`);
+              console.log(`Could not get status for ${accountId}:`, err);
             }
 
-            // Update the account in the map
             this.accounts.set(accountId, account);
 
             io.emit("client-connect", {
@@ -177,28 +207,50 @@ const socket = makeWASocket({
             console.log(`✅ WhatsApp client #${index} connected with number ${phoneNumber}`);
           } catch (error) {
             console.error(`Error getting account info for ${accountId}:`, error);
+            io.emit("display-error", {
+              message: `Failed to retrieve account information: ${error instanceof Error ? error.message : 'Unknown error'}`,
+              actionRequired: false,
+              isFatal: false
+            });
           }
         }
 
         if (connection === 'close') {
+          // Handle crypto errors specifically
+          if ((lastDisconnect?.error as any)?.message?.includes('Zero-length key') || 
+              (lastDisconnect?.error as any)?.message?.includes('Invalid key')) {
+            console.error(`🛑 Crypto error detected for ${accountId}. Resetting session...`);
+            
+            io.emit("display-error", {
+              message: "Session corrupted. Resetting and retrying...",
+              actionRequired: false,
+              isFatal: false
+            });
+            
+            // Delete corrupted session
+            try {
+              if (fs.existsSync(authFolder)) {
+                fs.rmSync(authFolder, { recursive: true, force: true });
+              }
+            } catch (err) {
+              console.error('Error deleting auth folder:', err);
+            }
+            
+            // Reinitialize after delay
+            setTimeout(() => this.initializeAccount(io, index), 3000);
+            return;
+          }
 
-            if ((lastDisconnect?.error as any)?.message?.includes('Zero-length key')) {
-    console.error(`🛑 Crypto error detected for ${accountId}. Resetting session...`);
-    
-    // Delete corrupted session
-    try {
-      if (fs.existsSync(authFolder)) {
-        fs.rmSync(authFolder, { recursive: true, force: true });
-      }
-    } catch (err) {
-      console.error('Error deleting auth folder:', err);
-    }
-    
-    // Reinitialize after delay
-    setTimeout(() => this.initializeAccount(io, index), 3000);
-    return;
-  }
-
+          // Handle 405 errors specifically
+          if ((lastDisconnect?.error as any)?.output?.statusCode === 405) {
+            console.error(`🛑 405 Connection Failure for ${accountId}. This might be due to WhatsApp blocking the connection.`);
+            
+            io.emit("display-error", {
+              message: "Connection blocked by WhatsApp. Please try again later or use a different session.",
+              actionRequired: true,
+              isFatal: true
+            });
+          }
 
           const shouldReconnect = (lastDisconnect?.error as any)?.output?.statusCode !== DisconnectReason.loggedOut;
 
@@ -209,7 +261,8 @@ const socket = makeWASocket({
             accountId,
             reason: shouldReconnect ? "DISCONNECTED" : "LOGOUT",
             connect: false,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            isFatal: false
           });
 
           if (shouldReconnect) {
@@ -228,6 +281,16 @@ const socket = makeWASocket({
             }
           }
         }
+      });
+
+      // Add error event handler for the socket
+      socket.ev.on('error', (error) => {
+        console.error(`Socket error for ${accountId}:`, error);
+        io.emit("display-error", {
+          message: `Socket error: ${error instanceof Error ? error.message : 'Unknown socket error'}`,
+          actionRequired: false,
+          isFatal: false
+        });
       });
 
       socket.ev.on('creds.update', saveCreds);
@@ -403,7 +466,7 @@ const socket = makeWASocket({
     }
   }
 
-  static async login(io: any, req: Request, res: Response,): Promise<void> {
+  static async login(io: any, req: Request, res: Response): Promise<void> {
     try {
       // Find the next available index
       let nextIndex = 0;
@@ -421,29 +484,52 @@ const socket = makeWASocket({
       }
 
       console.log(`🔐 Starting login via QR code for account-${nextIndex}...`);
-      const account = await this.initializeAccount(io, nextIndex);
+      
+      // Check if we have too many failed attempts
+      const maxRetries = 3;
+      let retryCount = 0;
+      let account: WhatsAppAccount | null = null;
+      
+      while (retryCount < maxRetries && !account) {
+        try {
+          account = await this.initializeAccount(io, nextIndex);
+          if (!account) {
+            retryCount++;
+            console.log(`Attempt ${retryCount} failed, retrying...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+        } catch (error) {
+          retryCount++;
+          console.error(`Attempt ${retryCount} error:`, error);
+          if (retryCount < maxRetries) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+        }
+      }
 
       if (account) {
+        console.log(`✅ Login process started successfully for account-${nextIndex}`);
         io.emit("success", {
           success: true,
-          message: `Login process started for account-${nextIndex}`,
+          message: `Login process started for account-${nextIndex}. Please scan the QR code.`,
           accountId: account.id
         });
       } else {
+        console.error(`❌ Failed to initialize login process after ${maxRetries} attempts`);
         io.emit("display-error", {
           success: false,
-          message: "Failed to initialize login process"
+          message: "Failed to initialize login process after multiple attempts. Please check the logs and try again.",
+          actionRequired: true,
+          isFatal: true
         });
       }
     } catch (error) {
-      console.error("Login process failed:", error);
+      console.error("❌ Login process failed:", error);
       io.emit("display-error", {
-        message: error instanceof Error ? error.message : "Login failed",
+        message: error instanceof Error ? error.message : "Login failed due to unexpected error",
         actionRequired: true,
         isFatal: true
       });
-
-
     }
   }
 

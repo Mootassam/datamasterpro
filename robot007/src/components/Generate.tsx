@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import io, { Socket } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
@@ -97,7 +96,7 @@ interface OperationFailedData {
 
 interface NumberVerifiedData {
   phoneNumber: string;
-  status: 'registered' | 'not_registered';
+  status: "registered" | "not_registered";
   accountId: string;
 }
 
@@ -124,7 +123,13 @@ interface VerificationCompleteData {
 // types.ts
 export interface ExportProgress {
   operationId: string;
-  status: 'started' | 'progress' | 'completed' | 'error' | 'cancelled' | 'warning';
+  status:
+    | "started"
+    | "progress"
+    | "completed"
+    | "error"
+    | "cancelled"
+    | "warning";
   accountId: string;
   groupId: string;
   progress?: number;
@@ -161,22 +166,25 @@ function WhatsAppNumberGenerator() {
     rejectedCount: 0,
     eta: "",
   });
-    const [telegramExportProgress, setTelegramExportProgress] = useState<ExportProgress | null>(null);
+  const [telegramExportProgress, setTelegramExportProgress] =
+    useState<ExportProgress | null>(null);
 
   const [chatModalOpen, setChatModalOpen] = useState(false);
   const [EmailModalOpen, setEmailModalOpen] = useState(false);
-const [tvPaused, setTvPaused] = useState<VerificationPausedData | null>(null);
-const [tvFailed, setTvFailed] = useState<OperationFailedData | null>(null);
-const [tvVerified, setTvVerified] = useState<NumberVerifiedData | null>(null);
-const [tvError, setTvError] = useState<VerificationErrorData | null>(null);
-const [tvComplete, setTvComplete] = useState<VerificationCompleteData | null>(null);
-const [tvNotification, setTvNotification] = useState<{
-  type: 'info' | 'warning' | 'error' | 'success';
-  title: string;
-  message: string;
-  details?: string;
-  timestamp: string;
-} | null>(null);
+  const [tvPaused, setTvPaused] = useState<VerificationPausedData | null>(null);
+  const [tvFailed, setTvFailed] = useState<OperationFailedData | null>(null);
+  const [tvVerified, setTvVerified] = useState<NumberVerifiedData | null>(null);
+  const [tvError, setTvError] = useState<VerificationErrorData | null>(null);
+  const [tvComplete, setTvComplete] = useState<VerificationCompleteData | null>(
+    null
+  );
+  const [tvNotification, setTvNotification] = useState<{
+    type: "info" | "warning" | "error" | "success";
+    title: string;
+    message: string;
+    details?: string;
+    timestamp: string;
+  } | null>(null);
 
   // Then in your component, use it like this:
 
@@ -202,11 +210,11 @@ const [tvNotification, setTvNotification] = useState<{
 
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
-  const [country, setCountry] = useState({ value: "HK", label: "HongKong" });
+  const [country, setCountry] = useState({ value: "FR", label: "France" });
   const [state, setState] = useState({ value: "201", label: "" });
   const [carrier, setCarrier] = useState({
-    value: "5",
-    label: "CMHK (China Mobile Hong Kong)",
+    value: "6",
+    label: "Orange (Formerly Itineris)",
   });
   const [matchCount, setMatchCount] = useState("10");
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -234,50 +242,48 @@ const [tvNotification, setTvNotification] = useState<{
 
   // Mock download function
 
-// Remove the first handler (lines 1079-1094) and keep only this one:
-const handleTelegramExportProgress = (data: ExportProgress) => {
-  console.log('Telegram export progress:', data);
-  setTelegramExportProgress(data);
-  
-  // Handle notifications
-  if (data.status === 'completed') {
-    toast.success(
-      <div className="custom-toast">
-        <strong>Export Completed</strong>
-        <p>{data.message || 'Group members exported successfully'}</p>
-      </div>,
-      { autoClose: 3000 }
-    );
-    setTimeout(() => setTelegramExportProgress(null), 5000);
-  } 
-  else if (data.status === 'error') {
-    toast.error(
-      <div className="custom-toast">
-        <strong>Export Failed</strong>
-        <p>{data.message || 'Failed to export group members'}</p>
-      </div>,
-      { autoClose: 8000 }
-    );
-    setTimeout(() => setTelegramExportProgress(null), 10000);
-  }
-};
-  
-const handleDownloadExport  = () => {
-  if (!telegramExportProgress) return;
-  
-  const { groupId, accountId } = telegramExportProgress;
-  const url = `/api/export/download?groupId=${groupId}&accountId=${accountId}`;
-  
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', `telegram_${groupId}_members.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  
-  setTelegramExportProgress(null);
-};
+  // Remove the first handler (lines 1079-1094) and keep only this one:
+  const handleTelegramExportProgress = (data: ExportProgress) => {
+    console.log("Telegram export progress:", data);
+    setTelegramExportProgress(data);
 
+    // Handle notifications
+    if (data.status === "completed") {
+      toast.success(
+        <div className="custom-toast">
+          <strong>Export Completed</strong>
+          <p>{data.message || "Group members exported successfully"}</p>
+        </div>,
+        { autoClose: 3000 }
+      );
+      setTimeout(() => setTelegramExportProgress(null), 5000);
+    } else if (data.status === "error") {
+      toast.error(
+        <div className="custom-toast">
+          <strong>Export Failed</strong>
+          <p>{data.message || "Failed to export group members"}</p>
+        </div>,
+        { autoClose: 8000 }
+      );
+      setTimeout(() => setTelegramExportProgress(null), 10000);
+    }
+  };
+
+  const handleDownloadExport = () => {
+    if (!telegramExportProgress) return;
+
+    const { groupId, accountId } = telegramExportProgress;
+    const url = `/api/export/download?groupId=${groupId}&accountId=${accountId}`;
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `telegram_${groupId}_members.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setTelegramExportProgress(null);
+  };
 
   const handleStartVerification = (config) => {
     setVerificationConfig(config);
@@ -307,33 +313,29 @@ const handleDownloadExport  = () => {
   }, [numbers, registeredNumbers, rejectedNumbers, filter]);
 
   // Socket initialization and cleanup
-useEffect(() => {
+  useEffect(() => {
     let newSocket: Socket | null = null;
-    
+
     try {
-
-
-
-
-
-
-
       // Create socket with better error handling and reconnection settings
-      newSocket = io("http://199.192.21.96:8088", {
+      newSocket = io("http://localhost:8088", {
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
         timeout: 10000,
       });
-      
+
       setSocket(newSocket);
       console.log(`Initializing socket for ${activeService} service`);
     } catch (error) {
-      console.error('Socket initialization error:', error);
+      console.error("Socket initialization error:", error);
       toast.error(
         <div className="custom-toast fatal-error">
           <strong>Connection Error</strong>
-          <p>Failed to connect to the server. Please check if the server is running.</p>
+          <p>
+            Failed to connect to the server. Please check if the server is
+            running.
+          </p>
         </div>,
         { autoClose: 8000 }
       );
@@ -355,28 +357,28 @@ useEffect(() => {
         );
         return;
       }
-      
+
       // Handle different error types with appropriate messages
       if (data.isFatal) {
         toast.error(
           <div className="custom-toast fatal-error">
             <strong>Critical Error</strong>
-            <p>{data.message || 'A critical error occurred'}</p>
+            <p>{data.message || "A critical error occurred"}</p>
             {data.code && <p>Error code: {data.code}</p>}
             {data.action && <p>Suggested action: {data.action}</p>}
           </div>,
           { autoClose: 8000 }
         );
-      } else if (data.code === 'RATE_LIMIT') {
+      } else if (data.code === "RATE_LIMIT") {
         toast.error(
           <div className="custom-toast warning">
             <strong>Rate Limited</strong>
             <p>{data.message}</p>
-            <p>Please try again after {data.waitTime || 'some time'}</p>
+            <p>Please try again after {data.waitTime || "some time"}</p>
           </div>,
           { autoClose: 10000 }
         );
-      } else if (data.code === 'AUTH_ERROR') {
+      } else if (data.code === "AUTH_ERROR") {
         toast.error(
           <div className="custom-toast auth-error">
             <strong>Authentication Error</strong>
@@ -388,19 +390,18 @@ useEffect(() => {
       } else {
         toast.error(
           <div className="custom-toast">
-            <strong>{data.title || 'Error'}</strong>
-            <p>{data.message || 'An error occurred'}</p>
-          </div>, 
+            <strong>{data.title || "Error"}</strong>
+            <p>{data.message || "An error occurred"}</p>
+          </div>,
           { autoClose: 5000 }
         );
       }
-      
-      // Log error for debugging
-      console.error('Error received:', data);
-    };
-    
-    // Handle Telegram export progress updates
 
+      // Log error for debugging
+      console.error("Error received:", data);
+    };
+
+    // Handle Telegram export progress updates
 
     const handleDisplaySuccess = (data: any) => {
       if (!data) {
@@ -413,11 +414,11 @@ useEffect(() => {
         );
         return;
       }
-      
+
       if (data.important) {
         toast.success(
           <div className="custom-toast important-success">
-            <strong>{data.title || 'Success'}</strong>
+            <strong>{data.title || "Success"}</strong>
             <p>{data.message}</p>
             {data.details && <p>{data.details}</p>}
           </div>,
@@ -426,15 +427,15 @@ useEffect(() => {
       } else {
         toast.success(
           <div className="custom-toast">
-            <strong>{data.title || 'Success'}</strong>
-            <p>{data.message || 'Operation completed successfully'}</p>
+            <strong>{data.title || "Success"}</strong>
+            <p>{data.message || "Operation completed successfully"}</p>
           </div>,
           { autoClose: 3000 }
         );
       }
-      
+
       // Log success for debugging
-      console.log('Success event:', data);
+      console.log("Success event:", data);
     };
 
     const handleScanQrCode = (data: any) => {
@@ -552,124 +553,127 @@ useEffect(() => {
       setLoading(false);
     };
     const handleTvPaused = (data: VerificationPausedData) => {
-    setTvPaused(data);
-  };
+      setTvPaused(data);
+    };
 
-  const handleTvFailed = (data: OperationFailedData) => {
-    // Ensure error is properly formatted as a string
-    if (data && typeof data.error === 'object') {
-      data = {
-        ...data,
-        error: typeof data.error === 'object' && data.error !== null 
-          ? (data.error as any).message || JSON.stringify(data.error)
-          : String(data.error)
-      };
-    }
-    setTvFailed(data);
-    
-    // Show a toast notification for flood wait errors
-    if (data.error && data.error.includes('flood wait')) {
-      toast.warning(
-        <div className="custom-toast warning">
-          <strong>Account Rate Limited</strong>
-          <p>{data.error}</p>
-          {data.floodedAccounts.length > 0 && (
-            <p>Wait time: {data.floodedAccounts[0].formattedWaitTime}</p>
-          )}
-          {data.floodedAccounts.length === 0 && (
-            <p>Please add another account to continue verification</p>
-          )}
-        </div>,
-        { autoClose: 8000 }
-      );
-    }
-  };
-
-  const handleTvVerified = (data: NumberVerifiedData) => {
-    setTvVerified(data);
-    setTimeout(() => setTvVerified(null), 5000);
-  };
-
-  const handleTvError = (data: VerificationErrorData) => {
-    setTvError(data);
-  };
-
-  const handleTvComplete = (data: VerificationCompleteData) => {
-    setTvComplete(data);
-  };
-
-  const handleTvAccountSwitched = (data: any) => {
-    toast.info(
-      <div className="tv-account-switched-toast">
-        <strong>Account Switched</strong>
-        <p>From: {data.oldAccountPhone}</p>
-        <p>To: {data.newAccountPhone}</p>
-        <p>Reason: Rate limit (wait: {data.formattedWaitTime})</p>
-      </div>,
-      { autoClose: 5000 }
-    );
-    
-    // Show a more prominent notification if this is important
-    if (data.reason === "flood_wait") {
-      setTvNotification({
-        type: "info",
-        title: "Account Switched Due to Rate Limit",
-        message: `Account ${data.oldAccountPhone} is rate limited. Automatically switched to ${data.newAccountPhone} to continue verification.`,
-        details: `The rate-limited account will be available again after ${data.formattedWaitTime}.`,
-        timestamp: new Date().toISOString()
-      });
-      
-      // Auto-dismiss after 5 seconds
-      setTimeout(() => setTvNotification(null), 5000);
-    }
-  };
-
-  // Only set up event listeners if socket was successfully created
-  if (newSocket) {
-    // Connection events
-    newSocket.on("connect", handleConnect);
-    newSocket.on("connect_error", (error) => {
-      console.error('Socket connection error:', error);
-      toast.error(
-        <div className="custom-toast fatal-error">
-          <strong>Connection Error</strong>
-          <p>Failed to connect to the server. Please check if the server is running.</p>
-        </div>,
-        { autoClose: 8000 }
-      );
-    });
-    
-    newSocket.on("disconnect", (reason) => {
-      console.log(`Socket disconnected: ${reason}`);
-      if (reason === 'io server disconnect') {
-        // Server disconnected us, try to reconnect
-        newSocket?.connect();
+    const handleTvFailed = (data: OperationFailedData) => {
+      // Ensure error is properly formatted as a string
+      if (data && typeof data.error === "object") {
+        data = {
+          ...data,
+          error:
+            typeof data.error === "object" && data.error !== null
+              ? (data.error as any).message || JSON.stringify(data.error)
+              : String(data.error),
+        };
       }
-    });
-    
-    // Application events
-    newSocket.on("display-error", handleDisplayError);
-    newSocket.on("display-success", handleDisplaySuccess);
-    newSocket.on("scan-qrcode", handleScanQrCode);
-    newSocket.on("client-connect", handleClientConnect);
-    newSocket.on("client-disconnect", handleClientDisconnect);
-    newSocket.on("progress", handleProgress);
-    newSocket.on("verification-blocked", handleVerificationBlocked);
-    newSocket.on("done", handleDone);
-    newSocket.on("data-updated", handleDataUpdated);
+      setTvFailed(data);
 
+      // Show a toast notification for flood wait errors
+      if (data.error && data.error.includes("flood wait")) {
+        toast.warning(
+          <div className="custom-toast warning">
+            <strong>Account Rate Limited</strong>
+            <p>{data.error}</p>
+            {data.floodedAccounts.length > 0 && (
+              <p>Wait time: {data.floodedAccounts[0].formattedWaitTime}</p>
+            )}
+            {data.floodedAccounts.length === 0 && (
+              <p>Please add another account to continue verification</p>
+            )}
+          </div>,
+          { autoClose: 8000 }
+        );
+      }
+    };
 
-    // Telegram verification events
-    newSocket.on("verification-paused", handleTvPaused);
-    newSocket.on("operation-failed", handleTvFailed);
-    newSocket.on("number-verified", handleTvVerified);
-    newSocket.on("verification-error", handleTvError);
-    newSocket.on("verification-complete", handleTvComplete);
-    newSocket.on("account-switched", handleTvAccountSwitched);
-    newSocket.on("display-info", (data) => showInfoBanner(data.message));
-    newSocket.on("hide-success", () => setVisible(false));
-    newSocket.on("success", handleSuccess);
-  }
+    const handleTvVerified = (data: NumberVerifiedData) => {
+      setTvVerified(data);
+      setTimeout(() => setTvVerified(null), 5000);
+    };
+
+    const handleTvError = (data: VerificationErrorData) => {
+      setTvError(data);
+    };
+
+    const handleTvComplete = (data: VerificationCompleteData) => {
+      setTvComplete(data);
+    };
+
+    const handleTvAccountSwitched = (data: any) => {
+      toast.info(
+        <div className="tv-account-switched-toast">
+          <strong>Account Switched</strong>
+          <p>From: {data.oldAccountPhone}</p>
+          <p>To: {data.newAccountPhone}</p>
+          <p>Reason: Rate limit (wait: {data.formattedWaitTime})</p>
+        </div>,
+        { autoClose: 5000 }
+      );
+
+      // Show a more prominent notification if this is important
+      if (data.reason === "flood_wait") {
+        setTvNotification({
+          type: "info",
+          title: "Account Switched Due to Rate Limit",
+          message: `Account ${data.oldAccountPhone} is rate limited. Automatically switched to ${data.newAccountPhone} to continue verification.`,
+          details: `The rate-limited account will be available again after ${data.formattedWaitTime}.`,
+          timestamp: new Date().toISOString(),
+        });
+
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => setTvNotification(null), 5000);
+      }
+    };
+
+    // Only set up event listeners if socket was successfully created
+    if (newSocket) {
+      // Connection events
+      newSocket.on("connect", handleConnect);
+      newSocket.on("connect_error", (error) => {
+        console.error("Socket connection error:", error);
+        toast.error(
+          <div className="custom-toast fatal-error">
+            <strong>Connection Error</strong>
+            <p>
+              Failed to connect to the server. Please check if the server is
+              running.
+            </p>
+          </div>,
+          { autoClose: 8000 }
+        );
+      });
+
+      newSocket.on("disconnect", (reason) => {
+        console.log(`Socket disconnected: ${reason}`);
+        if (reason === "io server disconnect") {
+          // Server disconnected us, try to reconnect
+          newSocket?.connect();
+        }
+      });
+
+      // Application events
+      newSocket.on("display-error", handleDisplayError);
+      newSocket.on("display-success", handleDisplaySuccess);
+      newSocket.on("scan-qrcode", handleScanQrCode);
+      newSocket.on("client-connect", handleClientConnect);
+      newSocket.on("client-disconnect", handleClientDisconnect);
+      newSocket.on("progress", handleProgress);
+      newSocket.on("verification-blocked", handleVerificationBlocked);
+      newSocket.on("done", handleDone);
+      newSocket.on("data-updated", handleDataUpdated);
+
+      // Telegram verification events
+      newSocket.on("verification-paused", handleTvPaused);
+      newSocket.on("operation-failed", handleTvFailed);
+      newSocket.on("number-verified", handleTvVerified);
+      newSocket.on("verification-error", handleTvError);
+      newSocket.on("verification-complete", handleTvComplete);
+      newSocket.on("account-switched", handleTvAccountSwitched);
+      newSocket.on("display-info", (data) => showInfoBanner(data.message));
+      newSocket.on("hide-success", () => setVisible(false));
+      newSocket.on("success", handleSuccess);
+    }
 
     // Register event listeners
     newSocket.on("status-update", (data) => {
@@ -681,7 +685,6 @@ useEffect(() => {
       setVisible(true);
     });
 
-
     newSocket.on("display-info", (data) => showInfoBanner(data.message));
     newSocket.on("hide-success", () => setVisible(false));
     newSocket.on("success", handleSuccess);
@@ -690,24 +693,27 @@ useEffect(() => {
       // Connection events
       newSocket.on("connect", handleConnect);
       newSocket.on("connect_error", (error) => {
-        console.error('Socket connection error:', error);
+        console.error("Socket connection error:", error);
         toast.error(
           <div className="custom-toast fatal-error">
             <strong>Connection Error</strong>
-            <p>Failed to connect to the server. Please check if the server is running.</p>
+            <p>
+              Failed to connect to the server. Please check if the server is
+              running.
+            </p>
           </div>,
           { autoClose: 8000 }
         );
       });
-      
+
       newSocket.on("disconnect", (reason) => {
         console.log(`Socket disconnected: ${reason}`);
-        if (reason === 'io server disconnect') {
+        if (reason === "io server disconnect") {
           // Server disconnected us, try to reconnect
           newSocket?.connect();
         }
       });
-      
+
       // Application events
       newSocket.on("display-error", handleDisplayError);
       newSocket.on("display-success", handleDisplaySuccess);
@@ -719,7 +725,7 @@ useEffect(() => {
       newSocket.on("verification-blocked", handleVerificationBlocked);
       newSocket.on("done", handleDone);
       newSocket.on("data-updated", handleDataUpdated);
-      
+
       // Telegram verification events
       newSocket.on("verification-paused", handleTvPaused);
       newSocket.on("operation-failed", handleTvFailed);
@@ -727,31 +733,35 @@ useEffect(() => {
       newSocket.on("verification-error", handleTvError);
       newSocket.on("verification-complete", handleTvComplete);
       newSocket.on("account-switched", handleTvAccountSwitched);
-      
+
       // Account flood wait events
       newSocket.on("account-flood-wait", (data) => {
         setTvNotification({
-          type: 'warning',
-          title: 'Account Rate Limited',
+          type: "warning",
+          title: "Account Rate Limited",
           message: data.message,
           details: `This account will be available again after ${data.waitSeconds} seconds.`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
-        
+
         // Auto-dismiss after 5 seconds
         setTimeout(() => setTvNotification(null), 5000);
       });
-      
+
       newSocket.on("account-flood-wait-update", (data) => {
         // Only update if we're showing a flood wait notification
-        if (tvNotification && tvNotification.type === 'warning' && tvNotification.title.includes('Rate Limited')) {
+        if (
+          tvNotification &&
+          tvNotification.type === "warning" &&
+          tvNotification.title.includes("Rate Limited")
+        ) {
           setTvNotification({
             ...tvNotification,
-            details: `This account will be available again after ${data.formattedTime}.`
+            details: `This account will be available again after ${data.formattedTime}.`,
           });
         }
       });
-      
+
       newSocket.on("account-flood-wait-complete", (data) => {
         toast.success(
           <div className="custom-toast">
@@ -760,78 +770,82 @@ useEffect(() => {
           </div>,
           { autoClose: 3000 }
         );
-        
+
         // Clear any flood wait notification for this account
-        if (tvNotification && tvNotification.type === 'warning' && tvNotification.message.includes(data.accountId)) {
+        if (
+          tvNotification &&
+          tvNotification.type === "warning" &&
+          tvNotification.message.includes(data.accountId)
+        ) {
           setTvNotification(null);
         }
       });
 
-    newSocket.on("telegram-logout-error", (data) => {
-      Toast.Error(data.error.message);
-    });
+      newSocket.on("telegram-logout-error", (data) => {
+        Toast.Error(data.error.message);
+      });
 
-    newSocket.on("error", (data) => {
-      Toast.Error(data.message);
-    });
+      newSocket.on("error", (data) => {
+        Toast.Error(data.message);
+      });
 
-    // Handle server-side connection termination for all clients
-    newSocket.on("all-clients-disconnected", (data) => {
-      // Clear local state
-      setQrcode("");
-      setDisplayQr(false);
-      dispatch(connectionState("disconnected"));
-      toast.success(data.message || "All connections terminated");
-    });
+      // Handle server-side connection termination for all clients
+      newSocket.on("all-clients-disconnected", (data) => {
+        // Clear local state
+        setQrcode("");
+        setDisplayQr(false);
+        dispatch(connectionState("disconnected"));
+        toast.success(data.message || "All connections terminated");
+      });
 
-    
+      return () => {
+        if (newSocket) {
+          // Clean up all listeners
+          newSocket.off("connect");
+          newSocket.off("connect_error");
+          newSocket.off("disconnect");
+          newSocket.off("display-error");
+          newSocket.off("display-success");
+          newSocket.off("scan-qrcode");
+          newSocket.off("client-connect");
+          newSocket.off("client-disconnect");
+          newSocket.off("progress");
+          newSocket.off("verification-blocked");
+          newSocket.off("done");
+          newSocket.off("data-updated");
+          newSocket.off("display-info");
+          newSocket.off("display-warning");
+          newSocket.off("success");
+          newSocket.off("status-update");
+          newSocket.off("hide-success");
+          newSocket.off("telegram-logout-error");
+          newSocket.off("error");
+          newSocket.off("all-clients-disconnected");
+          newSocket.off("email-sending-progress");
 
-    return () => {
-      if (newSocket) {
-        // Clean up all listeners
-        newSocket.off("connect");
-        newSocket.off("connect_error");
-        newSocket.off("disconnect");
-        newSocket.off("display-error");
-        newSocket.off("display-success");
-        newSocket.off("scan-qrcode");
-        newSocket.off("client-connect");
-        newSocket.off("client-disconnect");
-        newSocket.off("progress");
-        newSocket.off("verification-blocked");
-        newSocket.off("done");
-        newSocket.off("data-updated");
-        newSocket.off("display-info");
-        newSocket.off("display-warning");
-        newSocket.off("success");
-        newSocket.off("status-update");
-        newSocket.off("hide-success");
-        newSocket.off("telegram-logout-error");
-        newSocket.off("error");
-        newSocket.off("all-clients-disconnected");
-        newSocket.off("email-sending-progress");
-        
-        // Telegram verification events
-        newSocket.off("verification-paused");
-        newSocket.off("operation-failed");
-        newSocket.off("number-verified");
-        newSocket.off("verification-error");
-        newSocket.off("verification-complete");
-        newSocket.off("account-switched");
-        newSocket.off("account-flood-wait");
-        newSocket.off("account-flood-wait-update");
-        newSocket.off("account-flood-wait-complete");
+          // Telegram verification events
+          newSocket.off("verification-paused");
+          newSocket.off("operation-failed");
+          newSocket.off("number-verified");
+          newSocket.off("verification-error");
+          newSocket.off("verification-complete");
+          newSocket.off("account-switched");
+          newSocket.off("account-flood-wait");
+          newSocket.off("account-flood-wait-update");
+          newSocket.off("account-flood-wait-complete");
 
-              newSocket.off("telegram-export-progress", handleTelegramExportProgress);
+          newSocket.off(
+            "telegram-export-progress",
+            handleTelegramExportProgress
+          );
 
-        
-        // Disconnect socket
-        newSocket.disconnect();
-        console.log('Socket disconnected and cleaned up');
-      }
+          // Disconnect socket
+          newSocket.disconnect();
+          console.log("Socket disconnected and cleaned up");
+        }
+      };
     }
-  };
-}, [stateConnetion, activeService, dispatch, accoutnId]);
+  }, [stateConnetion, activeService, dispatch, accoutnId]);
 
   const handleGenerate = useCallback(async () => {
     try {
@@ -1296,214 +1310,287 @@ useEffect(() => {
         />
       )}
 
-
-         <TelegramExportProgressModal 
+      <TelegramExportProgressModal
         progressData={telegramExportProgress}
         onClose={() => setTelegramExportProgress(null)}
-      onDownload={handleDownloadExport}
-
+        onDownload={handleDownloadExport}
       />
 
-
-
-         {tvPaused && (
-      <div className="tv-modal-overlay">
-        <div className="tv-modal tv-paused-modal">
-          <button className="tv-modal-close" onClick={() => setTvPaused(null)}>
-            &times;
-          </button>
-          <h2 className="tv-modal-title">Verification Paused</h2>
-          <div className="tv-icon-container">
-            <div className="tv-icon tv-warning-icon">⏱️</div>
-          </div>
-          <p className="tv-message">{tvPaused.message}</p>
-          
-          <div className="tv-info-card">
-            <h3>Next Available Account</h3>
-            <p><strong>ID:</strong> {tvPaused.nextAvailableAccount.id}</p>
-            <p><strong>Number:</strong> {tvPaused.nextAvailableAccount.phoneNumber}</p>
-            <p><strong>Available At:</strong> {new Date(tvPaused.nextAvailableAccount.availableAt).toLocaleTimeString()}</p>
-            <p><strong>Wait Time:</strong> {Math.round(tvPaused.waitTime)} seconds</p>
-          </div>
-        </div>
-      </div>
-    )}
-
-    {tvFailed && (
-      <div className="tv-modal-overlay">
-        <div className="tv-modal tv-failed-modal">
-          <button className="tv-modal-close" onClick={() => setTvFailed(null)}>
-            &times;
-          </button>
-          <h2 className="tv-modal-title">Operation Failed</h2>
-          <div className="tv-icon-container">
-            <div className="tv-icon tv-error-icon">❌</div>
-          </div>
-          <p className="tv-message">Operation: {tvFailed.operation}</p>
-          <p className="tv-error-message">{tvFailed.error}</p>
-          
-          <div className="tv-progress-info">
-            <h3>Progress</h3>
-            <p><strong>Processed:</strong> {tvFailed.progress.processed}</p>
-            <p><strong>Total:</strong> {tvFailed.progress.total}</p>
-            <p><strong>Success Rate:</strong> {tvFailed.progress.successRate}%</p>
-          </div>
-          
-          {tvFailed.floodedAccounts?.length > 0 && (
-            <div className="tv-flooded-accounts">
-              <h3>Flooded Accounts</h3>
-              {tvFailed.floodedAccounts.map(account => (
-                <div key={account.id} className="tv-account-card">
-                  <p><strong>ID:</strong> {account.id}</p>
-                  <p><strong>Number:</strong> {account.phoneNumber}</p>
-                  <p><strong>Wait Time:</strong> {account.formattedWaitTime}</p>
-                </div>
-              ))}
+      {tvPaused && (
+        <div className="tv-modal-overlay">
+          <div className="tv-modal tv-paused-modal">
+            <button
+              className="tv-modal-close"
+              onClick={() => setTvPaused(null)}
+            >
+              &times;
+            </button>
+            <h2 className="tv-modal-title">Verification Paused</h2>
+            <div className="tv-icon-container">
+              <div className="tv-icon tv-warning-icon">⏱️</div>
             </div>
-          )}
-        </div>
-      </div>
-    )}
+            <p className="tv-message">{tvPaused.message}</p>
 
-    {tvVerified && (
-      <div className={`tv-notification tv-verified-notification ${tvVerified.status}`}>
-        <div className="tv-notification-content">
-          <div className="tv-notification-icon">
-            {tvVerified.status === 'registered' ? '✓' : '✗'}
-          </div>
-          <div className="tv-notification-details">
-            <div className="tv-phone-number">{tvVerified.phoneNumber}</div>
-            <div className="tv-verified-status">
-              {tvVerified.status === 'registered' ? 'Registered' : 'Not Registered'}
+            <div className="tv-info-card">
+              <h3>Next Available Account</h3>
+              <p>
+                <strong>ID:</strong> {tvPaused.nextAvailableAccount.id}
+              </p>
+              <p>
+                <strong>Number:</strong>{" "}
+                {tvPaused.nextAvailableAccount.phoneNumber}
+              </p>
+              <p>
+                <strong>Available At:</strong>{" "}
+                {new Date(
+                  tvPaused.nextAvailableAccount.availableAt
+                ).toLocaleTimeString()}
+              </p>
+              <p>
+                <strong>Wait Time:</strong> {Math.round(tvPaused.waitTime)}{" "}
+                seconds
+              </p>
             </div>
           </div>
         </div>
-      </div>
-    )}
-    
-    {tvNotification && (
-      <div className={`tv-notification tv-custom-notification tv-${tvNotification.type}`} style={{
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
-        zIndex: 1000,
-        backgroundColor: tvNotification.type === 'info' ? '#2196F3' : 
-                         tvNotification.type === 'warning' ? '#FF9800' : 
-                         tvNotification.type === 'error' ? '#F44336' : 
-                         '#4CAF50',
-        color: 'white',
-        borderRadius: '4px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-        padding: '15px',
-        maxWidth: '400px',
-        animation: 'slideIn 0.5s ease-out'
-      }}>
-        <button 
-          onClick={() => setTvNotification(null)} 
-          style={{
-            position: 'absolute',
-            top: '5px',
-            right: '5px',
-            background: 'transparent',
-            border: 'none',
-            color: 'white',
-            fontSize: '16px',
-            cursor: 'pointer',
-            padding: '0 5px'
-          }}
-        >
-          ×
-        </button>
-        <div className="tv-notification-content" style={{ display: 'flex', alignItems: 'flex-start' }}>
-          <div className="tv-notification-icon" style={{ marginRight: '15px', fontSize: '24px' }}>
-            {tvNotification.type === 'info' && 'ℹ️'}
-            {tvNotification.type === 'warning' && '⚠️'}
-            {tvNotification.type === 'error' && '❌'}
-            {tvNotification.type === 'success' && '✓'}
-          </div>
-          <div className="tv-notification-details">
-            <div className="tv-notification-title" style={{ fontWeight: 'bold', marginBottom: '5px' }}>{tvNotification.title}</div>
-            <div className="tv-notification-message" style={{ marginBottom: '5px' }}>{tvNotification.message}</div>
-            {tvNotification.details && (
-              <div className="tv-notification-details-text" style={{ fontSize: '0.9em', opacity: '0.9' }}>{tvNotification.details}</div>
+      )}
+
+      {tvFailed && (
+        <div className="tv-modal-overlay">
+          <div className="tv-modal tv-failed-modal">
+            <button
+              className="tv-modal-close"
+              onClick={() => setTvFailed(null)}
+            >
+              &times;
+            </button>
+            <h2 className="tv-modal-title">Operation Failed</h2>
+            <div className="tv-icon-container">
+              <div className="tv-icon tv-error-icon">❌</div>
+            </div>
+            <p className="tv-message">Operation: {tvFailed.operation}</p>
+            <p className="tv-error-message">{tvFailed.error}</p>
+
+            <div className="tv-progress-info">
+              <h3>Progress</h3>
+              <p>
+                <strong>Processed:</strong> {tvFailed.progress.processed}
+              </p>
+              <p>
+                <strong>Total:</strong> {tvFailed.progress.total}
+              </p>
+              <p>
+                <strong>Success Rate:</strong> {tvFailed.progress.successRate}%
+              </p>
+            </div>
+
+            {tvFailed.floodedAccounts?.length > 0 && (
+              <div className="tv-flooded-accounts">
+                <h3>Flooded Accounts</h3>
+                {tvFailed.floodedAccounts.map((account) => (
+                  <div key={account.id} className="tv-account-card">
+                    <p>
+                      <strong>ID:</strong> {account.id}
+                    </p>
+                    <p>
+                      <strong>Number:</strong> {account.phoneNumber}
+                    </p>
+                    <p>
+                      <strong>Wait Time:</strong> {account.formattedWaitTime}
+                    </p>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
-      </div>
-    )}
+      )}
 
-    {tvError && (
-      <div className="tv-modal-overlay">
-        <div className="tv-modal tv-error-modal">
-          <button className="tv-modal-close" onClick={() => setTvError(null)}>
-            &times;
-          </button>
-          <h2 className="tv-modal-title">Verification Error</h2>
-          <div className="tv-icon-container">
-            <div className="tv-icon tv-error-icon">⚠️</div>
-          </div>
-          <div className="tv-error-details">
-            <p><strong>Phone Number:</strong> {tvError.phoneNumber}</p>
-            <p><strong>Account ID:</strong> {tvError.accountId}</p>
-            <p className="tv-error-message">{tvError.error}</p>
+      {tvVerified && (
+        <div
+          className={`tv-notification tv-verified-notification ${tvVerified.status}`}
+        >
+          <div className="tv-notification-content">
+            <div className="tv-notification-icon">
+              {tvVerified.status === "registered" ? "✓" : "✗"}
+            </div>
+            <div className="tv-notification-details">
+              <div className="tv-phone-number">{tvVerified.phoneNumber}</div>
+              <div className="tv-verified-status">
+                {tvVerified.status === "registered"
+                  ? "Registered"
+                  : "Not Registered"}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
 
-    {tvComplete && (
-      <div className="tv-modal-overlay">
-        <div className="tv-modal tv-complete-modal">
-          <button className="tv-modal-close" onClick={() => setTvComplete(null)}>
-            &times;
+      {tvNotification && (
+        <div
+          className={`tv-notification tv-custom-notification tv-${tvNotification.type}`}
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            zIndex: 1000,
+            backgroundColor:
+              tvNotification.type === "info"
+                ? "#2196F3"
+                : tvNotification.type === "warning"
+                ? "#FF9800"
+                : tvNotification.type === "error"
+                ? "#F44336"
+                : "#4CAF50",
+            color: "white",
+            borderRadius: "4px",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
+            padding: "15px",
+            maxWidth: "400px",
+            animation: "slideIn 0.5s ease-out",
+          }}
+        >
+          <button
+            onClick={() => setTvNotification(null)}
+            style={{
+              position: "absolute",
+              top: "5px",
+              right: "5px",
+              background: "transparent",
+              border: "none",
+              color: "white",
+              fontSize: "16px",
+              cursor: "pointer",
+              padding: "0 5px",
+            }}
+          >
+            ×
           </button>
-          <h2 className="tv-modal-title">Verification Complete!</h2>
-          <div className="tv-icon-container">
-            <div className="tv-icon tv-complete-icon">🎉</div>
-          </div>
-          
-          <div className="tv-stats-container">
-            <div className="tv-stat-card tv-registered-card">
-              <div className="tv-stat-value">{tvComplete.registered}</div>
-              <div className="tv-stat-label">Registered</div>
+          <div
+            className="tv-notification-content"
+            style={{ display: "flex", alignItems: "flex-start" }}
+          >
+            <div
+              className="tv-notification-icon"
+              style={{ marginRight: "15px", fontSize: "24px" }}
+            >
+              {tvNotification.type === "info" && "ℹ️"}
+              {tvNotification.type === "warning" && "⚠️"}
+              {tvNotification.type === "error" && "❌"}
+              {tvNotification.type === "success" && "✓"}
             </div>
-            
-            <div className="tv-stat-card tv-rejected-card">
-              <div className="tv-stat-value">{tvComplete.rejected}</div>
-              <div className="tv-stat-label">Rejected</div>
-            </div>
-            
-            <div className="tv-stat-card tv-total-card">
-              <div className="tv-stat-value">{tvComplete.total}</div>
-              <div className="tv-stat-label">Total</div>
-            </div>
-          </div>
-          
-          <div className="tv-summary">
-            <p><strong>Processed:</strong> {tvComplete.processed}</p>
-            <p><strong>Unprocessed:</strong> {tvComplete.unprocessed}</p>
-          </div>
-          
-          {tvComplete.floodedAccounts.length > 0 && (
-            <div className="tv-flooded-accounts">
-              <h3>Accounts in Flood Wait</h3>
-              {tvComplete.floodedAccounts.map(account => (
-                <div key={account.id} className="tv-account-card">
-                  <p><strong>ID:</strong> {account.id}</p>
-                  <p><strong>Number:</strong> {account.phoneNumber}</p>
-                  <p><strong>Wait Time:</strong> {account.formattedWaitTime}</p>
+            <div className="tv-notification-details">
+              <div
+                className="tv-notification-title"
+                style={{ fontWeight: "bold", marginBottom: "5px" }}
+              >
+                {tvNotification.title}
+              </div>
+              <div
+                className="tv-notification-message"
+                style={{ marginBottom: "5px" }}
+              >
+                {tvNotification.message}
+              </div>
+              {tvNotification.details && (
+                <div
+                  className="tv-notification-details-text"
+                  style={{ fontSize: "0.9em", opacity: "0.9" }}
+                >
+                  {tvNotification.details}
                 </div>
-              ))}
+              )}
             </div>
-          )}
+          </div>
         </div>
-      </div>
-    )}
+      )}
 
+      {tvError && (
+        <div className="tv-modal-overlay">
+          <div className="tv-modal tv-error-modal">
+            <button className="tv-modal-close" onClick={() => setTvError(null)}>
+              &times;
+            </button>
+            <h2 className="tv-modal-title">Verification Error</h2>
+            <div className="tv-icon-container">
+              <div className="tv-icon tv-error-icon">⚠️</div>
+            </div>
+            <div className="tv-error-details">
+              <p>
+                <strong>Phone Number:</strong> {tvError.phoneNumber}
+              </p>
+              <p>
+                <strong>Account ID:</strong> {tvError.accountId}
+              </p>
+              <p className="tv-error-message">{tvError.error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {tvComplete && (
+        <div className="tv-modal-overlay">
+          <div className="tv-modal tv-complete-modal">
+            <button
+              className="tv-modal-close"
+              onClick={() => setTvComplete(null)}
+            >
+              &times;
+            </button>
+            <h2 className="tv-modal-title">Verification Complete!</h2>
+            <div className="tv-icon-container">
+              <div className="tv-icon tv-complete-icon">🎉</div>
+            </div>
+
+            <div className="tv-stats-container">
+              <div className="tv-stat-card tv-registered-card">
+                <div className="tv-stat-value">{tvComplete.registered}</div>
+                <div className="tv-stat-label">Registered</div>
+              </div>
+
+              <div className="tv-stat-card tv-rejected-card">
+                <div className="tv-stat-value">{tvComplete.rejected}</div>
+                <div className="tv-stat-label">Rejected</div>
+              </div>
+
+              <div className="tv-stat-card tv-total-card">
+                <div className="tv-stat-value">{tvComplete.total}</div>
+                <div className="tv-stat-label">Total</div>
+              </div>
+            </div>
+
+            <div className="tv-summary">
+              <p>
+                <strong>Processed:</strong> {tvComplete.processed}
+              </p>
+              <p>
+                <strong>Unprocessed:</strong> {tvComplete.unprocessed}
+              </p>
+            </div>
+
+            {tvComplete.floodedAccounts.length > 0 && (
+              <div className="tv-flooded-accounts">
+                <h3>Accounts in Flood Wait</h3>
+                {tvComplete.floodedAccounts.map((account) => (
+                  <div key={account.id} className="tv-account-card">
+                    <p>
+                      <strong>ID:</strong> {account.id}
+                    </p>
+                    <p>
+                      <strong>Number:</strong> {account.phoneNumber}
+                    </p>
+                    <p>
+                      <strong>Wait Time:</strong> {account.formattedWaitTime}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div> // FIXED: Removed extra closing divs
   );
 }
-  
 
-
-export default WhatsAppNumberGenerator
+export default WhatsAppNumberGenerator;
