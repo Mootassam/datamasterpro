@@ -28,7 +28,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:prod": "node dist/src/server.js",
     "start": "nodemon --watch \"src/**/*.ts\" -e ts,json --exec \"ts-node --transpile-only ./src/server.ts\"",
-    "pkg": "npm run build && pkg . --compress Brotli --targets node18-win-x64 --output ../backend.exe"
+  "bundle": "node build-bundle.js",
+  "pkg": "npm run build && npm run bundle && pkg bundle.js --compress Brotli --targets node18-win-x64 --output ../backend.exe"
   },
   "author": "",
   "license": "ISC",
@@ -67,6 +68,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "esbuild": "^0.27.0",
     "pkg": "^5.8.1",
     "pm2": "^6.0.6",
     "ts-node": "9.0.0",

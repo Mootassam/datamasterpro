@@ -11,15 +11,26 @@ if (!globalThis.crypto) {
 
 // Set up crypto for both environments
 
-import { 
-  makeWASocket, 
-  useMultiFileAuthState, 
-  DisconnectReason, 
-  WASocket, 
-  downloadMediaMessage,
-  fetchLatestBaileysVersion,
-  makeCacheableSignalKeyStore
-} from '@whiskeysockets/baileys';
+let makeWASocket: any,
+    useMultiFileAuthState: any,
+    DisconnectReason: any,
+    WASocket: any,
+    downloadMediaMessage: any,
+    fetchLatestBaileysVersion: any,
+    makeCacheableSignalKeyStore: any;
+
+// Dynamically import Baileys (ESM) when the app starts
+(async () => {
+  const baileys = await import('@whiskeysockets/baileys') as any;
+  makeWASocket = baileys.makeWASocket;
+  useMultiFileAuthState = baileys.useMultiFileAuthState;
+  DisconnectReason = baileys.DisconnectReason;
+  WASocket = baileys.WASocket;
+  downloadMediaMessage = baileys.downloadMediaMessage;
+  fetchLatestBaileysVersion = baileys.fetchLatestBaileysVersion;
+  makeCacheableSignalKeyStore = baileys.makeCacheableSignalKeyStore;
+})();
+
 import PhoneNumberGenerator from "../utils/phoneNumberGenerator";
 import Error400 from "../errors/Error400";
 import streamifier from "streamifier";
@@ -62,7 +73,7 @@ interface WhatsAppAccount {
   profilePicUrl?: string;
   status?: string;
   connected: boolean;
-  socket?: WASocket;
+  socket?: any;
   lastUsed?: Date;
 }
 
@@ -1051,10 +1062,10 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
 
         const groupInfo: GroupInfo = {
           id,
-          name: chat.subject || 'Unknown Group',
-          description: chat.desc,
-          memberCount: Object.keys(chat.participants).length,
-          isAdmin: chat.participants.some(p =>
+          name: (chat as any).subject || 'Unknown Group',
+          description: (chat as any).desc,
+          memberCount: Object.keys((chat as any).participants).length,
+          isAdmin: (chat as any).participants.some(p =>
             p.id === socket.user?.id && ['admin', 'superadmin'].includes(p.admin || '')
           ),
           profilePicUrl: profilePicUrl || undefined
