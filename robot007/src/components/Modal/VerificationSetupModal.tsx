@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import "../styles/verification.css";
 import {
   FiCheck,
   FiInfo,

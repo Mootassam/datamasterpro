@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import "../styles/verification.css";
 import { FiCheck, FiX, FiClock, FiZap, FiBarChart2 } from 'react-icons/fi';
 import { ProcessCancel } from '../../store/generate/generateActions';
 
