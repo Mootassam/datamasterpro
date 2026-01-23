@@ -62,6 +62,16 @@ export const exportGroupMembers = async (accountId: string, groupId: string) => 
   return response.data;
 };
 
+export const importMembersToGroup = async (accountId: string, groupId: string, members: string[], config: any) => {
+  const response = await authAxios.post("/telegram/import-members", {
+    accountId,
+    groupId,
+    members,
+    config
+  });
+  return response.data;
+};
+
 // File upload
 export const uploadCSVFile = async (file: File) => {
   const formData = new FormData();
@@ -86,6 +96,39 @@ export const sendTelegramMessages = async (accountId: string, phoneNumbers: stri
   return response.data;
 };
 
+export const sendGroupMessages = async (
+  accountId: string,
+  groupIds: string[],
+  message: string,
+  imageFile?: File
+) => {
+  const formData = new FormData();
+  formData.append("accountId", accountId);
+  formData.append("message", message);
+  formData.append("groupIds", JSON.stringify(groupIds));
+  if (imageFile) {
+    formData.append("image", imageFile);
+  }
+  const response = await authAxios.post("/telegram/send-group-messages", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
+  return response.data;
+};
+
+export const sendGroupMessagesJson = async (
+  accountId: string,
+  groupIds: string[],
+  message: string
+) => {
+  const response = await authAxios.post("/telegram/send-group-messages", {
+    accountId,
+    groupIds,
+    message
+  });
+  return response.data;
+};
 export const cancelScheduledMessage = async (messageId: string) => {
   const response = await authAxios.post("/telegram/cancel-message", { messageId });
   return response.data;
@@ -112,4 +155,58 @@ export const downloadCSV = (data: any, filename: string = "telegram_data.csv") =
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+};
+
+// Dialog filters (folders)
+export const getDialogFilters = async (accountId: string) => {
+  const response = await authAxios.post("/telegram/dialog-filters", { accountId });
+  return response.data;
+};
+
+// Group discovery and scraping
+export const autoDiscoverTelegramGroups = async (accountId: string, keywords: string[], limit: number) => {
+  const response = await authAxios.post("/telegram/auto-discover-groups", {
+    accountId,
+    keywords,
+    limit
+  });
+  return response.data;
+};
+
+export const joinTelegramGroup = async (accountId: string, inviteLink: string) => {
+  const response = await authAxios.post("/telegram/join-group", {
+    accountId,
+    inviteLink
+  });
+  return response.data;
+};
+
+export const scrapeTelegramMembers = async (accountId: string, inviteLink: string) => {
+  const response = await authAxios.post("/telegram/scrape-members", {
+    accountId,
+    inviteLink
+  });
+  return response.data;
+};
+
+// Bulk messages to groups with optional image
+export const sendBulkMessagesToTelegramGroups = async (
+  accountId: string,
+  groups: Array<{ id: string; access_hash?: string; title?: string; username?: string }>,
+  message: string,
+  config?: any,
+  imageFile?: File
+) => {
+  const formData = new FormData();
+  formData.append("accountId", accountId);
+  formData.append("groups", JSON.stringify(groups));
+  formData.append("message", message);
+  if (config) formData.append("config", JSON.stringify(config));
+  if (imageFile) formData.append("file", imageFile);
+  const response = await authAxios.post("/telegram/send-messages-to-groups", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
+  return response.data;
 };

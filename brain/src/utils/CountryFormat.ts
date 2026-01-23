@@ -1,6 +1,8 @@
 
 
 
+import { parsePhoneNumberFromString } from "libphonenumber-js";
+
 const RuFormat = (carrier) => {
   const areaCode = "7"; // Russia country code
 
@@ -706,9 +708,19 @@ const Yemen = (carrier) => {
 ///////////////////////////////////////////
 
 const UnitedStates = (state) => {
-  const areaCode = "1"; // United States country code
-  const number = Math.floor(Math.random() * 9000000) + 1000000; // Random 7-digit number
-  return areaCode + state + number;
+  const areaCode = "1";
+  let attempts = 0;
+  while (attempts < 20) {
+    const localNumber = Math.floor(Math.random() * 10000000).toString().padStart(7, "0");
+    const candidate = areaCode + state + localNumber;
+    const parsed = parsePhoneNumberFromString("+" + candidate, "US");
+    if (parsed && parsed.isValid()) {
+      return candidate;
+    }
+    attempts++;
+  }
+  const fallback = Math.floor(Math.random() * 9000000) + 1000000;
+  return areaCode + state + fallback.toString().padStart(7, "0");
 };
 
 const Canada = (carrier) => {

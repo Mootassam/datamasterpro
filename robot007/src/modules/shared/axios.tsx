@@ -16,18 +16,26 @@ authAxios.interceptors.request.use(
   }
 );
 
-// Response interceptor
+// Add default headers via request interceptor
 authAxios.interceptors.request.use(
-  async function (options) {
-   
-    options.headers['ngrok-skip-browser-warning'] = 'true';
-
-    return options;
+  async function (config) {
+    config.headers = config.headers || {};
+    (config.headers as any)['ngrok-skip-browser-warning'] = 'true';
+    return config;
   },
   function (error) {
     console.log('Request error: ', error);
     return Promise.reject(error);
   },
+);
+
+// Response interceptor
+authAxios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.log('Response error: ', error);
+    return Promise.reject(error);
+  }
 );
 
 export default authAxios;

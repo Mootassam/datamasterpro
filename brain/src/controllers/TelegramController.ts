@@ -51,6 +51,7 @@ interface GroupInfo {
   isAdmin: boolean;
   profilePicUrl?: string;
   access_hash?: string | number; // Add access_hash to the interface
+  type?: string; // 'channel' or 'chat'
 }
 
 interface ScheduledMessage {
@@ -159,6 +160,186 @@ class TelegramController {
       this.accounts.set(id, account);
       return account;
     } catch (error :any) {
+      this.displayError(error, io);
+      throw error;
+    }
+  }
+
+  static async joinGroup(req: Request, io: Server): Promise<any> {
+    const { accountId, inviteLink } = req.body;
+    
+    if (!accountId || !inviteLink) {
+      throw new Error("Account ID and invite link are required");
+    }
+
+    const account = await this.getAccountById(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+      throw new Error("Account not connected");
+    }
+
+    try {
+      const mtproto = account.mtproto;
+      let result;
+
+      // Handle t.me/joinchat/ or t.me/+ links (Private links)
+      if (inviteLink.includes('joinchat') || inviteLink.includes('+')) {
+         const hash = inviteLink.split('+')[1] || inviteLink.split('joinchat/')[1];
+         result = await this.callWithDcMigration(mtproto, 'messages.importChatInvite', {
+            hash: hash
+         }, 0, account.id, io);
+      } else {
+         // Handle public usernames (t.me/username or @username)
+         let username = inviteLink.split('/').pop();
+         if (username.startsWith('@')) username = username.substring(1);
+         
+         result = await this.callWithDcMigration(mtproto, 'contacts.resolveUsername', {
+            username: username
+         }, 0, account.id, io);
+         
+         // If resolved, we might need to join if not already a member
+         if (result.chats && result.chats.length > 0) {
+             const chat = result.chats[0];
+             const inputChannel = {
+                 _: 'inputChannel',
+                 channel_id: chat.id,
+                 access_hash: chat.access_hash
+             };
+             
+             try {
+                 await this.callWithDcMigration(mtproto, 'channels.joinChannel', {
+                    channel: inputChannel
+                 }, 0, account.id, io);
+             } catch (e: any) {
+                 // If already a member, ignore
+                 if (!e.message?.includes('USER_ALREADY_PARTICIPANT')) {
+                     throw e;
+                 }
+             }
+             // Return the chat info
+             return chat;
+         }
+      }
+
+      return result;
+
+    } catch (error: any) {
+      this.displayError(error, io);
+      throw error;
+    }
+  }
+
+  static async getDialogFilters(req: Request, io: Server): Promise<any> {
+      const { accountId } = req.body;
+      const account = await this.getAccountById(accountId);
+      if (!account || !account.mtproto || !account.connected) {
+        throw new Error("Account not connected");
+      }
+
+      try {
+          const result = await this.callWithDcMigration(account.mtproto, 'messages.getDialogFilters', {}, 0, account.id, io);
+          return result;
+      } catch (error: any) {
+          this.displayError(error, io);
+          throw error;
+      }
+  }
+
+  static async scrapeMembers(req: Request, io: Server): Promise<any> {
+    const { accountId, inviteLink } = req.body;
+    
+    try {
+        // First join/resolve the group
+        const chat = await this.joinGroup(req, io);
+        
+        // Get account
+        const account = await this.getAccountById(accountId);
+        if (!account || !account.mtproto) throw new Error("Account error");
+        
+        const mtproto = account.mtproto;
+        
+        // Prepare input channel
+        // Note: joinGroup returns the chat object which should have id and access_hash
+        const inputChannel = {
+            _: 'inputChannel',
+            channel_id: chat.id,
+            access_hash: chat.access_hash
+        };
+        
+        // Fetch recent participants (limit to 200 for preview/instant scrape)
+        // For full export, user should use the export feature
+        const result = await this.callWithDcMigration(mtproto, 'channels.getParticipants', {
+            channel: inputChannel,
+            filter: { _: 'channelParticipantsRecent' },
+            offset: 0,
+            limit: 200,
+            hash: 0
+        }, 0, account.id, io);
+        
+        return {
+            group: {
+                id: chat.id.toString(),
+                name: chat.title,
+                username: chat.username,
+                memberCount: chat.participants_count,
+                access_hash: chat.access_hash
+            },
+            members: result.users.map((u: any) => ({
+                id: u.id,
+                firstName: u.first_name,
+                lastName: u.last_name,
+                username: u.username,
+                phone: u.phone,
+                bot: u.bot
+            }))
+        };
+        
+    } catch (error: any) {
+        this.displayError(error, io);
+        throw error;
+    }
+  }
+
+  static async autoDiscoverGroups(req: Request, io: Server): Promise<any> {
+    const { accountId, keywords, limit = 20 } = req.body;
+    
+    const account = await this.getAccountById(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+      throw new Error("Account not connected");
+    }
+
+    try {
+      const mtproto = account.mtproto;
+      const results: any[] = [];
+      
+      const keywordsList = Array.isArray(keywords) ? keywords : [keywords];
+      
+      for (const keyword of keywordsList) {
+          const searchResult = await this.callWithDcMigration(mtproto, 'contacts.search', {
+              q: keyword,
+              limit: limit
+          }, 0, account.id, io);
+          
+          if (searchResult.chats) {
+              for (const chat of searchResult.chats) {
+                  if (chat._ === 'channel' || chat._ === 'chat') {
+                      results.push({
+                          id: String(chat.id),
+                          title: chat.title,
+                          username: chat.username,
+                          members: chat.participants_count,
+                          type: chat._,
+                          access_hash: chat.access_hash
+                      });
+                  }
+              }
+          }
+      }
+      
+      // Remove duplicates
+      const uniqueResults = results.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+      
+      return uniqueResults;
+    } catch (error: any) {
       this.displayError(error, io);
       throw error;
     }
@@ -989,6 +1170,226 @@ if (typeof validAccounts !== 'undefined') {
   }
 }
 
+  static async importMembersToGroup(req: Request, io: Server): Promise<any> {
+    const { accountId, groupId, members, config } = req.body;
+    const delayBetweenMembers = config?.delayBetweenMembers || 2000;
+
+    if (!accountId || !groupId || !members || !Array.isArray(members)) {
+       throw new Error("Missing required parameters: accountId, groupId, members (array)");
+    }
+
+    const account = await this.getAccountById(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+      throw new Error("Account not connected");
+    }
+
+    const mtproto = account.mtproto;
+
+    // Get Group Info to determine type and access_hash
+    const groups = await this.getGroups({ body: { accountId } } as Request);
+    const group = groups.find(g => g.id === groupId);
+    
+    if (!group) throw new Error("Group not found");
+    
+    // Cancel import logic
+    const operationId = Math.random().toString(36).substring(2, 15);
+    this.currentOperationId = operationId;
+    const abortController = new AbortController();
+    this.activeOperations.set(operationId, abortController);
+    let cancellationEmitted = false;
+
+    io.emit("import-progress", { 
+        accountId,
+        groupId,
+        total: members.length, 
+        processed: 0, 
+        added: 0, 
+        failed: 0,
+        status: 'starting',
+        operationId // Send operationId to client
+    });
+
+    const result: { added: string[], failed: any[] } = { added: [], failed: [] };
+
+    for (let i = 0; i < members.length; i++) {
+        // Check for cancellation
+        if (abortController.signal.aborted && !cancellationEmitted) {
+            io.emit("import-progress", {
+                accountId,
+                groupId,
+                status: 'cancelled',
+                message: "Import cancelled by user",
+                processed: i,
+                total: members.length
+            });
+            cancellationEmitted = true;
+            break;
+        }
+        if (cancellationEmitted) break;
+
+        const member = members[i];
+        try {
+            let inputUser;
+            
+            // Clean member string and detect type
+            // Handle CSV format (e.g. "Target,Username,Phone...") - pick first non-empty suitable value
+            let target = member.trim();
+            if (target.includes(',')) {
+                const parts = target.split(',').map(p => p.trim());
+                // Try to find a valid username or phone in the parts
+                // Prioritize the first column as requested by "Target" format, but be flexible
+                target = parts.find(p => p.startsWith('@') || p.startsWith('+') || /^\d+$/.test(p)) || parts[0];
+            }
+
+            // Remove quotes if present
+            target = target.replace(/^"|"$/g, '');
+
+            // Check if phone number or username
+            const isPhone = target.startsWith('+') || /^\d+$/.test(target);
+            
+            if (isPhone) {
+                 const cleanPhone = target.replace(/\D/g, '');
+                 const importResult = await this.callWithDcMigration(mtproto, 'contacts.importContacts', {
+                    contacts: [{
+                      _: 'inputPhoneContact',
+                      client_id: Date.now(),
+                      phone: cleanPhone,
+                      first_name: target, 
+                      last_name: ''
+                    }]
+                 }, 0, account.id, io);
+                 
+                 if (importResult.users && importResult.users.length > 0) {
+                     const user = importResult.users[0];
+                     inputUser = {
+                         _: 'inputUser',
+                         user_id: user.id,
+                         access_hash: user.access_hash
+                     };
+                 } else {
+                    // Try to resolve as username if phone import fails (edge case)
+                    throw new Error("User not registered or could not be imported via phone");
+                 }
+            } else {
+                // Username
+                let username = target;
+                if (username.startsWith('@')) username = username.substring(1);
+                
+                // If it looks like a user ID (pure digits but treated as username above?), we can't easily import by ID alone without access_hash
+                // But if the user provided an ID, we might try inputUser with access_hash 0 (rarely works)
+                // For now, assume username
+                
+                 const resolveResult = await this.callWithDcMigration(mtproto, 'contacts.resolveUsername', {
+                    username: username
+                 }, 0, account.id, io);
+                 
+                 if (resolveResult.users && resolveResult.users.length > 0) {
+                     const user = resolveResult.users[0];
+                     inputUser = {
+                         _: 'inputUser',
+                         user_id: user.id,
+                         access_hash: user.access_hash
+                     };
+                 } else {
+                     throw new Error("Username not found");
+                 }
+            }
+            
+            // Invite
+            if (group.type === 'channel') {
+                await this.callWithDcMigration(mtproto, 'channels.inviteToChannel', {
+                    channel: {
+                        _: 'inputChannel',
+                        channel_id: group.id,
+                        access_hash: group.access_hash
+                    },
+                    users: [inputUser]
+                }, 0, account.id, io);
+            } else {
+                // Basic Chat
+                await this.callWithDcMigration(mtproto, 'messages.addChatUser', {
+                    chat_id: group.id,
+                    user_id: inputUser,
+                    fwd_limit: 100 
+                }, 0, account.id, io);
+            }
+            
+            // Success
+            result.added.push(target);
+            
+        } catch (err: any) {
+             const errorMessage = err.message || err.errorMessage || "Unknown error";
+             console.error(`Failed to add ${member}:`, errorMessage);
+             
+             if (errorMessage.includes('FLOOD_WAIT') || errorMessage.includes('PEER_FLOOD')) {
+                 const seconds = parseInt(errorMessage.match(/\d+/)?.[0] || "60");
+                 io.emit("import-progress", { 
+                    accountId,
+                    groupId,
+                    status: 'paused',
+                    message: `Flood wait: ${seconds}s`,
+                    processed: i, 
+                    total: members.length 
+                });
+                 
+                 // Wait with cancellation check
+                 const waitStart = Date.now();
+                 while (Date.now() - waitStart < seconds * 1000) {
+                     if (abortController.signal.aborted) break;
+                     await new Promise(r => setTimeout(r, 1000));
+                 }
+                 
+                 if (abortController.signal.aborted) {
+                     i--; // Retry this one? No, if cancelled, just break
+                     continue; // Loop will catch cancellation at top
+                 }
+
+                 i--; // Retry current member
+                 continue;
+             }
+             
+             result.failed.push({ member, error: errorMessage });
+        }
+        
+        io.emit("import-progress", { 
+            accountId,
+            groupId,
+            total: members.length, 
+            processed: i + 1, 
+            added: result.added.length, 
+            failed: result.failed.length,
+            status: 'processing'
+        });
+        
+        // Delay with cancellation check
+        const delayStart = Date.now();
+        while (Date.now() - delayStart < delayBetweenMembers) {
+            if (abortController.signal.aborted) break;
+            await new Promise(r => setTimeout(r, 100));
+        }
+    }
+    
+    // Cleanup
+    this.activeOperations.delete(operationId);
+    if (this.currentOperationId === operationId) {
+        this.currentOperationId = null;
+    }
+    
+    if (!cancellationEmitted) {
+        io.emit("import-progress", { 
+            accountId,
+            groupId,
+            total: members.length, 
+            processed: members.length, 
+            added: result.added.length, 
+            failed: result.failed.length,
+            status: 'completed'
+        });
+    }
+    
+    return result;
+  }
+
   static async getGroups(req: Request): Promise<GroupInfo[]> {
     const { accountId } = req.body;
     if (!accountId) throw new Error("Account ID required");
@@ -1018,7 +1419,8 @@ if (typeof validAccounts !== 'undefined') {
             memberCount: chat.participants_count || 0,
             isAdmin: !!(chat.admin_rights || chat.creator),
             profilePicUrl: undefined,
-            access_hash: chat.access_hash || 0 // Store the access_hash for later use
+            access_hash: chat.access_hash || 0, // Store the access_hash for later use
+            type: chat._
           });
         }
       }
@@ -1031,7 +1433,7 @@ if (typeof validAccounts !== 'undefined') {
   }
 
  static async exportGroupMembers(req: Request, res: Response, io: Server): Promise<void> {
-    const { accountId, groupId, filterType = 'recent', maxMembers = 0 } = req.body;
+    const { accountId, groupId, filterType = 'recent', maxMembers = 0, format = 'csv' } = req.body;
     const operationId = `export-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     let totalMembers = 0;
     let lastEmitTime = 0; // For throttling events
@@ -1115,9 +1517,14 @@ if (typeof validAccounts !== 'undefined') {
         return;
     }
     
-    // Set up response headers for CSV download
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename="group_${groupId}_members_${filterType}.csv"`);
+    // Set up response headers
+    if (format === 'txt') {
+        res.setHeader('Content-Type', 'text/plain');
+        res.setHeader('Content-Disposition', `attachment; filename="group_${groupId}_members_${filterType}.txt"`);
+    } else {
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="group_${groupId}_members_${filterType}.csv"`);
+    }
     res.write(`# Operation ID: ${operationId}\n`);
     
     // Handle client disconnect
@@ -1188,7 +1595,7 @@ if (typeof validAccounts !== 'undefined') {
         }
 
         // Write CSV header
-        res.write('Phone Number,First Name,Last Name,Username\n');
+        res.write('Import Key,Phone,Username,User ID,First Name,Last Name\n');
         res.write('# Export started, retrieving members...\n');
         
         // Implement pagination to fetch all members
@@ -1388,11 +1795,21 @@ if (typeof validAccounts !== 'undefined') {
                     }
                 }
                 
-                // Write this batch to the CSV response
+                // Write this batch to the response
                 if (newMembers.length > 0) {
-                    const batchContent = newMembers.map(m => 
-                        `${m.phone},"${m.firstName?.replace(/"/g, '""') || ''}","${m.lastName?.replace(/"/g, '""') || ''}",${m.username || ''}`
-                    ).join('\n');
+                    let batchContent = '';
+                    if (format === 'csv') {
+                        batchContent = newMembers.map(m => {
+                            // Prioritize phone, then username, then ID for import key
+                            const importKey = m.phone || (m.username ? `@${m.username}` : m.id);
+                            return `${importKey},${m.phone || ''},${m.username || ''},${m.id},"${m.firstName?.replace(/"/g, '""') || ''}","${m.lastName?.replace(/"/g, '""') || ''}"`;
+                        }).join('\n');
+                    } else {
+                        // TXT format - just the import key (username or phone)
+                        batchContent = newMembers.map(m => {
+                            return m.phone || (m.username ? `@${m.username}` : m.id);
+                        }).join('\n');
+                    }
                     
                     res.write(batchContent + '\n');
                     
@@ -1646,6 +2063,101 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
   static async sendBulkMessages(req: Request, io: Server): Promise<MessageResult> {
 
     return this.sendMessages(req, io);
+  }
+
+  static async sendBulkMessagesToGroups(req: Request, io: Server): Promise<any> {
+      const { accountId, groups, message, config } = req.body;
+      const file = (req as any).file;
+      
+      if (!accountId || !groups) {
+          throw new Error("Account ID and groups are required");
+      }
+      
+      const account = await this.getAccountById(accountId);
+      if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected");
+      }
+      
+      const mtproto = account.mtproto;
+      const result: { sent: string[], failed: { id: string, error: string }[] } = { sent: [], failed: [] };
+      // Handle both stringified JSON and direct array
+      const groupList = typeof groups === 'string' ? JSON.parse(groups) : groups;
+      
+      let inputMedia: any = null;
+      if (file) {
+          try {
+              const uploadedFile = await this.uploadFile(mtproto, file, accountId, io);
+              inputMedia = {
+                  _: 'inputMediaUploadedPhoto',
+                  file: uploadedFile,
+                  ttl_seconds: 0
+              };
+          } catch (e: any) {
+              console.error("Failed to upload file:", e);
+              throw new Error("Failed to upload photo: " + e.message);
+          }
+      }
+      
+      for (const group of groupList) {
+          try {
+              const peer = {
+                  _: 'inputPeerChannel',
+                  channel_id: group.id,
+                  access_hash: group.access_hash
+              };
+              
+              if (inputMedia) {
+                   await this.callWithDcMigration(mtproto, 'messages.sendMedia', {
+                      peer: peer,
+                      media: inputMedia,
+                      message: message || '',
+                      random_id: Math.floor(Math.random() * 1000000000)
+                  }, 0, account.id, io);
+              } else {
+                  await this.callWithDcMigration(mtproto, 'messages.sendMessage', {
+                      peer: peer,
+                      message: message,
+                      random_id: Math.floor(Math.random() * 1000000000)
+                  }, 0, account.id, io);
+              }
+              
+              (result.sent as any[]).push(group.id);
+          } catch (e: any) {
+              (result.failed as { id: any; error: string }[]).push({ id: group.id, error: e.message });
+          }
+          
+          // Delay
+          const delay = config?.delayBetweenMessages || 2000;
+          await new Promise(r => setTimeout(r, delay));
+      }
+      
+      return result;
+  }
+
+  private static async uploadFile(mtproto: any, file: any, accountId: string, io: Server): Promise<any> {
+    const CHUNK_SIZE = 512 * 1024; // 512KB
+    const totalParts = Math.ceil(file.size / CHUNK_SIZE);
+    const fileId = BigInt(Date.now()) + BigInt(Math.floor(Math.random() * 1000000));
+    
+    for (let i = 0; i < totalParts; i++) {
+        const start = i * CHUNK_SIZE;
+        const end = Math.min(start + CHUNK_SIZE, file.size);
+        const part = file.buffer.slice(start, end);
+        
+        await this.callWithDcMigration(mtproto, 'upload.saveFilePart', {
+            file_id: fileId.toString(),
+            file_part: i,
+            bytes: part
+        }, 0, accountId, io);
+    }
+    
+    return {
+        _: 'inputFile',
+        id: fileId.toString(),
+        parts: totalParts,
+        name: file.originalname,
+        md5_checksum: '' 
+    };
   }
 
   static async sendMessages(req: Request, io: Server): Promise<MessageResult> {

@@ -170,11 +170,13 @@ export const downloadFile = async (data) => {
 
 // Email Generate
 
-export const generateEmail = async (much: any, country, gender) => {
+export const generateEmail = async (much: any, country, gender, type, provider) => {
   const response = await authAxios.post("/email/generate", {
     much: much,
     country: country,
     gender: gender,
+    type: type,
+    provider: provider,
   });
   return response.data;
 };

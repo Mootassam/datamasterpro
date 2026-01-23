@@ -4,6 +4,7 @@ import * as TelegramServices from "./telegramServices";
 import {
   setTelegramAccounts,
   setTelegramGroups,
+  setDialogFilters,
   setPhoneNumbers,
   setRegisteredNumbers,
   setRejectedNumbers,
@@ -36,6 +37,99 @@ export const fetchTelegramAccounts = createAsyncThunk(
       throw error;
     } finally {
       dispatch(setTelegramLoading(false));
+    }
+  }
+);
+
+export const sendTelegramGroupMessages = createAsyncThunk(
+  "telegram/sendGroupMessages",
+  async (
+    {
+      accountId,
+      groupIds,
+      message,
+      imageFile
+    }: {
+      accountId: string;
+      groupIds: string[];
+      message: string;
+      imageFile?: File | null;
+    },
+    { dispatch }
+  ) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      dispatch(setMessagingInProgress(true));
+      dispatch(setCurrentOperation("Sending group messages"));
+      let result: any;
+      try {
+        // Convert to groups structure if using bulk endpoint
+        result = await TelegramServices.sendBulkMessagesToTelegramGroups(
+          accountId,
+          groupIds.map((id) => ({ id, access_hash: '' })),
+          message,
+          undefined,
+          imageFile || undefined
+        );
+      } catch (err) {
+        // Fallback: try JSON payload if multipart is not supported server-side
+        result = await TelegramServices.sendGroupMessagesJson(
+          accountId,
+          groupIds,
+          message
+        );
+      }
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to send group messages"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+      dispatch(setMessagingInProgress(false));
+      dispatch(setCurrentOperation(null));
+    }
+  }
+);
+
+export const sendBulkMessagesToTelegramGroups = createAsyncThunk(
+  "telegram/sendBulkMessagesToGroups",
+  async (
+    {
+      accountId,
+      groups,
+      message,
+      config,
+      file
+    }: {
+      accountId: string;
+      groups: Array<{ id: string; access_hash?: string; title?: string; username?: string }>;
+      message: string;
+      config?: any;
+      file?: File;
+    },
+    { dispatch }
+  ) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      dispatch(setMessagingInProgress(true));
+      dispatch(setCurrentOperation("Sending group messages"));
+      const result = await TelegramServices.sendBulkMessagesToTelegramGroups(
+        accountId,
+        groups,
+        message,
+        config,
+        file
+      );
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to send messages to groups"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+      dispatch(setMessagingInProgress(false));
+      dispatch(setCurrentOperation(null));
     }
   }
 );
@@ -174,11 +268,34 @@ export const fetchTelegramGroups = createAsyncThunk(
     try {
       dispatch(setTelegramLoading(true));
       const groups = await TelegramServices.getTelegramGroups(accountId);
-      dispatch(setTelegramGroups(groups));
-      return groups;
+      const normalized = (Array.isArray(groups) ? groups : []).map((g: any) => ({
+        ...g,
+        id: g?.id?.toString ? g.id.toString() : String(g?.id ?? ''),
+        access_hash: g?.access_hash !== undefined && g?.access_hash !== null ? String(g.access_hash) : ''
+      }));
+      dispatch(setTelegramGroups(normalized));
+      return normalized;
     } catch (error :any) {
       Errors.handle(error);
       dispatch(setTelegramError(error.message || "Failed to fetch Telegram groups"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+    }
+  }
+);
+
+export const fetchDialogFilters = createAsyncThunk(
+  "telegram/fetchDialogFilters",
+  async (accountId: string, { dispatch }) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      const filters = await TelegramServices.getDialogFilters(accountId);
+      dispatch(setDialogFilters(filters));
+      return filters;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to fetch dialog filters"));
       throw error;
     } finally {
       dispatch(setTelegramLoading(false));
@@ -203,6 +320,79 @@ export const exportTelegramGroupMembers = createAsyncThunk(
       throw error;
     } finally {
       dispatch(setTelegramLoading(false));
+    }
+  }
+);
+
+export const scrapeTelegramMembers = createAsyncThunk(
+  "telegram/scrapeMembers",
+  async ({ accountId, inviteLink }: { accountId: string; inviteLink: string }, { dispatch }) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      const result = await TelegramServices.scrapeTelegramMembers(accountId, inviteLink);
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to scrape members"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+    }
+  }
+);
+
+export const joinTelegramGroup = createAsyncThunk(
+  "telegram/joinGroup",
+  async ({ accountId, inviteLink }: { accountId: string; inviteLink: string }, { dispatch }) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      const result = await TelegramServices.joinTelegramGroup(accountId, inviteLink);
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to join group"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+    }
+  }
+);
+
+export const autoDiscoverTelegramGroups = createAsyncThunk(
+  "telegram/autoDiscoverGroups",
+  async ({ accountId, keywords, limit }: { accountId: string; keywords: string[]; limit: number }, { dispatch }) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      const result = await TelegramServices.autoDiscoverTelegramGroups(accountId, keywords, limit);
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to auto discover groups"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+    }
+  }
+);
+
+export const importMembersToGroup = createAsyncThunk(
+  "telegram/importMembers",
+  async (
+    { accountId, groupId, members, config }: { accountId: string; groupId: string; members: string[]; config: any },
+    { dispatch }
+  ) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      dispatch(setCurrentOperation(`Importing members to group`));
+      const result = await TelegramServices.importMembersToGroup(accountId, groupId, members, config);
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to import members"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+      dispatch(setCurrentOperation(null));
     }
   }
 );

@@ -29,7 +29,7 @@ class CancelController {
           break;
 
         case "email":
-        case "bulkwhatsapp":
+        case "bulkemail":
           cancelled = EmailController.cancelCurrentOperation();
           message = cancelled
             ? "Email verification cancelled successfully"

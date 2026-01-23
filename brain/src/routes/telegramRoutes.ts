@@ -96,6 +96,19 @@ const telegramRoutes = (io) => {
     }
   });
 
+  // Import members to group
+  router.post("/import-members", async (req: Request, res: Response) => {
+    try {
+      const result = await TelegramController.importMembersToGroup(req, io);
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Import members error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to import members" 
+      });
+    }
+  });
+
   // Get groups for an account
   router.post("/groups", async (req: Request, res: Response) => {
     try {
@@ -174,6 +187,71 @@ const telegramRoutes = (io) => {
       console.error("Get scheduled messages error:", error);
       res.status(500).json({ 
         error: error instanceof Error ? error.message : "Failed to get scheduled messages" 
+      });
+    }
+  });
+
+  // Auto-discover groups
+  router.post("/auto-discover-groups", async (req: Request, res: Response) => {
+    try {
+      const results = await TelegramController.autoDiscoverGroups(req, io);
+      res.status(200).json(results);
+    } catch (error) {
+      console.error("Auto discover groups error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to auto discover groups" 
+      });
+    }
+  });
+
+  // Send bulk messages to groups
+  router.post("/send-messages-to-groups", TelegramController.getUploadMiddleware(), async (req: Request, res: Response) => {
+    try {
+      const result = await TelegramController.sendBulkMessagesToGroups(req, io);
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Send messages to groups error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to send messages to groups" 
+      });
+    }
+  });
+
+  // Get dialog filters (folders)
+  router.post("/dialog-filters", async (req: Request, res: Response) => {
+    try {
+      const result = await TelegramController.getDialogFilters(req, io);
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Get dialog filters error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to get dialog filters" 
+      });
+    }
+  });
+
+  // Join group
+  router.post("/join-group", async (req: Request, res: Response) => {
+    try {
+      const result = await TelegramController.joinGroup(req, io);
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Join group error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to join group" 
+      });
+    }
+  });
+
+  // Scrape members
+  router.post("/scrape-members", async (req: Request, res: Response) => {
+    try {
+      const result = await TelegramController.scrapeMembers(req, io);
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Scrape members error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to scrape members" 
       });
     }
   });

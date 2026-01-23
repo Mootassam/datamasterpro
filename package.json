@@ -1,9 +1,9 @@
 {
-  "name": "my-electron-app",
+  "name": "CYBER007",
   "version": "1.0.0",
   "description": "Electron app with React (Vite) frontend and Node.js (TypeScript) backend",
   "main": "electron/main.js",
-  "author": "Your Name",
+  "author": "Leo",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
@@ -14,7 +14,7 @@
     "dist": "electron-builder"
   },
   "build": {
-    "appId": "com.yourcompany.yourapp",
+    "appId": "com.yourcompany.datamasterpro",
     "productName": "CYBER007",
     "directories": {
       "output": "dist_electron"

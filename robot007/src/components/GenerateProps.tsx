@@ -45,10 +45,26 @@ const GenerateProps = ({
   setModalState,
   activeService,
   setGender,
-  gender
+  gender,
+  emailType,
+  setEmailType,
+  emailProvider,
+  setEmailProvider
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [activeTab, setActiveTab] = useState("generate"); // ['generate', 'stats', 'osint']
+
+  const typeOptions = [
+    { value: 'person', label: 'Personal' },
+    { value: 'business', label: 'Business' },
+  ];
+
+  const providerOptions = [
+    { value: 'gmail.com', label: 'Gmail' },
+    { value: 'yahoo.com', label: 'Yahoo' },
+    { value: 'outlook.com', label: 'Outlook' },
+    { value: 'hotmail.com', label: 'Hotmail' },
+  ];
 
   const genderOptions = [
   { value: 'male', label: 'Male' },
@@ -181,21 +197,54 @@ const GenerateProps = ({
                      
                     />
                   </div>
-                  {activeService === "email" && (  <div className="form-group">
-    <label>Gender</label>
-         <Select
-                          key="gender-select"
-                          value={gender}
-                          onChange={(selected) => selected && setGender(selected)}
-                          options={genderOptions}  // Use stable reference
+                  {activeService === "email" && (
+                    <>
+                      <div className="form-group">
+                        <label>Type</label>
+                        <Select
+                          key="type-select"
+                          value={emailType}
+                          onChange={(selected) => selected && setEmailType(selected)}
+                          options={typeOptions}
                           isSearchable
                           className="react-select"
                           classNamePrefix="select"
-                          isDisabled={!country}
                         />
-  </div>)}
+                      </div>
 
-                  {activeService !== "email" && !["UnitedStates", "Canada"].includes(country?.label) &&  (
+                      {emailType?.value === 'person' && (
+                        <>
+                          <div className="form-group">
+                            <label>Gender</label>
+                            <Select
+                              key="gender-select"
+                              value={gender}
+                              onChange={(selected) => selected && setGender(selected)}
+                              options={genderOptions}
+                              isSearchable
+                              className="react-select"
+                              classNamePrefix="select"
+                              isDisabled={!country}
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Provider</label>
+                            <Select
+                              key="provider-select"
+                              value={emailProvider}
+                              onChange={(selected) => selected && setEmailProvider(selected)}
+                              options={providerOptions}
+                              isSearchable
+                              className="react-select"
+                              classNamePrefix="select"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )}
+
+                  {activeService !== "email" && !["UnitedStates", "Canada"].includes(country?.label) && (
                     <div className="form-group">
                       <label>Carrier</label>
                

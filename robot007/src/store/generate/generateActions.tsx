@@ -74,10 +74,10 @@ export const generateNumbers = createAsyncThunk<void, any>(
 
 export const generateEmails = createAsyncThunk<void, any>(
   "generate/generateEmails",
-  async ({ matchCount, country, gender }, thunkAPI) => {
+  async ({ matchCount, country, gender, type, provider }, thunkAPI) => {
     try {
       thunkAPI.dispatch(setgenerateLoading(true));
-      const phoneNumbers = await generateEmail(matchCount, country, gender);
+      const phoneNumbers = await generateEmail(matchCount, country, gender, type, provider);
       thunkAPI.dispatch(getNumbers(phoneNumbers));
       thunkAPI.dispatch(setgenerateLoading(false));
     } catch (error) {

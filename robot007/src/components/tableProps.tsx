@@ -43,12 +43,12 @@ const TableProps = ({
             {status === "registered" ? (
               <>
                 <FaCheck className="status-icon" />
-                <span>Registered</span>
+                <span>{activeService === 'email' ? 'Valid' : 'Registered'}</span>
               </>
             ) : status === "rejected" ? (
               <>
                 <FaTimes className="status-icon" />
-                <span>Rejected</span>
+                <span>{activeService === 'email' ? 'Invalid' : 'Rejected'}</span>
               </>
             ) : (
               <span>Pending</span>
@@ -121,13 +121,16 @@ const TableProps = ({
     )}
     
     {activeService === "email" && (
-      <button
-        className="bulk-email-btn"
-        onClick={() => setEmailModalOpen(true)}
-      >
-        <FiMail className="service-icon" />
-        <span>Email All ({registeredNumbers.length})</span>
-      </button>
+      <>
+        <button
+          className="bulk-email-btn"
+          onClick={() => setEmailModalOpen(true)}
+        >
+          <FiMail className="service-icon" />
+          <span>Email All ({registeredNumbers.length})</span>
+        </button>
+     
+      </>
     )}
   </div>
 )}

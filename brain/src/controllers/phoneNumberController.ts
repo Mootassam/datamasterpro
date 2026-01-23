@@ -2,14 +2,11 @@
 import { Request, Response } from "express";
 import { Server } from "socket.io";
 import multer, { Multer } from "multer";
-// Replace the crypto import with this:
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 if (!globalThis.crypto) {
   const { Crypto } = require('@peculiar/webcrypto');
   globalThis.crypto = new Crypto();
 }
-
-
-// Set up crypto for both environments
 
 let makeWASocket: any,
     useMultiFileAuthState: any,
@@ -19,7 +16,6 @@ let makeWASocket: any,
     fetchLatestBaileysVersion: any,
     makeCacheableSignalKeyStore: any;
 
-// Dynamically import Baileys (ESM) when the app starts
 (async () => {
   const baileys = await import('@whiskeysockets/baileys') as any;
   makeWASocket = baileys.makeWASocket;
@@ -122,6 +118,23 @@ private static getSessionPath(index: number): string {
 
   return sessionPath;
 }
+
+
+
+  private static normalizePhoneNumber(phoneNumber: string): string {
+    const input = phoneNumber?.toString().trim() || "";
+    if (!input) return "";
+
+    try {
+      const parsed = parsePhoneNumberFromString(input, "US");
+      if (parsed && parsed.isValid() && parsed.country === "US") {
+        return parsed.number.replace(/\D/g, "");
+      }
+    } catch (error) {
+    }
+
+    return input.replace(/\D/g, "");
+  }
 
 
 
@@ -767,7 +780,8 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
               await new Promise(resolve => setTimeout(resolve, config.delayBetweenNumbers));
             }
 
-            const results = await account.socket!.onWhatsApp(`${phoneNumber.replace(/\D/g, '')}@s.whatsapp.net`);
+            const normalized = this.normalizePhoneNumber(phoneNumber);
+            const results = await account.socket!.onWhatsApp(`${normalized}@s.whatsapp.net`);
             const [exists] = Array.isArray(results) ? results : [];
 
             if (exists?.exists) {
@@ -916,7 +930,7 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
         const iterationStart = Date.now();
         const jid = phoneNumber.includes('@s.whatsapp.net')
           ? phoneNumber
-          : `${phoneNumber.replace(/\D/g, '')}@s.whatsapp.net`;
+          : `${this.normalizePhoneNumber(phoneNumber)}@s.whatsapp.net`;
 
         const { text: messageText } = messages[Math.floor(Math.random() * messages.length)];
 
@@ -1344,7 +1358,7 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
     ];
 
     const rawNumber = req.params.id;
-    const sanitizedNumber = rawNumber.replace(/\D/g, '');
+    const sanitizedNumber = this.normalizePhoneNumber(rawNumber);
     const jid = `${sanitizedNumber}@s.whatsapp.net`;
 
     try {

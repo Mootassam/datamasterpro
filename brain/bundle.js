@@ -731,13 +731,13 @@ var require_inherits_browser = __commonJS({
 var require_inherits = __commonJS({
   "node_modules/inherits/inherits.js"(exports2, module2) {
     try {
-      util3 = require("util");
-      if (typeof util3.inherits !== "function") throw "";
-      module2.exports = util3.inherits;
+      util4 = require("util");
+      if (typeof util4.inherits !== "function") throw "";
+      module2.exports = util4.inherits;
     } catch (e2) {
       module2.exports = require_inherits_browser();
     }
-    var util3;
+    var util4;
   }
 });
 
@@ -1215,7 +1215,7 @@ var require_browser = __commonJS({
 var require_node = __commonJS({
   "node_modules/express/node_modules/debug/src/node.js"(exports2, module2) {
     var tty = require("tty");
-    var util3 = require("util");
+    var util4 = require("util");
     exports2 = module2.exports = require_debug();
     exports2.init = init2;
     exports2.log = log;
@@ -1240,7 +1240,7 @@ var require_node = __commonJS({
     }, {});
     var fd2 = parseInt(process.env.DEBUG_FD, 10) || 2;
     if (1 !== fd2 && 2 !== fd2) {
-      util3.deprecate(function() {
+      util4.deprecate(function() {
       }, "except for stderr(2) and stdout(1), any other usage of DEBUG_FD is deprecated. Override debug.log if you want to use a different log function (https://git.io/debug_fd)")();
     }
     var stream5 = 1 === fd2 ? process.stdout : 2 === fd2 ? process.stderr : createWritableStdioStream(fd2);
@@ -1249,13 +1249,13 @@ var require_node = __commonJS({
     }
     exports2.formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts).split("\n").map(function(str) {
+      return util4.inspect(v, this.inspectOpts).split("\n").map(function(str) {
         return str.trim();
       }).join(" ");
     };
     exports2.formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts);
+      return util4.inspect(v, this.inspectOpts);
     };
     function formatArgs(args) {
       var name = this.namespace;
@@ -1270,7 +1270,7 @@ var require_node = __commonJS({
       }
     }
     function log() {
-      return stream5.write(util3.format.apply(util3, arguments) + "\n");
+      return stream5.write(util4.format.apply(util4, arguments) + "\n");
     }
     function save(namespaces) {
       if (null == namespaces) {
@@ -17332,7 +17332,7 @@ var require_browser2 = __commonJS({
 var require_node2 = __commonJS({
   "node_modules/finalhandler/node_modules/debug/src/node.js"(exports2, module2) {
     var tty = require("tty");
-    var util3 = require("util");
+    var util4 = require("util");
     exports2 = module2.exports = require_debug2();
     exports2.init = init2;
     exports2.log = log;
@@ -17357,7 +17357,7 @@ var require_node2 = __commonJS({
     }, {});
     var fd2 = parseInt(process.env.DEBUG_FD, 10) || 2;
     if (1 !== fd2 && 2 !== fd2) {
-      util3.deprecate(function() {
+      util4.deprecate(function() {
       }, "except for stderr(2) and stdout(1), any other usage of DEBUG_FD is deprecated. Override debug.log if you want to use a different log function (https://git.io/debug_fd)")();
     }
     var stream5 = 1 === fd2 ? process.stdout : 2 === fd2 ? process.stderr : createWritableStdioStream(fd2);
@@ -17366,13 +17366,13 @@ var require_node2 = __commonJS({
     }
     exports2.formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts).split("\n").map(function(str) {
+      return util4.inspect(v, this.inspectOpts).split("\n").map(function(str) {
         return str.trim();
       }).join(" ");
     };
     exports2.formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts);
+      return util4.inspect(v, this.inspectOpts);
     };
     function formatArgs(args) {
       var name = this.namespace;
@@ -17387,7 +17387,7 @@ var require_node2 = __commonJS({
       }
     }
     function log() {
-      return stream5.write(util3.format.apply(util3, arguments) + "\n");
+      return stream5.write(util4.format.apply(util4, arguments) + "\n");
     }
     function save(namespaces) {
       if (null == namespaces) {
@@ -19191,7 +19191,7 @@ var require_browser3 = __commonJS({
 var require_node3 = __commonJS({
   "node_modules/send/node_modules/debug/src/node.js"(exports2, module2) {
     var tty = require("tty");
-    var util3 = require("util");
+    var util4 = require("util");
     exports2 = module2.exports = require_debug3();
     exports2.init = init2;
     exports2.log = log;
@@ -19216,7 +19216,7 @@ var require_node3 = __commonJS({
     }, {});
     var fd2 = parseInt(process.env.DEBUG_FD, 10) || 2;
     if (1 !== fd2 && 2 !== fd2) {
-      util3.deprecate(function() {
+      util4.deprecate(function() {
       }, "except for stderr(2) and stdout(1), any other usage of DEBUG_FD is deprecated. Override debug.log if you want to use a different log function (https://git.io/debug_fd)")();
     }
     var stream5 = 1 === fd2 ? process.stdout : 2 === fd2 ? process.stderr : createWritableStdioStream(fd2);
@@ -19225,13 +19225,13 @@ var require_node3 = __commonJS({
     }
     exports2.formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts).split("\n").map(function(str) {
+      return util4.inspect(v, this.inspectOpts).split("\n").map(function(str) {
         return str.trim();
       }).join(" ");
     };
     exports2.formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts);
+      return util4.inspect(v, this.inspectOpts);
     };
     function formatArgs(args) {
       var name = this.namespace;
@@ -19246,7 +19246,7 @@ var require_node3 = __commonJS({
       }
     }
     function log() {
-      return stream5.write(util3.format.apply(util3, arguments) + "\n");
+      return stream5.write(util4.format.apply(util4, arguments) + "\n");
     }
     function save(namespaces) {
       if (null == namespaces) {
@@ -19725,7 +19725,7 @@ var require_send = __commonJS({
     var path = require("path");
     var statuses = require_statuses();
     var Stream = require("stream");
-    var util3 = require("util");
+    var util4 = require("util");
     var extname = path.extname;
     var join4 = path.join;
     var normalize = path.normalize;
@@ -19771,7 +19771,7 @@ var require_send = __commonJS({
         this.from(opts.from);
       }
     }
-    util3.inherits(SendStream, Stream);
+    util4.inherits(SendStream, Stream);
     SendStream.prototype.etag = deprecate.function(function etag2(val) {
       this._etag = Boolean(val);
       debug31("etag %s", this._etag);
@@ -24858,14 +24858,14 @@ var require_supports_color = __commonJS({
 var require_node4 = __commonJS({
   "node_modules/engine.io/node_modules/debug/src/node.js"(exports2, module2) {
     var tty = require("tty");
-    var util3 = require("util");
+    var util4 = require("util");
     exports2.init = init2;
     exports2.log = log;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
     exports2.useColors = useColors;
-    exports2.destroy = util3.deprecate(
+    exports2.destroy = util4.deprecate(
       () => {
       },
       "Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`."
@@ -24996,7 +24996,7 @@ var require_node4 = __commonJS({
       return (/* @__PURE__ */ new Date()).toISOString() + " ";
     }
     function log(...args) {
-      return process.stderr.write(util3.format(...args) + "\n");
+      return process.stderr.write(util4.format(...args) + "\n");
     }
     function save(namespaces) {
       if (namespaces) {
@@ -25019,11 +25019,11 @@ var require_node4 = __commonJS({
     var { formatters } = module2.exports;
     formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
+      return util4.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
     };
     formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts);
+      return util4.inspect(v, this.inspectOpts);
     };
   }
 });
@@ -32323,14 +32323,14 @@ var require_browser5 = __commonJS({
 var require_node5 = __commonJS({
   "node_modules/socket.io-parser/node_modules/debug/src/node.js"(exports2, module2) {
     var tty = require("tty");
-    var util3 = require("util");
+    var util4 = require("util");
     exports2.init = init2;
     exports2.log = log;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
     exports2.useColors = useColors;
-    exports2.destroy = util3.deprecate(
+    exports2.destroy = util4.deprecate(
       () => {
       },
       "Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`."
@@ -32461,7 +32461,7 @@ var require_node5 = __commonJS({
       return (/* @__PURE__ */ new Date()).toISOString() + " ";
     }
     function log(...args) {
-      return process.stderr.write(util3.format(...args) + "\n");
+      return process.stderr.write(util4.format(...args) + "\n");
     }
     function save(namespaces) {
       if (namespaces) {
@@ -32484,11 +32484,11 @@ var require_node5 = __commonJS({
     var { formatters } = module2.exports;
     formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
+      return util4.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
     };
     formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts);
+      return util4.inspect(v, this.inspectOpts);
     };
   }
 });
@@ -33229,14 +33229,14 @@ var require_browser6 = __commonJS({
 var require_node6 = __commonJS({
   "node_modules/socket.io/node_modules/debug/src/node.js"(exports2, module2) {
     var tty = require("tty");
-    var util3 = require("util");
+    var util4 = require("util");
     exports2.init = init2;
     exports2.log = log;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
     exports2.useColors = useColors;
-    exports2.destroy = util3.deprecate(
+    exports2.destroy = util4.deprecate(
       () => {
       },
       "Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`."
@@ -33367,7 +33367,7 @@ var require_node6 = __commonJS({
       return (/* @__PURE__ */ new Date()).toISOString() + " ";
     }
     function log(...args) {
-      return process.stderr.write(util3.format(...args) + "\n");
+      return process.stderr.write(util4.format(...args) + "\n");
     }
     function save(namespaces) {
       if (namespaces) {
@@ -33390,11 +33390,11 @@ var require_node6 = __commonJS({
     var { formatters } = module2.exports;
     formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
+      return util4.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
     };
     formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts);
+      return util4.inspect(v, this.inspectOpts);
     };
   }
 });
@@ -44386,7 +44386,7 @@ var require_counter = __commonJS({
 // node_modules/multer/lib/multer-error.js
 var require_multer_error = __commonJS({
   "node_modules/multer/lib/multer-error.js"(exports2, module2) {
-    var util3 = require("util");
+    var util4 = require("util");
     var errorMessages = {
       LIMIT_PART_COUNT: "Too many parts",
       LIMIT_FILE_SIZE: "File too large",
@@ -44404,7 +44404,7 @@ var require_multer_error = __commonJS({
       this.code = code;
       if (field) this.field = field;
     }
-    util3.inherits(MulterError, Error);
+    util4.inherits(MulterError, Error);
     module2.exports = MulterError;
   }
 });
@@ -45010,7 +45010,7 @@ var require_BufferList = __commonJS({
       }
     }
     var Buffer2 = require_safe_buffer2().Buffer;
-    var util3 = require("util");
+    var util4 = require("util");
     function copyBuffer(src, target, offset) {
       src.copy(target, offset);
     }
@@ -45069,9 +45069,9 @@ var require_BufferList = __commonJS({
       };
       return BufferList;
     })();
-    if (util3 && util3.inspect && util3.inspect.custom) {
-      module2.exports.prototype[util3.inspect.custom] = function() {
-        var obj = util3.inspect({ length: this.length });
+    if (util4 && util4.inspect && util4.inspect.custom) {
+      module2.exports.prototype[util4.inspect.custom] = function() {
+        var obj = util4.inspect({ length: this.length });
         return this.constructor.name + " " + obj;
       };
     }
@@ -45171,8 +45171,8 @@ var require_stream_writable = __commonJS({
     var asyncWrite = !process.browser && ["v0.10", "v0.9."].indexOf(process.version.slice(0, 5)) > -1 ? setImmediate : pna.nextTick;
     var Duplex;
     Writable.WritableState = WritableState;
-    var util3 = Object.create(require_util());
-    util3.inherits = require_inherits();
+    var util4 = Object.create(require_util());
+    util4.inherits = require_inherits();
     var internalUtil = {
       deprecate: require_node7()
     };
@@ -45187,7 +45187,7 @@ var require_stream_writable = __commonJS({
       return Buffer2.isBuffer(obj) || obj instanceof OurUint8Array;
     }
     var destroyImpl = require_destroy2();
-    util3.inherits(Writable, Stream);
+    util4.inherits(Writable, Stream);
     function nop() {
     }
     function WritableState(options, stream5) {
@@ -45607,11 +45607,11 @@ var require_stream_duplex = __commonJS({
       return keys2;
     };
     module2.exports = Duplex;
-    var util3 = Object.create(require_util());
-    util3.inherits = require_inherits();
+    var util4 = Object.create(require_util());
+    util4.inherits = require_inherits();
     var Readable3 = require_stream_readable();
     var Writable = require_stream_writable();
-    util3.inherits(Duplex, Readable3);
+    util4.inherits(Duplex, Readable3);
     {
       keys = objectKeys(Writable.prototype);
       for (v = 0; v < keys.length; v++) {
@@ -45989,8 +45989,8 @@ var require_stream_readable = __commonJS({
     function _isUint8Array(obj) {
       return Buffer2.isBuffer(obj) || obj instanceof OurUint8Array;
     }
-    var util3 = Object.create(require_util());
-    util3.inherits = require_inherits();
+    var util4 = Object.create(require_util());
+    util4.inherits = require_inherits();
     var debugUtil = require("util");
     var debug31 = void 0;
     if (debugUtil && debugUtil.debuglog) {
@@ -46002,7 +46002,7 @@ var require_stream_readable = __commonJS({
     var BufferList = require_BufferList();
     var destroyImpl = require_destroy2();
     var StringDecoder;
-    util3.inherits(Readable3, Stream);
+    util4.inherits(Readable3, Stream);
     var kProxyEvents = ["error", "close", "destroy", "pause", "resume"];
     function prependListener(emitter, event, fn) {
       if (typeof emitter.prependListener === "function") return emitter.prependListener(event, fn);
@@ -46658,9 +46658,9 @@ var require_stream_transform = __commonJS({
     "use strict";
     module2.exports = Transform2;
     var Duplex = require_stream_duplex();
-    var util3 = Object.create(require_util());
-    util3.inherits = require_inherits();
-    util3.inherits(Transform2, Duplex);
+    var util4 = Object.create(require_util());
+    util4.inherits = require_inherits();
+    util4.inherits(Transform2, Duplex);
     function afterTransform(er, data3) {
       var ts = this._transformState;
       ts.transforming = false;
@@ -46758,9 +46758,9 @@ var require_stream_passthrough = __commonJS({
     "use strict";
     module2.exports = PassThrough;
     var Transform2 = require_stream_transform();
-    var util3 = Object.create(require_util());
-    util3.inherits = require_inherits();
-    util3.inherits(PassThrough, Transform2);
+    var util4 = Object.create(require_util());
+    util4.inherits = require_inherits();
+    util4.inherits(PassThrough, Transform2);
     function PassThrough(options) {
       if (!(this instanceof PassThrough)) return new PassThrough(options);
       Transform2.call(this, options);
@@ -47618,6 +47618,7446 @@ var require_multer = __commonJS({
     module2.exports.diskStorage = diskStorage;
     module2.exports.memoryStorage = memoryStorage;
     module2.exports.MulterError = MulterError;
+  }
+});
+
+// node_modules/libphonenumber-js/metadata.min.json
+var require_metadata_min = __commonJS({
+  "node_modules/libphonenumber-js/metadata.min.json"(exports2, module2) {
+    module2.exports = { version: 4, country_calling_codes: { "1": ["US", "AG", "AI", "AS", "BB", "BM", "BS", "CA", "DM", "DO", "GD", "GU", "JM", "KN", "KY", "LC", "MP", "MS", "PR", "SX", "TC", "TT", "VC", "VG", "VI"], "7": ["RU", "KZ"], "20": ["EG"], "27": ["ZA"], "30": ["GR"], "31": ["NL"], "32": ["BE"], "33": ["FR"], "34": ["ES"], "36": ["HU"], "39": ["IT", "VA"], "40": ["RO"], "41": ["CH"], "43": ["AT"], "44": ["GB", "GG", "IM", "JE"], "45": ["DK"], "46": ["SE"], "47": ["NO", "SJ"], "48": ["PL"], "49": ["DE"], "51": ["PE"], "52": ["MX"], "53": ["CU"], "54": ["AR"], "55": ["BR"], "56": ["CL"], "57": ["CO"], "58": ["VE"], "60": ["MY"], "61": ["AU", "CC", "CX"], "62": ["ID"], "63": ["PH"], "64": ["NZ"], "65": ["SG"], "66": ["TH"], "81": ["JP"], "82": ["KR"], "84": ["VN"], "86": ["CN"], "90": ["TR"], "91": ["IN"], "92": ["PK"], "93": ["AF"], "94": ["LK"], "95": ["MM"], "98": ["IR"], "211": ["SS"], "212": ["MA", "EH"], "213": ["DZ"], "216": ["TN"], "218": ["LY"], "220": ["GM"], "221": ["SN"], "222": ["MR"], "223": ["ML"], "224": ["GN"], "225": ["CI"], "226": ["BF"], "227": ["NE"], "228": ["TG"], "229": ["BJ"], "230": ["MU"], "231": ["LR"], "232": ["SL"], "233": ["GH"], "234": ["NG"], "235": ["TD"], "236": ["CF"], "237": ["CM"], "238": ["CV"], "239": ["ST"], "240": ["GQ"], "241": ["GA"], "242": ["CG"], "243": ["CD"], "244": ["AO"], "245": ["GW"], "246": ["IO"], "247": ["AC"], "248": ["SC"], "249": ["SD"], "250": ["RW"], "251": ["ET"], "252": ["SO"], "253": ["DJ"], "254": ["KE"], "255": ["TZ"], "256": ["UG"], "257": ["BI"], "258": ["MZ"], "260": ["ZM"], "261": ["MG"], "262": ["RE", "YT"], "263": ["ZW"], "264": ["NA"], "265": ["MW"], "266": ["LS"], "267": ["BW"], "268": ["SZ"], "269": ["KM"], "290": ["SH", "TA"], "291": ["ER"], "297": ["AW"], "298": ["FO"], "299": ["GL"], "350": ["GI"], "351": ["PT"], "352": ["LU"], "353": ["IE"], "354": ["IS"], "355": ["AL"], "356": ["MT"], "357": ["CY"], "358": ["FI", "AX"], "359": ["BG"], "370": ["LT"], "371": ["LV"], "372": ["EE"], "373": ["MD"], "374": ["AM"], "375": ["BY"], "376": ["AD"], "377": ["MC"], "378": ["SM"], "380": ["UA"], "381": ["RS"], "382": ["ME"], "383": ["XK"], "385": ["HR"], "386": ["SI"], "387": ["BA"], "389": ["MK"], "420": ["CZ"], "421": ["SK"], "423": ["LI"], "500": ["FK"], "501": ["BZ"], "502": ["GT"], "503": ["SV"], "504": ["HN"], "505": ["NI"], "506": ["CR"], "507": ["PA"], "508": ["PM"], "509": ["HT"], "590": ["GP", "BL", "MF"], "591": ["BO"], "592": ["GY"], "593": ["EC"], "594": ["GF"], "595": ["PY"], "596": ["MQ"], "597": ["SR"], "598": ["UY"], "599": ["CW", "BQ"], "670": ["TL"], "672": ["NF"], "673": ["BN"], "674": ["NR"], "675": ["PG"], "676": ["TO"], "677": ["SB"], "678": ["VU"], "679": ["FJ"], "680": ["PW"], "681": ["WF"], "682": ["CK"], "683": ["NU"], "685": ["WS"], "686": ["KI"], "687": ["NC"], "688": ["TV"], "689": ["PF"], "690": ["TK"], "691": ["FM"], "692": ["MH"], "850": ["KP"], "852": ["HK"], "853": ["MO"], "855": ["KH"], "856": ["LA"], "880": ["BD"], "886": ["TW"], "960": ["MV"], "961": ["LB"], "962": ["JO"], "963": ["SY"], "964": ["IQ"], "965": ["KW"], "966": ["SA"], "967": ["YE"], "968": ["OM"], "970": ["PS"], "971": ["AE"], "972": ["IL"], "973": ["BH"], "974": ["QA"], "975": ["BT"], "976": ["MN"], "977": ["NP"], "992": ["TJ"], "993": ["TM"], "994": ["AZ"], "995": ["GE"], "996": ["KG"], "998": ["UZ"] }, countries: { AC: ["247", "00", "(?:[01589]\\d|[46])\\d{4}", [5, 6]], AD: ["376", "00", "(?:1|6\\d)\\d{7}|[135-9]\\d{5}", [6, 8, 9], [["(\\d{3})(\\d{3})", "$1 $2", ["[135-9]"]], ["(\\d{4})(\\d{4})", "$1 $2", ["1"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6"]]]], AE: ["971", "00", "(?:[4-7]\\d|9[0-689])\\d{7}|800\\d{2,9}|[2-4679]\\d{7}", [5, 6, 7, 8, 9, 10, 11, 12], [["(\\d{3})(\\d{2,9})", "$1 $2", ["60|8"]], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[236]|[479][2-8]"], "0$1"], ["(\\d{3})(\\d)(\\d{5})", "$1 $2 $3", ["[479]"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["5"], "0$1"]], "0"], AF: ["93", "00", "[2-7]\\d{8}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-7]"], "0$1"]], "0"], AG: ["1", "011", "(?:268|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([457]\\d{6})$|1", "268$1", 0, "268"], AI: ["1", "011", "(?:264|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2457]\\d{6})$|1", "264$1", 0, "264"], AL: ["355", "00", "(?:700\\d\\d|900)\\d{3}|8\\d{5,7}|(?:[2-5]|6\\d)\\d{7}", [6, 7, 8, 9], [["(\\d{3})(\\d{3,4})", "$1 $2", ["80|9"], "0$1"], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["4[2-6]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2358][2-5]|4"], "0$1"], ["(\\d{3})(\\d{5})", "$1 $2", ["[23578]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["6"], "0$1"]], "0"], AM: ["374", "00", "(?:[1-489]\\d|55|60|77)\\d{6}", [8], [["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["[89]0"], "0 $1"], ["(\\d{3})(\\d{5})", "$1 $2", ["2|3[12]"], "(0$1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["1|47"], "(0$1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["[3-9]"], "0$1"]], "0"], AO: ["244", "00", "[29]\\d{8}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[29]"]]]], AR: ["54", "00", "(?:11|[89]\\d\\d)\\d{8}|[2368]\\d{9}", [10, 11], [["(\\d{4})(\\d{2})(\\d{4})", "$1 $2-$3", ["2(?:2[024-9]|3[0-59]|47|6[245]|9[02-8])|3(?:3[28]|4[03-9]|5[2-46-8]|7[1-578]|8[2-9])", "2(?:[23]02|6(?:[25]|4[6-8])|9(?:[02356]|4[02568]|72|8[23]))|3(?:3[28]|4(?:[04679]|3[5-8]|5[4-68]|8[2379])|5(?:[2467]|3[237]|8[2-5])|7[1-578]|8(?:[2469]|3[2578]|5[4-8]|7[36-8]|8[5-8]))|2(?:2[24-9]|3[1-59]|47)", "2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3[78]|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8[23])|7[1-578]|8(?:[2469]|3[278]|5[56][46]|86[3-6]))|2(?:2[24-9]|3[1-59]|47)|38(?:[58][78]|7[378])|3(?:4[35][56]|58[45]|8(?:[38]5|54|76))[4-6]", "2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3(?:5(?:4[0-25689]|[56])|[78])|58|8[2379])|5(?:[2467]|3[237]|8(?:[23]|4(?:[45]|60)|5(?:4[0-39]|5|64)))|7[1-578]|8(?:[2469]|3[278]|54(?:4|5[13-7]|6[89])|86[3-6]))|2(?:2[24-9]|3[1-59]|47)|38(?:[58][78]|7[378])|3(?:454|85[56])[46]|3(?:4(?:36|5[56])|8(?:[38]5|76))[4-6]"], "0$1", 1], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2-$3", ["1"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2-$3", ["[68]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2-$3", ["[23]"], "0$1", 1], ["(\\d)(\\d{4})(\\d{2})(\\d{4})", "$2 15-$3-$4", ["9(?:2[2-469]|3[3-578])", "9(?:2(?:2[024-9]|3[0-59]|47|6[245]|9[02-8])|3(?:3[28]|4[03-9]|5[2-46-8]|7[1-578]|8[2-9]))", "9(?:2(?:[23]02|6(?:[25]|4[6-8])|9(?:[02356]|4[02568]|72|8[23]))|3(?:3[28]|4(?:[04679]|3[5-8]|5[4-68]|8[2379])|5(?:[2467]|3[237]|8[2-5])|7[1-578]|8(?:[2469]|3[2578]|5[4-8]|7[36-8]|8[5-8])))|92(?:2[24-9]|3[1-59]|47)", "9(?:2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3[78]|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8[23])|7[1-578]|8(?:[2469]|3[278]|5(?:[56][46]|[78])|7[378]|8(?:6[3-6]|[78]))))|92(?:2[24-9]|3[1-59]|47)|93(?:4[35][56]|58[45]|8(?:[38]5|54|76))[4-6]", "9(?:2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3(?:5(?:4[0-25689]|[56])|[78])|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8(?:[23]|4(?:[45]|60)|5(?:4[0-39]|5|64)))|7[1-578]|8(?:[2469]|3[278]|5(?:4(?:4|5[13-7]|6[89])|[56][46]|[78])|7[378]|8(?:6[3-6]|[78]))))|92(?:2[24-9]|3[1-59]|47)|93(?:4(?:36|5[56])|8(?:[38]5|76))[4-6]"], "0$1", 0, "$1 $2 $3-$4"], ["(\\d)(\\d{2})(\\d{4})(\\d{4})", "$2 15-$3-$4", ["91"], "0$1", 0, "$1 $2 $3-$4"], ["(\\d{3})(\\d{3})(\\d{5})", "$1-$2-$3", ["8"], "0$1"], ["(\\d)(\\d{3})(\\d{3})(\\d{4})", "$2 15-$3-$4", ["9"], "0$1", 0, "$1 $2 $3-$4"]], "0", 0, "0?(?:(11|2(?:2(?:02?|[13]|2[13-79]|4[1-6]|5[2457]|6[124-8]|7[1-4]|8[13-6]|9[1267])|3(?:02?|1[467]|2[03-6]|3[13-8]|[49][2-6]|5[2-8]|[67])|4(?:7[3-578]|9)|6(?:[0136]|2[24-6]|4[6-8]?|5[15-8])|80|9(?:0[1-3]|[19]|2\\d|3[1-6]|4[02568]?|5[2-4]|6[2-46]|72?|8[23]?))|3(?:3(?:2[79]|6|8[2578])|4(?:0[0-24-9]|[12]|3[5-8]?|4[24-7]|5[4-68]?|6[02-9]|7[126]|8[2379]?|9[1-36-8])|5(?:1|2[1245]|3[237]?|4[1-46-9]|6[2-4]|7[1-6]|8[2-5]?)|6[24]|7(?:[069]|1[1568]|2[15]|3[145]|4[13]|5[14-8]|7[2-57]|8[126])|8(?:[01]|2[15-7]|3[2578]?|4[13-6]|5[4-8]?|6[1-357-9]|7[36-8]?|8[5-8]?|9[124])))15)?", "9$1"], AS: ["1", "011", "(?:[58]\\d\\d|684|900)\\d{7}", [10], 0, "1", 0, "([267]\\d{6})$|1", "684$1", 0, "684"], AT: ["43", "00", "1\\d{3,12}|2\\d{6,12}|43(?:(?:0\\d|5[02-9])\\d{3,9}|2\\d{4,5}|[3467]\\d{4}|8\\d{4,6}|9\\d{4,7})|5\\d{4,12}|8\\d{7,12}|9\\d{8,12}|(?:[367]\\d|4[0-24-9])\\d{4,11}", [4, 5, 6, 7, 8, 9, 10, 11, 12, 13], [["(\\d)(\\d{3,12})", "$1 $2", ["1(?:11|[2-9])"], "0$1"], ["(\\d{3})(\\d{2})", "$1 $2", ["517"], "0$1"], ["(\\d{2})(\\d{3,5})", "$1 $2", ["5[079]"], "0$1"], ["(\\d{3})(\\d{3,10})", "$1 $2", ["(?:31|4)6|51|6(?:48|5[0-3579]|[6-9])|7(?:20|32|8)|[89]", "(?:31|4)6|51|6(?:485|5[0-3579]|[6-9])|7(?:20|32|8)|[89]"], "0$1"], ["(\\d{4})(\\d{3,9})", "$1 $2", ["[2-467]|5[2-6]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["5"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4,7})", "$1 $2 $3", ["5"], "0$1"]], "0"], AU: ["61", "001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011", "1(?:[0-79]\\d{7}(?:\\d(?:\\d{2})?)?|8[0-24-9]\\d{7})|[2-478]\\d{8}|1\\d{4,7}", [5, 6, 7, 8, 9, 10, 12], [["(\\d{2})(\\d{3,4})", "$1 $2", ["16"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2,4})", "$1 $2 $3", ["16"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["14|4"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["[2378]"], "(0$1)"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1(?:30|[89])"]]], "0", 0, "(183[12])|0", 0, 0, 0, [["(?:(?:(?:2(?:[0-26-9]\\d|3[0-8]|4[02-9]|5[0135-9])|7(?:[013-57-9]\\d|2[0-8]))\\d|3(?:(?:[0-3589]\\d|6[1-9]|7[0-35-9])\\d|4(?:[0-578]\\d|90)))\\d\\d|8(?:51(?:0(?:0[03-9]|[12479]\\d|3[2-9]|5[0-8]|6[1-9]|8[0-7])|1(?:[0235689]\\d|1[0-69]|4[0-589]|7[0-47-9])|2(?:0[0-79]|[18][13579]|2[14-9]|3[0-46-9]|[4-6]\\d|7[89]|9[0-4])|3\\d\\d)|(?:6[0-8]|[78]\\d)\\d{3}|9(?:[02-9]\\d{3}|1(?:(?:[0-58]\\d|6[0135-9])\\d|7(?:0[0-24-9]|[1-9]\\d)|9(?:[0-46-9]\\d|5[0-79])))))\\d{3}", [9]], ["4(?:79[01]|83[0-389]|94[0-4])\\d{5}|4(?:[0-36]\\d|4[047-9]|5[0-25-9]|7[02-8]|8[0-24-9]|9[0-37-9])\\d{6}", [9]], ["180(?:0\\d{3}|2)\\d{3}", [7, 10]], ["190[0-26]\\d{6}", [10]], 0, 0, 0, ["163\\d{2,6}", [5, 6, 7, 8, 9]], ["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}", [9]], ["13(?:00\\d{6}(?:\\d{2})?|45[0-4]\\d{3})|13\\d{4}", [6, 8, 10, 12]]], "0011"], AW: ["297", "00", "(?:[25-79]\\d\\d|800)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[25-9]"]]]], AX: ["358", "00|99(?:[01469]|5(?:[14]1|3[23]|5[59]|77|88|9[09]))", "2\\d{4,9}|35\\d{4,5}|(?:60\\d\\d|800)\\d{4,6}|7\\d{5,11}|(?:[14]\\d|3[0-46-9]|50)\\d{4,8}", [5, 6, 7, 8, 9, 10, 11, 12], 0, "0", 0, 0, 0, 0, "18", 0, "00"], AZ: ["994", "00", "365\\d{6}|(?:[124579]\\d|60|88)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["90"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["1[28]|2|365|46", "1[28]|2|365[45]|46", "1[28]|2|365(?:4|5[02])|46"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[13-9]"], "0$1"]], "0"], BA: ["387", "00", "6\\d{8}|(?:[35689]\\d|49|70)\\d{6}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["6[1-3]|[7-9]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2-$3", ["[3-5]|6[56]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["6"], "0$1"]], "0"], BB: ["1", "011", "(?:246|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "246$1", 0, "246"], BD: ["880", "00", "[1-469]\\d{9}|8[0-79]\\d{7,8}|[2-79]\\d{8}|[2-9]\\d{7}|[3-9]\\d{6}|[57-9]\\d{5}", [6, 7, 8, 9, 10], [["(\\d{2})(\\d{4,6})", "$1-$2", ["31[5-8]|[459]1"], "0$1"], ["(\\d{3})(\\d{3,7})", "$1-$2", ["3(?:[67]|8[013-9])|4(?:6[168]|7|[89][18])|5(?:6[128]|9)|6(?:[15]|28|4[14])|7[2-589]|8(?:0[014-9]|[12])|9[358]|(?:3[2-5]|4[235]|5[2-578]|6[0389]|76|8[3-7]|9[24])1|(?:44|66)[01346-9]"], "0$1"], ["(\\d{4})(\\d{3,6})", "$1-$2", ["[13-9]|2[23]"], "0$1"], ["(\\d)(\\d{7,8})", "$1-$2", ["2"], "0$1"]], "0"], BE: ["32", "00", "4\\d{8}|[1-9]\\d{7}", [8, 9], [["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["(?:80|9)0"], "0$1"], ["(\\d)(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[239]|4[23]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[15-8]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["4"], "0$1"]], "0"], BF: ["226", "00", "[025-7]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[025-7]"]]]], BG: ["359", "00", "00800\\d{7}|[2-7]\\d{6,7}|[89]\\d{6,8}|2\\d{5}", [6, 7, 8, 9, 12], [["(\\d)(\\d)(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["2"], "0$1"], ["(\\d{3})(\\d{4})", "$1 $2", ["43[1-6]|70[1-9]"], "0$1"], ["(\\d)(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2,3})", "$1 $2 $3", ["[356]|4[124-7]|7[1-9]|8[1-6]|9[1-7]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["(?:70|8)0"], "0$1"], ["(\\d{3})(\\d{3})(\\d{2})", "$1 $2 $3", ["43[1-7]|7"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[48]|9[08]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"], "0$1"]], "0"], BH: ["973", "00", "[136-9]\\d{7}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[13679]|8[02-4679]"]]]], BI: ["257", "00", "(?:[267]\\d|31)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2367]"]]]], BJ: ["229", "00", "(?:01\\d|[24-689])\\d{7}", [8, 10], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[24-689]"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["0"]]]], BL: ["590", "00", "(?:590\\d|7090)\\d{5}|(?:69|80|9\\d)\\d{7}", [9], 0, "0", 0, 0, 0, 0, 0, [["590(?:2[7-9]|3[3-7]|5[12]|87)\\d{4}"], ["(?:69(?:0\\d\\d|1(?:2[2-9]|3[0-5])|4(?:0[89]|1[2-6]|9\\d)|6(?:1[016-9]|5[0-4]|[67]\\d))|7090[0-4])\\d{4}"], ["80[0-5]\\d{6}"], 0, 0, 0, 0, 0, ["9(?:(?:39[5-7]|76[018])\\d|475[0-6])\\d{4}"]]], BM: ["1", "011", "(?:441|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "441$1", 0, "441"], BN: ["673", "00", "[2-578]\\d{6}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-578]"]]]], BO: ["591", "00(?:1\\d)?", "8001\\d{5}|(?:[2-467]\\d|50)\\d{6}", [8, 9], [["(\\d)(\\d{7})", "$1 $2", ["[235]|4[46]"]], ["(\\d{8})", "$1", ["[67]"]], ["(\\d{3})(\\d{2})(\\d{4})", "$1 $2 $3", ["8"]]], "0", 0, "0(1\\d)?"], BQ: ["599", "00", "(?:[34]1|7\\d)\\d{5}", [7], 0, 0, 0, 0, 0, 0, "[347]"], BR: ["55", "00(?:1[245]|2[1-35]|31|4[13]|[56]5|99)", "[1-467]\\d{9,10}|55[0-46-9]\\d{8}|[34]\\d{7}|55\\d{7,8}|(?:5[0-46-9]|[89]\\d)\\d{7,9}", [8, 9, 10, 11], [["(\\d{4})(\\d{4})", "$1-$2", ["300|4(?:0[02]|37|86)", "300|4(?:0(?:0|20)|370|864)"]], ["(\\d{3})(\\d{2,3})(\\d{4})", "$1 $2 $3", ["(?:[358]|90)0"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2-$3", ["(?:[14689][1-9]|2[12478]|3[1-578]|5[13-5]|7[13-579])[2-57]"], "($1)"], ["(\\d{2})(\\d{5})(\\d{4})", "$1 $2-$3", ["[16][1-9]|[2-57-9]"], "($1)"]], "0", 0, "(?:0|90)(?:(1[245]|2[1-35]|31|4[13]|[56]5|99)(\\d{10,11}))?", "$2"], BS: ["1", "011", "(?:242|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([3-8]\\d{6})$|1", "242$1", 0, "242"], BT: ["975", "00", "[17]\\d{7}|[2-8]\\d{6}", [7, 8], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-68]|7[246]"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["1[67]|7"]]]], BW: ["267", "00", "(?:0800|(?:[37]|800)\\d)\\d{6}|(?:[2-6]\\d|90)\\d{5}", [7, 8, 10], [["(\\d{2})(\\d{5})", "$1 $2", ["90"]], ["(\\d{3})(\\d{4})", "$1 $2", ["[24-6]|3[15-9]"]], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[37]"]], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["0"]], ["(\\d{3})(\\d{4})(\\d{3})", "$1 $2 $3", ["8"]]]], BY: ["375", "810", "(?:[12]\\d|33|44|902)\\d{7}|8(?:0[0-79]\\d{5,7}|[1-7]\\d{9})|8(?:1[0-489]|[5-79]\\d)\\d{7}|8[1-79]\\d{6,7}|8[0-79]\\d{5}|8\\d{5}", [6, 7, 8, 9, 10, 11], [["(\\d{3})(\\d{3})", "$1 $2", ["800"], "8 $1"], ["(\\d{3})(\\d{2})(\\d{2,4})", "$1 $2 $3", ["800"], "8 $1"], ["(\\d{4})(\\d{2})(\\d{3})", "$1 $2-$3", ["1(?:5[169]|6[3-5]|7[179])|2(?:1[35]|2[34]|3[3-5])", "1(?:5[169]|6(?:3[1-3]|4|5[125])|7(?:1[3-9]|7[0-24-6]|9[2-7]))|2(?:1[35]|2[34]|3[3-5])"], "8 0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["1(?:[56]|7[467])|2[1-3]"], "8 0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["[1-4]"], "8 0$1"], ["(\\d{3})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["[89]"], "8 $1"]], "8", 0, "0|80?", 0, 0, 0, 0, "8~10"], BZ: ["501", "00", "(?:0800\\d|[2-8])\\d{6}", [7, 11], [["(\\d{3})(\\d{4})", "$1-$2", ["[2-8]"]], ["(\\d)(\\d{3})(\\d{4})(\\d{3})", "$1-$2-$3-$4", ["0"]]]], CA: ["1", "011", "[2-9]\\d{9}|3\\d{6}", [7, 10], 0, "1", 0, 0, 0, 0, 0, [["(?:2(?:04|[23]6|[48]9|50|63)|3(?:06|43|54|6[578]|82)|4(?:03|1[68]|[26]8|3[178]|50|74)|5(?:06|1[49]|48|79|8[147])|6(?:04|[18]3|39|47|72)|7(?:0[59]|42|53|78|8[02])|8(?:[06]7|19|25|7[39])|9(?:0[25]|42))[2-9]\\d{6}", [10]], ["", [10]], ["8(?:00|33|44|55|66|77|88)[2-9]\\d{6}", [10]], ["900[2-9]\\d{6}", [10]], ["52(?:3(?:[2-46-9][02-9]\\d|5(?:[02-46-9]\\d|5[0-46-9]))|4(?:[2-478][02-9]\\d|5(?:[034]\\d|2[024-9]|5[0-46-9])|6(?:0[1-9]|[2-9]\\d)|9(?:[05-9]\\d|2[0-5]|49)))\\d{4}|52[34][2-9]1[02-9]\\d{4}|(?:5(?:2[125-9]|33|44|66|77|88)|6(?:22|33))[2-9]\\d{6}", [10]], 0, ["310\\d{4}", [7]], 0, ["600[2-9]\\d{6}", [10]]]], CC: ["61", "001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011", "1(?:[0-79]\\d{8}(?:\\d{2})?|8[0-24-9]\\d{7})|[148]\\d{8}|1\\d{5,7}", [6, 7, 8, 9, 10, 12], 0, "0", 0, "([59]\\d{7})$|0", "8$1", 0, 0, [["8(?:51(?:0(?:02|31|60|89)|1(?:18|76)|223)|91(?:0(?:1[0-2]|29)|1(?:[28]2|50|79)|2(?:10|64)|3(?:[06]8|22)|4[29]8|62\\d|70[23]|959))\\d{3}", [9]], ["4(?:79[01]|83[0-389]|94[0-4])\\d{5}|4(?:[0-36]\\d|4[047-9]|5[0-25-9]|7[02-8]|8[0-24-9]|9[0-37-9])\\d{6}", [9]], ["180(?:0\\d{3}|2)\\d{3}", [7, 10]], ["190[0-26]\\d{6}", [10]], 0, 0, 0, 0, ["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}", [9]], ["13(?:00\\d{6}(?:\\d{2})?|45[0-4]\\d{3})|13\\d{4}", [6, 8, 10, 12]]], "0011"], CD: ["243", "00", "(?:(?:[189]|5\\d)\\d|2)\\d{7}|[1-68]\\d{6}", [7, 8, 9, 10], [["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["88"], "0$1"], ["(\\d{2})(\\d{5})", "$1 $2", ["[1-6]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[89]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["5"], "0$1"]], "0"], CF: ["236", "00", "(?:[27]\\d{3}|8776)\\d{4}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[278]"]]]], CG: ["242", "00", "222\\d{6}|(?:0\\d|80)\\d{7}", [9], [["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["8"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[02]"]]]], CH: ["41", "00", "8\\d{11}|[2-9]\\d{8}", [9, 12], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8[047]|90"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-79]|81"], "0$1"], ["(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["8"], "0$1"]], "0"], CI: ["225", "00", "[02]\\d{9}", [10], [["(\\d{2})(\\d{2})(\\d)(\\d{5})", "$1 $2 $3 $4", ["2"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3 $4", ["0"]]]], CK: ["682", "00", "[2-578]\\d{4}", [5], [["(\\d{2})(\\d{3})", "$1 $2", ["[2-578]"]]]], CL: ["56", "(?:0|1(?:1[0-69]|2[02-5]|5[13-58]|69|7[0167]|8[018]))0", "12300\\d{6}|6\\d{9,10}|[2-9]\\d{8}", [9, 10, 11], [["(\\d{5})(\\d{4})", "$1 $2", ["219", "2196"], "($1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["44"]], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["2[1-36]"], "($1)"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["9[2-9]"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["3[2-5]|[47]|5[1-3578]|6[13-57]|8(?:0[1-9]|[1-9])"], "($1)"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["60|8"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]], ["(\\d{3})(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["60"]]]], CM: ["237", "00", "[26]\\d{8}|88\\d{6,7}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["88"]], ["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["[26]|88"]]]], CN: ["86", "00|1(?:[12]\\d|79)\\d\\d00", "(?:(?:1[03-689]|2\\d)\\d\\d|6)\\d{8}|1\\d{10}|[126]\\d{6}(?:\\d(?:\\d{2})?)?|86\\d{5,6}|(?:[3-579]\\d|8[0-57-9])\\d{5,9}", [7, 8, 9, 10, 11, 12], [["(\\d{2})(\\d{5,6})", "$1 $2", ["(?:10|2[0-57-9])[19]|3(?:[157]|35|49|9[1-68])|4(?:1[124-9]|2[179]|6[47-9]|7|8[23])|5(?:[1357]|2[37]|4[36]|6[1-46]|80)|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:07|1[236-8]|2[5-7]|[37]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3|4[13]|5[1-5]|7[0-79]|9[0-35-9])|(?:4[35]|59|85)[1-9]", "(?:10|2[0-57-9])(?:1[02]|9[56])|8078|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:1[124-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[1-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))1", "10(?:1(?:0|23)|9[56])|2[0-57-9](?:1(?:00|23)|9[56])|80781|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:1[124-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[1-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))12", "10(?:1(?:0|23)|9[56])|2[0-57-9](?:1(?:00|23)|9[56])|807812|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:1[124-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[1-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))123", "10(?:1(?:0|23)|9[56])|2[0-57-9](?:1(?:00|23)|9[56])|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:1[124-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:078|1[236-8]|2[5-7]|[37]\\d|5[1-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))123"], "0$1"], ["(\\d{3})(\\d{5,6})", "$1 $2", ["3(?:[157]|35|49|9[1-68])|4(?:[17]|2[179]|6[47-9]|8[23])|5(?:[1357]|2[37]|4[36]|6[1-46]|80)|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]|4[13]|5[1-5])|(?:4[35]|59|85)[1-9]", "(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[1-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))[19]", "85[23](?:10|95)|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:10|9[56])", "85[23](?:100|95)|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:100|9[56])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["(?:4|80)0"]], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["10|2(?:[02-57-9]|1[1-9])", "10|2(?:[02-57-9]|1[1-9])", "10[0-79]|2(?:[02-57-9]|1[1-79])|(?:10|21)8(?:0[1-9]|[1-9])"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["3(?:[3-59]|7[02-68])|4(?:[26-8]|3[3-9]|5[2-9])|5(?:3[03-9]|[468]|7[028]|9[2-46-9])|6|7(?:[0-247]|3[04-9]|5[0-4689]|6[2368])|8(?:[1-358]|9[1-7])|9(?:[013479]|5[1-5])|(?:[34]1|55|79|87)[02-9]"], "0$1", 1], ["(\\d{3})(\\d{7,8})", "$1 $2", ["9"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["80"], "0$1", 1], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["[3-578]"], "0$1", 1], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["1[3-9]"]], ["(\\d{2})(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3 $4", ["[12]"], "0$1", 1]], "0", 0, "(1(?:[12]\\d|79)\\d\\d)|0", 0, 0, 0, 0, "00"], CO: ["57", "00(?:4(?:[14]4|56)|[579])", "(?:46|60\\d\\d)\\d{6}|(?:1\\d|[39])\\d{9}", [8, 10, 11], [["(\\d{4})(\\d{4})", "$1 $2", ["46"]], ["(\\d{3})(\\d{7})", "$1 $2", ["6|90"], "($1)"], ["(\\d{3})(\\d{7})", "$1 $2", ["3[0-357]|91"]], ["(\\d)(\\d{3})(\\d{7})", "$1-$2-$3", ["1"], "0$1", 0, "$1 $2 $3"]], "0", 0, "0([3579]|4(?:[14]4|56))?"], CR: ["506", "00", "(?:8\\d|90)\\d{8}|(?:[24-8]\\d{3}|3005)\\d{4}", [8, 10], [["(\\d{4})(\\d{4})", "$1 $2", ["[2-7]|8[3-9]"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2-$3", ["[89]"]]], 0, 0, "(19(?:0[0-2468]|1[09]|20|66|77|99))"], CU: ["53", "119", "(?:[2-7]|8\\d\\d)\\d{7}|[2-47]\\d{6}|[34]\\d{5}", [6, 7, 8, 10], [["(\\d{2})(\\d{4,6})", "$1 $2", ["2[1-4]|[34]"], "(0$1)"], ["(\\d)(\\d{6,7})", "$1 $2", ["7"], "(0$1)"], ["(\\d)(\\d{7})", "$1 $2", ["[56]"], "0$1"], ["(\\d{3})(\\d{7})", "$1 $2", ["8"], "0$1"]], "0"], CV: ["238", "0", "(?:[2-59]\\d\\d|800)\\d{4}", [7], [["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["[2-589]"]]]], CW: ["599", "00", "(?:[34]1|60|(?:7|9\\d)\\d)\\d{5}", [7, 8], [["(\\d{3})(\\d{4})", "$1 $2", ["[3467]"]], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["9[4-8]"]]], 0, 0, 0, 0, 0, "[69]"], CX: ["61", "001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011", "1(?:[0-79]\\d{8}(?:\\d{2})?|8[0-24-9]\\d{7})|[148]\\d{8}|1\\d{5,7}", [6, 7, 8, 9, 10, 12], 0, "0", 0, "([59]\\d{7})$|0", "8$1", 0, 0, [["8(?:51(?:0(?:01|30|59|88)|1(?:17|46|75)|2(?:22|35))|91(?:00[6-9]|1(?:[28]1|49|78)|2(?:09|63)|3(?:12|26|75)|4(?:56|97)|64\\d|7(?:0[01]|1[0-2])|958))\\d{3}", [9]], ["4(?:79[01]|83[0-389]|94[0-4])\\d{5}|4(?:[0-36]\\d|4[047-9]|5[0-25-9]|7[02-8]|8[0-24-9]|9[0-37-9])\\d{6}", [9]], ["180(?:0\\d{3}|2)\\d{3}", [7, 10]], ["190[0-26]\\d{6}", [10]], 0, 0, 0, 0, ["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}", [9]], ["13(?:00\\d{6}(?:\\d{2})?|45[0-4]\\d{3})|13\\d{4}", [6, 8, 10, 12]]], "0011"], CY: ["357", "00", "(?:[279]\\d|[58]0)\\d{6}", [8], [["(\\d{2})(\\d{6})", "$1 $2", ["[257-9]"]]]], CZ: ["420", "00", "(?:[2-578]\\d|60)\\d{7}|9\\d{8,11}", [9, 10, 11, 12], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-8]|9[015-7]"]], ["(\\d{2})(\\d{3})(\\d{3})(\\d{2})", "$1 $2 $3 $4", ["96"]], ["(\\d{2})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["9"]], ["(\\d{3})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["9"]]]], DE: ["49", "00", "[2579]\\d{5,14}|49(?:[34]0|69|8\\d)\\d\\d?|49(?:37|49|60|7[089]|9\\d)\\d{1,3}|49(?:2[024-9]|3[2-689]|7[1-7])\\d{1,8}|(?:1|[368]\\d|4[0-8])\\d{3,13}|49(?:[015]\\d|2[13]|31|[46][1-8])\\d{1,9}", [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], [["(\\d{2})(\\d{3,13})", "$1 $2", ["3[02]|40|[68]9"], "0$1"], ["(\\d{3})(\\d{3,12})", "$1 $2", ["2(?:0[1-389]|1[124]|2[18]|3[14])|3(?:[35-9][15]|4[015])|906|(?:2[4-9]|4[2-9]|[579][1-9]|[68][1-8])1", "2(?:0[1-389]|12[0-8])|3(?:[35-9][15]|4[015])|906|2(?:[13][14]|2[18])|(?:2[4-9]|4[2-9]|[579][1-9]|[68][1-8])1"], "0$1"], ["(\\d{4})(\\d{2,11})", "$1 $2", ["[24-6]|3(?:[3569][02-46-9]|4[2-4679]|7[2-467]|8[2-46-8])|70[2-8]|8(?:0[2-9]|[1-8])|90[7-9]|[79][1-9]", "[24-6]|3(?:3(?:0[1-467]|2[127-9]|3[124578]|7[1257-9]|8[1256]|9[145])|4(?:2[135]|4[13578]|9[1346])|5(?:0[14]|2[1-3589]|6[1-4]|7[13468]|8[13568])|6(?:2[1-489]|3[124-6]|6[13]|7[12579]|8[1-356]|9[135])|7(?:2[1-7]|4[145]|6[1-5]|7[1-4])|8(?:21|3[1468]|6|7[1467]|8[136])|9(?:0[12479]|2[1358]|4[134679]|6[1-9]|7[136]|8[147]|9[1468]))|70[2-8]|8(?:0[2-9]|[1-8])|90[7-9]|[79][1-9]|3[68]4[1347]|3(?:47|60)[1356]|3(?:3[46]|46|5[49])[1246]|3[4579]3[1357]"], "0$1"], ["(\\d{3})(\\d{4})", "$1 $2", ["138"], "0$1"], ["(\\d{5})(\\d{2,10})", "$1 $2", ["3"], "0$1"], ["(\\d{3})(\\d{5,11})", "$1 $2", ["181"], "0$1"], ["(\\d{3})(\\d)(\\d{4,10})", "$1 $2 $3", ["1(?:3|80)|9"], "0$1"], ["(\\d{3})(\\d{7,8})", "$1 $2", ["1[67]"], "0$1"], ["(\\d{3})(\\d{7,12})", "$1 $2", ["8"], "0$1"], ["(\\d{5})(\\d{6})", "$1 $2", ["185", "1850", "18500"], "0$1"], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["7"], "0$1"], ["(\\d{4})(\\d{7})", "$1 $2", ["18[68]"], "0$1"], ["(\\d{4})(\\d{7})", "$1 $2", ["15[1279]"], "0$1"], ["(\\d{5})(\\d{6})", "$1 $2", ["15[03568]", "15(?:[0568]|31)"], "0$1"], ["(\\d{3})(\\d{8})", "$1 $2", ["18"], "0$1"], ["(\\d{3})(\\d{2})(\\d{7,8})", "$1 $2 $3", ["1(?:6[023]|7)"], "0$1"], ["(\\d{4})(\\d{2})(\\d{7})", "$1 $2 $3", ["15[279]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{8})", "$1 $2 $3", ["15"], "0$1"]], "0"], DJ: ["253", "00", "(?:2\\d|77)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[27]"]]]], DK: ["45", "00", "[2-9]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-9]"]]]], DM: ["1", "011", "(?:[58]\\d\\d|767|900)\\d{7}", [10], 0, "1", 0, "([2-7]\\d{6})$|1", "767$1", 0, "767"], DO: ["1", "011", "(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, 0, 0, 0, "8001|8[024]9"], DZ: ["213", "00", "(?:[1-4]|[5-79]\\d|80)\\d{7}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[1-4]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["9"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-8]"], "0$1"]], "0"], EC: ["593", "00", "1\\d{9,10}|(?:[2-7]|9\\d)\\d{7}", [8, 9, 10, 11], [["(\\d)(\\d{3})(\\d{4})", "$1 $2-$3", ["[2-7]"], "(0$1)", 0, "$1-$2-$3"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["1"]]], "0"], EE: ["372", "00", "8\\d{9}|[4578]\\d{7}|(?:[3-8]\\d|90)\\d{5}", [7, 8, 10], [["(\\d{3})(\\d{4})", "$1 $2", ["[369]|4[3-8]|5(?:[0-2]|5[0-478]|6[45])|7[1-9]|88", "[369]|4[3-8]|5(?:[02]|1(?:[0-8]|95)|5[0-478]|6(?:4[0-4]|5[1-589]))|7[1-9]|88"]], ["(\\d{4})(\\d{3,4})", "$1 $2", ["[45]|8(?:00|[1-49])", "[45]|8(?:00[1-9]|[1-49])"]], ["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["7"]], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]]]], EG: ["20", "00", "[189]\\d{8,9}|[24-6]\\d{8}|[135]\\d{7}", [8, 9, 10], [["(\\d)(\\d{7,8})", "$1 $2", ["[23]"], "0$1"], ["(\\d{2})(\\d{6,7})", "$1 $2", ["1[35]|[4-6]|8[2468]|9[235-7]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[89]"], "0$1"], ["(\\d{2})(\\d{8})", "$1 $2", ["1"], "0$1"]], "0"], EH: ["212", "00", "[5-8]\\d{8}", [9], 0, "0", 0, 0, 0, 0, "528[89]"], ER: ["291", "00", "[178]\\d{6}", [7], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[178]"], "0$1"]], "0"], ES: ["34", "00", "[5-9]\\d{8}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[89]00"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-9]"]]]], ET: ["251", "00", "(?:11|[2-579]\\d)\\d{7}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1-579]"], "0$1"]], "0"], FI: ["358", "00|99(?:[01469]|5(?:[14]1|3[23]|5[59]|77|88|9[09]))", "[1-35689]\\d{4}|7\\d{10,11}|(?:[124-7]\\d|3[0-46-9])\\d{8}|[1-9]\\d{5,8}", [5, 6, 7, 8, 9, 10, 11, 12], [["(\\d{5})", "$1", ["20[2-59]"], "0$1"], ["(\\d{3})(\\d{3,7})", "$1 $2", ["(?:[1-3]0|[68])0|70[07-9]"], "0$1"], ["(\\d{2})(\\d{4,8})", "$1 $2", ["[14]|2[09]|50|7[135]"], "0$1"], ["(\\d{2})(\\d{6,10})", "$1 $2", ["7"], "0$1"], ["(\\d)(\\d{4,9})", "$1 $2", ["(?:19|[2568])[1-8]|3(?:0[1-9]|[1-9])|9"], "0$1"]], "0", 0, 0, 0, 0, "1[03-79]|[2-9]", 0, "00"], FJ: ["679", "0(?:0|52)", "45\\d{5}|(?:0800\\d|[235-9])\\d{6}", [7, 11], [["(\\d{3})(\\d{4})", "$1 $2", ["[235-9]|45"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["0"]]], 0, 0, 0, 0, 0, 0, 0, "00"], FK: ["500", "00", "[2-7]\\d{4}", [5]], FM: ["691", "00", "(?:[39]\\d\\d|820)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[389]"]]]], FO: ["298", "00", "[2-9]\\d{5}", [6], [["(\\d{6})", "$1", ["[2-9]"]]], 0, 0, "(10(?:01|[12]0|88))"], FR: ["33", "00", "[1-9]\\d{8}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0 $1"], ["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["[1-79]"], "0$1"]], "0"], GA: ["241", "00", "(?:[067]\\d|11)\\d{6}|[2-7]\\d{6}", [7, 8], [["(\\d)(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-7]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["0"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["11|[67]"], "0$1"]], 0, 0, "0(11\\d{6}|60\\d{6}|61\\d{6}|6[256]\\d{6}|7[467]\\d{6})", "$1"], GB: ["44", "00", "[1-357-9]\\d{9}|[18]\\d{8}|8\\d{6}", [7, 9, 10], [["(\\d{3})(\\d{4})", "$1 $2", ["800", "8001", "80011", "800111", "8001111"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["845", "8454", "84546", "845464"], "0$1"], ["(\\d{3})(\\d{6})", "$1 $2", ["800"], "0$1"], ["(\\d{5})(\\d{4,5})", "$1 $2", ["1(?:38|5[23]|69|76|94)", "1(?:(?:38|69)7|5(?:24|39)|768|946)", "1(?:3873|5(?:242|39[4-6])|(?:697|768)[347]|9467)"], "0$1"], ["(\\d{4})(\\d{5,6})", "$1 $2", ["1(?:[2-69][02-9]|[78])"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["[25]|7(?:0|6[02-9])", "[25]|7(?:0|6(?:[03-9]|2[356]))"], "0$1"], ["(\\d{4})(\\d{6})", "$1 $2", ["7"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1389]"], "0$1"]], "0", 0, 0, 0, 0, 0, [["(?:1(?:1(?:3(?:[0-58]\\d\\d|73[0-35])|4(?:(?:[0-5]\\d|70)\\d|69[7-9])|(?:(?:5[0-26-9]|[78][0-49])\\d|6(?:[0-4]\\d|50))\\d)|(?:2(?:(?:0[024-9]|2[3-9]|3[3-79]|4[1-689]|[58][02-9]|6[0-47-9]|7[013-9]|9\\d)\\d|1(?:[0-7]\\d|8[0-3]))|(?:3(?:0\\d|1[0-8]|[25][02-9]|3[02-579]|[468][0-46-9]|7[1-35-79]|9[2-578])|4(?:0[03-9]|[137]\\d|[28][02-57-9]|4[02-69]|5[0-8]|[69][0-79])|5(?:0[1-35-9]|[16]\\d|2[024-9]|3[015689]|4[02-9]|5[03-9]|7[0-35-9]|8[0-468]|9[0-57-9])|6(?:0[034689]|1\\d|2[0-35689]|[38][013-9]|4[1-467]|5[0-69]|6[13-9]|7[0-8]|9[0-24578])|7(?:0[0246-9]|2\\d|3[0236-8]|4[03-9]|5[0-46-9]|6[013-9]|7[0-35-9]|8[024-9]|9[02-9])|8(?:0[35-9]|2[1-57-9]|3[02-578]|4[0-578]|5[124-9]|6[2-69]|7\\d|8[02-9]|9[02569])|9(?:0[02-589]|[18]\\d|2[02-689]|3[1-57-9]|4[2-9]|5[0-579]|6[2-47-9]|7[0-24578]|9[2-57]))\\d)\\d)|2(?:0[013478]|3[0189]|4[017]|8[0-46-9]|9[0-2])\\d{3})\\d{4}|1(?:2(?:0(?:46[1-4]|87[2-9])|545[1-79]|76(?:2\\d|3[1-8]|6[1-6])|9(?:7(?:2[0-4]|3[2-5])|8(?:2[2-8]|7[0-47-9]|8[3-5])))|3(?:6(?:38[2-5]|47[23])|8(?:47[04-9]|64[0157-9]))|4(?:044[1-7]|20(?:2[23]|8\\d)|6(?:0(?:30|5[2-57]|6[1-8]|7[2-8])|140)|8(?:052|87[1-3]))|5(?:2(?:4(?:3[2-79]|6\\d)|76\\d)|6(?:26[06-9]|686))|6(?:06(?:4\\d|7[4-79])|295[5-7]|35[34]\\d|47(?:24|61)|59(?:5[08]|6[67]|74)|9(?:55[0-4]|77[23]))|7(?:26(?:6[13-9]|7[0-7])|(?:442|688)\\d|50(?:2[0-3]|[3-68]2|76))|8(?:27[56]\\d|37(?:5[2-5]|8[239])|843[2-58])|9(?:0(?:0(?:6[1-8]|85)|52\\d)|3583|4(?:66[1-8]|9(?:2[01]|81))|63(?:23|3[1-4])|9561))\\d{3}", [9, 10]], ["7(?:457[0-57-9]|700[01]|911[028])\\d{5}|7(?:[1-3]\\d\\d|4(?:[0-46-9]\\d|5[0-689])|5(?:0[0-8]|[13-9]\\d|2[0-35-9])|7(?:0[1-9]|[1-7]\\d|8[02-9]|9[0-689])|8(?:[014-9]\\d|[23][0-8])|9(?:[024-9]\\d|1[02-9]|3[0-689]))\\d{6}", [10]], ["80[08]\\d{7}|800\\d{6}|8001111"], ["(?:8(?:4[2-5]|7[0-3])|9(?:[01]\\d|8[2-49]))\\d{7}|845464\\d", [7, 10]], ["70\\d{8}", [10]], 0, ["(?:3[0347]|55)\\d{8}", [10]], ["76(?:464|652)\\d{5}|76(?:0[0-28]|2[356]|34|4[01347]|5[49]|6[0-369]|77|8[14]|9[139])\\d{6}", [10]], ["56\\d{8}", [10]]], 0, " x"], GD: ["1", "011", "(?:473|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "473$1", 0, "473"], GE: ["995", "00", "(?:[3-57]\\d\\d|800)\\d{6}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["70"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["32"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[57]"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[348]"], "0$1"]], "0"], GF: ["594", "00", "(?:[56]94\\d|7093)\\d{5}|(?:80|9\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-7]|9[47]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[89]"], "0$1"]], "0"], GG: ["44", "00", "(?:1481|[357-9]\\d{3})\\d{6}|8\\d{6}(?:\\d{2})?", [7, 9, 10], 0, "0", 0, "([25-9]\\d{5})$|0", "1481$1", 0, 0, [["1481[25-9]\\d{5}", [10]], ["7(?:(?:781|839)\\d|911[17])\\d{5}", [10]], ["80[08]\\d{7}|800\\d{6}|8001111"], ["(?:8(?:4[2-5]|7[0-3])|9(?:[01]\\d|8[0-3]))\\d{7}|845464\\d", [7, 10]], ["70\\d{8}", [10]], 0, ["(?:3[0347]|55)\\d{8}", [10]], ["76(?:464|652)\\d{5}|76(?:0[0-28]|2[356]|34|4[01347]|5[49]|6[0-369]|77|8[14]|9[139])\\d{6}", [10]], ["56\\d{8}", [10]]]], GH: ["233", "00", "(?:[235]\\d{3}|800)\\d{5}", [8, 9], [["(\\d{3})(\\d{5})", "$1 $2", ["8"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[235]"], "0$1"]], "0"], GI: ["350", "00", "(?:[25]\\d|60)\\d{6}", [8], [["(\\d{3})(\\d{5})", "$1 $2", ["2"]]]], GL: ["299", "00", "(?:19|[2-689]\\d|70)\\d{4}", [6], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["19|[2-9]"]]]], GM: ["220", "00", "[2-9]\\d{6}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-9]"]]]], GN: ["224", "00", "722\\d{6}|(?:3|6\\d)\\d{7}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["3"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[67]"]]]], GP: ["590", "00", "(?:590\\d|7090)\\d{5}|(?:69|80|9\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-79]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0$1"]], "0", 0, 0, 0, 0, 0, [["590(?:0[1-68]|[14][0-24-9]|2[0-68]|3[1-9]|5[3-579]|[68][0-689]|7[08]|9\\d)\\d{4}"], ["(?:69(?:0\\d\\d|1(?:2[2-9]|3[0-5])|4(?:0[89]|1[2-6]|9\\d)|6(?:1[016-9]|5[0-4]|[67]\\d))|7090[0-4])\\d{4}"], ["80[0-5]\\d{6}"], 0, 0, 0, 0, 0, ["9(?:(?:39[5-7]|76[018])\\d|475[0-6])\\d{4}"]]], GQ: ["240", "00", "222\\d{6}|(?:3\\d|55|[89]0)\\d{7}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[235]"]], ["(\\d{3})(\\d{6})", "$1 $2", ["[89]"]]]], GR: ["30", "00", "5005000\\d{3}|8\\d{9,11}|(?:[269]\\d|70)\\d{8}", [10, 11, 12], [["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["21|7"]], ["(\\d{4})(\\d{6})", "$1 $2", ["2(?:2|3[2-57-9]|4[2-469]|5[2-59]|6[2-9]|7[2-69]|8[2-49])|5"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2689]"]], ["(\\d{3})(\\d{3,4})(\\d{5})", "$1 $2 $3", ["8"]]]], GT: ["502", "00", "80\\d{6}|(?:1\\d{3}|[2-7])\\d{7}", [8, 11], [["(\\d{4})(\\d{4})", "$1 $2", ["[2-8]"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]]]], GU: ["1", "011", "(?:[58]\\d\\d|671|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "671$1", 0, "671"], GW: ["245", "00", "[49]\\d{8}|4\\d{6}", [7, 9], [["(\\d{3})(\\d{4})", "$1 $2", ["40"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[49]"]]]], GY: ["592", "001", "(?:[2-8]\\d{3}|9008)\\d{3}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-9]"]]]], HK: ["852", "00(?:30|5[09]|[126-9]?)", "8[0-46-9]\\d{6,7}|9\\d{4,7}|(?:[2-7]|9\\d{3})\\d{7}", [5, 6, 7, 8, 9, 11], [["(\\d{3})(\\d{2,5})", "$1 $2", ["900", "9003"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[2-7]|8[1-4]|9(?:0[1-9]|[1-8])"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]], ["(\\d{3})(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["9"]]], 0, 0, 0, 0, 0, 0, 0, "00"], HN: ["504", "00", "8\\d{10}|[237-9]\\d{7}", [8, 11], [["(\\d{4})(\\d{4})", "$1-$2", ["[237-9]"]]]], HR: ["385", "00", "[2-69]\\d{8}|80\\d{5,7}|[1-79]\\d{7}|6\\d{6}", [7, 8, 9], [["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["6[01]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["8"], "0$1"], ["(\\d)(\\d{4})(\\d{3})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["6|7[245]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-57]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"], "0$1"]], "0"], HT: ["509", "00", "(?:[2-489]\\d|55)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["[2-589]"]]]], HU: ["36", "00", "[235-7]\\d{8}|[1-9]\\d{7}", [8, 9], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "(06 $1)"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[27][2-9]|3[2-7]|4[24-9]|5[2-79]|6|8[2-57-9]|9[2-69]"], "(06 $1)"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-9]"], "06 $1"]], "06"], ID: ["62", "00[89]", "00[1-9]\\d{9,14}|(?:[1-36]|8\\d{5})\\d{6}|00\\d{9}|[1-9]\\d{8,10}|[2-9]\\d{7}", [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["15"]], ["(\\d{2})(\\d{5,9})", "$1 $2", ["2[124]|[36]1"], "(0$1)"], ["(\\d{3})(\\d{5,7})", "$1 $2", ["800"], "0$1"], ["(\\d{3})(\\d{5,8})", "$1 $2", ["[2-79]"], "(0$1)"], ["(\\d{3})(\\d{3,4})(\\d{3})", "$1-$2-$3", ["8[1-35-9]"], "0$1"], ["(\\d{3})(\\d{6,8})", "$1 $2", ["1"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["804"], "0$1"], ["(\\d{3})(\\d)(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["80"], "0$1"], ["(\\d{3})(\\d{4})(\\d{4,5})", "$1-$2-$3", ["8"], "0$1"]], "0"], IE: ["353", "00", "(?:1\\d|[2569])\\d{6,8}|4\\d{6,9}|7\\d{8}|8\\d{8,9}", [7, 8, 9, 10], [["(\\d{2})(\\d{5})", "$1 $2", ["2[24-9]|47|58|6[237-9]|9[35-9]"], "(0$1)"], ["(\\d{3})(\\d{5})", "$1 $2", ["[45]0"], "(0$1)"], ["(\\d)(\\d{3,4})(\\d{4})", "$1 $2 $3", ["1"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2569]|4[1-69]|7[14]"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["70"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["81"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[78]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["4"], "(0$1)"], ["(\\d{2})(\\d)(\\d{3})(\\d{4})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], IL: ["972", "0(?:0|1[2-9])", "1\\d{6}(?:\\d{3,5})?|[57]\\d{8}|[1-489]\\d{7}", [7, 8, 9, 10, 11, 12], [["(\\d{4})(\\d{3})", "$1-$2", ["125"]], ["(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3", ["121"]], ["(\\d)(\\d{3})(\\d{4})", "$1-$2-$3", ["[2-489]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["[57]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1-$2-$3", ["12"]], ["(\\d{4})(\\d{6})", "$1-$2", ["159"]], ["(\\d)(\\d{3})(\\d{3})(\\d{3})", "$1-$2-$3-$4", ["1[7-9]"]], ["(\\d{3})(\\d{1,2})(\\d{3})(\\d{4})", "$1-$2 $3-$4", ["15"]]], "0"], IM: ["44", "00", "1624\\d{6}|(?:[3578]\\d|90)\\d{8}", [10], 0, "0", 0, "([25-8]\\d{5})$|0", "1624$1", 0, "74576|(?:16|7[56])24"], IN: ["91", "00", "(?:000800|[2-9]\\d\\d)\\d{7}|1\\d{7,12}", [8, 9, 10, 11, 12, 13], [["(\\d{8})", "$1", ["5(?:0|2[23]|3[03]|[67]1|88)", "5(?:0|2(?:21|3)|3(?:0|3[23])|616|717|888)", "5(?:0|2(?:21|3)|3(?:0|3[23])|616|717|8888)"], 0, 1], ["(\\d{4})(\\d{4,5})", "$1 $2", ["180", "1800"], 0, 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["140"], 0, 1], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["11|2[02]|33|4[04]|79[1-7]|80[2-46]", "11|2[02]|33|4[04]|79(?:[1-6]|7[19])|80(?:[2-4]|6[0-589])", "11|2[02]|33|4[04]|79(?:[124-6]|3(?:[02-9]|1[0-24-9])|7(?:1|9[1-6]))|80(?:[2-4]|6[0-589])"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["1(?:2[0-249]|3[0-25]|4[145]|[68]|7[1257])|2(?:1[257]|3[013]|4[01]|5[0137]|6[0158]|78|8[1568])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|5[12]|[78]1)|6(?:12|[2-4]1|5[17]|6[13]|80)|7(?:12|3[134]|4[47]|61|88)|8(?:16|2[014]|3[126]|6[136]|7[078]|8[34]|91)|(?:43|59|75)[15]|(?:1[59]|29|67|72)[14]", "1(?:2[0-24]|3[0-25]|4[145]|[59][14]|6[1-9]|7[1257]|8[1-57-9])|2(?:1[257]|3[013]|4[01]|5[0137]|6[058]|78|8[1568]|9[14])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|3[15]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|[578]1|9[15])|674|7(?:(?:2[14]|3[34]|5[15])[2-6]|61[346]|88[0-8])|8(?:70[2-6]|84[235-7]|91[3-7])|(?:1(?:29|60|8[06])|261|552|6(?:12|[2-47]1|5[17]|6[13]|80)|7(?:12|31|4[47])|8(?:16|2[014]|3[126]|6[136]|7[78]|83))[2-7]", "1(?:2[0-24]|3[0-25]|4[145]|[59][14]|6[1-9]|7[1257]|8[1-57-9])|2(?:1[257]|3[013]|4[01]|5[0137]|6[058]|78|8[1568]|9[14])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|3[15]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|[578]1|9[15])|6(?:12(?:[2-6]|7[0-8])|74[2-7])|7(?:(?:2[14]|5[15])[2-6]|3171|61[346]|88(?:[2-7]|82))|8(?:70[2-6]|84(?:[2356]|7[19])|91(?:[3-6]|7[19]))|73[134][2-6]|(?:74[47]|8(?:16|2[014]|3[126]|6[136]|7[78]|83))(?:[2-6]|7[19])|(?:1(?:29|60|8[06])|261|552|6(?:[2-4]1|5[17]|6[13]|7(?:1|4[0189])|80)|7(?:12|88[01]))[2-7]"], "0$1", 1], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1(?:[2-479]|5[0235-9])|[2-5]|6(?:1[1358]|2[2457-9]|3[2-5]|4[235-7]|5[2-689]|6[24578]|7[235689]|8[1-6])|7(?:1[013-9]|28|3[129]|4[1-35689]|5[29]|6[02-5]|70)|807", "1(?:[2-479]|5[0235-9])|[2-5]|6(?:1[1358]|2(?:[2457]|84|95)|3(?:[2-4]|55)|4[235-7]|5[2-689]|6[24578]|7[235689]|8[1-6])|7(?:1(?:[013-8]|9[6-9])|28[6-8]|3(?:17|2[0-49]|9[2-57])|4(?:1[2-4]|[29][0-7]|3[0-8]|[56]|8[0-24-7])|5(?:2[1-3]|9[0-6])|6(?:0[5689]|2[5-9]|3[02-8]|4|5[0-367])|70[13-7])|807[19]", "1(?:[2-479]|5(?:[0236-9]|5[013-9]))|[2-5]|6(?:2(?:84|95)|355|83)|73179|807(?:1|9[1-3])|(?:1552|6(?:1[1358]|2[2457]|3[2-4]|4[235-7]|5[2-689]|6[24578]|7[235689]|8[124-6])\\d|7(?:1(?:[013-8]\\d|9[6-9])|28[6-8]|3(?:2[0-49]|9[2-57])|4(?:1[2-4]|[29][0-7]|3[0-8]|[56]\\d|8[0-24-7])|5(?:2[1-3]|9[0-6])|6(?:0[5689]|2[5-9]|3[02-8]|4\\d|5[0-367])|70[13-7]))[2-7]"], "0$1", 1], ["(\\d{5})(\\d{5})", "$1 $2", ["[6-9]"], "0$1", 1], ["(\\d{4})(\\d{2,4})(\\d{4})", "$1 $2 $3", ["1(?:6|8[06])", "1(?:6|8[06]0)"], 0, 1], ["(\\d{4})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["18"], 0, 1]], "0"], IO: ["246", "00", "3\\d{6}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["3"]]]], IQ: ["964", "00", "(?:1|7\\d\\d)\\d{7}|[2-6]\\d{7,8}", [8, 9, 10], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-6]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "0$1"]], "0"], IR: ["98", "00", "[1-9]\\d{9}|(?:[1-8]\\d\\d|9)\\d{3,4}", [4, 5, 6, 7, 10], [["(\\d{4,5})", "$1", ["96"], "0$1"], ["(\\d{2})(\\d{4,5})", "$1 $2", ["(?:1[137]|2[13-68]|3[1458]|4[145]|5[1468]|6[16]|7[1467]|8[13467])[12689]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["[1-8]"], "0$1"]], "0"], IS: ["354", "00|1(?:0(?:01|[12]0)|100)", "(?:38\\d|[4-9])\\d{6}", [7, 9], [["(\\d{3})(\\d{4})", "$1 $2", ["[4-9]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["3"]]], 0, 0, 0, 0, 0, 0, 0, "00"], IT: ["39", "00", "0\\d{5,10}|1\\d{8,10}|3(?:[0-8]\\d{7,10}|9\\d{7,8})|(?:43|55|70)\\d{8}|8\\d{5}(?:\\d{2,4})?", [6, 7, 8, 9, 10, 11, 12], [["(\\d{2})(\\d{4,6})", "$1 $2", ["0[26]"]], ["(\\d{3})(\\d{3,6})", "$1 $2", ["0[13-57-9][0159]|8(?:03|4[17]|9[2-5])", "0[13-57-9][0159]|8(?:03|4[17]|9(?:2|3[04]|[45][0-4]))"]], ["(\\d{4})(\\d{2,6})", "$1 $2", ["0(?:[13-579][2-46-8]|8[236-8])"]], ["(\\d{4})(\\d{4})", "$1 $2", ["894"]], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["0[26]|5"]], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["1(?:44|[679])|[378]|43"]], ["(\\d{3})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["0[13-57-9][0159]|14"]], ["(\\d{2})(\\d{4})(\\d{5})", "$1 $2 $3", ["0[26]"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["0"]], ["(\\d{3})(\\d{4})(\\d{4,5})", "$1 $2 $3", ["3"]]], 0, 0, 0, 0, 0, 0, [["0669[0-79]\\d{1,6}|0(?:1(?:[0159]\\d|[27][1-5]|31|4[1-4]|6[1356]|8[2-57])|2\\d\\d|3(?:[0159]\\d|2[1-4]|3[12]|[48][1-6]|6[2-59]|7[1-7])|4(?:[0159]\\d|[23][1-9]|4[245]|6[1-5]|7[1-4]|81)|5(?:[0159]\\d|2[1-5]|3[2-6]|4[1-79]|6[4-6]|7[1-578]|8[3-8])|6(?:[0-57-9]\\d|6[0-8])|7(?:[0159]\\d|2[12]|3[1-7]|4[2-46]|6[13569]|7[13-6]|8[1-59])|8(?:[0159]\\d|2[3-578]|3[1-356]|[6-8][1-5])|9(?:[0159]\\d|[238][1-5]|4[12]|6[1-8]|7[1-6]))\\d{2,7}", [6, 7, 8, 9, 10, 11]], ["3[2-9]\\d{7,8}|(?:31|43)\\d{8}", [9, 10]], ["80(?:0\\d{3}|3)\\d{3}", [6, 9]], ["(?:0878\\d{3}|89(?:2\\d|3[04]|4(?:[0-4]|[5-9]\\d\\d)|5[0-4]))\\d\\d|(?:1(?:44|6[346])|89(?:38|5[5-9]|9))\\d{6}", [6, 8, 9, 10]], ["1(?:78\\d|99)\\d{6}", [9, 10]], ["3[2-8]\\d{9,10}", [11, 12]], 0, 0, ["55\\d{8}", [10]], ["84(?:[08]\\d{3}|[17])\\d{3}", [6, 9]]]], JE: ["44", "00", "1534\\d{6}|(?:[3578]\\d|90)\\d{8}", [10], 0, "0", 0, "([0-24-8]\\d{5})$|0", "1534$1", 0, 0, [["1534[0-24-8]\\d{5}"], ["7(?:(?:(?:50|82)9|937)\\d|7(?:00[378]|97\\d))\\d{5}"], ["80(?:07(?:35|81)|8901)\\d{4}"], ["(?:8(?:4(?:4(?:4(?:05|42|69)|703)|5(?:041|800))|7(?:0002|1206))|90(?:066[59]|1810|71(?:07|55)))\\d{4}"], ["701511\\d{4}"], 0, ["(?:3(?:0(?:07(?:35|81)|8901)|3\\d{4}|4(?:4(?:4(?:05|42|69)|703)|5(?:041|800))|7(?:0002|1206))|55\\d{4})\\d{4}"], ["76(?:464|652)\\d{5}|76(?:0[0-28]|2[356]|34|4[01347]|5[49]|6[0-369]|77|8[14]|9[139])\\d{6}"], ["56\\d{8}"]]], JM: ["1", "011", "(?:[58]\\d\\d|658|900)\\d{7}", [10], 0, "1", 0, 0, 0, 0, "658|876"], JO: ["962", "00", "(?:(?:[2689]|7\\d)\\d|32|53)\\d{6}", [8, 9], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[2356]|87"], "(0$1)"], ["(\\d{3})(\\d{5,6})", "$1 $2", ["[89]"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["70"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["7"], "0$1"]], "0"], JP: ["81", "010", "00[1-9]\\d{6,14}|[257-9]\\d{9}|(?:00|[1-9]\\d\\d)\\d{6}", [8, 9, 10, 11, 12, 13, 14, 15, 16, 17], [["(\\d{3})(\\d{3})(\\d{3})", "$1-$2-$3", ["(?:12|57|99)0"], "0$1"], ["(\\d{4})(\\d)(\\d{4})", "$1-$2-$3", ["1(?:26|3[79]|4[56]|5[4-68]|6[3-5])|499|5(?:76|97)|746|8(?:3[89]|47|51)|9(?:80|9[16])", "1(?:267|3(?:7[247]|9[278])|466|5(?:47|58|64)|6(?:3[245]|48|5[4-68]))|499[2468]|5(?:76|97)9|7468|8(?:3(?:8[7-9]|96)|477|51[2-9])|9(?:802|9(?:1[23]|69))|1(?:45|58)[67]", "1(?:267|3(?:7[247]|9[278])|466|5(?:47|58|64)|6(?:3[245]|48|5[4-68]))|499[2468]|5(?:769|979[2-69])|7468|8(?:3(?:8[7-9]|96[2457-9])|477|51[2-9])|9(?:802|9(?:1[23]|69))|1(?:45|58)[67]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["60"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1-$2-$3", ["[36]|4(?:2[09]|7[01])", "[36]|4(?:2(?:0|9[02-69])|7(?:0[019]|1))"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["1(?:1|5[45]|77|88|9[69])|2(?:2[1-37]|3[0-269]|4[59]|5|6[24]|7[1-358]|8[1369]|9[0-38])|4(?:[28][1-9]|3[0-57]|[45]|6[248]|7[2-579]|9[29])|5(?:2|3[0459]|4[0-369]|5[29]|8[02389]|9[0-389])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9[2-6])|8(?:2[124589]|3[26-9]|49|51|6|7[0-468]|8[68]|9[019])|9(?:[23][1-9]|4[15]|5[138]|6[1-3]|7[156]|8[189]|9[1-489])", "1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2(?:[127]|3[014-9])|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|9[19])|62|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|8[1-9]|9[29])|5(?:2|3(?:[045]|9[0-8])|4[0-369]|5[29]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9[0-2469])|3(?:[29]|60)|49|51|6(?:[0-24]|36|5[0-3589]|7[23]|9[01459])|7[0-468]|8[68])|9(?:[23][1-9]|4[15]|5[138]|6[1-3]|7[156]|8[189]|9(?:[1289]|3[34]|4[0178]))|(?:264|837)[016-9]|2(?:57|93)[015-9]|(?:25[0468]|422|838)[01]|(?:47[59]|59[89]|8(?:6[68]|9))[019]", "1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2[127]|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|9(?:17|99))|6(?:2|4[016-9])|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|9[29])|5(?:2|3(?:[045]|9(?:[0-58]|6[4-9]|7[0-35689]))|4[0-369]|5[29]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9[0169])|3(?:[29]|60|7(?:[017-9]|6[6-8]))|49|51|6(?:[0-24]|36[2-57-9]|5(?:[0-389]|5[23])|6(?:[01]|9[178])|7(?:2[2-468]|3[78])|9[0145])|7[0-468]|8[68])|9(?:4[15]|5[138]|7[156]|8[189]|9(?:[1289]|3(?:31|4[357])|4[0178]))|(?:8294|96)[1-3]|2(?:57|93)[015-9]|(?:223|8699)[014-9]|(?:25[0468]|422|838)[01]|(?:48|8292|9[23])[1-9]|(?:47[59]|59[89]|8(?:68|9))[019]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{4})", "$1-$2-$3", ["[14]|[289][2-9]|5[3-9]|7[2-4679]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2-$3", ["800"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1-$2-$3", ["[257-9]"], "0$1"]], "0", 0, "(000[259]\\d{6})$|(?:(?:003768)0?)|0", "$1"], KE: ["254", "000", "(?:[17]\\d\\d|900)\\d{6}|(?:2|80)0\\d{6,7}|[4-6]\\d{6,8}", [7, 8, 9, 10], [["(\\d{2})(\\d{5,7})", "$1 $2", ["[24-6]"], "0$1"], ["(\\d{3})(\\d{6})", "$1 $2", ["[17]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[89]"], "0$1"]], "0"], KG: ["996", "00", "8\\d{9}|[235-9]\\d{8}", [9, 10], [["(\\d{4})(\\d{5})", "$1 $2", ["3(?:1[346]|[24-79])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[235-79]|88"], "0$1"], ["(\\d{3})(\\d{3})(\\d)(\\d{2,3})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], KH: ["855", "00[14-9]", "1\\d{9}|[1-9]\\d{7,8}", [8, 9, 10], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[1-9]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]]], "0"], KI: ["686", "00", "(?:[37]\\d|6[0-79])\\d{6}|(?:[2-48]\\d|50)\\d{3}", [5, 8], 0, "0"], KM: ["269", "00", "[3478]\\d{6}", [7], [["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["[3478]"]]]], KN: ["1", "011", "(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-7]\\d{6})$|1", "869$1", 0, "869"], KP: ["850", "00|99", "85\\d{6}|(?:19\\d|[2-7])\\d{7}", [8, 10], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"], "0$1"], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-7]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"]], "0"], KR: ["82", "00(?:[125689]|3(?:[46]5|91)|7(?:00|27|3|55|6[126]))", "00[1-9]\\d{8,11}|(?:[12]|5\\d{3})\\d{7}|[13-6]\\d{9}|(?:[1-6]\\d|80)\\d{7}|[3-6]\\d{4,5}|(?:00|7)0\\d{8}", [5, 6, 8, 9, 10, 11, 12, 13, 14], [["(\\d{2})(\\d{3,4})", "$1-$2", ["(?:3[1-3]|[46][1-4]|5[1-5])1"], "0$1"], ["(\\d{4})(\\d{4})", "$1-$2", ["1"]], ["(\\d)(\\d{3,4})(\\d{4})", "$1-$2-$3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["[36]0|8"], "0$1"], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1-$2-$3", ["[1346]|5[1-5]"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1-$2-$3", ["[57]"], "0$1"], ["(\\d{2})(\\d{5})(\\d{4})", "$1-$2-$3", ["5"], "0$1"]], "0", 0, "0(8(?:[1-46-8]|5\\d\\d))?"], KW: ["965", "00", "18\\d{5}|(?:[2569]\\d|41)\\d{6}", [7, 8], [["(\\d{4})(\\d{3,4})", "$1 $2", ["[169]|2(?:[235]|4[1-35-9])|52"]], ["(\\d{3})(\\d{5})", "$1 $2", ["[245]"]]]], KY: ["1", "011", "(?:345|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "345$1", 0, "345"], KZ: ["7", "810", "(?:33622|8\\d{8})\\d{5}|[78]\\d{9}", [10, 14], 0, "8", 0, 0, 0, 0, "33|7", 0, "8~10"], LA: ["856", "00", "[23]\\d{9}|3\\d{8}|(?:[235-8]\\d|41)\\d{6}", [8, 9, 10], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["2[13]|3[14]|[4-8]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["3"], "0$1"], ["(\\d{2})(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["[23]"], "0$1"]], "0"], LB: ["961", "00", "[27-9]\\d{7}|[13-9]\\d{6}", [7, 8], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[13-69]|7(?:[2-57]|62|8[0-7]|9[04-9])|8[02-9]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[27-9]"]]], "0"], LC: ["1", "011", "(?:[58]\\d\\d|758|900)\\d{7}", [10], 0, "1", 0, "([2-8]\\d{6})$|1", "758$1", 0, "758"], LI: ["423", "00", "[68]\\d{8}|(?:[2378]\\d|90)\\d{5}", [7, 9], [["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["[2379]|8(?:0[09]|7)", "[2379]|8(?:0(?:02|9)|7)"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["69"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6"]]], "0", 0, "(1001)|0"], LK: ["94", "00", "[1-9]\\d{8}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[1-689]"], "0$1"]], "0"], LR: ["231", "00", "(?:[245]\\d|33|77|88)\\d{7}|(?:2\\d|[4-6])\\d{6}", [7, 8, 9], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["4[67]|[56]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-578]"], "0$1"]], "0"], LS: ["266", "00", "(?:[256]\\d\\d|800)\\d{5}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[2568]"]]]], LT: ["370", "00", "(?:[3469]\\d|52|[78]0)\\d{6}", [8], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["52[0-7]"], "(0-$1)", 1], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["[7-9]"], "0 $1", 1], ["(\\d{2})(\\d{6})", "$1 $2", ["37|4(?:[15]|6[1-8])"], "(0-$1)", 1], ["(\\d{3})(\\d{5})", "$1 $2", ["[3-6]"], "(0-$1)", 1]], "0", 0, "[08]"], LU: ["352", "00", "35[013-9]\\d{4,8}|6\\d{8}|35\\d{2,4}|(?:[2457-9]\\d|3[0-46-9])\\d{2,9}", [4, 5, 6, 7, 8, 9, 10, 11], [["(\\d{2})(\\d{3})", "$1 $2", ["2(?:0[2-689]|[2-9])|[3-57]|8(?:0[2-9]|[13-9])|9(?:0[89]|[2-579])"]], ["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["2(?:0[2-689]|[2-9])|[3-57]|8(?:0[2-9]|[13-9])|9(?:0[89]|[2-579])"]], ["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["20[2-689]"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})", "$1 $2 $3 $4", ["2(?:[0367]|4[3-8])"]], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["80[01]|90[015]"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["20"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})", "$1 $2 $3 $4 $5", ["2(?:[0367]|4[3-8])"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{1,5})", "$1 $2 $3 $4", ["[3-57]|8[13-9]|9(?:0[89]|[2-579])|(?:2|80)[2-9]"]]], 0, 0, "(15(?:0[06]|1[12]|[35]5|4[04]|6[26]|77|88|99)\\d)"], LV: ["371", "00", "(?:[268]\\d|90)\\d{6}", [8], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[269]|8[01]"]]]], LY: ["218", "00", "[2-9]\\d{8}", [9], [["(\\d{2})(\\d{7})", "$1-$2", ["[2-9]"], "0$1"]], "0"], MA: ["212", "00", "[5-8]\\d{8}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["5[45]"], "0$1"], ["(\\d{4})(\\d{5})", "$1-$2", ["5(?:2[2-46-9]|3[3-9]|9)|8(?:0[89]|92)"], "0$1"], ["(\\d{2})(\\d{7})", "$1-$2", ["8"], "0$1"], ["(\\d{3})(\\d{6})", "$1-$2", ["[5-7]"], "0$1"]], "0", 0, 0, 0, 0, 0, [["5(?:2(?:[0-25-79]\\d|3[1-578]|4[02-46-8]|8[0235-7])|3(?:[0-47]\\d|5[02-9]|6[02-8]|8[014-9]|9[3-9])|(?:4[067]|5[03])\\d)\\d{5}"], ["(?:6(?:[0-79]\\d|8[0-247-9])|7(?:[0167]\\d|2[0-467]|5[0-3]|8[0-7]))\\d{6}"], ["80[0-7]\\d{6}"], ["89\\d{7}"], 0, 0, 0, 0, ["(?:592(?:4[0-2]|93)|80[89]\\d\\d)\\d{4}"]]], MC: ["377", "00", "(?:[3489]|6\\d)\\d{7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["4"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[389]"]], ["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["6"], "0$1"]], "0"], MD: ["373", "00", "(?:[235-7]\\d|[89]0)\\d{6}", [8], [["(\\d{3})(\\d{5})", "$1 $2", ["[89]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["22|3"], "0$1"], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["[25-7]"], "0$1"]], "0"], ME: ["382", "00", "(?:20|[3-79]\\d)\\d{6}|80\\d{6,7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-9]"], "0$1"]], "0"], MF: ["590", "00", "(?:590\\d|7090)\\d{5}|(?:69|80|9\\d)\\d{7}", [9], 0, "0", 0, 0, 0, 0, 0, [["590(?:0[079]|[14]3|[27][79]|3[03-7]|5[0-268]|87)\\d{4}"], ["(?:69(?:0\\d\\d|1(?:2[2-9]|3[0-5])|4(?:0[89]|1[2-6]|9\\d)|6(?:1[016-9]|5[0-4]|[67]\\d))|7090[0-4])\\d{4}"], ["80[0-5]\\d{6}"], 0, 0, 0, 0, 0, ["9(?:(?:39[5-7]|76[018])\\d|475[0-6])\\d{4}"]]], MG: ["261", "00", "[23]\\d{8}", [9], [["(\\d{2})(\\d{2})(\\d{3})(\\d{2})", "$1 $2 $3 $4", ["[23]"], "0$1"]], "0", 0, "([24-9]\\d{6})$|0", "20$1"], MH: ["692", "011", "329\\d{4}|(?:[256]\\d|45)\\d{5}", [7], [["(\\d{3})(\\d{4})", "$1-$2", ["[2-6]"]]], "1"], MK: ["389", "00", "[2-578]\\d{7}", [8], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["2|34[47]|4(?:[37]7|5[47]|64)"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[347]"], "0$1"], ["(\\d{3})(\\d)(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[58]"], "0$1"]], "0"], ML: ["223", "00", "[24-9]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[24-9]"]]]], MM: ["95", "00", "1\\d{5,7}|95\\d{6}|(?:[4-7]|9[0-46-9])\\d{6,8}|(?:2|8\\d)\\d{5,8}", [6, 7, 8, 9, 10], [["(\\d)(\\d{2})(\\d{3})", "$1 $2 $3", ["16|2"], "0$1"], ["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["4(?:[2-46]|5[3-5])|5|6(?:[1-689]|7[235-7])|7(?:[0-4]|5[2-7])|8[1-5]|(?:60|86)[23]"], "0$1"], ["(\\d)(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[12]|452|678|86", "[12]|452|6788|86"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[4-7]|8[1-35]"], "0$1"], ["(\\d)(\\d{3})(\\d{4,6})", "$1 $2 $3", ["9(?:2[0-4]|[35-9]|4[137-9])"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"], "0$1"], ["(\\d)(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["92"], "0$1"], ["(\\d)(\\d{5})(\\d{4})", "$1 $2 $3", ["9"], "0$1"]], "0"], MN: ["976", "001", "[12]\\d{7,9}|[5-9]\\d{7}", [8, 9, 10], [["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["[12]1"], "0$1"], ["(\\d{4})(\\d{4})", "$1 $2", ["[5-9]"]], ["(\\d{3})(\\d{5,6})", "$1 $2", ["[12]2[1-3]"], "0$1"], ["(\\d{4})(\\d{5,6})", "$1 $2", ["[12](?:27|3[2-8]|4[2-68]|5[1-4689])", "[12](?:27|3[2-8]|4[2-68]|5[1-4689])[0-3]"], "0$1"], ["(\\d{5})(\\d{4,5})", "$1 $2", ["[12]"], "0$1"]], "0"], MO: ["853", "00", "0800\\d{3}|(?:28|[68]\\d)\\d{6}", [7, 8], [["(\\d{4})(\\d{3})", "$1 $2", ["0"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[268]"]]]], MP: ["1", "011", "[58]\\d{9}|(?:67|90)0\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "670$1", 0, "670"], MQ: ["596", "00", "(?:596\\d|7091)\\d{5}|(?:69|[89]\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-79]|8(?:0[6-9]|[36])"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], MR: ["222", "00", "(?:[2-4]\\d\\d|800)\\d{5}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-48]"]]]], MS: ["1", "011", "(?:[58]\\d\\d|664|900)\\d{7}", [10], 0, "1", 0, "([34]\\d{6})$|1", "664$1", 0, "664"], MT: ["356", "00", "3550\\d{4}|(?:[2579]\\d\\d|800)\\d{5}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[2357-9]"]]]], MU: ["230", "0(?:0|[24-7]0|3[03])", "(?:[57]|8\\d\\d)\\d{7}|[2-468]\\d{6}", [7, 8, 10], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-46]|8[013]"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[57]"]], ["(\\d{5})(\\d{5})", "$1 $2", ["8"]]], 0, 0, 0, 0, 0, 0, 0, "020"], MV: ["960", "0(?:0|19)", "(?:800|9[0-57-9]\\d)\\d{7}|[34679]\\d{6}", [7, 10], [["(\\d{3})(\\d{4})", "$1-$2", ["[34679]"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[89]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], MW: ["265", "00", "(?:[1289]\\d|31|77)\\d{7}|1\\d{6}", [7, 9], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["1[2-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[137-9]"], "0$1"]], "0"], MX: ["52", "0[09]", "[2-9]\\d{9}", [10], [["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["33|5[56]|81"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-9]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], MY: ["60", "00", "1\\d{8,9}|(?:3\\d|[4-9])\\d{7}", [8, 9, 10], [["(\\d)(\\d{3})(\\d{4})", "$1-$2 $3", ["[4-79]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1-$2 $3", ["1(?:[02469]|[378][1-9]|53)|8", "1(?:[02469]|[37][1-9]|53|8(?:[1-46-9]|5[7-9]))|8"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1-$2 $3", ["3"], "0$1"], ["(\\d)(\\d{3})(\\d{2})(\\d{4})", "$1-$2-$3-$4", ["1(?:[367]|80)"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2 $3", ["15"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1-$2 $3", ["1"], "0$1"]], "0"], MZ: ["258", "00", "(?:2|8\\d)\\d{7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2|8[2-79]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]]]], NA: ["264", "00", "[68]\\d{7,8}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["88"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["6"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["87"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"], "0$1"]], "0"], NC: ["687", "00", "(?:050|[2-57-9]\\d\\d)\\d{3}", [6], [["(\\d{2})(\\d{2})(\\d{2})", "$1.$2.$3", ["[02-57-9]"]]]], NE: ["227", "00", "[027-9]\\d{7}", [8], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["08"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[089]|2[013]|7[0467]"]]]], NF: ["672", "00", "[13]\\d{5}", [6], [["(\\d{2})(\\d{4})", "$1 $2", ["1[0-3]"]], ["(\\d)(\\d{5})", "$1 $2", ["[13]"]]], 0, 0, "([0-258]\\d{4})$", "3$1"], NG: ["234", "009", "(?:20|9\\d)\\d{8}|[78]\\d{9,13}", [10, 11, 12, 13, 14], [["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[7-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["20[129]"], "0$1"], ["(\\d{4})(\\d{2})(\\d{4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{3})(\\d{4})(\\d{4,5})", "$1 $2 $3", ["[78]"], "0$1"], ["(\\d{3})(\\d{5})(\\d{5,6})", "$1 $2 $3", ["[78]"], "0$1"]], "0"], NI: ["505", "00", "(?:1800|[25-8]\\d{3})\\d{4}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[125-8]"]]]], NL: ["31", "00", "(?:[124-7]\\d\\d|3(?:[02-9]\\d|1[0-8]))\\d{6}|8\\d{6,9}|9\\d{6,10}|1\\d{4,5}", [5, 6, 7, 8, 9, 10, 11], [["(\\d{3})(\\d{4,7})", "$1 $2", ["[89]0"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["66"], "0$1"], ["(\\d)(\\d{8})", "$1 $2", ["6"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["1[16-8]|2[259]|3[124]|4[17-9]|5[124679]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1-578]|91"], "0$1"], ["(\\d{3})(\\d{3})(\\d{5})", "$1 $2 $3", ["9"], "0$1"]], "0"], NO: ["47", "00", "(?:0|[2-9]\\d{3})\\d{4}", [5, 8], [["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["8"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-79]"]]], 0, 0, 0, 0, 0, "[02-689]|7[0-8]"], NP: ["977", "00", "(?:1\\d|9)\\d{9}|[1-9]\\d{7}", [8, 10, 11], [["(\\d)(\\d{7})", "$1-$2", ["1[2-6]"], "0$1"], ["(\\d{2})(\\d{6})", "$1-$2", ["1[01]|[2-8]|9(?:[1-59]|[67][2-6])"], "0$1"], ["(\\d{3})(\\d{7})", "$1-$2", ["9"]]], "0"], NR: ["674", "00", "(?:222|444|(?:55|8\\d)\\d|666|777|999)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[24-9]"]]]], NU: ["683", "00", "(?:[4-7]|888\\d)\\d{3}", [4, 7], [["(\\d{3})(\\d{4})", "$1 $2", ["8"]]]], NZ: ["64", "0(?:0|161)", "[1289]\\d{9}|50\\d{5}(?:\\d{2,3})?|[27-9]\\d{7,8}|(?:[34]\\d|6[0-35-9])\\d{6}|8\\d{4,6}", [5, 6, 7, 8, 9, 10], [["(\\d{2})(\\d{3,8})", "$1 $2", ["8[1-79]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["50[036-8]|8|90", "50(?:[0367]|88)|8|90"], "0$1"], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["24|[346]|7[2-57-9]|9[2-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2(?:10|74)|[589]"], "0$1"], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["1|2[028]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,5})", "$1 $2 $3", ["2(?:[169]|7[0-35-9])|7"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, "00"], OM: ["968", "00", "(?:1505|[279]\\d{3}|500)\\d{4}|800\\d{5,6}", [7, 8, 9], [["(\\d{3})(\\d{4,6})", "$1 $2", ["[58]"]], ["(\\d{2})(\\d{6})", "$1 $2", ["2"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[179]"]]]], PA: ["507", "00", "(?:00800|8\\d{3})\\d{6}|[68]\\d{7}|[1-57-9]\\d{6}", [7, 8, 10, 11], [["(\\d{3})(\\d{4})", "$1-$2", ["[1-57-9]"]], ["(\\d{4})(\\d{4})", "$1-$2", ["[68]"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"]]]], PE: ["51", "00|19(?:1[124]|77|90)00", "(?:[14-8]|9\\d)\\d{7}", [8, 9], [["(\\d{3})(\\d{5})", "$1 $2", ["80"], "(0$1)"], ["(\\d)(\\d{7})", "$1 $2", ["1"], "(0$1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["[4-8]"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"]]], "0", 0, 0, 0, 0, 0, 0, "00", " Anexo "], PF: ["689", "00", "4\\d{5}(?:\\d{2})?|8\\d{7,8}", [6, 8, 9], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["44"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["4|8[7-9]"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"]]]], PG: ["675", "00|140[1-3]", "(?:180|[78]\\d{3})\\d{4}|(?:[2-589]\\d|64)\\d{5}", [7, 8], [["(\\d{3})(\\d{4})", "$1 $2", ["18|[2-69]|85"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[78]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], PH: ["63", "00", "(?:[2-7]|9\\d)\\d{8}|2\\d{5}|(?:1800|8)\\d{7,9}", [6, 8, 9, 10, 11, 12, 13], [["(\\d)(\\d{5})", "$1 $2", ["2"], "(0$1)"], ["(\\d{4})(\\d{4,6})", "$1 $2", ["3(?:23|39|46)|4(?:2[3-6]|[35]9|4[26]|76)|544|88[245]|(?:52|64|86)2", "3(?:230|397|461)|4(?:2(?:35|[46]4|51)|396|4(?:22|63)|59[347]|76[15])|5(?:221|446)|642[23]|8(?:622|8(?:[24]2|5[13]))"], "(0$1)"], ["(\\d{5})(\\d{4})", "$1 $2", ["346|4(?:27|9[35])|883", "3469|4(?:279|9(?:30|56))|8834"], "(0$1)"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["2"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[3-7]|8[2-8]"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[89]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]], ["(\\d{4})(\\d{1,2})(\\d{3})(\\d{4})", "$1 $2 $3 $4", ["1"]]], "0"], PK: ["92", "00", "122\\d{6}|[24-8]\\d{10,11}|9(?:[013-9]\\d{8,10}|2(?:[01]\\d\\d|2(?:[06-8]\\d|1[01]))\\d{7})|(?:[2-8]\\d{3}|92(?:[0-7]\\d|8[1-9]))\\d{6}|[24-9]\\d{8}|[89]\\d{7}", [8, 9, 10, 11, 12], [["(\\d{3})(\\d{3})(\\d{2,7})", "$1 $2 $3", ["[89]0"], "0$1"], ["(\\d{4})(\\d{5})", "$1 $2", ["1"]], ["(\\d{3})(\\d{6,7})", "$1 $2", ["2(?:3[2358]|4[2-4]|9[2-8])|45[3479]|54[2-467]|60[468]|72[236]|8(?:2[2-689]|3[23578]|4[3478]|5[2356])|9(?:2[2-8]|3[27-9]|4[2-6]|6[3569]|9[25-8])", "9(?:2[3-8]|98)|(?:2(?:3[2358]|4[2-4]|9[2-8])|45[3479]|54[2-467]|60[468]|72[236]|8(?:2[2-689]|3[23578]|4[3478]|5[2356])|9(?:22|3[27-9]|4[2-6]|6[3569]|9[25-7]))[2-9]"], "(0$1)"], ["(\\d{2})(\\d{7,8})", "$1 $2", ["(?:2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91)[2-9]"], "(0$1)"], ["(\\d{5})(\\d{5})", "$1 $2", ["58"], "(0$1)"], ["(\\d{3})(\\d{7})", "$1 $2", ["3"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["[24-9]"], "(0$1)"]], "0"], PL: ["48", "00", "(?:6|8\\d\\d)\\d{7}|[1-9]\\d{6}(?:\\d{2})?|[26]\\d{5}", [6, 7, 8, 9, 10], [["(\\d{5})", "$1", ["19"]], ["(\\d{3})(\\d{3})", "$1 $2", ["11|20|64"]], ["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])1", "(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])19"]], ["(\\d{3})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["64"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["21|39|45|5[0137]|6[0469]|7[02389]|8(?:0[14]|8)"]], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["1[2-8]|[2-7]|8[1-79]|9[145]"]], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["8"]]]], PM: ["508", "00", "[45]\\d{5}|(?:708|8\\d\\d)\\d{6}", [6, 9], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["[45]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["7"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], PR: ["1", "011", "(?:[589]\\d\\d|787)\\d{7}", [10], 0, "1", 0, 0, 0, 0, "787|939"], PS: ["970", "00", "[2489]2\\d{6}|(?:1\\d|5)\\d{8}", [8, 9, 10], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[2489]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["5"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]]], "0"], PT: ["351", "00", "1693\\d{5}|(?:[26-9]\\d|30)\\d{7}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["2[12]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["16|[236-9]"]]]], PW: ["680", "01[12]", "(?:[24-8]\\d\\d|345|900)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-9]"]]]], PY: ["595", "00", "59\\d{4,6}|9\\d{5,10}|(?:[2-46-8]\\d|5[0-8])\\d{4,7}", [6, 7, 8, 9, 10, 11], [["(\\d{3})(\\d{3,6})", "$1 $2", ["[2-9]0"], "0$1"], ["(\\d{2})(\\d{5})", "$1 $2", ["[26]1|3[289]|4[1246-8]|7[1-3]|8[1-36]"], "(0$1)"], ["(\\d{3})(\\d{4,5})", "$1 $2", ["2[279]|3[13-5]|4[359]|5|6(?:[34]|7[1-46-8])|7[46-8]|85"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2[14-68]|3[26-9]|4[1246-8]|6(?:1|75)|7[1-35]|8[1-36]"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["87"]], ["(\\d{3})(\\d{6})", "$1 $2", ["9(?:[5-79]|8[1-7])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-8]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["9"]]], "0"], QA: ["974", "00", "800\\d{4}|(?:2|800)\\d{6}|(?:0080|[3-7])\\d{7}", [7, 8, 9, 11], [["(\\d{3})(\\d{4})", "$1 $2", ["2[136]|8"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[3-7]"]]]], RE: ["262", "00", "709\\d{6}|(?:26|[689]\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[26-9]"], "0$1"]], "0", 0, 0, 0, 0, 0, [["26(?:2\\d\\d|3(?:0\\d|1[0-6]))\\d{4}"], ["(?:69(?:2\\d\\d|3(?:[06][0-6]|1[0-3]|2[0-2]|3[0-39]|4\\d|5[0-5]|7[0-37]|8[0-8]|9[0-479]))|7092[0-3])\\d{4}"], ["80\\d{7}"], ["89[1-37-9]\\d{6}"], 0, 0, 0, 0, ["9(?:399[0-3]|479[0-6]|76(?:2[278]|3[0-37]))\\d{4}"], ["8(?:1[019]|2[0156]|84|90)\\d{6}"]]], RO: ["40", "00", "(?:[236-8]\\d|90)\\d{7}|[23]\\d{5}", [6, 9], [["(\\d{3})(\\d{3})", "$1 $2", ["2[3-6]", "2[3-6]\\d9"], "0$1"], ["(\\d{2})(\\d{4})", "$1 $2", ["219|31"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[23]1"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[236-9]"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, 0, " int "], RS: ["381", "00", "38[02-9]\\d{6,9}|6\\d{7,9}|90\\d{4,8}|38\\d{5,6}|(?:7\\d\\d|800)\\d{3,9}|(?:[12]\\d|3[0-79])\\d{5,10}", [6, 7, 8, 9, 10, 11, 12], [["(\\d{3})(\\d{3,9})", "$1 $2", ["(?:2[389]|39)0|[7-9]"], "0$1"], ["(\\d{2})(\\d{5,10})", "$1 $2", ["[1-36]"], "0$1"]], "0"], RU: ["7", "810", "8\\d{13}|[347-9]\\d{9}", [10, 14], [["(\\d{4})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["7(?:1[0-8]|2[1-9])", "7(?:1(?:[0-356]2|4[29]|7|8[27])|2(?:1[23]|[2-9]2))", "7(?:1(?:[0-356]2|4[29]|7|8[27])|2(?:13[03-69]|62[013-9]))|72[1-57-9]2"], "8 ($1)", 1], ["(\\d{5})(\\d)(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["7(?:1[0-68]|2[1-9])", "7(?:1(?:[06][3-6]|[18]|2[35]|[3-5][3-5])|2(?:[13][3-5]|[24-689]|7[457]))", "7(?:1(?:0(?:[356]|4[023])|[18]|2(?:3[013-9]|5)|3[45]|43[013-79]|5(?:3[1-8]|4[1-7]|5)|6(?:3[0-35-9]|[4-6]))|2(?:1(?:3[178]|[45])|[24-689]|3[35]|7[457]))|7(?:14|23)4[0-8]|71(?:33|45)[1-79]"], "8 ($1)", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "8 ($1)", 1], ["(\\d{3})(\\d{3})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["[349]|8(?:[02-7]|1[1-8])"], "8 ($1)", 1], ["(\\d{4})(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["8"], "8 ($1)"]], "8", 0, 0, 0, 0, "3[04-689]|[489]", 0, "8~10"], RW: ["250", "00", "(?:06|[27]\\d\\d|[89]00)\\d{6}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["0"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["2"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[7-9]"], "0$1"]], "0"], SA: ["966", "00", "92\\d{7}|(?:[15]|8\\d)\\d{8}", [9, 10], [["(\\d{4})(\\d{5})", "$1 $2", ["9"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["5"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["81"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"]]], "0"], SB: ["677", "0[01]", "[6-9]\\d{6}|[1-6]\\d{4}", [5, 7], [["(\\d{2})(\\d{5})", "$1 $2", ["6[89]|7|8[4-9]|9(?:[1-8]|9[0-8])"]]]], SC: ["248", "010|0[0-2]", "(?:[2489]\\d|64)\\d{5}", [7], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[246]|9[57]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], SD: ["249", "00", "[19]\\d{8}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[19]"], "0$1"]], "0"], SE: ["46", "00", "(?:[26]\\d\\d|9)\\d{9}|[1-9]\\d{8}|[1-689]\\d{7}|[1-4689]\\d{6}|2\\d{5}", [6, 7, 8, 9, 10, 12], [["(\\d{2})(\\d{2,3})(\\d{2})", "$1-$2 $3", ["20"], "0$1", 0, "$1 $2 $3"], ["(\\d{3})(\\d{4})", "$1-$2", ["9(?:00|39|44|9)"], "0$1", 0, "$1 $2"], ["(\\d{2})(\\d{3})(\\d{2})", "$1-$2 $3", ["[12][136]|3[356]|4[0246]|6[03]|90[1-9]"], "0$1", 0, "$1 $2 $3"], ["(\\d)(\\d{2,3})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["8"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2,3})(\\d{2})", "$1-$2 $3", ["1[2457]|2(?:[247-9]|5[0138])|3[0247-9]|4[1357-9]|5[0-35-9]|6(?:[125689]|4[02-57]|7[0-2])|9(?:[125-8]|3[02-5]|4[0-3])"], "0$1", 0, "$1 $2 $3"], ["(\\d{3})(\\d{2,3})(\\d{3})", "$1-$2 $3", ["9(?:00|39|44)"], "0$1", 0, "$1 $2 $3"], ["(\\d{2})(\\d{2,3})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["1[13689]|2[0136]|3[1356]|4[0246]|54|6[03]|90[1-9]"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["10|7"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d)(\\d{3})(\\d{3})(\\d{2})", "$1-$2 $3 $4", ["8"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["[13-5]|2(?:[247-9]|5[0138])|6(?:[124-689]|7[0-2])|9(?:[125-8]|3[02-5]|4[0-3])"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{3})", "$1-$2 $3 $4", ["9"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1-$2 $3 $4 $5", ["[26]"], "0$1", 0, "$1 $2 $3 $4 $5"]], "0"], SG: ["65", "0[0-3]\\d", "(?:(?:1\\d|8)\\d\\d|7000)\\d{7}|[3689]\\d{7}", [8, 10, 11], [["(\\d{4})(\\d{4})", "$1 $2", ["[369]|8(?:0[1-9]|[1-9])"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"]], ["(\\d{4})(\\d{4})(\\d{3})", "$1 $2 $3", ["7"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]]]], SH: ["290", "00", "(?:[256]\\d|8)\\d{3}", [4, 5], 0, 0, 0, 0, 0, 0, "[256]"], SI: ["386", "00|10(?:22|66|88|99)", "[1-7]\\d{7}|8\\d{4,7}|90\\d{4,6}", [5, 6, 7, 8], [["(\\d{2})(\\d{3,6})", "$1 $2", ["8[09]|9"], "0$1"], ["(\\d{3})(\\d{5})", "$1 $2", ["59|8"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[37][01]|4[0139]|51|6"], "0$1"], ["(\\d)(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[1-57]"], "(0$1)"]], "0", 0, 0, 0, 0, 0, 0, "00"], SJ: ["47", "00", "0\\d{4}|(?:[489]\\d|79)\\d{6}", [5, 8], 0, 0, 0, 0, 0, 0, "79"], SK: ["421", "00", "[2-689]\\d{8}|[2-59]\\d{6}|[2-5]\\d{5}", [6, 7, 9], [["(\\d)(\\d{2})(\\d{3,4})", "$1 $2 $3", ["21"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["[3-5][1-8]1", "[3-5][1-8]1[67]"], "0$1"], ["(\\d)(\\d{3})(\\d{3})(\\d{2})", "$1/$2 $3 $4", ["2"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[689]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1/$2 $3 $4", ["[3-5]"], "0$1"]], "0"], SL: ["232", "00", "(?:[237-9]\\d|66)\\d{6}", [8], [["(\\d{2})(\\d{6})", "$1 $2", ["[236-9]"], "(0$1)"]], "0"], SM: ["378", "00", "(?:0549|[5-7]\\d)\\d{6}", [8, 10], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-7]"]], ["(\\d{4})(\\d{6})", "$1 $2", ["0"]]], 0, 0, "([89]\\d{5})$", "0549$1"], SN: ["221", "00", "(?:[378]\\d|93)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"]], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[379]"]]]], SO: ["252", "00", "[346-9]\\d{8}|[12679]\\d{7}|[1-5]\\d{6}|[1348]\\d{5}", [6, 7, 8, 9], [["(\\d{2})(\\d{4})", "$1 $2", ["8[125]"]], ["(\\d{6})", "$1", ["[134]"]], ["(\\d)(\\d{6})", "$1 $2", ["[15]|2[0-79]|3[0-46-8]|4[0-7]"]], ["(\\d)(\\d{7})", "$1 $2", ["(?:2|90)4|[67]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[348]|64|79|90"]], ["(\\d{2})(\\d{5,7})", "$1 $2", ["1|28|6[0-35-9]|7[67]|9[2-9]"]]], "0"], SR: ["597", "00", "(?:[2-5]|68|[78]\\d|90)\\d{5}", [6, 7], [["(\\d{2})(\\d{2})(\\d{2})", "$1-$2-$3", ["56"]], ["(\\d{3})(\\d{3})", "$1-$2", ["[2-5]"]], ["(\\d{3})(\\d{4})", "$1-$2", ["[6-9]"]]]], SS: ["211", "00", "[19]\\d{8}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[19]"], "0$1"]], "0"], ST: ["239", "00", "(?:22|9\\d)\\d{5}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[29]"]]]], SV: ["503", "00", "[267]\\d{7}|(?:80\\d|900)\\d{4}(?:\\d{4})?", [7, 8, 11], [["(\\d{3})(\\d{4})", "$1 $2", ["[89]"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[267]"]], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["[89]"]]]], SX: ["1", "011", "7215\\d{6}|(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "(5\\d{6})$|1", "721$1", 0, "721"], SY: ["963", "00", "[1-39]\\d{8}|[1-5]\\d{7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[1-5]"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"], "0$1", 1]], "0"], SZ: ["268", "00", "0800\\d{4}|(?:[237]\\d|900)\\d{6}", [8, 9], [["(\\d{4})(\\d{4})", "$1 $2", ["[0237]"]], ["(\\d{5})(\\d{4})", "$1 $2", ["9"]]]], TA: ["290", "00", "8\\d{3}", [4], 0, 0, 0, 0, 0, 0, "8"], TC: ["1", "011", "(?:[58]\\d\\d|649|900)\\d{7}", [10], 0, "1", 0, "([2-479]\\d{6})$|1", "649$1", 0, "649"], TD: ["235", "00|16", "(?:22|[689]\\d|77)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[26-9]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], TG: ["228", "00", "[279]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[279]"]]]], TH: ["66", "00[1-9]", "(?:001800|[2-57]|[689]\\d)\\d{7}|1\\d{7,9}", [8, 9, 10, 13], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[13-9]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]]], "0"], TJ: ["992", "810", "[0-57-9]\\d{8}", [9], [["(\\d{6})(\\d)(\\d{2})", "$1 $2 $3", ["331", "3317"]], ["(\\d{3})(\\d{2})(\\d{4})", "$1 $2 $3", ["44[02-479]|[34]7"]], ["(\\d{4})(\\d)(\\d{4})", "$1 $2 $3", ["3(?:[1245]|3[12])"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[0-57-9]"]]], 0, 0, 0, 0, 0, 0, 0, "8~10"], TK: ["690", "00", "[2-47]\\d{3,6}", [4, 5, 6, 7]], TL: ["670", "00", "7\\d{7}|(?:[2-47]\\d|[89]0)\\d{5}", [7, 8], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-489]|70"]], ["(\\d{4})(\\d{4})", "$1 $2", ["7"]]]], TM: ["993", "810", "(?:[1-6]\\d|71)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["12"], "(8 $1)"], ["(\\d{3})(\\d)(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["[1-5]"], "(8 $1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["[67]"], "8 $1"]], "8", 0, 0, 0, 0, 0, 0, "8~10"], TN: ["216", "00", "[2-57-9]\\d{7}", [8], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-57-9]"]]]], TO: ["676", "00", "(?:0800|(?:[5-8]\\d\\d|999)\\d)\\d{3}|[2-8]\\d{4}", [5, 7], [["(\\d{2})(\\d{3})", "$1-$2", ["[2-4]|50|6[09]|7[0-24-69]|8[05]"]], ["(\\d{4})(\\d{3})", "$1 $2", ["0"]], ["(\\d{3})(\\d{4})", "$1 $2", ["[5-9]"]]]], TR: ["90", "00", "4\\d{6}|8\\d{11,12}|(?:[2-58]\\d\\d|900)\\d{7}", [7, 10, 12, 13], [["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["512|8[01589]|90"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["5(?:[0-59]|61)", "5(?:[0-59]|61[06])", "5(?:[0-59]|61[06]1)"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[24][1-8]|3[1-9]"], "(0$1)", 1], ["(\\d{3})(\\d{3})(\\d{6,7})", "$1 $2 $3", ["80"], "0$1", 1]], "0"], TT: ["1", "011", "(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-46-8]\\d{6})$|1", "868$1", 0, "868"], TV: ["688", "00", "(?:2|7\\d\\d|90)\\d{4}", [5, 6, 7], [["(\\d{2})(\\d{3})", "$1 $2", ["2"]], ["(\\d{2})(\\d{4})", "$1 $2", ["90"]], ["(\\d{2})(\\d{5})", "$1 $2", ["7"]]]], TW: ["886", "0(?:0[25-79]|19)", "[2-689]\\d{8}|7\\d{9,10}|[2-8]\\d{7}|2\\d{6}", [7, 8, 9, 10, 11], [["(\\d{2})(\\d)(\\d{4})", "$1 $2 $3", ["202"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[258]0"], "0$1"], ["(\\d)(\\d{3,4})(\\d{4})", "$1 $2 $3", ["[23568]|4(?:0[02-48]|[1-47-9])|7[1-9]", "[23568]|4(?:0[2-48]|[1-47-9])|(?:400|7)[1-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[49]"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4,5})", "$1 $2 $3", ["7"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, 0, "#"], TZ: ["255", "00[056]", "(?:[25-8]\\d|41|90)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{4})", "$1 $2 $3", ["[89]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[24]"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["5"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[67]"], "0$1"]], "0"], UA: ["380", "00", "[89]\\d{9}|[3-9]\\d{8}", [9, 10], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6[12][29]|(?:3[1-8]|4[136-8]|5[12457]|6[49])2|(?:56|65)[24]", "6[12][29]|(?:35|4[1378]|5[12457]|6[49])2|(?:56|65)[24]|(?:3[1-46-8]|46)2[013-9]"], "0$1"], ["(\\d{4})(\\d{5})", "$1 $2", ["3[1-8]|4(?:[1367]|[45][6-9]|8[4-6])|5(?:[1-5]|6[0135689]|7[4-6])|6(?:[12][3-7]|[459])", "3[1-8]|4(?:[1367]|[45][6-9]|8[4-6])|5(?:[1-5]|6(?:[015689]|3[02389])|7[4-6])|6(?:[12][3-7]|[459])"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[3-7]|89|9[1-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[89]"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, "0~0"], UG: ["256", "00[057]", "800\\d{6}|(?:[29]0|[347]\\d)\\d{7}", [9], [["(\\d{4})(\\d{5})", "$1 $2", ["202", "2024"], "0$1"], ["(\\d{3})(\\d{6})", "$1 $2", ["[27-9]|4(?:6[45]|[7-9])"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["[34]"], "0$1"]], "0"], US: ["1", "011", "[2-9]\\d{9}|3\\d{6}", [10], [["(\\d{3})(\\d{4})", "$1-$2", ["310"], 0, 1], ["(\\d{3})(\\d{3})(\\d{4})", "($1) $2-$3", ["[2-9]"], 0, 1, "$1-$2-$3"]], "1", 0, 0, 0, 0, 0, [["(?:3052(?:0[0-8]|[1-9]\\d)|5056(?:[0-35-9]\\d|4[0-468]))\\d{4}|(?:2742|305[3-9]|472[247-9]|505[2-57-9]|983[2-47-9])\\d{6}|(?:2(?:0[1-35-9]|1[02-9]|2[03-57-9]|3[1459]|4[08]|5[1-46]|6[0279]|7[0269]|8[13])|3(?:0[1-47-9]|1[02-9]|2[0135-79]|3[0-24679]|4[167]|5[0-2]|6[01349]|8[056])|4(?:0[124-9]|1[02-579]|2[3-5]|3[0245]|4[023578]|58|6[349]|7[0589]|8[04])|5(?:0[1-47-9]|1[0235-8]|20|3[0149]|4[01]|5[179]|6[1-47]|7[0-5]|8[0256])|6(?:0[1-35-9]|1[024-9]|2[03689]|3[016]|4[0156]|5[01679]|6[0-279]|78|8[0-29])|7(?:0[1-46-8]|1[2-9]|2[04-8]|3[0-247]|4[037]|5[47]|6[02359]|7[0-59]|8[156])|8(?:0[1-68]|1[02-8]|2[0168]|3[0-2589]|4[03578]|5[046-9]|6[02-5]|7[028])|9(?:0[1346-9]|1[02-9]|2[0589]|3[0146-8]|4[01357-9]|5[12469]|7[0-389]|8[04-69]))[2-9]\\d{6}"], [""], ["8(?:00|33|44|55|66|77|88)[2-9]\\d{6}"], ["900[2-9]\\d{6}"], ["52(?:3(?:[2-46-9][02-9]\\d|5(?:[02-46-9]\\d|5[0-46-9]))|4(?:[2-478][02-9]\\d|5(?:[034]\\d|2[024-9]|5[0-46-9])|6(?:0[1-9]|[2-9]\\d)|9(?:[05-9]\\d|2[0-5]|49)))\\d{4}|52[34][2-9]1[02-9]\\d{4}|5(?:00|2[125-9]|33|44|66|77|88)[2-9]\\d{6}"], 0, 0, 0, ["305209\\d{4}"]]], UY: ["598", "0(?:0|1[3-9]\\d)", "0004\\d{2,9}|[1249]\\d{7}|(?:[49]\\d|80)\\d{5}", [6, 7, 8, 9, 10, 11, 12, 13], [["(\\d{3})(\\d{3,4})", "$1 $2", ["0"]], ["(\\d{3})(\\d{4})", "$1 $2", ["[49]0|8"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{4})(\\d{4})", "$1 $2", ["[124]"]], ["(\\d{3})(\\d{3})(\\d{2,4})", "$1 $2 $3", ["0"]], ["(\\d{3})(\\d{3})(\\d{3})(\\d{2,4})", "$1 $2 $3 $4", ["0"]]], "0", 0, 0, 0, 0, 0, 0, "00", " int. "], UZ: ["998", "00", "(?:20|33|[5-9]\\d)\\d{7}", [9], [["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[235-9]"]]]], VA: ["39", "00", "0\\d{5,10}|3[0-8]\\d{7,10}|55\\d{8}|8\\d{5}(?:\\d{2,4})?|(?:1\\d|39)\\d{7,8}", [6, 7, 8, 9, 10, 11, 12], 0, 0, 0, 0, 0, 0, "06698"], VC: ["1", "011", "(?:[58]\\d\\d|784|900)\\d{7}", [10], 0, "1", 0, "([2-7]\\d{6})$|1", "784$1", 0, "784"], VE: ["58", "00", "[68]00\\d{7}|(?:[24]\\d|[59]0)\\d{8}", [10], [["(\\d{3})(\\d{7})", "$1-$2", ["[24-689]"], "0$1"]], "0"], VG: ["1", "011", "(?:284|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-578]\\d{6})$|1", "284$1", 0, "284"], VI: ["1", "011", "[58]\\d{9}|(?:34|90)0\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "340$1", 0, "340"], VN: ["84", "00", "[12]\\d{9}|[135-9]\\d{8}|[16]\\d{7}|[16-8]\\d{6}", [7, 8, 9, 10], [["(\\d{2})(\\d{5})", "$1 $2", ["80"], "0$1", 1], ["(\\d{4})(\\d{4,6})", "$1 $2", ["1"], 0, 1], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["6"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[357-9]"], "0$1", 1], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["2[48]"], "0$1", 1], ["(\\d{3})(\\d{4})(\\d{3})", "$1 $2 $3", ["2"], "0$1", 1]], "0"], VU: ["678", "00", "[57-9]\\d{6}|(?:[238]\\d|48)\\d{3}", [5, 7], [["(\\d{3})(\\d{4})", "$1 $2", ["[57-9]"]]]], WF: ["681", "00", "(?:40|72|8\\d{4})\\d{4}|[89]\\d{5}", [6, 9], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["[47-9]"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"]]]], WS: ["685", "0", "(?:[2-6]|8\\d{5})\\d{4}|[78]\\d{6}|[68]\\d{5}", [5, 6, 7, 10], [["(\\d{5})", "$1", ["[2-5]|6[1-9]"]], ["(\\d{3})(\\d{3,7})", "$1 $2", ["[68]"]], ["(\\d{2})(\\d{5})", "$1 $2", ["7"]]]], XK: ["383", "00", "2\\d{7,8}|3\\d{7,11}|(?:4\\d\\d|[89]00)\\d{5}", [8, 9, 10, 11, 12], [["(\\d{3})(\\d{5})", "$1 $2", ["[89]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-4]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["2|39"], "0$1"], ["(\\d{2})(\\d{7,10})", "$1 $2", ["3"], "0$1"]], "0"], YE: ["967", "00", "(?:1|7\\d)\\d{7}|[1-7]\\d{6}", [7, 8, 9], [["(\\d)(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[1-6]|7(?:[24-6]|8[0-7])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["7"], "0$1"]], "0"], YT: ["262", "00", "7093\\d{5}|(?:80|9\\d)\\d{7}|(?:26|63)9\\d{6}", [9], 0, "0", 0, 0, 0, 0, 0, [["269(?:0[0-467]|15|5[0-4]|6\\d|[78]0)\\d{4}"], ["(?:639(?:0[0-79]|1[019]|[267]\\d|3[09]|40|5[05-9]|9[04-79])|7093[5-7])\\d{4}"], ["80\\d{7}"], 0, 0, 0, 0, 0, ["9(?:(?:39|47)8[01]|769\\d)\\d{4}"]]], ZA: ["27", "00", "[1-79]\\d{8}|8\\d{4,9}", [5, 6, 7, 8, 9, 10], [["(\\d{2})(\\d{3,4})", "$1 $2", ["8[1-4]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2,3})", "$1 $2 $3", ["8[1-4]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["860"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"], "0$1"]], "0"], ZM: ["260", "00", "800\\d{6}|(?:21|[579]\\d|63)\\d{7}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[28]"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["[579]"], "0$1"]], "0"], ZW: ["263", "00", "2(?:[0-57-9]\\d{6,8}|6[0-24-9]\\d{6,7})|[38]\\d{9}|[35-8]\\d{8}|[3-6]\\d{7}|[1-689]\\d{6}|[1-3569]\\d{5}|[1356]\\d{4}", [5, 6, 7, 8, 9, 10], [["(\\d{3})(\\d{3,5})", "$1 $2", ["2(?:0[45]|2[278]|[49]8)|3(?:[09]8|17)|6(?:[29]8|37|75)|[23][78]|(?:33|5[15]|6[68])[78]"], "0$1"], ["(\\d)(\\d{3})(\\d{2,4})", "$1 $2 $3", ["[49]"], "0$1"], ["(\\d{3})(\\d{4})", "$1 $2", ["80"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["24|8[13-59]|(?:2[05-79]|39|5[45]|6[15-8])2", "2(?:02[014]|4|[56]20|[79]2)|392|5(?:42|525)|6(?:[16-8]21|52[013])|8[13-59]"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2(?:1[39]|2[0157]|[378]|[56][14])|3(?:12|29)", "2(?:1[39]|2[0157]|[378]|[56][14])|3(?:123|29)"], "0$1"], ["(\\d{4})(\\d{6})", "$1 $2", ["8"], "0$1"], ["(\\d{2})(\\d{3,5})", "$1 $2", ["1|2(?:0[0-36-9]|12|29|[56])|3(?:1[0-689]|[24-6])|5(?:[0236-9]|1[2-4])|6(?:[013-59]|7[0-46-9])|(?:33|55|6[68])[0-69]|(?:29|3[09]|62)[0-79]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["29[013-9]|39|54"], "0$1"], ["(\\d{4})(\\d{3,5})", "$1 $2", ["(?:25|54)8", "258|5483"], "0$1"]], "0"] }, nonGeographic: { "800": ["800", 0, "(?:00|[1-9]\\d)\\d{6}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["\\d"]]], 0, 0, 0, 0, 0, 0, [0, 0, ["(?:00|[1-9]\\d)\\d{6}"]]], "808": ["808", 0, "[1-9]\\d{7}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[1-9]"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0, 0, ["[1-9]\\d{7}"]]], "870": ["870", 0, "7\\d{11}|[235-7]\\d{8}", [9, 12], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[235-7]"]]], 0, 0, 0, 0, 0, 0, [0, ["(?:[356]|774[45])\\d{8}|7[6-8]\\d{7}"], 0, 0, 0, 0, 0, 0, ["2\\d{8}", [9]]]], "878": ["878", 0, "10\\d{10}", [12], [["(\\d{2})(\\d{5})(\\d{5})", "$1 $2 $3", ["1"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0, ["10\\d{10}"]]], "881": ["881", 0, "6\\d{9}|[0-36-9]\\d{8}", [9, 10], [["(\\d)(\\d{3})(\\d{5})", "$1 $2 $3", ["[0-37-9]"]], ["(\\d)(\\d{3})(\\d{5,6})", "$1 $2 $3", ["6"]]], 0, 0, 0, 0, 0, 0, [0, ["6\\d{9}|[0-36-9]\\d{8}"]]], "882": ["882", 0, "[13]\\d{6}(?:\\d{2,5})?|[19]\\d{7}|(?:[25]\\d\\d|4)\\d{7}(?:\\d{2})?", [7, 8, 9, 10, 11, 12], [["(\\d{2})(\\d{5})", "$1 $2", ["16|342"]], ["(\\d{2})(\\d{6})", "$1 $2", ["49"]], ["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["1[36]|9"]], ["(\\d{2})(\\d{4})(\\d{3})", "$1 $2 $3", ["3[23]"]], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["16"]], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["10|23|3(?:[15]|4[57])|4|51"]], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["34"]], ["(\\d{2})(\\d{4,5})(\\d{5})", "$1 $2 $3", ["[1-35]"]]], 0, 0, 0, 0, 0, 0, [0, ["342\\d{4}|(?:337|49)\\d{6}|(?:3(?:2|47|7\\d{3})|50\\d{3})\\d{7}", [7, 8, 9, 10, 12]], 0, 0, 0, ["348[57]\\d{7}", [11]], 0, 0, ["1(?:3(?:0[0347]|[13][0139]|2[035]|4[013568]|6[0459]|7[06]|8[15-8]|9[0689])\\d{4}|6\\d{5,10})|(?:345\\d|9[89])\\d{6}|(?:10|2(?:3|85\\d)|3(?:[15]|[69]\\d\\d)|4[15-8]|51)\\d{8}"]]], "883": ["883", 0, "(?:[1-4]\\d|51)\\d{6,10}", [8, 9, 10, 11, 12], [["(\\d{3})(\\d{3})(\\d{2,8})", "$1 $2 $3", ["[14]|2[24-689]|3[02-689]|51[24-9]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["510"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["21"]], ["(\\d{4})(\\d{4})(\\d{4})", "$1 $2 $3", ["51[13]"]], ["(\\d{3})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["[235]"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0, ["(?:2(?:00\\d\\d|10)|(?:370[1-9]|51\\d0)\\d)\\d{7}|51(?:00\\d{5}|[24-9]0\\d{4,7})|(?:1[0-79]|2[24-689]|3[02-689]|4[0-4])0\\d{5,9}"]]], "888": ["888", 0, "\\d{11}", [11], [["(\\d{3})(\\d{3})(\\d{5})", "$1 $2 $3"]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, ["\\d{11}"]]], "979": ["979", 0, "[1359]\\d{8}", [9], [["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["[1359]"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, ["[1359]\\d{8}"]]] } };
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/isObject.js
+var require_isObject = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/isObject.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = isObject2;
+    var objectConstructor = {}.constructor;
+    function isObject2(object) {
+      return object !== void 0 && object !== null && object.constructor === objectConstructor;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/normalizeArguments.js
+var require_normalizeArguments = __commonJS({
+  "node_modules/libphonenumber-js/build/normalizeArguments.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = normalizeArguments;
+    var _isObject = _interopRequireDefault(require_isObject());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function ownKeys2(object, enumerableOnly) {
+      var keys = Object.keys(object);
+      if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        enumerableOnly && (symbols = symbols.filter(function(sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        })), keys.push.apply(keys, symbols);
+      }
+      return keys;
+    }
+    function _objectSpread(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = null != arguments[i] ? arguments[i] : {};
+        i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
+          _defineProperty(target, key, source[key]);
+        }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+      return target;
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    function _slicedToArray(arr, i) {
+      return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+    }
+    function _nonIterableRest() {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function _iterableToArrayLimit(arr, i) {
+      var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+      if (_i == null) return;
+      var _arr = [];
+      var _n = true;
+      var _d = false;
+      var _s, _e;
+      try {
+        for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
+          _arr.push(_s.value);
+          if (i && _arr.length === i) break;
+        }
+      } catch (err2) {
+        _d = true;
+        _e = err2;
+      } finally {
+        try {
+          if (!_n && _i["return"] != null) _i["return"]();
+        } finally {
+          if (_d) throw _e;
+        }
+      }
+      return _arr;
+    }
+    function _arrayWithHoles(arr) {
+      if (Array.isArray(arr)) return arr;
+    }
+    function normalizeArguments(args) {
+      var _Array$prototype$slic = Array.prototype.slice.call(args), _Array$prototype$slic2 = _slicedToArray(_Array$prototype$slic, 4), arg_1 = _Array$prototype$slic2[0], arg_2 = _Array$prototype$slic2[1], arg_3 = _Array$prototype$slic2[2], arg_4 = _Array$prototype$slic2[3];
+      var text;
+      var options;
+      var metadata;
+      if (typeof arg_1 === "string") {
+        text = arg_1;
+      } else throw new TypeError("A text for parsing must be a string.");
+      if (!arg_2 || typeof arg_2 === "string") {
+        if (arg_4) {
+          options = arg_3;
+          metadata = arg_4;
+        } else {
+          options = void 0;
+          metadata = arg_3;
+        }
+        if (arg_2) {
+          options = _objectSpread({
+            defaultCountry: arg_2
+          }, options);
+        }
+      } else if ((0, _isObject["default"])(arg_2)) {
+        if (arg_3) {
+          options = arg_2;
+          metadata = arg_3;
+        } else {
+          metadata = arg_2;
+        }
+      } else throw new Error("Invalid second argument: ".concat(arg_2));
+      return {
+        text,
+        options,
+        metadata
+      };
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/constants.js
+var require_constants3 = __commonJS({
+  "node_modules/libphonenumber-js/build/constants.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.WHITESPACE = exports2.VALID_PUNCTUATION = exports2.VALID_DIGITS = exports2.PLUS_CHARS = exports2.MIN_LENGTH_FOR_NSN = exports2.MAX_LENGTH_FOR_NSN = exports2.MAX_LENGTH_COUNTRY_CODE = void 0;
+    var MIN_LENGTH_FOR_NSN = 2;
+    exports2.MIN_LENGTH_FOR_NSN = MIN_LENGTH_FOR_NSN;
+    var MAX_LENGTH_FOR_NSN = 17;
+    exports2.MAX_LENGTH_FOR_NSN = MAX_LENGTH_FOR_NSN;
+    var MAX_LENGTH_COUNTRY_CODE = 3;
+    exports2.MAX_LENGTH_COUNTRY_CODE = MAX_LENGTH_COUNTRY_CODE;
+    var VALID_DIGITS = "0-9\uFF10-\uFF19\u0660-\u0669\u06F0-\u06F9";
+    exports2.VALID_DIGITS = VALID_DIGITS;
+    var DASHES = "-\u2010-\u2015\u2212\u30FC\uFF0D";
+    var SLASHES = "\uFF0F/";
+    var DOTS = "\uFF0E.";
+    var WHITESPACE = " \xA0\xAD\u200B\u2060\u3000";
+    exports2.WHITESPACE = WHITESPACE;
+    var BRACKETS = "()\uFF08\uFF09\uFF3B\uFF3D\\[\\]";
+    var TILDES = "~\u2053\u223C\uFF5E";
+    var VALID_PUNCTUATION = "".concat(DASHES).concat(SLASHES).concat(DOTS).concat(WHITESPACE).concat(BRACKETS).concat(TILDES);
+    exports2.VALID_PUNCTUATION = VALID_PUNCTUATION;
+    var PLUS_CHARS = "+\uFF0B";
+    exports2.PLUS_CHARS = PLUS_CHARS;
+  }
+});
+
+// node_modules/libphonenumber-js/build/ParseError.js
+var require_ParseError = __commonJS({
+  "node_modules/libphonenumber-js/build/ParseError.js"(exports2) {
+    "use strict";
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
+        return typeof obj2;
+      } : function(obj2) {
+        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+      }, _typeof(obj);
+    }
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = void 0;
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _inherits(subClass, superClass) {
+      if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function");
+      }
+      subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } });
+      Object.defineProperty(subClass, "prototype", { writable: false });
+      if (superClass) _setPrototypeOf(subClass, superClass);
+    }
+    function _createSuper(Derived) {
+      var hasNativeReflectConstruct = _isNativeReflectConstruct();
+      return function _createSuperInternal() {
+        var Super = _getPrototypeOf(Derived), result;
+        if (hasNativeReflectConstruct) {
+          var NewTarget = _getPrototypeOf(this).constructor;
+          result = Reflect.construct(Super, arguments, NewTarget);
+        } else {
+          result = Super.apply(this, arguments);
+        }
+        return _possibleConstructorReturn(this, result);
+      };
+    }
+    function _possibleConstructorReturn(self2, call) {
+      if (call && (_typeof(call) === "object" || typeof call === "function")) {
+        return call;
+      } else if (call !== void 0) {
+        throw new TypeError("Derived constructors may only return object or undefined");
+      }
+      return _assertThisInitialized(self2);
+    }
+    function _assertThisInitialized(self2) {
+      if (self2 === void 0) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+      }
+      return self2;
+    }
+    function _wrapNativeSuper(Class) {
+      var _cache = typeof Map === "function" ? /* @__PURE__ */ new Map() : void 0;
+      _wrapNativeSuper = function _wrapNativeSuper2(Class2) {
+        if (Class2 === null || !_isNativeFunction(Class2)) return Class2;
+        if (typeof Class2 !== "function") {
+          throw new TypeError("Super expression must either be null or a function");
+        }
+        if (typeof _cache !== "undefined") {
+          if (_cache.has(Class2)) return _cache.get(Class2);
+          _cache.set(Class2, Wrapper);
+        }
+        function Wrapper() {
+          return _construct(Class2, arguments, _getPrototypeOf(this).constructor);
+        }
+        Wrapper.prototype = Object.create(Class2.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } });
+        return _setPrototypeOf(Wrapper, Class2);
+      };
+      return _wrapNativeSuper(Class);
+    }
+    function _construct(Parent, args, Class) {
+      if (_isNativeReflectConstruct()) {
+        _construct = Reflect.construct;
+      } else {
+        _construct = function _construct2(Parent2, args2, Class2) {
+          var a = [null];
+          a.push.apply(a, args2);
+          var Constructor = Function.bind.apply(Parent2, a);
+          var instance = new Constructor();
+          if (Class2) _setPrototypeOf(instance, Class2.prototype);
+          return instance;
+        };
+      }
+      return _construct.apply(null, arguments);
+    }
+    function _isNativeReflectConstruct() {
+      if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+      if (Reflect.construct.sham) return false;
+      if (typeof Proxy === "function") return true;
+      try {
+        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
+        }));
+        return true;
+      } catch (e2) {
+        return false;
+      }
+    }
+    function _isNativeFunction(fn) {
+      return Function.toString.call(fn).indexOf("[native code]") !== -1;
+    }
+    function _setPrototypeOf(o2, p) {
+      _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf2(o3, p2) {
+        o3.__proto__ = p2;
+        return o3;
+      };
+      return _setPrototypeOf(o2, p);
+    }
+    function _getPrototypeOf(o2) {
+      _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf2(o3) {
+        return o3.__proto__ || Object.getPrototypeOf(o3);
+      };
+      return _getPrototypeOf(o2);
+    }
+    var ParseError = /* @__PURE__ */ (function(_Error) {
+      _inherits(ParseError2, _Error);
+      var _super = _createSuper(ParseError2);
+      function ParseError2(code) {
+        var _this;
+        _classCallCheck(this, ParseError2);
+        _this = _super.call(this, code);
+        Object.setPrototypeOf(_assertThisInitialized(_this), ParseError2.prototype);
+        _this.name = _this.constructor.name;
+        return _this;
+      }
+      return _createClass(ParseError2);
+    })(/* @__PURE__ */ _wrapNativeSuper(Error));
+    exports2["default"] = ParseError;
+  }
+});
+
+// node_modules/libphonenumber-js/build/tools/semver-compare.js
+var require_semver_compare = __commonJS({
+  "node_modules/libphonenumber-js/build/tools/semver-compare.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = _default;
+    function _default(a, b) {
+      a = a.split("-");
+      b = b.split("-");
+      var pa = a[0].split(".");
+      var pb = b[0].split(".");
+      for (var i = 0; i < 3; i++) {
+        var na = Number(pa[i]);
+        var nb = Number(pb[i]);
+        if (na > nb) return 1;
+        if (nb > na) return -1;
+        if (!isNaN(na) && isNaN(nb)) return 1;
+        if (isNaN(na) && !isNaN(nb)) return -1;
+      }
+      if (a[1] && b[1]) {
+        return a[1] > b[1] ? 1 : a[1] < b[1] ? -1 : 0;
+      }
+      return !a[1] && b[1] ? 1 : a[1] && !b[1] ? -1 : 0;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/metadata.js
+var require_metadata = __commonJS({
+  "node_modules/libphonenumber-js/build/metadata.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = void 0;
+    exports2.getCountryCallingCode = getCountryCallingCode;
+    exports2.getExtPrefix = getExtPrefix;
+    exports2.isSupportedCountry = isSupportedCountry;
+    exports2.validateMetadata = validateMetadata;
+    var _semverCompare = _interopRequireDefault(require_semver_compare());
+    var _isObject = _interopRequireDefault(require_isObject());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
+        return typeof obj2;
+      } : function(obj2) {
+        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+      }, _typeof(obj);
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    var V3 = "1.2.0";
+    var V4 = "1.7.35";
+    var DEFAULT_EXT_PREFIX = " ext. ";
+    var CALLING_CODE_REG_EXP = /^\d+$/;
+    var Metadata = /* @__PURE__ */ (function() {
+      function Metadata2(metadata) {
+        _classCallCheck(this, Metadata2);
+        validateMetadata(metadata);
+        this.metadata = metadata;
+        setVersion.call(this, metadata);
+      }
+      _createClass(Metadata2, [{
+        key: "getCountries",
+        value: function getCountries() {
+          return Object.keys(this.metadata.countries).filter(function(_) {
+            return _ !== "001";
+          });
+        }
+      }, {
+        key: "getCountryMetadata",
+        value: function getCountryMetadata(countryCode) {
+          return this.metadata.countries[countryCode];
+        }
+      }, {
+        key: "nonGeographic",
+        value: function nonGeographic() {
+          if (this.v1 || this.v2 || this.v3) return;
+          return this.metadata.nonGeographic || this.metadata.nonGeographical;
+        }
+      }, {
+        key: "hasCountry",
+        value: function hasCountry(country2) {
+          return this.getCountryMetadata(country2) !== void 0;
+        }
+      }, {
+        key: "hasCallingCode",
+        value: function hasCallingCode(callingCode) {
+          if (this.getCountryCodesForCallingCode(callingCode)) {
+            return true;
+          }
+          if (this.nonGeographic()) {
+            if (this.nonGeographic()[callingCode]) {
+              return true;
+            }
+          } else {
+            var countryCodes = this.countryCallingCodes()[callingCode];
+            if (countryCodes && countryCodes.length === 1 && countryCodes[0] === "001") {
+              return true;
+            }
+          }
+        }
+      }, {
+        key: "isNonGeographicCallingCode",
+        value: function isNonGeographicCallingCode(callingCode) {
+          if (this.nonGeographic()) {
+            return this.nonGeographic()[callingCode] ? true : false;
+          } else {
+            return this.getCountryCodesForCallingCode(callingCode) ? false : true;
+          }
+        }
+        // Deprecated.
+      }, {
+        key: "country",
+        value: function country2(countryCode) {
+          return this.selectNumberingPlan(countryCode);
+        }
+      }, {
+        key: "selectNumberingPlan",
+        value: function selectNumberingPlan(countryCode, callingCode) {
+          if (countryCode && CALLING_CODE_REG_EXP.test(countryCode)) {
+            callingCode = countryCode;
+            countryCode = null;
+          }
+          if (countryCode && countryCode !== "001") {
+            if (!this.hasCountry(countryCode)) {
+              throw new Error("Unknown country: ".concat(countryCode));
+            }
+            this.numberingPlan = new NumberingPlan(this.getCountryMetadata(countryCode), this);
+          } else if (callingCode) {
+            if (!this.hasCallingCode(callingCode)) {
+              throw new Error("Unknown calling code: ".concat(callingCode));
+            }
+            this.numberingPlan = new NumberingPlan(this.getNumberingPlanMetadata(callingCode), this);
+          } else {
+            this.numberingPlan = void 0;
+          }
+          return this;
+        }
+      }, {
+        key: "getCountryCodesForCallingCode",
+        value: function getCountryCodesForCallingCode(callingCode) {
+          var countryCodes = this.countryCallingCodes()[callingCode];
+          if (countryCodes) {
+            if (countryCodes.length === 1 && countryCodes[0].length === 3) {
+              return;
+            }
+            return countryCodes;
+          }
+        }
+      }, {
+        key: "getCountryCodeForCallingCode",
+        value: function getCountryCodeForCallingCode(callingCode) {
+          var countryCodes = this.getCountryCodesForCallingCode(callingCode);
+          if (countryCodes) {
+            return countryCodes[0];
+          }
+        }
+      }, {
+        key: "getNumberingPlanMetadata",
+        value: function getNumberingPlanMetadata(callingCode) {
+          var countryCode = this.getCountryCodeForCallingCode(callingCode);
+          if (countryCode) {
+            return this.getCountryMetadata(countryCode);
+          }
+          if (this.nonGeographic()) {
+            var metadata = this.nonGeographic()[callingCode];
+            if (metadata) {
+              return metadata;
+            }
+          } else {
+            var countryCodes = this.countryCallingCodes()[callingCode];
+            if (countryCodes && countryCodes.length === 1 && countryCodes[0] === "001") {
+              return this.metadata.countries["001"];
+            }
+          }
+        }
+        // Deprecated.
+      }, {
+        key: "countryCallingCode",
+        value: function countryCallingCode() {
+          return this.numberingPlan.callingCode();
+        }
+        // Deprecated.
+      }, {
+        key: "IDDPrefix",
+        value: function IDDPrefix() {
+          return this.numberingPlan.IDDPrefix();
+        }
+        // Deprecated.
+      }, {
+        key: "defaultIDDPrefix",
+        value: function defaultIDDPrefix() {
+          return this.numberingPlan.defaultIDDPrefix();
+        }
+        // Deprecated.
+      }, {
+        key: "nationalNumberPattern",
+        value: function nationalNumberPattern() {
+          return this.numberingPlan.nationalNumberPattern();
+        }
+        // Deprecated.
+      }, {
+        key: "possibleLengths",
+        value: function possibleLengths() {
+          return this.numberingPlan.possibleLengths();
+        }
+        // Deprecated.
+      }, {
+        key: "formats",
+        value: function formats() {
+          return this.numberingPlan.formats();
+        }
+        // Deprecated.
+      }, {
+        key: "nationalPrefixForParsing",
+        value: function nationalPrefixForParsing() {
+          return this.numberingPlan.nationalPrefixForParsing();
+        }
+        // Deprecated.
+      }, {
+        key: "nationalPrefixTransformRule",
+        value: function nationalPrefixTransformRule() {
+          return this.numberingPlan.nationalPrefixTransformRule();
+        }
+        // Deprecated.
+      }, {
+        key: "leadingDigits",
+        value: function leadingDigits() {
+          return this.numberingPlan.leadingDigits();
+        }
+        // Deprecated.
+      }, {
+        key: "hasTypes",
+        value: function hasTypes() {
+          return this.numberingPlan.hasTypes();
+        }
+        // Deprecated.
+      }, {
+        key: "type",
+        value: function type(_type) {
+          return this.numberingPlan.type(_type);
+        }
+        // Deprecated.
+      }, {
+        key: "ext",
+        value: function ext() {
+          return this.numberingPlan.ext();
+        }
+      }, {
+        key: "countryCallingCodes",
+        value: function countryCallingCodes() {
+          if (this.v1) return this.metadata.country_phone_code_to_countries;
+          return this.metadata.country_calling_codes;
+        }
+        // Deprecated.
+      }, {
+        key: "chooseCountryByCountryCallingCode",
+        value: function chooseCountryByCountryCallingCode(callingCode) {
+          return this.selectNumberingPlan(callingCode);
+        }
+      }, {
+        key: "hasSelectedNumberingPlan",
+        value: function hasSelectedNumberingPlan() {
+          return this.numberingPlan !== void 0;
+        }
+      }]);
+      return Metadata2;
+    })();
+    exports2["default"] = Metadata;
+    var NumberingPlan = /* @__PURE__ */ (function() {
+      function NumberingPlan2(metadata, globalMetadataObject) {
+        _classCallCheck(this, NumberingPlan2);
+        this.globalMetadataObject = globalMetadataObject;
+        this.metadata = metadata;
+        setVersion.call(this, globalMetadataObject.metadata);
+      }
+      _createClass(NumberingPlan2, [{
+        key: "callingCode",
+        value: function callingCode() {
+          return this.metadata[0];
+        }
+        // Formatting information for regions which share
+        // a country calling code is contained by only one region
+        // for performance reasons. For example, for NANPA region
+        // ("North American Numbering Plan Administration",
+        //  which includes USA, Canada, Cayman Islands, Bahamas, etc)
+        // it will be contained in the metadata for `US`.
+      }, {
+        key: "getDefaultCountryMetadataForRegion",
+        value: function getDefaultCountryMetadataForRegion() {
+          return this.globalMetadataObject.getNumberingPlanMetadata(this.callingCode());
+        }
+        // Is always present.
+      }, {
+        key: "IDDPrefix",
+        value: function IDDPrefix() {
+          if (this.v1 || this.v2) return;
+          return this.metadata[1];
+        }
+        // Is only present when a country supports multiple IDD prefixes.
+      }, {
+        key: "defaultIDDPrefix",
+        value: function defaultIDDPrefix() {
+          if (this.v1 || this.v2) return;
+          return this.metadata[12];
+        }
+      }, {
+        key: "nationalNumberPattern",
+        value: function nationalNumberPattern() {
+          if (this.v1 || this.v2) return this.metadata[1];
+          return this.metadata[2];
+        }
+        // "possible length" data is always present in Google's metadata.
+      }, {
+        key: "possibleLengths",
+        value: function possibleLengths() {
+          if (this.v1) return;
+          return this.metadata[this.v2 ? 2 : 3];
+        }
+      }, {
+        key: "_getFormats",
+        value: function _getFormats(metadata) {
+          return metadata[this.v1 ? 2 : this.v2 ? 3 : 4];
+        }
+        // For countries of the same region (e.g. NANPA)
+        // formats are all stored in the "main" country for that region.
+        // E.g. "RU" and "KZ", "US" and "CA".
+      }, {
+        key: "formats",
+        value: function formats() {
+          var _this = this;
+          var formats2 = this._getFormats(this.metadata) || this._getFormats(this.getDefaultCountryMetadataForRegion()) || [];
+          return formats2.map(function(_) {
+            return new Format2(_, _this);
+          });
+        }
+      }, {
+        key: "nationalPrefix",
+        value: function nationalPrefix() {
+          return this.metadata[this.v1 ? 3 : this.v2 ? 4 : 5];
+        }
+      }, {
+        key: "_getNationalPrefixFormattingRule",
+        value: function _getNationalPrefixFormattingRule(metadata) {
+          return metadata[this.v1 ? 4 : this.v2 ? 5 : 6];
+        }
+        // For countries of the same region (e.g. NANPA)
+        // national prefix formatting rule is stored in the "main" country for that region.
+        // E.g. "RU" and "KZ", "US" and "CA".
+      }, {
+        key: "nationalPrefixFormattingRule",
+        value: function nationalPrefixFormattingRule() {
+          return this._getNationalPrefixFormattingRule(this.metadata) || this._getNationalPrefixFormattingRule(this.getDefaultCountryMetadataForRegion());
+        }
+      }, {
+        key: "_nationalPrefixForParsing",
+        value: function _nationalPrefixForParsing() {
+          return this.metadata[this.v1 ? 5 : this.v2 ? 6 : 7];
+        }
+      }, {
+        key: "nationalPrefixForParsing",
+        value: function nationalPrefixForParsing() {
+          return this._nationalPrefixForParsing() || this.nationalPrefix();
+        }
+      }, {
+        key: "nationalPrefixTransformRule",
+        value: function nationalPrefixTransformRule() {
+          return this.metadata[this.v1 ? 6 : this.v2 ? 7 : 8];
+        }
+      }, {
+        key: "_getNationalPrefixIsOptionalWhenFormatting",
+        value: function _getNationalPrefixIsOptionalWhenFormatting() {
+          return !!this.metadata[this.v1 ? 7 : this.v2 ? 8 : 9];
+        }
+        // For countries of the same region (e.g. NANPA)
+        // "national prefix is optional when formatting" flag is
+        // stored in the "main" country for that region.
+        // E.g. "RU" and "KZ", "US" and "CA".
+      }, {
+        key: "nationalPrefixIsOptionalWhenFormattingInNationalFormat",
+        value: function nationalPrefixIsOptionalWhenFormattingInNationalFormat() {
+          return this._getNationalPrefixIsOptionalWhenFormatting(this.metadata) || this._getNationalPrefixIsOptionalWhenFormatting(this.getDefaultCountryMetadataForRegion());
+        }
+      }, {
+        key: "leadingDigits",
+        value: function leadingDigits() {
+          return this.metadata[this.v1 ? 8 : this.v2 ? 9 : 10];
+        }
+      }, {
+        key: "types",
+        value: function types() {
+          return this.metadata[this.v1 ? 9 : this.v2 ? 10 : 11];
+        }
+      }, {
+        key: "hasTypes",
+        value: function hasTypes() {
+          if (this.types() && this.types().length === 0) {
+            return false;
+          }
+          return !!this.types();
+        }
+      }, {
+        key: "type",
+        value: function type(_type2) {
+          if (this.hasTypes() && getType(this.types(), _type2)) {
+            return new Type(getType(this.types(), _type2), this);
+          }
+        }
+      }, {
+        key: "ext",
+        value: function ext() {
+          if (this.v1 || this.v2) return DEFAULT_EXT_PREFIX;
+          return this.metadata[13] || DEFAULT_EXT_PREFIX;
+        }
+      }]);
+      return NumberingPlan2;
+    })();
+    var Format2 = /* @__PURE__ */ (function() {
+      function Format3(format, metadata) {
+        _classCallCheck(this, Format3);
+        this._format = format;
+        this.metadata = metadata;
+      }
+      _createClass(Format3, [{
+        key: "pattern",
+        value: function pattern() {
+          return this._format[0];
+        }
+      }, {
+        key: "format",
+        value: function format() {
+          return this._format[1];
+        }
+      }, {
+        key: "leadingDigitsPatterns",
+        value: function leadingDigitsPatterns() {
+          return this._format[2] || [];
+        }
+      }, {
+        key: "nationalPrefixFormattingRule",
+        value: function nationalPrefixFormattingRule() {
+          return this._format[3] || this.metadata.nationalPrefixFormattingRule();
+        }
+      }, {
+        key: "nationalPrefixIsOptionalWhenFormattingInNationalFormat",
+        value: function nationalPrefixIsOptionalWhenFormattingInNationalFormat() {
+          return !!this._format[4] || this.metadata.nationalPrefixIsOptionalWhenFormattingInNationalFormat();
+        }
+      }, {
+        key: "nationalPrefixIsMandatoryWhenFormattingInNationalFormat",
+        value: function nationalPrefixIsMandatoryWhenFormattingInNationalFormat() {
+          return this.usesNationalPrefix() && !this.nationalPrefixIsOptionalWhenFormattingInNationalFormat();
+        }
+        // Checks whether national prefix formatting rule contains national prefix.
+      }, {
+        key: "usesNationalPrefix",
+        value: function usesNationalPrefix() {
+          return this.nationalPrefixFormattingRule() && // Check that national prefix formatting rule is not a "dummy" one.
+          !FIRST_GROUP_ONLY_PREFIX_PATTERN.test(this.nationalPrefixFormattingRule()) ? true : false;
+        }
+      }, {
+        key: "internationalFormat",
+        value: function internationalFormat() {
+          return this._format[5] || this.format();
+        }
+      }]);
+      return Format3;
+    })();
+    var FIRST_GROUP_ONLY_PREFIX_PATTERN = /^\(?\$1\)?$/;
+    var Type = /* @__PURE__ */ (function() {
+      function Type2(type, metadata) {
+        _classCallCheck(this, Type2);
+        this.type = type;
+        this.metadata = metadata;
+      }
+      _createClass(Type2, [{
+        key: "pattern",
+        value: function pattern() {
+          if (this.metadata.v1) return this.type;
+          return this.type[0];
+        }
+      }, {
+        key: "possibleLengths",
+        value: function possibleLengths() {
+          if (this.metadata.v1) return;
+          return this.type[1] || this.metadata.possibleLengths();
+        }
+      }]);
+      return Type2;
+    })();
+    function getType(types, type) {
+      switch (type) {
+        case "FIXED_LINE":
+          return types[0];
+        case "MOBILE":
+          return types[1];
+        case "TOLL_FREE":
+          return types[2];
+        case "PREMIUM_RATE":
+          return types[3];
+        case "PERSONAL_NUMBER":
+          return types[4];
+        case "VOICEMAIL":
+          return types[5];
+        case "UAN":
+          return types[6];
+        case "PAGER":
+          return types[7];
+        case "VOIP":
+          return types[8];
+        case "SHARED_COST":
+          return types[9];
+      }
+    }
+    function validateMetadata(metadata) {
+      if (!metadata) {
+        throw new Error("[libphonenumber-js] `metadata` argument not passed. Check your arguments.");
+      }
+      if (!(0, _isObject["default"])(metadata) || !(0, _isObject["default"])(metadata.countries)) {
+        throw new Error("[libphonenumber-js] `metadata` argument was passed but it's not a valid metadata. Must be an object having `.countries` child object property. Got ".concat((0, _isObject["default"])(metadata) ? "an object of shape: { " + Object.keys(metadata).join(", ") + " }" : "a " + typeOf(metadata) + ": " + metadata, "."));
+      }
+    }
+    var typeOf = function typeOf2(_) {
+      return _typeof(_);
+    };
+    function getExtPrefix(country2, metadata) {
+      metadata = new Metadata(metadata);
+      if (metadata.hasCountry(country2)) {
+        return metadata.country(country2).ext();
+      }
+      return DEFAULT_EXT_PREFIX;
+    }
+    function getCountryCallingCode(country2, metadata) {
+      metadata = new Metadata(metadata);
+      if (metadata.hasCountry(country2)) {
+        return metadata.country(country2).countryCallingCode();
+      }
+      throw new Error("Unknown country: ".concat(country2));
+    }
+    function isSupportedCountry(country2, metadata) {
+      return metadata.countries.hasOwnProperty(country2);
+    }
+    function setVersion(metadata) {
+      var version3 = metadata.version;
+      if (typeof version3 === "number") {
+        this.v1 = version3 === 1;
+        this.v2 = version3 === 2;
+        this.v3 = version3 === 3;
+        this.v4 = version3 === 4;
+      } else {
+        if (!version3) {
+          this.v1 = true;
+        } else if ((0, _semverCompare["default"])(version3, V3) === -1) {
+          this.v2 = true;
+        } else if ((0, _semverCompare["default"])(version3, V4) === -1) {
+          this.v3 = true;
+        } else {
+          this.v4 = true;
+        }
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/extension/createExtensionPattern.js
+var require_createExtensionPattern = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/extension/createExtensionPattern.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = createExtensionPattern;
+    var _constants = require_constants3();
+    var RFC3966_EXTN_PREFIX = ";ext=";
+    var getExtensionDigitsPattern = function getExtensionDigitsPattern2(maxLength) {
+      return "([".concat(_constants.VALID_DIGITS, "]{1,").concat(maxLength, "})");
+    };
+    function createExtensionPattern(purpose) {
+      var extLimitAfterExplicitLabel = "20";
+      var extLimitAfterLikelyLabel = "15";
+      var extLimitAfterAmbiguousChar = "9";
+      var extLimitWhenNotSure = "6";
+      var possibleSeparatorsBetweenNumberAndExtLabel = "[ \xA0\\t,]*";
+      var possibleCharsAfterExtLabel = "[:\\.\uFF0E]?[ \xA0\\t,-]*";
+      var optionalExtnSuffix = "#?";
+      var explicitExtLabels = "(?:e?xt(?:ensi(?:o\u0301?|\xF3))?n?|\uFF45?\uFF58\uFF54\uFF4E?|\u0434\u043E\u0431|anexo)";
+      var ambiguousExtLabels = "(?:[x\uFF58#\uFF03~\uFF5E]|int|\uFF49\uFF4E\uFF54)";
+      var ambiguousSeparator = "[- ]+";
+      var possibleSeparatorsNumberExtLabelNoComma = "[ \xA0\\t]*";
+      var autoDiallingAndExtLabelsFound = "(?:,{2}|;)";
+      var rfcExtn = RFC3966_EXTN_PREFIX + getExtensionDigitsPattern(extLimitAfterExplicitLabel);
+      var explicitExtn = possibleSeparatorsBetweenNumberAndExtLabel + explicitExtLabels + possibleCharsAfterExtLabel + getExtensionDigitsPattern(extLimitAfterExplicitLabel) + optionalExtnSuffix;
+      var ambiguousExtn = possibleSeparatorsBetweenNumberAndExtLabel + ambiguousExtLabels + possibleCharsAfterExtLabel + getExtensionDigitsPattern(extLimitAfterAmbiguousChar) + optionalExtnSuffix;
+      var americanStyleExtnWithSuffix = ambiguousSeparator + getExtensionDigitsPattern(extLimitWhenNotSure) + "#";
+      var autoDiallingExtn = possibleSeparatorsNumberExtLabelNoComma + autoDiallingAndExtLabelsFound + possibleCharsAfterExtLabel + getExtensionDigitsPattern(extLimitAfterLikelyLabel) + optionalExtnSuffix;
+      var onlyCommasExtn = possibleSeparatorsNumberExtLabelNoComma + "(?:,)+" + possibleCharsAfterExtLabel + getExtensionDigitsPattern(extLimitAfterAmbiguousChar) + optionalExtnSuffix;
+      return rfcExtn + "|" + explicitExtn + "|" + ambiguousExtn + "|" + americanStyleExtnWithSuffix + "|" + autoDiallingExtn + "|" + onlyCommasExtn;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/isViablePhoneNumber.js
+var require_isViablePhoneNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/isViablePhoneNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.VALID_PHONE_NUMBER_WITH_EXTENSION = exports2.VALID_PHONE_NUMBER = void 0;
+    exports2["default"] = isViablePhoneNumber;
+    exports2.isViablePhoneNumberStart = isViablePhoneNumberStart;
+    var _constants = require_constants3();
+    var _createExtensionPattern = _interopRequireDefault(require_createExtensionPattern());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    var MIN_LENGTH_PHONE_NUMBER_PATTERN = "[" + _constants.VALID_DIGITS + "]{" + _constants.MIN_LENGTH_FOR_NSN + "}";
+    var VALID_PHONE_NUMBER = "[" + _constants.PLUS_CHARS + "]{0,1}(?:[" + _constants.VALID_PUNCTUATION + "]*[" + _constants.VALID_DIGITS + "]){3,}[" + _constants.VALID_PUNCTUATION + _constants.VALID_DIGITS + "]*";
+    exports2.VALID_PHONE_NUMBER = VALID_PHONE_NUMBER;
+    var VALID_PHONE_NUMBER_START_REG_EXP = new RegExp("^[" + _constants.PLUS_CHARS + "]{0,1}(?:[" + _constants.VALID_PUNCTUATION + "]*[" + _constants.VALID_DIGITS + "]){1,2}$", "i");
+    var VALID_PHONE_NUMBER_WITH_EXTENSION = VALID_PHONE_NUMBER + // Phone number extensions
+    "(?:" + (0, _createExtensionPattern["default"])() + ")?";
+    exports2.VALID_PHONE_NUMBER_WITH_EXTENSION = VALID_PHONE_NUMBER_WITH_EXTENSION;
+    var VALID_PHONE_NUMBER_PATTERN = new RegExp(
+      // Either a short two-digit-only phone number
+      "^" + MIN_LENGTH_PHONE_NUMBER_PATTERN + "$|^" + VALID_PHONE_NUMBER_WITH_EXTENSION + "$",
+      "i"
+    );
+    function isViablePhoneNumber(number) {
+      return number.length >= _constants.MIN_LENGTH_FOR_NSN && VALID_PHONE_NUMBER_PATTERN.test(number);
+    }
+    function isViablePhoneNumberStart(number) {
+      return VALID_PHONE_NUMBER_START_REG_EXP.test(number);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/extension/extractExtension.js
+var require_extractExtension = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/extension/extractExtension.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = extractExtension;
+    var _createExtensionPattern = _interopRequireDefault(require_createExtensionPattern());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    var EXTN_PATTERN = new RegExp("(?:" + (0, _createExtensionPattern["default"])() + ")$", "i");
+    function extractExtension(number) {
+      var start = number.search(EXTN_PATTERN);
+      if (start < 0) {
+        return {};
+      }
+      var numberWithoutExtension = number.slice(0, start);
+      var matches = number.match(EXTN_PATTERN);
+      var i = 1;
+      while (i < matches.length) {
+        if (matches[i]) {
+          return {
+            number: numberWithoutExtension,
+            ext: matches[i]
+          };
+        }
+        i++;
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/parseDigits.js
+var require_parseDigits = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/parseDigits.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.DIGITS = void 0;
+    exports2["default"] = parseDigits;
+    exports2.parseDigit = parseDigit;
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    var DIGITS = {
+      "0": "0",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "\uFF10": "0",
+      // Fullwidth digit 0
+      "\uFF11": "1",
+      // Fullwidth digit 1
+      "\uFF12": "2",
+      // Fullwidth digit 2
+      "\uFF13": "3",
+      // Fullwidth digit 3
+      "\uFF14": "4",
+      // Fullwidth digit 4
+      "\uFF15": "5",
+      // Fullwidth digit 5
+      "\uFF16": "6",
+      // Fullwidth digit 6
+      "\uFF17": "7",
+      // Fullwidth digit 7
+      "\uFF18": "8",
+      // Fullwidth digit 8
+      "\uFF19": "9",
+      // Fullwidth digit 9
+      "\u0660": "0",
+      // Arabic-indic digit 0
+      "\u0661": "1",
+      // Arabic-indic digit 1
+      "\u0662": "2",
+      // Arabic-indic digit 2
+      "\u0663": "3",
+      // Arabic-indic digit 3
+      "\u0664": "4",
+      // Arabic-indic digit 4
+      "\u0665": "5",
+      // Arabic-indic digit 5
+      "\u0666": "6",
+      // Arabic-indic digit 6
+      "\u0667": "7",
+      // Arabic-indic digit 7
+      "\u0668": "8",
+      // Arabic-indic digit 8
+      "\u0669": "9",
+      // Arabic-indic digit 9
+      "\u06F0": "0",
+      // Eastern-Arabic digit 0
+      "\u06F1": "1",
+      // Eastern-Arabic digit 1
+      "\u06F2": "2",
+      // Eastern-Arabic digit 2
+      "\u06F3": "3",
+      // Eastern-Arabic digit 3
+      "\u06F4": "4",
+      // Eastern-Arabic digit 4
+      "\u06F5": "5",
+      // Eastern-Arabic digit 5
+      "\u06F6": "6",
+      // Eastern-Arabic digit 6
+      "\u06F7": "7",
+      // Eastern-Arabic digit 7
+      "\u06F8": "8",
+      // Eastern-Arabic digit 8
+      "\u06F9": "9"
+      // Eastern-Arabic digit 9
+    };
+    exports2.DIGITS = DIGITS;
+    function parseDigit(character) {
+      return DIGITS[character];
+    }
+    function parseDigits(string) {
+      var result = "";
+      for (var _iterator = _createForOfIteratorHelperLoose(string.split("")), _step; !(_step = _iterator()).done; ) {
+        var character = _step.value;
+        var digit = parseDigit(character);
+        if (digit) {
+          result += digit;
+        }
+      }
+      return result;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/parseIncompletePhoneNumber.js
+var require_parseIncompletePhoneNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/parseIncompletePhoneNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = parseIncompletePhoneNumber;
+    exports2.parsePhoneNumberCharacter = parsePhoneNumberCharacter;
+    var _parseDigits = require_parseDigits();
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function parseIncompletePhoneNumber(string) {
+      var result = "";
+      for (var _iterator = _createForOfIteratorHelperLoose(string.split("")), _step; !(_step = _iterator()).done; ) {
+        var character = _step.value;
+        result += parsePhoneNumberCharacter(character, result) || "";
+      }
+      return result;
+    }
+    function parsePhoneNumberCharacter(character, prevParsedCharacters, emitEvent) {
+      if (character === "+") {
+        if (prevParsedCharacters) {
+          if (typeof emitEvent === "function") {
+            emitEvent("end");
+          }
+          return;
+        }
+        return "+";
+      }
+      return (0, _parseDigits.parseDigit)(character);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/getCountryCallingCode.js
+var require_getCountryCallingCode = __commonJS({
+  "node_modules/libphonenumber-js/build/getCountryCallingCode.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    Object.defineProperty(exports2, "default", {
+      enumerable: true,
+      get: function get() {
+        return _metadata.getCountryCallingCode;
+      }
+    });
+    var _metadata = require_metadata();
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/mergeArrays.js
+var require_mergeArrays = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/mergeArrays.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = mergeArrays2;
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function mergeArrays2(a, b) {
+      var merged = a.slice();
+      for (var _iterator = _createForOfIteratorHelperLoose(b), _step; !(_step = _iterator()).done; ) {
+        var element = _step.value;
+        if (a.indexOf(element) < 0) {
+          merged.push(element);
+        }
+      }
+      return merged.sort(function(a2, b2) {
+        return a2 - b2;
+      });
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/checkNumberLength.js
+var require_checkNumberLength = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/checkNumberLength.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.checkNumberLengthForType = checkNumberLengthForType;
+    exports2["default"] = checkNumberLength;
+    var _mergeArrays = _interopRequireDefault(require_mergeArrays());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function checkNumberLength(nationalNumber, metadata) {
+      return checkNumberLengthForType(nationalNumber, void 0, metadata);
+    }
+    function checkNumberLengthForType(nationalNumber, type, metadata) {
+      var type_info = metadata.type(type);
+      var possible_lengths = type_info && type_info.possibleLengths() || metadata.possibleLengths();
+      if (!possible_lengths) {
+        return "IS_POSSIBLE";
+      }
+      if (type === "FIXED_LINE_OR_MOBILE") {
+        if (!metadata.type("FIXED_LINE")) {
+          return checkNumberLengthForType(nationalNumber, "MOBILE", metadata);
+        }
+        var mobile_type = metadata.type("MOBILE");
+        if (mobile_type) {
+          possible_lengths = (0, _mergeArrays["default"])(possible_lengths, mobile_type.possibleLengths());
+        }
+      } else if (type && !type_info) {
+        return "INVALID_LENGTH";
+      }
+      var actual_length = nationalNumber.length;
+      var minimum_length = possible_lengths[0];
+      if (minimum_length === actual_length) {
+        return "IS_POSSIBLE";
+      }
+      if (minimum_length > actual_length) {
+        return "TOO_SHORT";
+      }
+      if (possible_lengths[possible_lengths.length - 1] < actual_length) {
+        return "TOO_LONG";
+      }
+      return possible_lengths.indexOf(actual_length, 1) >= 0 ? "IS_POSSIBLE" : "INVALID_LENGTH";
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/isPossible.js
+var require_isPossible = __commonJS({
+  "node_modules/libphonenumber-js/build/isPossible.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = isPossiblePhoneNumber;
+    exports2.isPossibleNumber = isPossibleNumber;
+    var _metadata = _interopRequireDefault(require_metadata());
+    var _checkNumberLength = _interopRequireDefault(require_checkNumberLength());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function isPossiblePhoneNumber(input, options, metadata) {
+      if (options === void 0) {
+        options = {};
+      }
+      metadata = new _metadata["default"](metadata);
+      if (options.v2) {
+        if (!input.countryCallingCode) {
+          throw new Error("Invalid phone number object passed");
+        }
+        metadata.selectNumberingPlan(input.countryCallingCode);
+      } else {
+        if (!input.phone) {
+          return false;
+        }
+        if (input.country) {
+          if (!metadata.hasCountry(input.country)) {
+            throw new Error("Unknown country: ".concat(input.country));
+          }
+          metadata.country(input.country);
+        } else {
+          if (!input.countryCallingCode) {
+            throw new Error("Invalid phone number object passed");
+          }
+          metadata.selectNumberingPlan(input.countryCallingCode);
+        }
+      }
+      if (metadata.possibleLengths()) {
+        return isPossibleNumber(input.phone || input.nationalNumber, metadata);
+      } else {
+        if (input.countryCallingCode && metadata.isNonGeographicCallingCode(input.countryCallingCode)) {
+          return true;
+        } else {
+          throw new Error('Missing "possibleLengths" in metadata. Perhaps the metadata has been generated before v1.0.18.');
+        }
+      }
+    }
+    function isPossibleNumber(nationalNumber, metadata) {
+      switch ((0, _checkNumberLength["default"])(nationalNumber, metadata)) {
+        case "IS_POSSIBLE":
+          return true;
+        // This library ignores "local-only" phone numbers (for simplicity).
+        // See the readme for more info on what are "local-only" phone numbers.
+        // case 'IS_POSSIBLE_LOCAL_ONLY':
+        // 	return !isInternational
+        default:
+          return false;
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/matchesEntirely.js
+var require_matchesEntirely = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/matchesEntirely.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = matchesEntirely;
+    function matchesEntirely(text, regular_expression) {
+      text = text || "";
+      return new RegExp("^(?:" + regular_expression + ")$").test(text);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/getNumberType.js
+var require_getNumberType = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/getNumberType.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = getNumberType;
+    exports2.isNumberTypeEqualTo = isNumberTypeEqualTo;
+    var _metadata = _interopRequireDefault(require_metadata());
+    var _matchesEntirely = _interopRequireDefault(require_matchesEntirely());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    var NON_FIXED_LINE_PHONE_TYPES = ["MOBILE", "PREMIUM_RATE", "TOLL_FREE", "SHARED_COST", "VOIP", "PERSONAL_NUMBER", "PAGER", "UAN", "VOICEMAIL"];
+    function getNumberType(input, options, metadata) {
+      options = options || {};
+      if (!input.country && !input.countryCallingCode) {
+        return;
+      }
+      metadata = new _metadata["default"](metadata);
+      metadata.selectNumberingPlan(input.country, input.countryCallingCode);
+      var nationalNumber = options.v2 ? input.nationalNumber : input.phone;
+      if (!(0, _matchesEntirely["default"])(nationalNumber, metadata.nationalNumberPattern())) {
+        return;
+      }
+      if (isNumberTypeEqualTo(nationalNumber, "FIXED_LINE", metadata)) {
+        if (metadata.type("MOBILE") && metadata.type("MOBILE").pattern() === "") {
+          return "FIXED_LINE_OR_MOBILE";
+        }
+        if (!metadata.type("MOBILE")) {
+          return "FIXED_LINE_OR_MOBILE";
+        }
+        if (isNumberTypeEqualTo(nationalNumber, "MOBILE", metadata)) {
+          return "FIXED_LINE_OR_MOBILE";
+        }
+        return "FIXED_LINE";
+      }
+      for (var _iterator = _createForOfIteratorHelperLoose(NON_FIXED_LINE_PHONE_TYPES), _step; !(_step = _iterator()).done; ) {
+        var type = _step.value;
+        if (isNumberTypeEqualTo(nationalNumber, type, metadata)) {
+          return type;
+        }
+      }
+    }
+    function isNumberTypeEqualTo(nationalNumber, type, metadata) {
+      type = metadata.type(type);
+      if (!type || !type.pattern()) {
+        return false;
+      }
+      if (type.possibleLengths() && type.possibleLengths().indexOf(nationalNumber.length) < 0) {
+        return false;
+      }
+      return (0, _matchesEntirely["default"])(nationalNumber, type.pattern());
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/isValid.js
+var require_isValid = __commonJS({
+  "node_modules/libphonenumber-js/build/isValid.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = isValidNumber;
+    var _metadata = _interopRequireDefault(require_metadata());
+    var _matchesEntirely = _interopRequireDefault(require_matchesEntirely());
+    var _getNumberType = _interopRequireDefault(require_getNumberType());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function isValidNumber(input, options, metadata) {
+      options = options || {};
+      metadata = new _metadata["default"](metadata);
+      metadata.selectNumberingPlan(input.country, input.countryCallingCode);
+      if (metadata.hasTypes()) {
+        return (0, _getNumberType["default"])(input, options, metadata.metadata) !== void 0;
+      }
+      var nationalNumber = options.v2 ? input.nationalNumber : input.phone;
+      return (0, _matchesEntirely["default"])(nationalNumber, metadata.nationalNumberPattern());
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/getPossibleCountriesForNumber.js
+var require_getPossibleCountriesForNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/getPossibleCountriesForNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = getPossibleCountriesForNumber;
+    var _metadata2 = _interopRequireDefault(require_metadata());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function getPossibleCountriesForNumber(callingCode, nationalNumber, metadata) {
+      var _metadata = new _metadata2["default"](metadata);
+      var possibleCountries = _metadata.getCountryCodesForCallingCode(callingCode);
+      if (!possibleCountries) {
+        return [];
+      }
+      return possibleCountries.filter(function(country2) {
+        return couldNationalNumberBelongToCountry(nationalNumber, country2, metadata);
+      });
+    }
+    function couldNationalNumberBelongToCountry(nationalNumber, country2, metadata) {
+      var _metadata = new _metadata2["default"](metadata);
+      _metadata.selectNumberingPlan(country2);
+      if (_metadata.numberingPlan.possibleLengths().indexOf(nationalNumber.length) >= 0) {
+        return true;
+      }
+      return false;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/stripIddPrefix.js
+var require_stripIddPrefix = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/stripIddPrefix.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = stripIddPrefix;
+    var _metadata = _interopRequireDefault(require_metadata());
+    var _constants = require_constants3();
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    var CAPTURING_DIGIT_PATTERN = new RegExp("([" + _constants.VALID_DIGITS + "])");
+    function stripIddPrefix(number, country2, callingCode, metadata) {
+      if (!country2) {
+        return;
+      }
+      var countryMetadata = new _metadata["default"](metadata);
+      countryMetadata.selectNumberingPlan(country2, callingCode);
+      var IDDPrefixPattern = new RegExp(countryMetadata.IDDPrefix());
+      if (number.search(IDDPrefixPattern) !== 0) {
+        return;
+      }
+      number = number.slice(number.match(IDDPrefixPattern)[0].length);
+      var matchedGroups = number.match(CAPTURING_DIGIT_PATTERN);
+      if (matchedGroups && matchedGroups[1] != null && matchedGroups[1].length > 0) {
+        if (matchedGroups[1] === "0") {
+          return;
+        }
+      }
+      return number;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/extractNationalNumberFromPossiblyIncompleteNumber.js
+var require_extractNationalNumberFromPossiblyIncompleteNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/extractNationalNumberFromPossiblyIncompleteNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = extractNationalNumberFromPossiblyIncompleteNumber;
+    function extractNationalNumberFromPossiblyIncompleteNumber(number, metadata) {
+      if (number && metadata.numberingPlan.nationalPrefixForParsing()) {
+        var prefixPattern = new RegExp("^(?:" + metadata.numberingPlan.nationalPrefixForParsing() + ")");
+        var prefixMatch = prefixPattern.exec(number);
+        if (prefixMatch) {
+          var nationalNumber;
+          var carrierCode;
+          var capturedGroupsCount = prefixMatch.length - 1;
+          var hasCapturedGroups = capturedGroupsCount > 0 && prefixMatch[capturedGroupsCount];
+          if (metadata.nationalPrefixTransformRule() && hasCapturedGroups) {
+            nationalNumber = number.replace(prefixPattern, metadata.nationalPrefixTransformRule());
+            if (capturedGroupsCount > 1) {
+              carrierCode = prefixMatch[1];
+            }
+          } else {
+            var prefixBeforeNationalNumber = prefixMatch[0];
+            nationalNumber = number.slice(prefixBeforeNationalNumber.length);
+            if (hasCapturedGroups) {
+              carrierCode = prefixMatch[1];
+            }
+          }
+          var nationalPrefix;
+          if (hasCapturedGroups) {
+            var possiblePositionOfTheFirstCapturedGroup = number.indexOf(prefixMatch[1]);
+            var possibleNationalPrefix = number.slice(0, possiblePositionOfTheFirstCapturedGroup);
+            if (possibleNationalPrefix === metadata.numberingPlan.nationalPrefix()) {
+              nationalPrefix = metadata.numberingPlan.nationalPrefix();
+            }
+          } else {
+            nationalPrefix = prefixMatch[0];
+          }
+          return {
+            nationalNumber,
+            nationalPrefix,
+            carrierCode
+          };
+        }
+      }
+      return {
+        nationalNumber: number
+      };
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/extractNationalNumber.js
+var require_extractNationalNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/extractNationalNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = extractNationalNumber;
+    var _extractNationalNumberFromPossiblyIncompleteNumber = _interopRequireDefault(require_extractNationalNumberFromPossiblyIncompleteNumber());
+    var _matchesEntirely = _interopRequireDefault(require_matchesEntirely());
+    var _checkNumberLength = _interopRequireDefault(require_checkNumberLength());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function extractNationalNumber(number, metadata) {
+      var _extractNationalNumbe = (0, _extractNationalNumberFromPossiblyIncompleteNumber["default"])(number, metadata), carrierCode = _extractNationalNumbe.carrierCode, nationalNumber = _extractNationalNumbe.nationalNumber;
+      if (nationalNumber !== number) {
+        if (!shouldHaveExtractedNationalPrefix(number, nationalNumber, metadata)) {
+          return {
+            nationalNumber: number
+          };
+        }
+        if (metadata.possibleLengths()) {
+          if (!isPossibleIncompleteNationalNumber(nationalNumber, metadata)) {
+            return {
+              nationalNumber: number
+            };
+          }
+        }
+      }
+      return {
+        nationalNumber,
+        carrierCode
+      };
+    }
+    function shouldHaveExtractedNationalPrefix(nationalNumberBefore, nationalNumberAfter, metadata) {
+      if ((0, _matchesEntirely["default"])(nationalNumberBefore, metadata.nationalNumberPattern()) && !(0, _matchesEntirely["default"])(nationalNumberAfter, metadata.nationalNumberPattern())) {
+        return false;
+      }
+      return true;
+    }
+    function isPossibleIncompleteNationalNumber(nationalNumber, metadata) {
+      switch ((0, _checkNumberLength["default"])(nationalNumber, metadata)) {
+        case "TOO_SHORT":
+        case "INVALID_LENGTH":
+          return false;
+        default:
+          return true;
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/extractCountryCallingCodeFromInternationalNumberWithoutPlusSign.js
+var require_extractCountryCallingCodeFromInternationalNumberWithoutPlusSign = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/extractCountryCallingCodeFromInternationalNumberWithoutPlusSign.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = extractCountryCallingCodeFromInternationalNumberWithoutPlusSign;
+    var _metadata = _interopRequireDefault(require_metadata());
+    var _matchesEntirely = _interopRequireDefault(require_matchesEntirely());
+    var _extractNationalNumber = _interopRequireDefault(require_extractNationalNumber());
+    var _checkNumberLength = _interopRequireDefault(require_checkNumberLength());
+    var _getCountryCallingCode = _interopRequireDefault(require_getCountryCallingCode());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function extractCountryCallingCodeFromInternationalNumberWithoutPlusSign(number, country2, callingCode, metadata) {
+      var countryCallingCode = country2 ? (0, _getCountryCallingCode["default"])(country2, metadata) : callingCode;
+      if (number.indexOf(countryCallingCode) === 0) {
+        metadata = new _metadata["default"](metadata);
+        metadata.selectNumberingPlan(country2, callingCode);
+        var possibleShorterNumber = number.slice(countryCallingCode.length);
+        var _extractNationalNumbe = (0, _extractNationalNumber["default"])(possibleShorterNumber, metadata), possibleShorterNationalNumber = _extractNationalNumbe.nationalNumber;
+        var _extractNationalNumbe2 = (0, _extractNationalNumber["default"])(number, metadata), nationalNumber = _extractNationalNumbe2.nationalNumber;
+        if (!(0, _matchesEntirely["default"])(nationalNumber, metadata.nationalNumberPattern()) && (0, _matchesEntirely["default"])(possibleShorterNationalNumber, metadata.nationalNumberPattern()) || (0, _checkNumberLength["default"])(nationalNumber, metadata) === "TOO_LONG") {
+          return {
+            countryCallingCode,
+            number: possibleShorterNumber
+          };
+        }
+      }
+      return {
+        number
+      };
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/extractCountryCallingCode.js
+var require_extractCountryCallingCode = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/extractCountryCallingCode.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = extractCountryCallingCode;
+    var _stripIddPrefix = _interopRequireDefault(require_stripIddPrefix());
+    var _extractCountryCallingCodeFromInternationalNumberWithoutPlusSign = _interopRequireDefault(require_extractCountryCallingCodeFromInternationalNumberWithoutPlusSign());
+    var _metadata = _interopRequireDefault(require_metadata());
+    var _constants = require_constants3();
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function extractCountryCallingCode(number, country2, callingCode, metadata) {
+      if (!number) {
+        return {};
+      }
+      var isNumberWithIddPrefix;
+      if (number[0] !== "+") {
+        var numberWithoutIDD = (0, _stripIddPrefix["default"])(number, country2, callingCode, metadata);
+        if (numberWithoutIDD && numberWithoutIDD !== number) {
+          isNumberWithIddPrefix = true;
+          number = "+" + numberWithoutIDD;
+        } else {
+          if (country2 || callingCode) {
+            var _extractCountryCallin = (0, _extractCountryCallingCodeFromInternationalNumberWithoutPlusSign["default"])(number, country2, callingCode, metadata), countryCallingCode = _extractCountryCallin.countryCallingCode, shorterNumber = _extractCountryCallin.number;
+            if (countryCallingCode) {
+              return {
+                countryCallingCodeSource: "FROM_NUMBER_WITHOUT_PLUS_SIGN",
+                countryCallingCode,
+                number: shorterNumber
+              };
+            }
+          }
+          return {
+            // No need to set it to `UNSPECIFIED`. It can be just `undefined`.
+            // countryCallingCodeSource: 'UNSPECIFIED',
+            number
+          };
+        }
+      }
+      if (number[1] === "0") {
+        return {};
+      }
+      metadata = new _metadata["default"](metadata);
+      var i = 2;
+      while (i - 1 <= _constants.MAX_LENGTH_COUNTRY_CODE && i <= number.length) {
+        var _countryCallingCode = number.slice(1, i);
+        if (metadata.hasCallingCode(_countryCallingCode)) {
+          metadata.selectNumberingPlan(_countryCallingCode);
+          return {
+            countryCallingCodeSource: isNumberWithIddPrefix ? "FROM_NUMBER_WITH_IDD" : "FROM_NUMBER_WITH_PLUS_SIGN",
+            countryCallingCode: _countryCallingCode,
+            number: number.slice(i)
+          };
+        }
+        i++;
+      }
+      return {};
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/applyInternationalSeparatorStyle.js
+var require_applyInternationalSeparatorStyle = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/applyInternationalSeparatorStyle.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = applyInternationalSeparatorStyle;
+    var _constants = require_constants3();
+    function applyInternationalSeparatorStyle(formattedNumber) {
+      return formattedNumber.replace(new RegExp("[".concat(_constants.VALID_PUNCTUATION, "]+"), "g"), " ").trim();
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/formatNationalNumberUsingFormat.js
+var require_formatNationalNumberUsingFormat = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/formatNationalNumberUsingFormat.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.FIRST_GROUP_PATTERN = void 0;
+    exports2["default"] = formatNationalNumberUsingFormat;
+    var _applyInternationalSeparatorStyle = _interopRequireDefault(require_applyInternationalSeparatorStyle());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    var FIRST_GROUP_PATTERN = /(\$\d)/;
+    exports2.FIRST_GROUP_PATTERN = FIRST_GROUP_PATTERN;
+    function formatNationalNumberUsingFormat(number, format, _ref) {
+      var useInternationalFormat = _ref.useInternationalFormat, withNationalPrefix = _ref.withNationalPrefix, carrierCode = _ref.carrierCode, metadata = _ref.metadata;
+      var formattedNumber = number.replace(new RegExp(format.pattern()), useInternationalFormat ? format.internationalFormat() : (
+        // This library doesn't use `domestic_carrier_code_formatting_rule`,
+        // because that one is only used when formatting phone numbers
+        // for dialing from a mobile phone, and this is not a dialing library.
+        // carrierCode && format.domesticCarrierCodeFormattingRule()
+        // 	// First, replace the $CC in the formatting rule with the desired carrier code.
+        // 	// Then, replace the $FG in the formatting rule with the first group
+        // 	// and the carrier code combined in the appropriate way.
+        // 	? format.format().replace(FIRST_GROUP_PATTERN, format.domesticCarrierCodeFormattingRule().replace('$CC', carrierCode))
+        // 	: (
+        // 		withNationalPrefix && format.nationalPrefixFormattingRule()
+        // 			? format.format().replace(FIRST_GROUP_PATTERN, format.nationalPrefixFormattingRule())
+        // 			: format.format()
+        // 	)
+        withNationalPrefix && format.nationalPrefixFormattingRule() ? format.format().replace(FIRST_GROUP_PATTERN, format.nationalPrefixFormattingRule()) : format.format()
+      ));
+      if (useInternationalFormat) {
+        return (0, _applyInternationalSeparatorStyle["default"])(formattedNumber);
+      }
+      return formattedNumber;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/getIddPrefix.js
+var require_getIddPrefix = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/getIddPrefix.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = getIddPrefix;
+    var _metadata = _interopRequireDefault(require_metadata());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    var SINGLE_IDD_PREFIX_REG_EXP = /^[\d]+(?:[~\u2053\u223C\uFF5E][\d]+)?$/;
+    function getIddPrefix(country2, callingCode, metadata) {
+      var countryMetadata = new _metadata["default"](metadata);
+      countryMetadata.selectNumberingPlan(country2, callingCode);
+      if (countryMetadata.defaultIDDPrefix()) {
+        return countryMetadata.defaultIDDPrefix();
+      }
+      if (SINGLE_IDD_PREFIX_REG_EXP.test(countryMetadata.IDDPrefix())) {
+        return countryMetadata.IDDPrefix();
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/RFC3966.js
+var require_RFC3966 = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/RFC3966.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.formatRFC3966 = formatRFC3966;
+    exports2.parseRFC3966 = parseRFC3966;
+    var _isViablePhoneNumber = _interopRequireDefault(require_isViablePhoneNumber());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _slicedToArray(arr, i) {
+      return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+    }
+    function _nonIterableRest() {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _iterableToArrayLimit(arr, i) {
+      var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+      if (_i == null) return;
+      var _arr = [];
+      var _n = true;
+      var _d = false;
+      var _s, _e;
+      try {
+        for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
+          _arr.push(_s.value);
+          if (i && _arr.length === i) break;
+        }
+      } catch (err2) {
+        _d = true;
+        _e = err2;
+      } finally {
+        try {
+          if (!_n && _i["return"] != null) _i["return"]();
+        } finally {
+          if (_d) throw _e;
+        }
+      }
+      return _arr;
+    }
+    function _arrayWithHoles(arr) {
+      if (Array.isArray(arr)) return arr;
+    }
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function parseRFC3966(text) {
+      var number;
+      var ext;
+      text = text.replace(/^tel:/, "tel=");
+      for (var _iterator = _createForOfIteratorHelperLoose(text.split(";")), _step; !(_step = _iterator()).done; ) {
+        var part = _step.value;
+        var _part$split = part.split("="), _part$split2 = _slicedToArray(_part$split, 2), name = _part$split2[0], value = _part$split2[1];
+        switch (name) {
+          case "tel":
+            number = value;
+            break;
+          case "ext":
+            ext = value;
+            break;
+          case "phone-context":
+            if (value[0] === "+") {
+              number = value + number;
+            }
+            break;
+        }
+      }
+      if (!(0, _isViablePhoneNumber["default"])(number)) {
+        return {};
+      }
+      var result = {
+        number
+      };
+      if (ext) {
+        result.ext = ext;
+      }
+      return result;
+    }
+    function formatRFC3966(_ref) {
+      var number = _ref.number, ext = _ref.ext;
+      if (!number) {
+        return "";
+      }
+      if (number[0] !== "+") {
+        throw new Error('"formatRFC3966()" expects "number" to be in E.164 format.');
+      }
+      return "tel:".concat(number).concat(ext ? ";ext=" + ext : "");
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/format.js
+var require_format = __commonJS({
+  "node_modules/libphonenumber-js/build/format.js"(exports2) {
+    "use strict";
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
+        return typeof obj2;
+      } : function(obj2) {
+        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+      }, _typeof(obj);
+    }
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.chooseFormatForNumber = chooseFormatForNumber;
+    exports2["default"] = formatNumber2;
+    var _matchesEntirely = _interopRequireDefault(require_matchesEntirely());
+    var _formatNationalNumberUsingFormat = _interopRequireDefault(require_formatNationalNumberUsingFormat());
+    var _metadata = _interopRequireWildcard(require_metadata());
+    var _getIddPrefix = _interopRequireDefault(require_getIddPrefix());
+    var _RFC = require_RFC3966();
+    function _getRequireWildcardCache(nodeInterop) {
+      if (typeof WeakMap !== "function") return null;
+      var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
+      var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
+      return (_getRequireWildcardCache = function _getRequireWildcardCache2(nodeInterop2) {
+        return nodeInterop2 ? cacheNodeInterop : cacheBabelInterop;
+      })(nodeInterop);
+    }
+    function _interopRequireWildcard(obj, nodeInterop) {
+      if (!nodeInterop && obj && obj.__esModule) {
+        return obj;
+      }
+      if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
+        return { "default": obj };
+      }
+      var cache = _getRequireWildcardCache(nodeInterop);
+      if (cache && cache.has(obj)) {
+        return cache.get(obj);
+      }
+      var newObj = {};
+      var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+      for (var key in obj) {
+        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+          var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+          if (desc && (desc.get || desc.set)) {
+            Object.defineProperty(newObj, key, desc);
+          } else {
+            newObj[key] = obj[key];
+          }
+        }
+      }
+      newObj["default"] = obj;
+      if (cache) {
+        cache.set(obj, newObj);
+      }
+      return newObj;
+    }
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function ownKeys2(object, enumerableOnly) {
+      var keys = Object.keys(object);
+      if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        enumerableOnly && (symbols = symbols.filter(function(sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        })), keys.push.apply(keys, symbols);
+      }
+      return keys;
+    }
+    function _objectSpread(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = null != arguments[i] ? arguments[i] : {};
+        i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
+          _defineProperty(target, key, source[key]);
+        }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+      return target;
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    var DEFAULT_OPTIONS = {
+      formatExtension: function formatExtension(formattedNumber, extension, metadata) {
+        return "".concat(formattedNumber).concat(metadata.ext()).concat(extension);
+      }
+    };
+    function formatNumber2(input, format, options, metadata) {
+      if (options) {
+        options = _objectSpread(_objectSpread({}, DEFAULT_OPTIONS), options);
+      } else {
+        options = DEFAULT_OPTIONS;
+      }
+      metadata = new _metadata["default"](metadata);
+      if (input.country && input.country !== "001") {
+        if (!metadata.hasCountry(input.country)) {
+          throw new Error("Unknown country: ".concat(input.country));
+        }
+        metadata.country(input.country);
+      } else if (input.countryCallingCode) {
+        metadata.selectNumberingPlan(input.countryCallingCode);
+      } else return input.phone || "";
+      var countryCallingCode = metadata.countryCallingCode();
+      var nationalNumber = options.v2 ? input.nationalNumber : input.phone;
+      var number;
+      switch (format) {
+        case "NATIONAL":
+          if (!nationalNumber) {
+            return "";
+          }
+          number = formatNationalNumber(nationalNumber, input.carrierCode, "NATIONAL", metadata, options);
+          return addExtension(number, input.ext, metadata, options.formatExtension);
+        case "INTERNATIONAL":
+          if (!nationalNumber) {
+            return "+".concat(countryCallingCode);
+          }
+          number = formatNationalNumber(nationalNumber, null, "INTERNATIONAL", metadata, options);
+          number = "+".concat(countryCallingCode, " ").concat(number);
+          return addExtension(number, input.ext, metadata, options.formatExtension);
+        case "E.164":
+          return "+".concat(countryCallingCode).concat(nationalNumber);
+        case "RFC3966":
+          return (0, _RFC.formatRFC3966)({
+            number: "+".concat(countryCallingCode).concat(nationalNumber),
+            ext: input.ext
+          });
+        // For reference, here's Google's IDD formatter:
+        // https://github.com/google/libphonenumber/blob/32719cf74e68796788d1ca45abc85dcdc63ba5b9/java/libphonenumber/src/com/google/i18n/phonenumbers/PhoneNumberUtil.java#L1546
+        // Not saying that this IDD formatter replicates it 1:1, but it seems to work.
+        // Who would even need to format phone numbers in IDD format anyway?
+        case "IDD":
+          if (!options.fromCountry) {
+            return;
+          }
+          var formattedNumber = formatIDD(nationalNumber, input.carrierCode, countryCallingCode, options.fromCountry, metadata);
+          return addExtension(formattedNumber, input.ext, metadata, options.formatExtension);
+        default:
+          throw new Error('Unknown "format" argument passed to "formatNumber()": "'.concat(format, '"'));
+      }
+    }
+    function formatNationalNumber(number, carrierCode, formatAs, metadata, options) {
+      var format = chooseFormatForNumber(metadata.formats(), number);
+      if (!format) {
+        return number;
+      }
+      return (0, _formatNationalNumberUsingFormat["default"])(number, format, {
+        useInternationalFormat: formatAs === "INTERNATIONAL",
+        withNationalPrefix: format.nationalPrefixIsOptionalWhenFormattingInNationalFormat() && options && options.nationalPrefix === false ? false : true,
+        carrierCode,
+        metadata
+      });
+    }
+    function chooseFormatForNumber(availableFormats, nationalNnumber) {
+      for (var _iterator = _createForOfIteratorHelperLoose(availableFormats), _step; !(_step = _iterator()).done; ) {
+        var format = _step.value;
+        if (format.leadingDigitsPatterns().length > 0) {
+          var lastLeadingDigitsPattern = format.leadingDigitsPatterns()[format.leadingDigitsPatterns().length - 1];
+          if (nationalNnumber.search(lastLeadingDigitsPattern) !== 0) {
+            continue;
+          }
+        }
+        if ((0, _matchesEntirely["default"])(nationalNnumber, format.pattern())) {
+          return format;
+        }
+      }
+    }
+    function addExtension(formattedNumber, ext, metadata, formatExtension) {
+      return ext ? formatExtension(formattedNumber, ext, metadata) : formattedNumber;
+    }
+    function formatIDD(nationalNumber, carrierCode, countryCallingCode, fromCountry, metadata) {
+      var fromCountryCallingCode = (0, _metadata.getCountryCallingCode)(fromCountry, metadata.metadata);
+      if (fromCountryCallingCode === countryCallingCode) {
+        var formattedNumber = formatNationalNumber(nationalNumber, carrierCode, "NATIONAL", metadata);
+        if (countryCallingCode === "1") {
+          return countryCallingCode + " " + formattedNumber;
+        }
+        return formattedNumber;
+      }
+      var iddPrefix = (0, _getIddPrefix["default"])(fromCountry, void 0, metadata.metadata);
+      if (iddPrefix) {
+        return "".concat(iddPrefix, " ").concat(countryCallingCode, " ").concat(formatNationalNumber(nationalNumber, null, "INTERNATIONAL", metadata));
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/PhoneNumber.js
+var require_PhoneNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/PhoneNumber.js"(exports2) {
+    "use strict";
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
+        return typeof obj2;
+      } : function(obj2) {
+        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+      }, _typeof(obj);
+    }
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = void 0;
+    var _metadata = _interopRequireWildcard(require_metadata());
+    var _isPossible = _interopRequireDefault(require_isPossible());
+    var _isValid = _interopRequireDefault(require_isValid());
+    var _getNumberType = _interopRequireDefault(require_getNumberType());
+    var _getPossibleCountriesForNumber = _interopRequireDefault(require_getPossibleCountriesForNumber());
+    var _extractCountryCallingCode = _interopRequireDefault(require_extractCountryCallingCode());
+    var _isObject = _interopRequireDefault(require_isObject());
+    var _format2 = _interopRequireDefault(require_format());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _getRequireWildcardCache(nodeInterop) {
+      if (typeof WeakMap !== "function") return null;
+      var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
+      var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
+      return (_getRequireWildcardCache = function _getRequireWildcardCache2(nodeInterop2) {
+        return nodeInterop2 ? cacheNodeInterop : cacheBabelInterop;
+      })(nodeInterop);
+    }
+    function _interopRequireWildcard(obj, nodeInterop) {
+      if (!nodeInterop && obj && obj.__esModule) {
+        return obj;
+      }
+      if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
+        return { "default": obj };
+      }
+      var cache = _getRequireWildcardCache(nodeInterop);
+      if (cache && cache.has(obj)) {
+        return cache.get(obj);
+      }
+      var newObj = {};
+      var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+      for (var key in obj) {
+        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+          var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+          if (desc && (desc.get || desc.set)) {
+            Object.defineProperty(newObj, key, desc);
+          } else {
+            newObj[key] = obj[key];
+          }
+        }
+      }
+      newObj["default"] = obj;
+      if (cache) {
+        cache.set(obj, newObj);
+      }
+      return newObj;
+    }
+    function ownKeys2(object, enumerableOnly) {
+      var keys = Object.keys(object);
+      if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        enumerableOnly && (symbols = symbols.filter(function(sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        })), keys.push.apply(keys, symbols);
+      }
+      return keys;
+    }
+    function _objectSpread(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = null != arguments[i] ? arguments[i] : {};
+        i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
+          _defineProperty(target, key, source[key]);
+        }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+      return target;
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    var USE_NON_GEOGRAPHIC_COUNTRY_CODE = false;
+    var PhoneNumber = /* @__PURE__ */ (function() {
+      function PhoneNumber2(countryOrCountryCallingCode, nationalNumber, metadata) {
+        _classCallCheck(this, PhoneNumber2);
+        if (!countryOrCountryCallingCode) {
+          throw new TypeError("First argument is required");
+        }
+        if (typeof countryOrCountryCallingCode !== "string") {
+          throw new TypeError("First argument must be a string");
+        }
+        if (typeof countryOrCountryCallingCode === "string") {
+          if (countryOrCountryCallingCode[0] === "+" && !nationalNumber) {
+            throw new TypeError("`metadata` argument not passed");
+          }
+          if ((0, _isObject["default"])(nationalNumber) && (0, _isObject["default"])(nationalNumber.countries)) {
+            metadata = nationalNumber;
+            var e164Number = countryOrCountryCallingCode;
+            if (!E164_NUMBER_REGEXP.test(e164Number)) {
+              throw new Error('Invalid `number` argument passed: must consist of a "+" followed by digits');
+            }
+            var _extractCountryCallin = (0, _extractCountryCallingCode["default"])(e164Number, void 0, void 0, metadata), _countryCallingCode = _extractCountryCallin.countryCallingCode, number = _extractCountryCallin.number;
+            nationalNumber = number;
+            countryOrCountryCallingCode = _countryCallingCode;
+            if (!nationalNumber) {
+              throw new Error("Invalid `number` argument passed: too short");
+            }
+          }
+        }
+        if (!nationalNumber) {
+          throw new TypeError("`nationalNumber` argument is required");
+        }
+        if (typeof nationalNumber !== "string") {
+          throw new TypeError("`nationalNumber` argument must be a string");
+        }
+        (0, _metadata.validateMetadata)(metadata);
+        var _getCountryAndCountry = getCountryAndCountryCallingCode(countryOrCountryCallingCode, metadata), country2 = _getCountryAndCountry.country, countryCallingCode = _getCountryAndCountry.countryCallingCode;
+        this.country = country2;
+        this.countryCallingCode = countryCallingCode;
+        this.nationalNumber = nationalNumber;
+        this.number = "+" + this.countryCallingCode + this.nationalNumber;
+        this.getMetadata = function() {
+          return metadata;
+        };
+      }
+      _createClass(PhoneNumber2, [{
+        key: "setExt",
+        value: function setExt(ext) {
+          this.ext = ext;
+        }
+      }, {
+        key: "getPossibleCountries",
+        value: function getPossibleCountries() {
+          if (this.country) {
+            return [this.country];
+          }
+          return (0, _getPossibleCountriesForNumber["default"])(this.countryCallingCode, this.nationalNumber, this.getMetadata());
+        }
+      }, {
+        key: "isPossible",
+        value: function isPossible() {
+          return (0, _isPossible["default"])(this, {
+            v2: true
+          }, this.getMetadata());
+        }
+      }, {
+        key: "isValid",
+        value: function isValid() {
+          return (0, _isValid["default"])(this, {
+            v2: true
+          }, this.getMetadata());
+        }
+      }, {
+        key: "isNonGeographic",
+        value: function isNonGeographic() {
+          var metadata = new _metadata["default"](this.getMetadata());
+          return metadata.isNonGeographicCallingCode(this.countryCallingCode);
+        }
+      }, {
+        key: "isEqual",
+        value: function isEqual(phoneNumber) {
+          return this.number === phoneNumber.number && this.ext === phoneNumber.ext;
+        }
+        // This function was originally meant to be an equivalent for `validatePhoneNumberLength()`,
+        // but later it was found out that it doesn't include the possible `TOO_SHORT` result
+        // returned from `parsePhoneNumberWithError()` in the original `validatePhoneNumberLength()`,
+        // so eventually I simply commented out this method from the `PhoneNumber` class
+        // and just left the `validatePhoneNumberLength()` function, even though that one would require
+        // and additional step to also validate the actual country / calling code of the phone number.
+        // validateLength() {
+        // 	const metadata = new Metadata(this.getMetadata())
+        // 	metadata.selectNumberingPlan(this.countryCallingCode)
+        // 	const result = checkNumberLength(this.nationalNumber, metadata)
+        // 	if (result !== 'IS_POSSIBLE') {
+        // 		return result
+        // 	}
+        // }
+      }, {
+        key: "getType",
+        value: function getType() {
+          return (0, _getNumberType["default"])(this, {
+            v2: true
+          }, this.getMetadata());
+        }
+      }, {
+        key: "format",
+        value: function format(_format, options) {
+          return (0, _format2["default"])(this, _format, options ? _objectSpread(_objectSpread({}, options), {}, {
+            v2: true
+          }) : {
+            v2: true
+          }, this.getMetadata());
+        }
+      }, {
+        key: "formatNational",
+        value: function formatNational(options) {
+          return this.format("NATIONAL", options);
+        }
+      }, {
+        key: "formatInternational",
+        value: function formatInternational(options) {
+          return this.format("INTERNATIONAL", options);
+        }
+      }, {
+        key: "getURI",
+        value: function getURI(options) {
+          return this.format("RFC3966", options);
+        }
+      }]);
+      return PhoneNumber2;
+    })();
+    exports2["default"] = PhoneNumber;
+    var isCountryCode = function isCountryCode2(value) {
+      return /^[A-Z]{2}$/.test(value);
+    };
+    function getCountryAndCountryCallingCode(countryOrCountryCallingCode, metadataJson) {
+      var country2;
+      var countryCallingCode;
+      var metadata = new _metadata["default"](metadataJson);
+      if (isCountryCode(countryOrCountryCallingCode)) {
+        country2 = countryOrCountryCallingCode;
+        metadata.selectNumberingPlan(country2);
+        countryCallingCode = metadata.countryCallingCode();
+      } else {
+        countryCallingCode = countryOrCountryCallingCode;
+        if (USE_NON_GEOGRAPHIC_COUNTRY_CODE) {
+          if (metadata.isNonGeographicCallingCode(countryCallingCode)) {
+            country2 = "001";
+          }
+        }
+      }
+      return {
+        country: country2,
+        countryCallingCode
+      };
+    }
+    var E164_NUMBER_REGEXP = /^\+\d+$/;
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/getCountryByNationalNumber.js
+var require_getCountryByNationalNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/getCountryByNationalNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = getCountryByNationalNumber;
+    var _metadata = _interopRequireDefault(require_metadata());
+    var _getNumberType = _interopRequireDefault(require_getNumberType());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function getCountryByNationalNumber(nationalPhoneNumber, _ref) {
+      var countries = _ref.countries, defaultCountry = _ref.defaultCountry, metadata = _ref.metadata;
+      metadata = new _metadata["default"](metadata);
+      for (var _iterator = _createForOfIteratorHelperLoose(countries), _step; !(_step = _iterator()).done; ) {
+        var country2 = _step.value;
+        metadata.country(country2);
+        if (metadata.leadingDigits()) {
+          if (nationalPhoneNumber && nationalPhoneNumber.search(metadata.leadingDigits()) === 0) {
+            return country2;
+          }
+        } else if ((0, _getNumberType["default"])({
+          phone: nationalPhoneNumber,
+          country: country2
+        }, void 0, metadata.metadata)) {
+          return country2;
+        }
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/getCountryByCallingCode.js
+var require_getCountryByCallingCode = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/getCountryByCallingCode.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = getCountryByCallingCode;
+    var _getCountryByNationalNumber = _interopRequireDefault(require_getCountryByNationalNumber());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    var USE_NON_GEOGRAPHIC_COUNTRY_CODE = false;
+    function getCountryByCallingCode(callingCode, _ref) {
+      var nationalPhoneNumber = _ref.nationalNumber, defaultCountry = _ref.defaultCountry, metadata = _ref.metadata;
+      if (USE_NON_GEOGRAPHIC_COUNTRY_CODE) {
+        if (metadata.isNonGeographicCallingCode(callingCode)) {
+          return "001";
+        }
+      }
+      var possibleCountries = metadata.getCountryCodesForCallingCode(callingCode);
+      if (!possibleCountries) {
+        return;
+      }
+      if (possibleCountries.length === 1) {
+        return possibleCountries[0];
+      }
+      return (0, _getCountryByNationalNumber["default"])(nationalPhoneNumber, {
+        countries: possibleCountries,
+        defaultCountry,
+        metadata: metadata.metadata
+      });
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/extractPhoneContext.js
+var require_extractPhoneContext = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/extractPhoneContext.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.RFC3966_PREFIX_ = exports2.RFC3966_PHONE_CONTEXT_ = exports2.RFC3966_ISDN_SUBADDRESS_ = exports2.PLUS_SIGN = void 0;
+    exports2["default"] = extractPhoneContext;
+    exports2.isPhoneContextValid = isPhoneContextValid;
+    var _constants = require_constants3();
+    var PLUS_SIGN = "+";
+    exports2.PLUS_SIGN = PLUS_SIGN;
+    var RFC3966_VISUAL_SEPARATOR_ = "[\\-\\.\\(\\)]?";
+    var RFC3966_PHONE_DIGIT_ = "([" + _constants.VALID_DIGITS + "]|" + RFC3966_VISUAL_SEPARATOR_ + ")";
+    var RFC3966_GLOBAL_NUMBER_DIGITS_ = "^\\" + PLUS_SIGN + RFC3966_PHONE_DIGIT_ + "*[" + _constants.VALID_DIGITS + "]" + RFC3966_PHONE_DIGIT_ + "*$";
+    var RFC3966_GLOBAL_NUMBER_DIGITS_PATTERN_ = new RegExp(RFC3966_GLOBAL_NUMBER_DIGITS_, "g");
+    var ALPHANUM_ = _constants.VALID_DIGITS;
+    var RFC3966_DOMAINLABEL_ = "[" + ALPHANUM_ + "]+((\\-)*[" + ALPHANUM_ + "])*";
+    var VALID_ALPHA_ = "a-zA-Z";
+    var RFC3966_TOPLABEL_ = "[" + VALID_ALPHA_ + "]+((\\-)*[" + ALPHANUM_ + "])*";
+    var RFC3966_DOMAINNAME_ = "^(" + RFC3966_DOMAINLABEL_ + "\\.)*" + RFC3966_TOPLABEL_ + "\\.?$";
+    var RFC3966_DOMAINNAME_PATTERN_ = new RegExp(RFC3966_DOMAINNAME_, "g");
+    var RFC3966_PREFIX_ = "tel:";
+    exports2.RFC3966_PREFIX_ = RFC3966_PREFIX_;
+    var RFC3966_PHONE_CONTEXT_ = ";phone-context=";
+    exports2.RFC3966_PHONE_CONTEXT_ = RFC3966_PHONE_CONTEXT_;
+    var RFC3966_ISDN_SUBADDRESS_ = ";isub=";
+    exports2.RFC3966_ISDN_SUBADDRESS_ = RFC3966_ISDN_SUBADDRESS_;
+    function extractPhoneContext(numberToExtractFrom) {
+      var indexOfPhoneContext = numberToExtractFrom.indexOf(RFC3966_PHONE_CONTEXT_);
+      if (indexOfPhoneContext < 0) {
+        return null;
+      }
+      var phoneContextStart = indexOfPhoneContext + RFC3966_PHONE_CONTEXT_.length;
+      if (phoneContextStart >= numberToExtractFrom.length) {
+        return "";
+      }
+      var phoneContextEnd = numberToExtractFrom.indexOf(";", phoneContextStart);
+      if (phoneContextEnd >= 0) {
+        return numberToExtractFrom.substring(phoneContextStart, phoneContextEnd);
+      } else {
+        return numberToExtractFrom.substring(phoneContextStart);
+      }
+    }
+    function isPhoneContextValid(phoneContext) {
+      if (phoneContext === null) {
+        return true;
+      }
+      if (phoneContext.length === 0) {
+        return false;
+      }
+      return RFC3966_GLOBAL_NUMBER_DIGITS_PATTERN_.test(phoneContext) || RFC3966_DOMAINNAME_PATTERN_.test(phoneContext);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/helpers/extractFormattedPhoneNumberFromPossibleRfc3966NumberUri.js
+var require_extractFormattedPhoneNumberFromPossibleRfc3966NumberUri = __commonJS({
+  "node_modules/libphonenumber-js/build/helpers/extractFormattedPhoneNumberFromPossibleRfc3966NumberUri.js"(exports2) {
+    "use strict";
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
+        return typeof obj2;
+      } : function(obj2) {
+        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+      }, _typeof(obj);
+    }
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = extractFormattedPhoneNumberFromPossibleRfc3966NumberUri;
+    var _extractPhoneContext = _interopRequireWildcard(require_extractPhoneContext());
+    var _ParseError = _interopRequireDefault(require_ParseError());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _getRequireWildcardCache(nodeInterop) {
+      if (typeof WeakMap !== "function") return null;
+      var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
+      var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
+      return (_getRequireWildcardCache = function _getRequireWildcardCache2(nodeInterop2) {
+        return nodeInterop2 ? cacheNodeInterop : cacheBabelInterop;
+      })(nodeInterop);
+    }
+    function _interopRequireWildcard(obj, nodeInterop) {
+      if (!nodeInterop && obj && obj.__esModule) {
+        return obj;
+      }
+      if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
+        return { "default": obj };
+      }
+      var cache = _getRequireWildcardCache(nodeInterop);
+      if (cache && cache.has(obj)) {
+        return cache.get(obj);
+      }
+      var newObj = {};
+      var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+      for (var key in obj) {
+        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+          var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+          if (desc && (desc.get || desc.set)) {
+            Object.defineProperty(newObj, key, desc);
+          } else {
+            newObj[key] = obj[key];
+          }
+        }
+      }
+      newObj["default"] = obj;
+      if (cache) {
+        cache.set(obj, newObj);
+      }
+      return newObj;
+    }
+    function extractFormattedPhoneNumberFromPossibleRfc3966NumberUri(numberToParse, _ref) {
+      var extractFormattedPhoneNumber = _ref.extractFormattedPhoneNumber;
+      var phoneContext = (0, _extractPhoneContext["default"])(numberToParse);
+      if (!(0, _extractPhoneContext.isPhoneContextValid)(phoneContext)) {
+        throw new _ParseError["default"]("NOT_A_NUMBER");
+      }
+      var phoneNumberString;
+      if (phoneContext === null) {
+        phoneNumberString = extractFormattedPhoneNumber(numberToParse) || "";
+      } else {
+        phoneNumberString = "";
+        if (phoneContext.charAt(0) === _extractPhoneContext.PLUS_SIGN) {
+          phoneNumberString += phoneContext;
+        }
+        var indexOfRfc3966Prefix = numberToParse.indexOf(_extractPhoneContext.RFC3966_PREFIX_);
+        var indexOfNationalNumber;
+        if (indexOfRfc3966Prefix >= 0) {
+          indexOfNationalNumber = indexOfRfc3966Prefix + _extractPhoneContext.RFC3966_PREFIX_.length;
+        } else {
+          indexOfNationalNumber = 0;
+        }
+        var indexOfPhoneContext = numberToParse.indexOf(_extractPhoneContext.RFC3966_PHONE_CONTEXT_);
+        phoneNumberString += numberToParse.substring(indexOfNationalNumber, indexOfPhoneContext);
+      }
+      var indexOfIsdn = phoneNumberString.indexOf(_extractPhoneContext.RFC3966_ISDN_SUBADDRESS_);
+      if (indexOfIsdn > 0) {
+        phoneNumberString = phoneNumberString.substring(0, indexOfIsdn);
+      }
+      if (phoneNumberString !== "") {
+        return phoneNumberString;
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/parse.js
+var require_parse2 = __commonJS({
+  "node_modules/libphonenumber-js/build/parse.js"(exports2) {
+    "use strict";
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
+        return typeof obj2;
+      } : function(obj2) {
+        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+      }, _typeof(obj);
+    }
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = parse;
+    var _constants = require_constants3();
+    var _ParseError = _interopRequireDefault(require_ParseError());
+    var _metadata = _interopRequireDefault(require_metadata());
+    var _isViablePhoneNumber = _interopRequireWildcard(require_isViablePhoneNumber());
+    var _extractExtension = _interopRequireDefault(require_extractExtension());
+    var _parseIncompletePhoneNumber = _interopRequireDefault(require_parseIncompletePhoneNumber());
+    var _getCountryCallingCode = _interopRequireDefault(require_getCountryCallingCode());
+    var _isPossible = require_isPossible();
+    var _PhoneNumber = _interopRequireDefault(require_PhoneNumber());
+    var _matchesEntirely = _interopRequireDefault(require_matchesEntirely());
+    var _extractCountryCallingCode = _interopRequireDefault(require_extractCountryCallingCode());
+    var _extractNationalNumber = _interopRequireDefault(require_extractNationalNumber());
+    var _stripIddPrefix = _interopRequireDefault(require_stripIddPrefix());
+    var _getCountryByCallingCode = _interopRequireDefault(require_getCountryByCallingCode());
+    var _extractFormattedPhoneNumberFromPossibleRfc3966NumberUri = _interopRequireDefault(require_extractFormattedPhoneNumberFromPossibleRfc3966NumberUri());
+    function _getRequireWildcardCache(nodeInterop) {
+      if (typeof WeakMap !== "function") return null;
+      var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
+      var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
+      return (_getRequireWildcardCache = function _getRequireWildcardCache2(nodeInterop2) {
+        return nodeInterop2 ? cacheNodeInterop : cacheBabelInterop;
+      })(nodeInterop);
+    }
+    function _interopRequireWildcard(obj, nodeInterop) {
+      if (!nodeInterop && obj && obj.__esModule) {
+        return obj;
+      }
+      if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
+        return { "default": obj };
+      }
+      var cache = _getRequireWildcardCache(nodeInterop);
+      if (cache && cache.has(obj)) {
+        return cache.get(obj);
+      }
+      var newObj = {};
+      var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+      for (var key in obj) {
+        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+          var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+          if (desc && (desc.get || desc.set)) {
+            Object.defineProperty(newObj, key, desc);
+          } else {
+            newObj[key] = obj[key];
+          }
+        }
+      }
+      newObj["default"] = obj;
+      if (cache) {
+        cache.set(obj, newObj);
+      }
+      return newObj;
+    }
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    var MAX_INPUT_STRING_LENGTH = 250;
+    var PHONE_NUMBER_START_PATTERN = new RegExp("[" + _constants.PLUS_CHARS + _constants.VALID_DIGITS + "]");
+    var AFTER_PHONE_NUMBER_END_PATTERN = new RegExp("[^" + _constants.VALID_DIGITS + "#]+$");
+    var USE_NON_GEOGRAPHIC_COUNTRY_CODE = false;
+    function parse(text, options, metadata) {
+      options = options || {};
+      metadata = new _metadata["default"](metadata);
+      if (options.defaultCountry && !metadata.hasCountry(options.defaultCountry)) {
+        if (options.v2) {
+          throw new _ParseError["default"]("INVALID_COUNTRY");
+        }
+        throw new Error("Unknown country: ".concat(options.defaultCountry));
+      }
+      var _parseInput = parseInput(text, options.v2, options.extract), formattedPhoneNumber = _parseInput.number, ext = _parseInput.ext, error = _parseInput.error;
+      if (!formattedPhoneNumber) {
+        if (options.v2) {
+          if (error === "TOO_SHORT") {
+            throw new _ParseError["default"]("TOO_SHORT");
+          }
+          throw new _ParseError["default"]("NOT_A_NUMBER");
+        }
+        return {};
+      }
+      var _parsePhoneNumber = parsePhoneNumber(formattedPhoneNumber, options.defaultCountry, options.defaultCallingCode, metadata), country2 = _parsePhoneNumber.country, nationalNumber = _parsePhoneNumber.nationalNumber, countryCallingCode = _parsePhoneNumber.countryCallingCode, countryCallingCodeSource = _parsePhoneNumber.countryCallingCodeSource, carrierCode = _parsePhoneNumber.carrierCode;
+      if (!metadata.hasSelectedNumberingPlan()) {
+        if (options.v2) {
+          throw new _ParseError["default"]("INVALID_COUNTRY");
+        }
+        return {};
+      }
+      if (!nationalNumber || nationalNumber.length < _constants.MIN_LENGTH_FOR_NSN) {
+        if (options.v2) {
+          throw new _ParseError["default"]("TOO_SHORT");
+        }
+        return {};
+      }
+      if (nationalNumber.length > _constants.MAX_LENGTH_FOR_NSN) {
+        if (options.v2) {
+          throw new _ParseError["default"]("TOO_LONG");
+        }
+        return {};
+      }
+      if (options.v2) {
+        var phoneNumber = new _PhoneNumber["default"](countryCallingCode, nationalNumber, metadata.metadata);
+        if (country2) {
+          phoneNumber.country = country2;
+        }
+        if (carrierCode) {
+          phoneNumber.carrierCode = carrierCode;
+        }
+        if (ext) {
+          phoneNumber.ext = ext;
+        }
+        phoneNumber.__countryCallingCodeSource = countryCallingCodeSource;
+        return phoneNumber;
+      }
+      var valid = (options.extended ? metadata.hasSelectedNumberingPlan() : country2) ? (0, _matchesEntirely["default"])(nationalNumber, metadata.nationalNumberPattern()) : false;
+      if (!options.extended) {
+        return valid ? result(country2, nationalNumber, ext) : {};
+      }
+      return {
+        country: country2,
+        countryCallingCode,
+        carrierCode,
+        valid,
+        possible: valid ? true : options.extended === true && metadata.possibleLengths() && (0, _isPossible.isPossibleNumber)(nationalNumber, metadata) ? true : false,
+        phone: nationalNumber,
+        ext
+      };
+    }
+    function _extractFormattedPhoneNumber(text, extract, throwOnError) {
+      if (!text) {
+        return;
+      }
+      if (text.length > MAX_INPUT_STRING_LENGTH) {
+        if (throwOnError) {
+          throw new _ParseError["default"]("TOO_LONG");
+        }
+        return;
+      }
+      if (extract === false) {
+        return text;
+      }
+      var startsAt = text.search(PHONE_NUMBER_START_PATTERN);
+      if (startsAt < 0) {
+        return;
+      }
+      return text.slice(startsAt).replace(AFTER_PHONE_NUMBER_END_PATTERN, "");
+    }
+    function parseInput(text, v22, extract) {
+      var number = (0, _extractFormattedPhoneNumberFromPossibleRfc3966NumberUri["default"])(text, {
+        extractFormattedPhoneNumber: function extractFormattedPhoneNumber(text2) {
+          return _extractFormattedPhoneNumber(text2, extract, v22);
+        }
+      });
+      if (!number) {
+        return {};
+      }
+      if (!(0, _isViablePhoneNumber["default"])(number)) {
+        if ((0, _isViablePhoneNumber.isViablePhoneNumberStart)(number)) {
+          return {
+            error: "TOO_SHORT"
+          };
+        }
+        return {};
+      }
+      var withExtensionStripped = (0, _extractExtension["default"])(number);
+      if (withExtensionStripped.ext) {
+        return withExtensionStripped;
+      }
+      return {
+        number
+      };
+    }
+    function result(country2, nationalNumber, ext) {
+      var result2 = {
+        country: country2,
+        phone: nationalNumber
+      };
+      if (ext) {
+        result2.ext = ext;
+      }
+      return result2;
+    }
+    function parsePhoneNumber(formattedPhoneNumber, defaultCountry, defaultCallingCode, metadata) {
+      var _extractCountryCallin = (0, _extractCountryCallingCode["default"])((0, _parseIncompletePhoneNumber["default"])(formattedPhoneNumber), defaultCountry, defaultCallingCode, metadata.metadata), countryCallingCodeSource = _extractCountryCallin.countryCallingCodeSource, countryCallingCode = _extractCountryCallin.countryCallingCode, number = _extractCountryCallin.number;
+      var country2;
+      if (countryCallingCode) {
+        metadata.selectNumberingPlan(countryCallingCode);
+      } else if (number && (defaultCountry || defaultCallingCode)) {
+        metadata.selectNumberingPlan(defaultCountry, defaultCallingCode);
+        if (defaultCountry) {
+          country2 = defaultCountry;
+        } else {
+          if (USE_NON_GEOGRAPHIC_COUNTRY_CODE) {
+            if (metadata.isNonGeographicCallingCode(defaultCallingCode)) {
+              country2 = "001";
+            }
+          }
+        }
+        countryCallingCode = defaultCallingCode || (0, _getCountryCallingCode["default"])(defaultCountry, metadata.metadata);
+      } else return {};
+      if (!number) {
+        return {
+          countryCallingCodeSource,
+          countryCallingCode
+        };
+      }
+      var _extractNationalNumbe = (0, _extractNationalNumber["default"])((0, _parseIncompletePhoneNumber["default"])(number), metadata), nationalNumber = _extractNationalNumbe.nationalNumber, carrierCode = _extractNationalNumbe.carrierCode;
+      var exactCountry = (0, _getCountryByCallingCode["default"])(countryCallingCode, {
+        nationalNumber,
+        defaultCountry,
+        metadata
+      });
+      if (exactCountry) {
+        country2 = exactCountry;
+        if (exactCountry === "001") {
+        } else {
+          metadata.country(country2);
+        }
+      }
+      return {
+        country: country2,
+        countryCallingCode,
+        countryCallingCodeSource,
+        nationalNumber,
+        carrierCode
+      };
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/parsePhoneNumberWithError_.js
+var require_parsePhoneNumberWithError = __commonJS({
+  "node_modules/libphonenumber-js/build/parsePhoneNumberWithError_.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = parsePhoneNumberWithError;
+    var _parse = _interopRequireDefault(require_parse2());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function ownKeys2(object, enumerableOnly) {
+      var keys = Object.keys(object);
+      if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        enumerableOnly && (symbols = symbols.filter(function(sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        })), keys.push.apply(keys, symbols);
+      }
+      return keys;
+    }
+    function _objectSpread(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = null != arguments[i] ? arguments[i] : {};
+        i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
+          _defineProperty(target, key, source[key]);
+        }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+      return target;
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    function parsePhoneNumberWithError(text, options, metadata) {
+      return (0, _parse["default"])(text, _objectSpread(_objectSpread({}, options), {}, {
+        v2: true
+      }), metadata);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/parsePhoneNumber_.js
+var require_parsePhoneNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/parsePhoneNumber_.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = parsePhoneNumber;
+    var _parsePhoneNumberWithError_ = _interopRequireDefault(require_parsePhoneNumberWithError());
+    var _ParseError = _interopRequireDefault(require_ParseError());
+    var _metadata = require_metadata();
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function ownKeys2(object, enumerableOnly) {
+      var keys = Object.keys(object);
+      if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        enumerableOnly && (symbols = symbols.filter(function(sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        })), keys.push.apply(keys, symbols);
+      }
+      return keys;
+    }
+    function _objectSpread(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = null != arguments[i] ? arguments[i] : {};
+        i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
+          _defineProperty(target, key, source[key]);
+        }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+      return target;
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    function parsePhoneNumber(text, options, metadata) {
+      if (options && options.defaultCountry && !(0, _metadata.isSupportedCountry)(options.defaultCountry, metadata)) {
+        options = _objectSpread(_objectSpread({}, options), {}, {
+          defaultCountry: void 0
+        });
+      }
+      try {
+        return (0, _parsePhoneNumberWithError_["default"])(text, options, metadata);
+      } catch (error) {
+        if (error instanceof _ParseError["default"]) {
+        } else {
+          throw error;
+        }
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/parsePhoneNumber.js
+var require_parsePhoneNumber2 = __commonJS({
+  "node_modules/libphonenumber-js/build/parsePhoneNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = parsePhoneNumber;
+    var _normalizeArguments2 = _interopRequireDefault(require_normalizeArguments());
+    var _parsePhoneNumber_ = _interopRequireDefault(require_parsePhoneNumber());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function parsePhoneNumber() {
+      var _normalizeArguments = (0, _normalizeArguments2["default"])(arguments), text = _normalizeArguments.text, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      return (0, _parsePhoneNumber_["default"])(text, options, metadata);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/parsePhoneNumberWithError.js
+var require_parsePhoneNumberWithError2 = __commonJS({
+  "node_modules/libphonenumber-js/build/parsePhoneNumberWithError.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = parsePhoneNumberWithError;
+    var _parsePhoneNumberWithError_ = _interopRequireDefault(require_parsePhoneNumberWithError());
+    var _normalizeArguments2 = _interopRequireDefault(require_normalizeArguments());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function parsePhoneNumberWithError() {
+      var _normalizeArguments = (0, _normalizeArguments2["default"])(arguments), text = _normalizeArguments.text, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      return (0, _parsePhoneNumberWithError_["default"])(text, options, metadata);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/isValidPhoneNumber.js
+var require_isValidPhoneNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/isValidPhoneNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = isValidPhoneNumber;
+    var _normalizeArguments2 = _interopRequireDefault(require_normalizeArguments());
+    var _parsePhoneNumber_ = _interopRequireDefault(require_parsePhoneNumber());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function ownKeys2(object, enumerableOnly) {
+      var keys = Object.keys(object);
+      if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        enumerableOnly && (symbols = symbols.filter(function(sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        })), keys.push.apply(keys, symbols);
+      }
+      return keys;
+    }
+    function _objectSpread(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = null != arguments[i] ? arguments[i] : {};
+        i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
+          _defineProperty(target, key, source[key]);
+        }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+      return target;
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    function isValidPhoneNumber() {
+      var _normalizeArguments = (0, _normalizeArguments2["default"])(arguments), text = _normalizeArguments.text, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      options = _objectSpread(_objectSpread({}, options), {}, {
+        extract: false
+      });
+      var phoneNumber = (0, _parsePhoneNumber_["default"])(text, options, metadata);
+      return phoneNumber && phoneNumber.isValid() || false;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/isPossiblePhoneNumber.js
+var require_isPossiblePhoneNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/isPossiblePhoneNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = isPossiblePhoneNumber;
+    var _normalizeArguments2 = _interopRequireDefault(require_normalizeArguments());
+    var _parsePhoneNumber_ = _interopRequireDefault(require_parsePhoneNumber());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function ownKeys2(object, enumerableOnly) {
+      var keys = Object.keys(object);
+      if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        enumerableOnly && (symbols = symbols.filter(function(sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        })), keys.push.apply(keys, symbols);
+      }
+      return keys;
+    }
+    function _objectSpread(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = null != arguments[i] ? arguments[i] : {};
+        i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
+          _defineProperty(target, key, source[key]);
+        }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+      return target;
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    function isPossiblePhoneNumber() {
+      var _normalizeArguments = (0, _normalizeArguments2["default"])(arguments), text = _normalizeArguments.text, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      options = _objectSpread(_objectSpread({}, options), {}, {
+        extract: false
+      });
+      var phoneNumber = (0, _parsePhoneNumber_["default"])(text, options, metadata);
+      return phoneNumber && phoneNumber.isPossible() || false;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/validatePhoneNumberLength.js
+var require_validatePhoneNumberLength = __commonJS({
+  "node_modules/libphonenumber-js/build/validatePhoneNumberLength.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = validatePhoneNumberLength;
+    var _normalizeArguments2 = _interopRequireDefault(require_normalizeArguments());
+    var _parsePhoneNumberWithError_ = _interopRequireDefault(require_parsePhoneNumberWithError());
+    var _ParseError = _interopRequireDefault(require_ParseError());
+    var _metadata = _interopRequireDefault(require_metadata());
+    var _checkNumberLength = _interopRequireDefault(require_checkNumberLength());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function ownKeys2(object, enumerableOnly) {
+      var keys = Object.keys(object);
+      if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        enumerableOnly && (symbols = symbols.filter(function(sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        })), keys.push.apply(keys, symbols);
+      }
+      return keys;
+    }
+    function _objectSpread(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = null != arguments[i] ? arguments[i] : {};
+        i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
+          _defineProperty(target, key, source[key]);
+        }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+      return target;
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    function validatePhoneNumberLength() {
+      var _normalizeArguments = (0, _normalizeArguments2["default"])(arguments), text = _normalizeArguments.text, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      options = _objectSpread(_objectSpread({}, options), {}, {
+        extract: false
+      });
+      try {
+        var phoneNumber = (0, _parsePhoneNumberWithError_["default"])(text, options, metadata);
+        metadata = new _metadata["default"](metadata);
+        metadata.selectNumberingPlan(phoneNumber.countryCallingCode);
+        var result = (0, _checkNumberLength["default"])(phoneNumber.nationalNumber, metadata);
+        if (result !== "IS_POSSIBLE") {
+          return result;
+        }
+      } catch (error) {
+        if (error instanceof _ParseError["default"]) {
+          return error.message;
+        } else {
+          throw error;
+        }
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/findNumbers/LRUCache.js
+var require_LRUCache = __commonJS({
+  "node_modules/libphonenumber-js/build/findNumbers/LRUCache.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = void 0;
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    var Node = /* @__PURE__ */ _createClass(function Node2(key, value) {
+      var next = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : null;
+      var prev = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : null;
+      _classCallCheck(this, Node2);
+      this.key = key;
+      this.value = value;
+      this.next = next;
+      this.prev = prev;
+    });
+    var LRUCache = /* @__PURE__ */ (function() {
+      function LRUCache2() {
+        var limit = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : 10;
+        _classCallCheck(this, LRUCache2);
+        this.size = 0;
+        this.limit = limit;
+        this.head = null;
+        this.tail = null;
+        this.cache = {};
+      }
+      _createClass(LRUCache2, [{
+        key: "put",
+        value: function put(key, value) {
+          this.ensureLimit();
+          if (!this.head) {
+            this.head = this.tail = new Node(key, value);
+          } else {
+            var node = new Node(key, value, this.head);
+            this.head.prev = node;
+            this.head = node;
+          }
+          this.cache[key] = this.head;
+          this.size++;
+        }
+        // Read from cache map and make that node as new Head of LinkedList
+      }, {
+        key: "get",
+        value: function get(key) {
+          if (this.cache[key]) {
+            var value = this.cache[key].value;
+            this.remove(key);
+            this.put(key, value);
+            return value;
+          }
+          console.log("Item not available in cache for key ".concat(key));
+        }
+      }, {
+        key: "ensureLimit",
+        value: function ensureLimit() {
+          if (this.size === this.limit) {
+            this.remove(this.tail.key);
+          }
+        }
+      }, {
+        key: "remove",
+        value: function remove(key) {
+          var node = this.cache[key];
+          if (node.prev !== null) {
+            node.prev.next = node.next;
+          } else {
+            this.head = node.next;
+          }
+          if (node.next !== null) {
+            node.next.prev = node.prev;
+          } else {
+            this.tail = node.prev;
+          }
+          delete this.cache[key];
+          this.size--;
+        }
+      }, {
+        key: "clear",
+        value: function clear() {
+          this.head = null;
+          this.tail = null;
+          this.size = 0;
+          this.cache = {};
+        }
+        // // Invokes the callback function with every node of the chain and the index of the node.
+        // forEach(fn) {
+        //   let node = this.head;
+        //   let counter = 0;
+        //   while (node) {
+        //     fn(node, counter);
+        //     node = node.next;
+        //     counter++;
+        //   }
+        // }
+        // // To iterate over LRU with a 'for...of' loop
+        // *[Symbol.iterator]() {
+        //   let node = this.head;
+        //   while (node) {
+        //     yield node;
+        //     node = node.next;
+        //   }
+        // }
+      }]);
+      return LRUCache2;
+    })();
+    exports2["default"] = LRUCache;
+  }
+});
+
+// node_modules/libphonenumber-js/build/findNumbers/RegExpCache.js
+var require_RegExpCache = __commonJS({
+  "node_modules/libphonenumber-js/build/findNumbers/RegExpCache.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = void 0;
+    var _LRUCache = _interopRequireDefault(require_LRUCache());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    var RegExpCache = /* @__PURE__ */ (function() {
+      function RegExpCache2(size) {
+        _classCallCheck(this, RegExpCache2);
+        this.cache = new _LRUCache["default"](size);
+      }
+      _createClass(RegExpCache2, [{
+        key: "getPatternForRegExp",
+        value: function getPatternForRegExp(pattern) {
+          var regExp = this.cache.get(pattern);
+          if (!regExp) {
+            regExp = new RegExp("^" + pattern);
+            this.cache.put(pattern, regExp);
+          }
+          return regExp;
+        }
+      }]);
+      return RegExpCache2;
+    })();
+    exports2["default"] = RegExpCache;
+  }
+});
+
+// node_modules/libphonenumber-js/build/findNumbers/util.js
+var require_util2 = __commonJS({
+  "node_modules/libphonenumber-js/build/findNumbers/util.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.endsWith = endsWith2;
+    exports2.limit = limit;
+    exports2.startsWith = startsWith;
+    exports2.trimAfterFirstMatch = trimAfterFirstMatch;
+    function limit(lower, upper) {
+      if (lower < 0 || upper <= 0 || upper < lower) {
+        throw new TypeError();
+      }
+      return "{".concat(lower, ",").concat(upper, "}");
+    }
+    function trimAfterFirstMatch(regexp, string) {
+      var index = string.search(regexp);
+      if (index >= 0) {
+        return string.slice(0, index);
+      }
+      return string;
+    }
+    function startsWith(string, substring) {
+      return string.indexOf(substring) === 0;
+    }
+    function endsWith2(string, substring) {
+      return string.indexOf(substring, string.length - substring.length) === string.length - substring.length;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/findNumbers/utf-8.js
+var require_utf_8 = __commonJS({
+  "node_modules/libphonenumber-js/build/findNumbers/utf-8.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2._pN = exports2._pL = exports2.PZ = void 0;
+    exports2.isInvalidPunctuationSymbol = isInvalidPunctuationSymbol;
+    exports2.isLatinLetter = isLatinLetter;
+    exports2.pZ = exports2.pNd = void 0;
+    var _pZ = " \xA0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000";
+    var pZ = "[".concat(_pZ, "]");
+    exports2.pZ = pZ;
+    var PZ = "[^".concat(_pZ, "]");
+    exports2.PZ = PZ;
+    var _pN = "0-9\xB2\xB3\xB9\xBC-\xBE\u0660-\u0669\u06F0-\u06F9\u07C0-\u07C9\u0966-\u096F\u09E6-\u09EF\u09F4-\u09F9\u0A66-\u0A6F\u0AE6-\u0AEF\u0B66-\u0B6F\u0B72-\u0B77\u0BE6-\u0BF2\u0C66-\u0C6F\u0C78-\u0C7E\u0CE6-\u0CEF\u0D66-\u0D75\u0E50-\u0E59\u0ED0-\u0ED9\u0F20-\u0F33\u1040-\u1049\u1090-\u1099\u1369-\u137C\u16EE-\u16F0\u17E0-\u17E9\u17F0-\u17F9\u1810-\u1819\u1946-\u194F\u19D0-\u19DA\u1A80-\u1A89\u1A90-\u1A99\u1B50-\u1B59\u1BB0-\u1BB9\u1C40-\u1C49\u1C50-\u1C59\u2070\u2074-\u2079\u2080-\u2089\u2150-\u2182\u2185-\u2189\u2460-\u249B\u24EA-\u24FF\u2776-\u2793\u2CFD\u3007\u3021-\u3029\u3038-\u303A\u3192-\u3195\u3220-\u3229\u3248-\u324F\u3251-\u325F\u3280-\u3289\u32B1-\u32BF\uA620-\uA629\uA6E6-\uA6EF\uA830-\uA835\uA8D0-\uA8D9\uA900-\uA909\uA9D0-\uA9D9\uAA50-\uAA59\uABF0-\uABF9\uFF10-\uFF19";
+    exports2._pN = _pN;
+    var _pNd = "0-9\u0660-\u0669\u06F0-\u06F9\u07C0-\u07C9\u0966-\u096F\u09E6-\u09EF\u0A66-\u0A6F\u0AE6-\u0AEF\u0B66-\u0B6F\u0BE6-\u0BEF\u0C66-\u0C6F\u0CE6-\u0CEF\u0D66-\u0D6F\u0E50-\u0E59\u0ED0-\u0ED9\u0F20-\u0F29\u1040-\u1049\u1090-\u1099\u17E0-\u17E9\u1810-\u1819\u1946-\u194F\u19D0-\u19D9\u1A80-\u1A89\u1A90-\u1A99\u1B50-\u1B59\u1BB0-\u1BB9\u1C40-\u1C49\u1C50-\u1C59\uA620-\uA629\uA8D0-\uA8D9\uA900-\uA909\uA9D0-\uA9D9\uAA50-\uAA59\uABF0-\uABF9\uFF10-\uFF19";
+    var pNd = "[".concat(_pNd, "]");
+    exports2.pNd = pNd;
+    var _pL = "A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC";
+    exports2._pL = _pL;
+    var pL = "[".concat(_pL, "]");
+    var pL_regexp = new RegExp(pL);
+    var _pSc = "$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20B9\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6";
+    var pSc = "[".concat(_pSc, "]");
+    var pSc_regexp = new RegExp(pSc);
+    var _pMn = "\u0300-\u036F\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0711\u0730-\u074A\u07A6-\u07B0\u07EB-\u07F3\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u08E4-\u08FE\u0900-\u0902\u093A\u093C\u0941-\u0948\u094D\u0951-\u0957\u0962\u0963\u0981\u09BC\u09C1-\u09C4\u09CD\u09E2\u09E3\u0A01\u0A02\u0A3C\u0A41\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A70\u0A71\u0A75\u0A81\u0A82\u0ABC\u0AC1-\u0AC5\u0AC7\u0AC8\u0ACD\u0AE2\u0AE3\u0B01\u0B3C\u0B3F\u0B41-\u0B44\u0B4D\u0B56\u0B62\u0B63\u0B82\u0BC0\u0BCD\u0C3E-\u0C40\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0CBC\u0CBF\u0CC6\u0CCC\u0CCD\u0CE2\u0CE3\u0D41-\u0D44\u0D4D\u0D62\u0D63\u0DCA\u0DD2-\u0DD4\u0DD6\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0EB1\u0EB4-\u0EB9\u0EBB\u0EBC\u0EC8-\u0ECD\u0F18\u0F19\u0F35\u0F37\u0F39\u0F71-\u0F7E\u0F80-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102D-\u1030\u1032-\u1037\u1039\u103A\u103D\u103E\u1058\u1059\u105E-\u1060\u1071-\u1074\u1082\u1085\u1086\u108D\u109D\u135D-\u135F\u1712-\u1714\u1732-\u1734\u1752\u1753\u1772\u1773\u17B4\u17B5\u17B7-\u17BD\u17C6\u17C9-\u17D3\u17DD\u180B-\u180D\u18A9\u1920-\u1922\u1927\u1928\u1932\u1939-\u193B\u1A17\u1A18\u1A56\u1A58-\u1A5E\u1A60\u1A62\u1A65-\u1A6C\u1A73-\u1A7C\u1A7F\u1B00-\u1B03\u1B34\u1B36-\u1B3A\u1B3C\u1B42\u1B6B-\u1B73\u1B80\u1B81\u1BA2-\u1BA5\u1BA8\u1BA9\u1BAB\u1BE6\u1BE8\u1BE9\u1BED\u1BEF-\u1BF1\u1C2C-\u1C33\u1C36\u1C37\u1CD0-\u1CD2\u1CD4-\u1CE0\u1CE2-\u1CE8\u1CED\u1CF4\u1DC0-\u1DE6\u1DFC-\u1DFF\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302D\u3099\u309A\uA66F\uA674-\uA67D\uA69F\uA6F0\uA6F1\uA802\uA806\uA80B\uA825\uA826\uA8C4\uA8E0-\uA8F1\uA926-\uA92D\uA947-\uA951\uA980-\uA982\uA9B3\uA9B6-\uA9B9\uA9BC\uAA29-\uAA2E\uAA31\uAA32\uAA35\uAA36\uAA43\uAA4C\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAEC\uAAED\uAAF6\uABE5\uABE8\uABED\uFB1E\uFE00-\uFE0F\uFE20-\uFE26";
+    var pMn = "[".concat(_pMn, "]");
+    var pMn_regexp = new RegExp(pMn);
+    var _InBasic_Latin = "\0-\x7F";
+    var _InLatin_1_Supplement = "\x80-\xFF";
+    var _InLatin_Extended_A = "\u0100-\u017F";
+    var _InLatin_Extended_Additional = "\u1E00-\u1EFF";
+    var _InLatin_Extended_B = "\u0180-\u024F";
+    var _InCombining_Diacritical_Marks = "\u0300-\u036F";
+    var latinLetterRegexp = new RegExp("[" + _InBasic_Latin + _InLatin_1_Supplement + _InLatin_Extended_A + _InLatin_Extended_Additional + _InLatin_Extended_B + _InCombining_Diacritical_Marks + "]");
+    function isLatinLetter(letter) {
+      if (!pL_regexp.test(letter) && !pMn_regexp.test(letter)) {
+        return false;
+      }
+      return latinLetterRegexp.test(letter);
+    }
+    function isInvalidPunctuationSymbol(character) {
+      return character === "%" || pSc_regexp.test(character);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/findNumbers/matchPhoneNumberStringAgainstPhoneNumber.js
+var require_matchPhoneNumberStringAgainstPhoneNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/findNumbers/matchPhoneNumberStringAgainstPhoneNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = matchPhoneNumberStringAgainstPhoneNumber;
+    var _parsePhoneNumber = _interopRequireDefault(require_parsePhoneNumber2());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function matchPhoneNumberStringAgainstPhoneNumber(phoneNumberString, phoneNumber, metadata) {
+      var phoneNumberStringContainsCallingCode = true;
+      var parsedPhoneNumber = (0, _parsePhoneNumber["default"])(phoneNumberString, metadata);
+      if (!parsedPhoneNumber) {
+        phoneNumberStringContainsCallingCode = false;
+        parsedPhoneNumber = (0, _parsePhoneNumber["default"])(phoneNumberString, {
+          defaultCallingCode: phoneNumber.countryCallingCode
+        }, metadata);
+      }
+      if (!parsedPhoneNumber) {
+        return "INVALID_NUMBER";
+      }
+      if (phoneNumber.ext) {
+        if (parsedPhoneNumber.ext !== phoneNumber.ext) {
+          return "NO_MATCH";
+        }
+      } else {
+        if (parsedPhoneNumber.ext) {
+          return "NO_MATCH";
+        }
+      }
+      if (phoneNumberStringContainsCallingCode) {
+        if (phoneNumber.countryCallingCode !== parsedPhoneNumber.countryCallingCode) {
+          return "NO_MATCH";
+        }
+      }
+      if (phoneNumber.number === parsedPhoneNumber.number) {
+        if (phoneNumberStringContainsCallingCode) {
+          return "EXACT_MATCH";
+        } else {
+          return "NSN_MATCH";
+        }
+      }
+      if (phoneNumber.nationalNumber.indexOf(parsedPhoneNumber.nationalNumber) === 0 || parsedPhoneNumber.nationalNumber.indexOf(phoneNumber.nationalNumber) === 0) {
+        return "SHORT_NSN_MATCH";
+      }
+      return "NO_MATCH";
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/findNumbers/Leniency.js
+var require_Leniency = __commonJS({
+  "node_modules/libphonenumber-js/build/findNumbers/Leniency.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.containsMoreThanOneSlashInNationalNumber = containsMoreThanOneSlashInNationalNumber;
+    exports2["default"] = void 0;
+    var _isValid = _interopRequireDefault(require_isValid());
+    var _parseDigits = _interopRequireDefault(require_parseDigits());
+    var _matchPhoneNumberStringAgainstPhoneNumber = _interopRequireDefault(require_matchPhoneNumberStringAgainstPhoneNumber());
+    var _metadata2 = _interopRequireDefault(require_metadata());
+    var _getCountryByCallingCode = _interopRequireDefault(require_getCountryByCallingCode());
+    var _format = require_format();
+    var _util = require_util2();
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    var _default = {
+      /**
+       * Phone numbers accepted are "possible", but not necessarily "valid".
+       */
+      POSSIBLE: function POSSIBLE(phoneNumber, _ref) {
+        var candidate = _ref.candidate, metadata = _ref.metadata;
+        return true;
+      },
+      /**
+       * Phone numbers accepted are "possible" and "valid".
+       * Numbers written in national format must have their national-prefix
+       * present if it is usually written for a number of this type.
+       */
+      VALID: function VALID(phoneNumber, _ref2) {
+        var candidate = _ref2.candidate, defaultCountry = _ref2.defaultCountry, metadata = _ref2.metadata;
+        if (!phoneNumber.isValid() || !containsOnlyValidXChars(phoneNumber, candidate, metadata)) {
+          return false;
+        }
+        return true;
+      },
+      /**
+       * Phone numbers accepted are "valid" and
+       * are grouped in a possible way for this locale. For example, a US number written as
+       * "65 02 53 00 00" and "650253 0000" are not accepted at this leniency level, whereas
+       * "650 253 0000", "650 2530000" or "6502530000" are.
+       * Numbers with more than one '/' symbol in the national significant number
+       * are also dropped at this level.
+       *
+       * Warning: This level might result in lower coverage especially for regions outside of
+       * country code "+1". If you are not sure about which level to use,
+       * email the discussion group libphonenumber-discuss@googlegroups.com.
+       */
+      STRICT_GROUPING: function STRICT_GROUPING(phoneNumber, _ref3) {
+        var candidate = _ref3.candidate, defaultCountry = _ref3.defaultCountry, metadata = _ref3.metadata, regExpCache = _ref3.regExpCache;
+        if (!phoneNumber.isValid() || !containsOnlyValidXChars(phoneNumber, candidate, metadata) || containsMoreThanOneSlashInNationalNumber(phoneNumber, candidate) || !isNationalPrefixPresentIfRequired(phoneNumber, {
+          defaultCountry,
+          metadata
+        })) {
+          return false;
+        }
+        return checkNumberGroupingIsValid(phoneNumber, candidate, metadata, allNumberGroupsRemainGrouped, regExpCache);
+      },
+      /**
+       * Phone numbers accepted are "valid" and are grouped in the same way
+       * that we would have formatted it, or as a single block.
+       * For example, a US number written as "650 2530000" is not accepted
+       * at this leniency level, whereas "650 253 0000" or "6502530000" are.
+       * Numbers with more than one '/' symbol are also dropped at this level.
+       *
+       * Warning: This level might result in lower coverage especially for regions outside of
+       * country code "+1". If you are not sure about which level to use, email the discussion group
+       * libphonenumber-discuss@googlegroups.com.
+       */
+      EXACT_GROUPING: function EXACT_GROUPING(phoneNumber, _ref4) {
+        var candidate = _ref4.candidate, defaultCountry = _ref4.defaultCountry, metadata = _ref4.metadata, regExpCache = _ref4.regExpCache;
+        if (!phoneNumber.isValid() || !containsOnlyValidXChars(phoneNumber, candidate, metadata) || containsMoreThanOneSlashInNationalNumber(phoneNumber, candidate) || !isNationalPrefixPresentIfRequired(phoneNumber, {
+          defaultCountry,
+          metadata
+        })) {
+          return false;
+        }
+        return checkNumberGroupingIsValid(phoneNumber, candidate, metadata, allNumberGroupsAreExactlyPresent, regExpCache);
+      }
+    };
+    exports2["default"] = _default;
+    function containsOnlyValidXChars(phoneNumber, candidate, metadata) {
+      for (var index = 0; index < candidate.length - 1; index++) {
+        var charAtIndex = candidate.charAt(index);
+        if (charAtIndex === "x" || charAtIndex === "X") {
+          var charAtNextIndex = candidate.charAt(index + 1);
+          if (charAtNextIndex === "x" || charAtNextIndex === "X") {
+            index++;
+            if ((0, _matchPhoneNumberStringAgainstPhoneNumber["default"])(candidate.substring(index), phoneNumber, metadata) !== "NSN_MATCH") {
+              return false;
+            }
+          } else {
+            var ext = (0, _parseDigits["default"])(candidate.substring(index));
+            if (ext) {
+              if (phoneNumber.ext !== ext) {
+                return false;
+              }
+            } else {
+              if (phoneNumber.ext) {
+                return false;
+              }
+            }
+          }
+        }
+      }
+      return true;
+    }
+    function isNationalPrefixPresentIfRequired(phoneNumber, _ref5) {
+      var defaultCountry = _ref5.defaultCountry, _metadata = _ref5.metadata;
+      if (phoneNumber.__countryCallingCodeSource !== "FROM_DEFAULT_COUNTRY") {
+        return true;
+      }
+      var metadata = new _metadata2["default"](_metadata);
+      metadata.selectNumberingPlan(phoneNumber.countryCallingCode);
+      var phoneNumberRegion = phoneNumber.country || (0, _getCountryByCallingCode["default"])(phoneNumber.countryCallingCode, {
+        nationalNumber: phoneNumber.nationalNumber,
+        defaultCountry,
+        metadata
+      });
+      var nationalNumber = phoneNumber.nationalNumber;
+      var format = (0, _format.chooseFormatForNumber)(metadata.numberingPlan.formats(), nationalNumber);
+      if (format.nationalPrefixFormattingRule()) {
+        if (metadata.numberingPlan.nationalPrefixIsOptionalWhenFormattingInNationalFormat()) {
+          return true;
+        }
+        if (!format.usesNationalPrefix()) {
+          return true;
+        }
+        return Boolean(phoneNumber.nationalPrefix);
+      }
+      return true;
+    }
+    function containsMoreThanOneSlashInNationalNumber(phoneNumber, candidate) {
+      var firstSlashInBodyIndex = candidate.indexOf("/");
+      if (firstSlashInBodyIndex < 0) {
+        return false;
+      }
+      var secondSlashInBodyIndex = candidate.indexOf("/", firstSlashInBodyIndex + 1);
+      if (secondSlashInBodyIndex < 0) {
+        return false;
+      }
+      var candidateHasCountryCode = phoneNumber.__countryCallingCodeSource === "FROM_NUMBER_WITH_PLUS_SIGN" || phoneNumber.__countryCallingCodeSource === "FROM_NUMBER_WITHOUT_PLUS_SIGN";
+      if (candidateHasCountryCode && (0, _parseDigits["default"])(candidate.substring(0, firstSlashInBodyIndex)) === phoneNumber.countryCallingCode) {
+        return candidate.slice(secondSlashInBodyIndex + 1).indexOf("/") >= 0;
+      }
+      return true;
+    }
+    function checkNumberGroupingIsValid(number, candidate, metadata, checkGroups, regExpCache) {
+      throw new Error("This part of code hasn't been ported");
+      var normalizedCandidate = normalizeDigits(
+        candidate,
+        true
+        /* keep non-digits */
+      );
+      var formattedNumberGroups = getNationalNumberGroups(metadata, number, null);
+      if (checkGroups(metadata, number, normalizedCandidate, formattedNumberGroups)) {
+        return true;
+      }
+      var alternateFormats = MetadataManager.getAlternateFormatsForCountry(number.getCountryCode());
+      var nationalSignificantNumber = util.getNationalSignificantNumber(number);
+      if (alternateFormats) {
+        for (var _iterator = _createForOfIteratorHelperLoose(alternateFormats.numberFormats()), _step; !(_step = _iterator()).done; ) {
+          var alternateFormat = _step.value;
+          if (alternateFormat.leadingDigitsPatterns().length > 0) {
+            var leadingDigitsRegExp = regExpCache.getPatternForRegExp("^" + alternateFormat.leadingDigitsPatterns()[0]);
+            if (!leadingDigitsRegExp.test(nationalSignificantNumber)) {
+              continue;
+            }
+          }
+          formattedNumberGroups = getNationalNumberGroups(metadata, number, alternateFormat);
+          if (checkGroups(metadata, number, normalizedCandidate, formattedNumberGroups)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    function getNationalNumberGroups(metadata, number, formattingPattern) {
+      throw new Error("This part of code hasn't been ported");
+      if (formattingPattern) {
+        var nationalSignificantNumber = util.getNationalSignificantNumber(number);
+        return util.formatNsnUsingPattern(nationalSignificantNumber, formattingPattern, "RFC3966", metadata).split("-");
+      }
+      var rfc3966Format = formatNumber(number, "RFC3966", metadata);
+      var endIndex = rfc3966Format.indexOf(";");
+      if (endIndex < 0) {
+        endIndex = rfc3966Format.length;
+      }
+      var startIndex = rfc3966Format.indexOf("-") + 1;
+      return rfc3966Format.slice(startIndex, endIndex).split("-");
+    }
+    function allNumberGroupsAreExactlyPresent(metadata, number, normalizedCandidate, formattedNumberGroups) {
+      throw new Error("This part of code hasn't been ported");
+      var candidateGroups = normalizedCandidate.split(NON_DIGITS_PATTERN);
+      var candidateNumberGroupIndex = number.hasExtension() ? candidateGroups.length - 2 : candidateGroups.length - 1;
+      if (candidateGroups.length == 1 || candidateGroups[candidateNumberGroupIndex].contains(util.getNationalSignificantNumber(number))) {
+        return true;
+      }
+      var formattedNumberGroupIndex = formattedNumberGroups.length - 1;
+      while (formattedNumberGroupIndex > 0 && candidateNumberGroupIndex >= 0) {
+        if (candidateGroups[candidateNumberGroupIndex] !== formattedNumberGroups[formattedNumberGroupIndex]) {
+          return false;
+        }
+        formattedNumberGroupIndex--;
+        candidateNumberGroupIndex--;
+      }
+      return candidateNumberGroupIndex >= 0 && (0, _util.endsWith)(candidateGroups[candidateNumberGroupIndex], formattedNumberGroups[0]);
+    }
+    function allNumberGroupsRemainGrouped(metadata, number, normalizedCandidate, formattedNumberGroups) {
+      throw new Error("This part of code hasn't been ported");
+      var fromIndex = 0;
+      if (number.getCountryCodeSource() !== CountryCodeSource.FROM_DEFAULT_COUNTRY) {
+        var countryCode = String(number.getCountryCode());
+        fromIndex = normalizedCandidate.indexOf(countryCode) + countryCode.length();
+      }
+      for (var i = 0; i < formattedNumberGroups.length; i++) {
+        fromIndex = normalizedCandidate.indexOf(formattedNumberGroups[i], fromIndex);
+        if (fromIndex < 0) {
+          return false;
+        }
+        fromIndex += formattedNumberGroups[i].length();
+        if (i == 0 && fromIndex < normalizedCandidate.length()) {
+          var region = util.getRegionCodeForCountryCode(number.getCountryCode());
+          if (util.getNddPrefixForRegion(region, true) != null && Character.isDigit(normalizedCandidate.charAt(fromIndex))) {
+            var nationalSignificantNumber = util.getNationalSignificantNumber(number);
+            return (0, _util.startsWith)(normalizedCandidate.slice(fromIndex - formattedNumberGroups[i].length), nationalSignificantNumber);
+          }
+        }
+      }
+      return normalizedCandidate.slice(fromIndex).contains(number.getExtension());
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/findNumbers/parsePreCandidate.js
+var require_parsePreCandidate = __commonJS({
+  "node_modules/libphonenumber-js/build/findNumbers/parsePreCandidate.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = parsePreCandidate;
+    var _util = require_util2();
+    var SECOND_NUMBER_START_PATTERN = /[\\/] *x/;
+    function parsePreCandidate(candidate) {
+      return (0, _util.trimAfterFirstMatch)(SECOND_NUMBER_START_PATTERN, candidate);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/findNumbers/isValidPreCandidate.js
+var require_isValidPreCandidate = __commonJS({
+  "node_modules/libphonenumber-js/build/findNumbers/isValidPreCandidate.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = isValidPreCandidate;
+    var SLASH_SEPARATED_DATES = /(?:(?:[0-3]?\d\/[01]?\d)|(?:[01]?\d\/[0-3]?\d))\/(?:[12]\d)?\d{2}/;
+    var TIME_STAMPS = /[12]\d{3}[-/]?[01]\d[-/]?[0-3]\d +[0-2]\d$/;
+    var TIME_STAMPS_SUFFIX_LEADING = /^:[0-5]\d/;
+    function isValidPreCandidate(candidate, offset, text) {
+      if (SLASH_SEPARATED_DATES.test(candidate)) {
+        return false;
+      }
+      if (TIME_STAMPS.test(candidate)) {
+        var followingText = text.slice(offset + candidate.length);
+        if (TIME_STAMPS_SUFFIX_LEADING.test(followingText)) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/findNumbers/isValidCandidate.js
+var require_isValidCandidate = __commonJS({
+  "node_modules/libphonenumber-js/build/findNumbers/isValidCandidate.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.LEAD_CLASS = void 0;
+    exports2["default"] = isValidCandidate;
+    var _constants = require_constants3();
+    var _util = require_util2();
+    var _utf = require_utf_8();
+    var OPENING_PARENS = "(\\[\uFF08\uFF3B";
+    var CLOSING_PARENS = ")\\]\uFF09\uFF3D";
+    var NON_PARENS = "[^".concat(OPENING_PARENS).concat(CLOSING_PARENS, "]");
+    var LEAD_CLASS = "[".concat(OPENING_PARENS).concat(_constants.PLUS_CHARS, "]");
+    exports2.LEAD_CLASS = LEAD_CLASS;
+    var LEAD_CLASS_LEADING = new RegExp("^" + LEAD_CLASS);
+    var BRACKET_PAIR_LIMIT = (0, _util.limit)(0, 3);
+    var MATCHING_BRACKETS_ENTIRE = new RegExp("^(?:[" + OPENING_PARENS + "])?(?:" + NON_PARENS + "+[" + CLOSING_PARENS + "])?" + NON_PARENS + "+(?:[" + OPENING_PARENS + "]" + NON_PARENS + "+[" + CLOSING_PARENS + "])" + BRACKET_PAIR_LIMIT + NON_PARENS + "*$");
+    var PUB_PAGES = /\d{1,5}-+\d{1,5}\s{0,4}\(\d{1,4}/;
+    function isValidCandidate(candidate, offset, text, leniency) {
+      if (!MATCHING_BRACKETS_ENTIRE.test(candidate) || PUB_PAGES.test(candidate)) {
+        return;
+      }
+      if (leniency !== "POSSIBLE") {
+        if (offset > 0 && !LEAD_CLASS_LEADING.test(candidate)) {
+          var previousChar = text[offset - 1];
+          if ((0, _utf.isInvalidPunctuationSymbol)(previousChar) || (0, _utf.isLatinLetter)(previousChar)) {
+            return false;
+          }
+        }
+        var lastCharIndex = offset + candidate.length;
+        if (lastCharIndex < text.length) {
+          var nextChar = text[lastCharIndex];
+          if ((0, _utf.isInvalidPunctuationSymbol)(nextChar) || (0, _utf.isLatinLetter)(nextChar)) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/PhoneNumberMatcher.js
+var require_PhoneNumberMatcher = __commonJS({
+  "node_modules/libphonenumber-js/build/PhoneNumberMatcher.js"(exports2) {
+    "use strict";
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
+        return typeof obj2;
+      } : function(obj2) {
+        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+      }, _typeof(obj);
+    }
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = void 0;
+    var _PhoneNumber = _interopRequireDefault(require_PhoneNumber());
+    var _constants = require_constants3();
+    var _createExtensionPattern = _interopRequireDefault(require_createExtensionPattern());
+    var _RegExpCache = _interopRequireDefault(require_RegExpCache());
+    var _util = require_util2();
+    var _utf = require_utf_8();
+    var _Leniency = _interopRequireDefault(require_Leniency());
+    var _parsePreCandidate = _interopRequireDefault(require_parsePreCandidate());
+    var _isValidPreCandidate = _interopRequireDefault(require_isValidPreCandidate());
+    var _isValidCandidate = _interopRequireWildcard(require_isValidCandidate());
+    var _metadata = require_metadata();
+    var _parsePhoneNumber = _interopRequireDefault(require_parsePhoneNumber2());
+    function _getRequireWildcardCache(nodeInterop) {
+      if (typeof WeakMap !== "function") return null;
+      var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
+      var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
+      return (_getRequireWildcardCache = function _getRequireWildcardCache2(nodeInterop2) {
+        return nodeInterop2 ? cacheNodeInterop : cacheBabelInterop;
+      })(nodeInterop);
+    }
+    function _interopRequireWildcard(obj, nodeInterop) {
+      if (!nodeInterop && obj && obj.__esModule) {
+        return obj;
+      }
+      if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
+        return { "default": obj };
+      }
+      var cache = _getRequireWildcardCache(nodeInterop);
+      if (cache && cache.has(obj)) {
+        return cache.get(obj);
+      }
+      var newObj = {};
+      var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+      for (var key in obj) {
+        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+          var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+          if (desc && (desc.get || desc.set)) {
+            Object.defineProperty(newObj, key, desc);
+          } else {
+            newObj[key] = obj[key];
+          }
+        }
+      }
+      newObj["default"] = obj;
+      if (cache) {
+        cache.set(obj, newObj);
+      }
+      return newObj;
+    }
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    var USE_NON_GEOGRAPHIC_COUNTRY_CODE = false;
+    var EXTN_PATTERNS_FOR_MATCHING = (0, _createExtensionPattern["default"])("matching");
+    var INNER_MATCHES = [
+      // Breaks on the slash - e.g. "651-234-2345/332-445-1234"
+      "\\/+(.*)/",
+      // Note that the bracket here is inside the capturing group, since we consider it part of the
+      // phone number. Will match a pattern like "(650) 223 3345 (754) 223 3321".
+      "(\\([^(]*)",
+      // Breaks on a hyphen - e.g. "12345 - 332-445-1234 is my number."
+      // We require a space on either side of the hyphen for it to be considered a separator.
+      "(?:".concat(_utf.pZ, "-|-").concat(_utf.pZ, ")").concat(_utf.pZ, "*(.+)"),
+      // Various types of wide hyphens. Note we have decided not to enforce a space here, since it's
+      // possible that it's supposed to be used to break two numbers without spaces, and we haven't
+      // seen many instances of it used within a number.
+      "[\u2012-\u2015\uFF0D]".concat(_utf.pZ, "*(.+)"),
+      // Breaks on a full stop - e.g. "12345. 332-445-1234 is my number."
+      "\\.+".concat(_utf.pZ, "*([^.]+)"),
+      // Breaks on space - e.g. "3324451234 8002341234"
+      "".concat(_utf.pZ, "+(").concat(_utf.PZ, "+)")
+    ];
+    var leadLimit = (0, _util.limit)(0, 2);
+    var punctuationLimit = (0, _util.limit)(0, 4);
+    var digitBlockLimit = _constants.MAX_LENGTH_FOR_NSN + _constants.MAX_LENGTH_COUNTRY_CODE;
+    var blockLimit = (0, _util.limit)(0, digitBlockLimit);
+    var punctuation = "[".concat(_constants.VALID_PUNCTUATION, "]") + punctuationLimit;
+    var digitSequence = _utf.pNd + (0, _util.limit)(1, digitBlockLimit);
+    var PATTERN = "(?:" + _isValidCandidate.LEAD_CLASS + punctuation + ")" + leadLimit + digitSequence + "(?:" + punctuation + digitSequence + ")" + blockLimit + "(?:" + EXTN_PATTERNS_FOR_MATCHING + ")?";
+    var UNWANTED_END_CHAR_PATTERN = new RegExp("[^".concat(_utf._pN).concat(_utf._pL, "#]+$"));
+    var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || Math.pow(2, 53) - 1;
+    var PhoneNumberMatcher = /* @__PURE__ */ (function() {
+      function PhoneNumberMatcher2() {
+        var text = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "";
+        var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+        var metadata = arguments.length > 2 ? arguments[2] : void 0;
+        _classCallCheck(this, PhoneNumberMatcher2);
+        options = {
+          v2: options.v2,
+          defaultCallingCode: options.defaultCallingCode,
+          defaultCountry: options.defaultCountry && (0, _metadata.isSupportedCountry)(options.defaultCountry, metadata) ? options.defaultCountry : void 0,
+          leniency: options.leniency || (options.extended ? "POSSIBLE" : "VALID"),
+          maxTries: options.maxTries || MAX_SAFE_INTEGER
+        };
+        if (!options.leniency) {
+          throw new TypeError("`leniency` is required");
+        }
+        if (options.leniency !== "POSSIBLE" && options.leniency !== "VALID") {
+          throw new TypeError('Invalid `leniency`: "'.concat(options.leniency, '". Supported values: "POSSIBLE", "VALID".'));
+        }
+        if (options.maxTries < 0) {
+          throw new TypeError("`maxTries` must be `>= 0`");
+        }
+        this.text = text;
+        this.options = options;
+        this.metadata = metadata;
+        this.leniency = _Leniency["default"][options.leniency];
+        if (!this.leniency) {
+          throw new TypeError('Unknown leniency: "'.concat(options.leniency, '"'));
+        }
+        this.maxTries = options.maxTries;
+        this.PATTERN = new RegExp(PATTERN, "ig");
+        this.state = "NOT_READY";
+        this.searchIndex = 0;
+        this.regExpCache = new _RegExpCache["default"](32);
+      }
+      _createClass(PhoneNumberMatcher2, [{
+        key: "find",
+        value: function find() {
+          var matches;
+          while (this.maxTries > 0 && (matches = this.PATTERN.exec(this.text)) !== null) {
+            var candidate = matches[0];
+            var offset = matches.index;
+            candidate = (0, _parsePreCandidate["default"])(candidate);
+            if ((0, _isValidPreCandidate["default"])(candidate, offset, this.text)) {
+              var match = (
+                // Try to come up with a valid match given the entire candidate.
+                this.parseAndVerify(candidate, offset, this.text) || this.extractInnerMatch(candidate, offset, this.text)
+              );
+              if (match) {
+                if (this.options.v2) {
+                  return {
+                    startsAt: match.startsAt,
+                    endsAt: match.endsAt,
+                    number: match.phoneNumber
+                  };
+                } else {
+                  var phoneNumber = match.phoneNumber;
+                  var result = {
+                    startsAt: match.startsAt,
+                    endsAt: match.endsAt,
+                    phone: phoneNumber.nationalNumber
+                  };
+                  if (phoneNumber.country) {
+                    if (USE_NON_GEOGRAPHIC_COUNTRY_CODE && country === "001") {
+                      result.countryCallingCode = phoneNumber.countryCallingCode;
+                    } else {
+                      result.country = phoneNumber.country;
+                    }
+                  } else {
+                    result.countryCallingCode = phoneNumber.countryCallingCode;
+                  }
+                  if (phoneNumber.ext) {
+                    result.ext = phoneNumber.ext;
+                  }
+                  return result;
+                }
+              }
+            }
+            this.maxTries--;
+          }
+        }
+        /**
+         * Attempts to extract a match from `substring`
+         * if the substring itself does not qualify as a match.
+         */
+      }, {
+        key: "extractInnerMatch",
+        value: function extractInnerMatch(substring, offset, text) {
+          for (var _iterator = _createForOfIteratorHelperLoose(INNER_MATCHES), _step; !(_step = _iterator()).done; ) {
+            var innerMatchPattern = _step.value;
+            var isFirstMatch = true;
+            var candidateMatch = void 0;
+            var innerMatchRegExp = new RegExp(innerMatchPattern, "g");
+            while (this.maxTries > 0 && (candidateMatch = innerMatchRegExp.exec(substring)) !== null) {
+              if (isFirstMatch) {
+                var _candidate = (0, _util.trimAfterFirstMatch)(UNWANTED_END_CHAR_PATTERN, substring.slice(0, candidateMatch.index));
+                var _match = this.parseAndVerify(_candidate, offset, text);
+                if (_match) {
+                  return _match;
+                }
+                this.maxTries--;
+                isFirstMatch = false;
+              }
+              var candidate = (0, _util.trimAfterFirstMatch)(UNWANTED_END_CHAR_PATTERN, candidateMatch[1]);
+              var candidateIndexGuess = substring.indexOf(candidate, candidateMatch.index);
+              var match = this.parseAndVerify(candidate, offset + candidateIndexGuess, text);
+              if (match) {
+                return match;
+              }
+              this.maxTries--;
+            }
+          }
+        }
+        /**
+         * Parses a phone number from the `candidate` using `parse` and
+         * verifies it matches the requested `leniency`. If parsing and verification succeed,
+         * a corresponding `PhoneNumberMatch` is returned, otherwise this method returns `null`.
+         *
+         * @param candidate  the candidate match
+         * @param offset  the offset of {@code candidate} within {@link #text}
+         * @return  the parsed and validated phone number match, or null
+         */
+      }, {
+        key: "parseAndVerify",
+        value: function parseAndVerify(candidate, offset, text) {
+          if (!(0, _isValidCandidate["default"])(candidate, offset, text, this.options.leniency)) {
+            return;
+          }
+          var phoneNumber = (0, _parsePhoneNumber["default"])(candidate, {
+            extended: true,
+            defaultCountry: this.options.defaultCountry,
+            defaultCallingCode: this.options.defaultCallingCode
+          }, this.metadata);
+          if (!phoneNumber) {
+            return;
+          }
+          if (!phoneNumber.isPossible()) {
+            return;
+          }
+          if (this.leniency(phoneNumber, {
+            candidate,
+            defaultCountry: this.options.defaultCountry,
+            metadata: this.metadata,
+            regExpCache: this.regExpCache
+          })) {
+            return {
+              startsAt: offset,
+              endsAt: offset + candidate.length,
+              phoneNumber
+            };
+          }
+        }
+      }, {
+        key: "hasNext",
+        value: function hasNext() {
+          if (this.state === "NOT_READY") {
+            this.lastMatch = this.find();
+            if (this.lastMatch) {
+              this.state = "READY";
+            } else {
+              this.state = "DONE";
+            }
+          }
+          return this.state === "READY";
+        }
+      }, {
+        key: "next",
+        value: function next() {
+          if (!this.hasNext()) {
+            throw new Error("No next element");
+          }
+          var result = this.lastMatch;
+          this.lastMatch = null;
+          this.state = "NOT_READY";
+          return result;
+        }
+      }]);
+      return PhoneNumberMatcher2;
+    })();
+    exports2["default"] = PhoneNumberMatcher;
+  }
+});
+
+// node_modules/libphonenumber-js/build/legacy/findNumbers.js
+var require_findNumbers = __commonJS({
+  "node_modules/libphonenumber-js/build/legacy/findNumbers.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = findNumbers;
+    var _PhoneNumberMatcher = _interopRequireDefault(require_PhoneNumberMatcher());
+    var _normalizeArguments2 = _interopRequireDefault(require_normalizeArguments());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function findNumbers() {
+      var _normalizeArguments = (0, _normalizeArguments2["default"])(arguments), text = _normalizeArguments.text, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      var matcher = new _PhoneNumberMatcher["default"](text, options, metadata);
+      var results = [];
+      while (matcher.hasNext()) {
+        results.push(matcher.next());
+      }
+      return results;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/legacy/searchNumbers.js
+var require_searchNumbers = __commonJS({
+  "node_modules/libphonenumber-js/build/legacy/searchNumbers.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = searchNumbers;
+    var _normalizeArguments2 = _interopRequireDefault(require_normalizeArguments());
+    var _PhoneNumberMatcher = _interopRequireDefault(require_PhoneNumberMatcher());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    function searchNumbers() {
+      var _normalizeArguments = (0, _normalizeArguments2["default"])(arguments), text = _normalizeArguments.text, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      var matcher = new _PhoneNumberMatcher["default"](text, options, metadata);
+      return _defineProperty({}, Symbol.iterator, function() {
+        return {
+          next: function next() {
+            if (matcher.hasNext()) {
+              return {
+                done: false,
+                value: matcher.next()
+              };
+            }
+            return {
+              done: true
+            };
+          }
+        };
+      });
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/findPhoneNumbersInText.js
+var require_findPhoneNumbersInText = __commonJS({
+  "node_modules/libphonenumber-js/build/findPhoneNumbersInText.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = findPhoneNumbersInText;
+    var _PhoneNumberMatcher = _interopRequireDefault(require_PhoneNumberMatcher());
+    var _normalizeArguments2 = _interopRequireDefault(require_normalizeArguments());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function ownKeys2(object, enumerableOnly) {
+      var keys = Object.keys(object);
+      if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        enumerableOnly && (symbols = symbols.filter(function(sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        })), keys.push.apply(keys, symbols);
+      }
+      return keys;
+    }
+    function _objectSpread(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = null != arguments[i] ? arguments[i] : {};
+        i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
+          _defineProperty(target, key, source[key]);
+        }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+      return target;
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    function findPhoneNumbersInText() {
+      var _normalizeArguments = (0, _normalizeArguments2["default"])(arguments), text = _normalizeArguments.text, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      var matcher = new _PhoneNumberMatcher["default"](text, _objectSpread(_objectSpread({}, options), {}, {
+        v2: true
+      }), metadata);
+      var results = [];
+      while (matcher.hasNext()) {
+        results.push(matcher.next());
+      }
+      return results;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/searchPhoneNumbersInText.js
+var require_searchPhoneNumbersInText = __commonJS({
+  "node_modules/libphonenumber-js/build/searchPhoneNumbersInText.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = searchPhoneNumbersInText;
+    var _PhoneNumberMatcher = _interopRequireDefault(require_PhoneNumberMatcher());
+    var _normalizeArguments2 = _interopRequireDefault(require_normalizeArguments());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function ownKeys2(object, enumerableOnly) {
+      var keys = Object.keys(object);
+      if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        enumerableOnly && (symbols = symbols.filter(function(sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        })), keys.push.apply(keys, symbols);
+      }
+      return keys;
+    }
+    function _objectSpread(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = null != arguments[i] ? arguments[i] : {};
+        i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
+          _defineProperty(target, key, source[key]);
+        }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+      return target;
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    function searchPhoneNumbersInText() {
+      var _normalizeArguments = (0, _normalizeArguments2["default"])(arguments), text = _normalizeArguments.text, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      var matcher = new _PhoneNumberMatcher["default"](text, _objectSpread(_objectSpread({}, options), {}, {
+        v2: true
+      }), metadata);
+      return _defineProperty({}, Symbol.iterator, function() {
+        return {
+          next: function next() {
+            if (matcher.hasNext()) {
+              return {
+                done: false,
+                value: matcher.next()
+              };
+            }
+            return {
+              done: true
+            };
+          }
+        };
+      });
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/AsYouTypeState.js
+var require_AsYouTypeState = __commonJS({
+  "node_modules/libphonenumber-js/build/AsYouTypeState.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = void 0;
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    var AsYouTypeState = /* @__PURE__ */ (function() {
+      function AsYouTypeState2(_ref) {
+        var onCountryChange = _ref.onCountryChange, onCallingCodeChange = _ref.onCallingCodeChange;
+        _classCallCheck(this, AsYouTypeState2);
+        this.onCountryChange = onCountryChange;
+        this.onCallingCodeChange = onCallingCodeChange;
+      }
+      _createClass(AsYouTypeState2, [{
+        key: "reset",
+        value: function reset2(_ref2) {
+          var country2 = _ref2.country, callingCode = _ref2.callingCode;
+          this.international = false;
+          this.missingPlus = false;
+          this.IDDPrefix = void 0;
+          this.callingCode = void 0;
+          this.digits = "";
+          this.resetNationalSignificantNumber();
+          this.initCountryAndCallingCode(country2, callingCode);
+        }
+      }, {
+        key: "resetNationalSignificantNumber",
+        value: function resetNationalSignificantNumber() {
+          this.nationalSignificantNumber = this.getNationalDigits();
+          this.nationalSignificantNumberMatchesInput = true;
+          this.nationalPrefix = void 0;
+          this.carrierCode = void 0;
+          this.complexPrefixBeforeNationalSignificantNumber = void 0;
+        }
+      }, {
+        key: "update",
+        value: function update(properties) {
+          for (var _i = 0, _Object$keys = Object.keys(properties); _i < _Object$keys.length; _i++) {
+            var key = _Object$keys[_i];
+            this[key] = properties[key];
+          }
+        }
+      }, {
+        key: "initCountryAndCallingCode",
+        value: function initCountryAndCallingCode(country2, callingCode) {
+          this.setCountry(country2);
+          this.setCallingCode(callingCode);
+        }
+      }, {
+        key: "setCountry",
+        value: function setCountry(country2) {
+          this.country = country2;
+          this.onCountryChange(country2);
+        }
+      }, {
+        key: "setCallingCode",
+        value: function setCallingCode(callingCode) {
+          this.callingCode = callingCode;
+          this.onCallingCodeChange(callingCode, this.country);
+        }
+      }, {
+        key: "startInternationalNumber",
+        value: function startInternationalNumber(country2, callingCode) {
+          this.international = true;
+          this.initCountryAndCallingCode(country2, callingCode);
+        }
+      }, {
+        key: "appendDigits",
+        value: function appendDigits(nextDigits) {
+          this.digits += nextDigits;
+        }
+      }, {
+        key: "appendNationalSignificantNumberDigits",
+        value: function appendNationalSignificantNumberDigits(nextDigits) {
+          this.nationalSignificantNumber += nextDigits;
+        }
+        /**
+         * Returns the part of `this.digits` that corresponds to the national number.
+         * Basically, all digits that have been input by the user, except for the
+         * international prefix and the country calling code part
+         * (if the number is an international one).
+         * @return {string}
+         */
+      }, {
+        key: "getNationalDigits",
+        value: function getNationalDigits() {
+          if (this.international) {
+            return this.digits.slice((this.IDDPrefix ? this.IDDPrefix.length : 0) + (this.callingCode ? this.callingCode.length : 0));
+          }
+          return this.digits;
+        }
+      }, {
+        key: "getDigitsWithoutInternationalPrefix",
+        value: function getDigitsWithoutInternationalPrefix() {
+          if (this.international) {
+            if (this.IDDPrefix) {
+              return this.digits.slice(this.IDDPrefix.length);
+            }
+          }
+          return this.digits;
+        }
+      }]);
+      return AsYouTypeState2;
+    })();
+    exports2["default"] = AsYouTypeState;
+  }
+});
+
+// node_modules/libphonenumber-js/build/AsYouTypeFormatter.util.js
+var require_AsYouTypeFormatter_util = __commonJS({
+  "node_modules/libphonenumber-js/build/AsYouTypeFormatter.util.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.DIGIT_PLACEHOLDER = void 0;
+    exports2.closeNonPairedParens = closeNonPairedParens;
+    exports2.countOccurences = countOccurences;
+    exports2.cutAndStripNonPairedParens = cutAndStripNonPairedParens;
+    exports2.populateTemplateWithDigits = populateTemplateWithDigits;
+    exports2.repeat = repeat;
+    exports2.stripNonPairedParens = stripNonPairedParens;
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    var DIGIT_PLACEHOLDER = "x";
+    exports2.DIGIT_PLACEHOLDER = DIGIT_PLACEHOLDER;
+    var DIGIT_PLACEHOLDER_MATCHER = new RegExp(DIGIT_PLACEHOLDER);
+    function countOccurences(symbol2, string) {
+      var count = 0;
+      for (var _iterator = _createForOfIteratorHelperLoose(string.split("")), _step; !(_step = _iterator()).done; ) {
+        var character = _step.value;
+        if (character === symbol2) {
+          count++;
+        }
+      }
+      return count;
+    }
+    function repeat(string, times) {
+      if (times < 1) {
+        return "";
+      }
+      var result = "";
+      while (times > 1) {
+        if (times & 1) {
+          result += string;
+        }
+        times >>= 1;
+        string += string;
+      }
+      return result + string;
+    }
+    function cutAndStripNonPairedParens(string, cutBeforeIndex) {
+      if (string[cutBeforeIndex] === ")") {
+        cutBeforeIndex++;
+      }
+      return stripNonPairedParens(string.slice(0, cutBeforeIndex));
+    }
+    function closeNonPairedParens(template, cut_before) {
+      var retained_template = template.slice(0, cut_before);
+      var opening_braces = countOccurences("(", retained_template);
+      var closing_braces = countOccurences(")", retained_template);
+      var dangling_braces = opening_braces - closing_braces;
+      while (dangling_braces > 0 && cut_before < template.length) {
+        if (template[cut_before] === ")") {
+          dangling_braces--;
+        }
+        cut_before++;
+      }
+      return template.slice(0, cut_before);
+    }
+    function stripNonPairedParens(string) {
+      var dangling_braces = [];
+      var i = 0;
+      while (i < string.length) {
+        if (string[i] === "(") {
+          dangling_braces.push(i);
+        } else if (string[i] === ")") {
+          dangling_braces.pop();
+        }
+        i++;
+      }
+      var start = 0;
+      var cleared_string = "";
+      dangling_braces.push(string.length);
+      for (var _i = 0, _dangling_braces = dangling_braces; _i < _dangling_braces.length; _i++) {
+        var index = _dangling_braces[_i];
+        cleared_string += string.slice(start, index);
+        start = index + 1;
+      }
+      return cleared_string;
+    }
+    function populateTemplateWithDigits(template, position, digits) {
+      for (var _iterator2 = _createForOfIteratorHelperLoose(digits.split("")), _step2; !(_step2 = _iterator2()).done; ) {
+        var digit = _step2.value;
+        if (template.slice(position + 1).search(DIGIT_PLACEHOLDER_MATCHER) < 0) {
+          return;
+        }
+        position = template.search(DIGIT_PLACEHOLDER_MATCHER);
+        template = template.replace(DIGIT_PLACEHOLDER_MATCHER, digit);
+      }
+      return [template, position];
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/AsYouTypeFormatter.complete.js
+var require_AsYouTypeFormatter_complete = __commonJS({
+  "node_modules/libphonenumber-js/build/AsYouTypeFormatter.complete.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.canFormatCompleteNumber = canFormatCompleteNumber;
+    exports2["default"] = formatCompleteNumber;
+    var _checkNumberLength = _interopRequireDefault(require_checkNumberLength());
+    var _parseDigits = _interopRequireDefault(require_parseDigits());
+    var _formatNationalNumberUsingFormat = _interopRequireDefault(require_formatNationalNumberUsingFormat());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function formatCompleteNumber(state, format, _ref) {
+      var metadata = _ref.metadata, shouldTryNationalPrefixFormattingRule = _ref.shouldTryNationalPrefixFormattingRule, getSeparatorAfterNationalPrefix = _ref.getSeparatorAfterNationalPrefix;
+      var matcher = new RegExp("^(?:".concat(format.pattern(), ")$"));
+      if (matcher.test(state.nationalSignificantNumber)) {
+        return formatNationalNumberWithAndWithoutNationalPrefixFormattingRule(state, format, {
+          metadata,
+          shouldTryNationalPrefixFormattingRule,
+          getSeparatorAfterNationalPrefix
+        });
+      }
+    }
+    function canFormatCompleteNumber(nationalSignificantNumber, metadata) {
+      return (0, _checkNumberLength["default"])(nationalSignificantNumber, metadata) === "IS_POSSIBLE";
+    }
+    function formatNationalNumberWithAndWithoutNationalPrefixFormattingRule(state, format, _ref2) {
+      var metadata = _ref2.metadata, shouldTryNationalPrefixFormattingRule = _ref2.shouldTryNationalPrefixFormattingRule, getSeparatorAfterNationalPrefix = _ref2.getSeparatorAfterNationalPrefix;
+      var nationalSignificantNumber = state.nationalSignificantNumber, international = state.international, nationalPrefix = state.nationalPrefix, carrierCode = state.carrierCode;
+      if (shouldTryNationalPrefixFormattingRule(format)) {
+        var formattedNumber = formatNationalNumber(state, format, {
+          useNationalPrefixFormattingRule: true,
+          getSeparatorAfterNationalPrefix,
+          metadata
+        });
+        if (formattedNumber) {
+          return formattedNumber;
+        }
+      }
+      return formatNationalNumber(state, format, {
+        useNationalPrefixFormattingRule: false,
+        getSeparatorAfterNationalPrefix,
+        metadata
+      });
+    }
+    function formatNationalNumber(state, format, _ref3) {
+      var metadata = _ref3.metadata, useNationalPrefixFormattingRule = _ref3.useNationalPrefixFormattingRule, getSeparatorAfterNationalPrefix = _ref3.getSeparatorAfterNationalPrefix;
+      var formattedNationalNumber = (0, _formatNationalNumberUsingFormat["default"])(state.nationalSignificantNumber, format, {
+        carrierCode: state.carrierCode,
+        useInternationalFormat: state.international,
+        withNationalPrefix: useNationalPrefixFormattingRule,
+        metadata
+      });
+      if (!useNationalPrefixFormattingRule) {
+        if (state.nationalPrefix) {
+          formattedNationalNumber = state.nationalPrefix + getSeparatorAfterNationalPrefix(format) + formattedNationalNumber;
+        } else if (state.complexPrefixBeforeNationalSignificantNumber) {
+          formattedNationalNumber = state.complexPrefixBeforeNationalSignificantNumber + " " + formattedNationalNumber;
+        }
+      }
+      if (isValidFormattedNationalNumber(formattedNationalNumber, state)) {
+        return formattedNationalNumber;
+      }
+    }
+    function isValidFormattedNationalNumber(formattedNationalNumber, state) {
+      return (0, _parseDigits["default"])(formattedNationalNumber) === state.getNationalDigits();
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/AsYouTypeFormatter.PatternParser.js
+var require_AsYouTypeFormatter_PatternParser = __commonJS({
+  "node_modules/libphonenumber-js/build/AsYouTypeFormatter.PatternParser.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = void 0;
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    var PatternParser = /* @__PURE__ */ (function() {
+      function PatternParser2() {
+        _classCallCheck(this, PatternParser2);
+      }
+      _createClass(PatternParser2, [{
+        key: "parse",
+        value: function parse(pattern) {
+          this.context = [{
+            or: true,
+            instructions: []
+          }];
+          this.parsePattern(pattern);
+          if (this.context.length !== 1) {
+            throw new Error("Non-finalized contexts left when pattern parse ended");
+          }
+          var _this$context$ = this.context[0], branches = _this$context$.branches, instructions = _this$context$.instructions;
+          if (branches) {
+            return {
+              op: "|",
+              args: branches.concat([expandSingleElementArray(instructions)])
+            };
+          }
+          if (instructions.length === 0) {
+            throw new Error("Pattern is required");
+          }
+          if (instructions.length === 1) {
+            return instructions[0];
+          }
+          return instructions;
+        }
+      }, {
+        key: "startContext",
+        value: function startContext(context) {
+          this.context.push(context);
+        }
+      }, {
+        key: "endContext",
+        value: function endContext() {
+          this.context.pop();
+        }
+      }, {
+        key: "getContext",
+        value: function getContext() {
+          return this.context[this.context.length - 1];
+        }
+      }, {
+        key: "parsePattern",
+        value: function parsePattern(pattern) {
+          if (!pattern) {
+            throw new Error("Pattern is required");
+          }
+          var match = pattern.match(OPERATOR);
+          if (!match) {
+            if (ILLEGAL_CHARACTER_REGEXP.test(pattern)) {
+              throw new Error("Illegal characters found in a pattern: ".concat(pattern));
+            }
+            this.getContext().instructions = this.getContext().instructions.concat(pattern.split(""));
+            return;
+          }
+          var operator = match[1];
+          var before = pattern.slice(0, match.index);
+          var rightPart = pattern.slice(match.index + operator.length);
+          switch (operator) {
+            case "(?:":
+              if (before) {
+                this.parsePattern(before);
+              }
+              this.startContext({
+                or: true,
+                instructions: [],
+                branches: []
+              });
+              break;
+            case ")":
+              if (!this.getContext().or) {
+                throw new Error('")" operator must be preceded by "(?:" operator');
+              }
+              if (before) {
+                this.parsePattern(before);
+              }
+              if (this.getContext().instructions.length === 0) {
+                throw new Error('No instructions found after "|" operator in an "or" group');
+              }
+              var _this$getContext = this.getContext(), branches = _this$getContext.branches;
+              branches.push(expandSingleElementArray(this.getContext().instructions));
+              this.endContext();
+              this.getContext().instructions.push({
+                op: "|",
+                args: branches
+              });
+              break;
+            case "|":
+              if (!this.getContext().or) {
+                throw new Error('"|" operator can only be used inside "or" groups');
+              }
+              if (before) {
+                this.parsePattern(before);
+              }
+              if (!this.getContext().branches) {
+                if (this.context.length === 1) {
+                  this.getContext().branches = [];
+                } else {
+                  throw new Error('"branches" not found in an "or" group context');
+                }
+              }
+              this.getContext().branches.push(expandSingleElementArray(this.getContext().instructions));
+              this.getContext().instructions = [];
+              break;
+            case "[":
+              if (before) {
+                this.parsePattern(before);
+              }
+              this.startContext({
+                oneOfSet: true
+              });
+              break;
+            case "]":
+              if (!this.getContext().oneOfSet) {
+                throw new Error('"]" operator must be preceded by "[" operator');
+              }
+              this.endContext();
+              this.getContext().instructions.push({
+                op: "[]",
+                args: parseOneOfSet(before)
+              });
+              break;
+            /* istanbul ignore next */
+            default:
+              throw new Error("Unknown operator: ".concat(operator));
+          }
+          if (rightPart) {
+            this.parsePattern(rightPart);
+          }
+        }
+      }]);
+      return PatternParser2;
+    })();
+    exports2["default"] = PatternParser;
+    function parseOneOfSet(pattern) {
+      var values = [];
+      var i = 0;
+      while (i < pattern.length) {
+        if (pattern[i] === "-") {
+          if (i === 0 || i === pattern.length - 1) {
+            throw new Error("Couldn't parse a one-of set pattern: ".concat(pattern));
+          }
+          var prevValue = pattern[i - 1].charCodeAt(0) + 1;
+          var nextValue = pattern[i + 1].charCodeAt(0) - 1;
+          var value = prevValue;
+          while (value <= nextValue) {
+            values.push(String.fromCharCode(value));
+            value++;
+          }
+        } else {
+          values.push(pattern[i]);
+        }
+        i++;
+      }
+      return values;
+    }
+    var ILLEGAL_CHARACTER_REGEXP = /[\(\)\[\]\?\:\|]/;
+    var OPERATOR = new RegExp(
+      // any of:
+      "(\\||\\(\\?\\:|\\)|\\[|\\])"
+    );
+    function expandSingleElementArray(array) {
+      if (array.length === 1) {
+        return array[0];
+      }
+      return array;
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/AsYouTypeFormatter.PatternMatcher.js
+var require_AsYouTypeFormatter_PatternMatcher = __commonJS({
+  "node_modules/libphonenumber-js/build/AsYouTypeFormatter.PatternMatcher.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = void 0;
+    var _AsYouTypeFormatterPatternParser = _interopRequireDefault(require_AsYouTypeFormatter_PatternParser());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    var PatternMatcher = /* @__PURE__ */ (function() {
+      function PatternMatcher2(pattern) {
+        _classCallCheck(this, PatternMatcher2);
+        this.matchTree = new _AsYouTypeFormatterPatternParser["default"]().parse(pattern);
+      }
+      _createClass(PatternMatcher2, [{
+        key: "match",
+        value: function match(string) {
+          var _ref = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {}, allowOverflow = _ref.allowOverflow;
+          if (!string) {
+            throw new Error("String is required");
+          }
+          var result = _match(string.split(""), this.matchTree, true);
+          if (result && result.match) {
+            delete result.matchedChars;
+          }
+          if (result && result.overflow) {
+            if (!allowOverflow) {
+              return;
+            }
+          }
+          return result;
+        }
+      }]);
+      return PatternMatcher2;
+    })();
+    exports2["default"] = PatternMatcher;
+    function _match(characters, tree, last) {
+      if (typeof tree === "string") {
+        var characterString = characters.join("");
+        if (tree.indexOf(characterString) === 0) {
+          if (characters.length === tree.length) {
+            return {
+              match: true,
+              matchedChars: characters
+            };
+          }
+          return {
+            partialMatch: true
+            // matchedChars: characters
+          };
+        }
+        if (characterString.indexOf(tree) === 0) {
+          if (last) {
+            if (characters.length > tree.length) {
+              return {
+                overflow: true
+              };
+            }
+          }
+          return {
+            match: true,
+            matchedChars: characters.slice(0, tree.length)
+          };
+        }
+        return;
+      }
+      if (Array.isArray(tree)) {
+        var restCharacters = characters.slice();
+        var i = 0;
+        while (i < tree.length) {
+          var subtree = tree[i];
+          var result = _match(restCharacters, subtree, last && i === tree.length - 1);
+          if (!result) {
+            return;
+          } else if (result.overflow) {
+            return result;
+          } else if (result.match) {
+            restCharacters = restCharacters.slice(result.matchedChars.length);
+            if (restCharacters.length === 0) {
+              if (i === tree.length - 1) {
+                return {
+                  match: true,
+                  matchedChars: characters
+                };
+              } else {
+                return {
+                  partialMatch: true
+                  // matchedChars: characters
+                };
+              }
+            }
+          } else {
+            if (result.partialMatch) {
+              return {
+                partialMatch: true
+                // matchedChars: characters
+              };
+            } else {
+              throw new Error("Unsupported match result:\n".concat(JSON.stringify(result, null, 2)));
+            }
+          }
+          i++;
+        }
+        if (last) {
+          return {
+            overflow: true
+          };
+        }
+        return {
+          match: true,
+          matchedChars: characters.slice(0, characters.length - restCharacters.length)
+        };
+      }
+      switch (tree.op) {
+        case "|":
+          var partialMatch;
+          for (var _iterator = _createForOfIteratorHelperLoose(tree.args), _step; !(_step = _iterator()).done; ) {
+            var branch = _step.value;
+            var _result = _match(characters, branch, last);
+            if (_result) {
+              if (_result.overflow) {
+                return _result;
+              } else if (_result.match) {
+                return {
+                  match: true,
+                  matchedChars: _result.matchedChars
+                };
+              } else {
+                if (_result.partialMatch) {
+                  partialMatch = true;
+                } else {
+                  throw new Error("Unsupported match result:\n".concat(JSON.stringify(_result, null, 2)));
+                }
+              }
+            }
+          }
+          if (partialMatch) {
+            return {
+              partialMatch: true
+              // matchedChars: ...
+            };
+          }
+          return;
+        case "[]":
+          for (var _iterator2 = _createForOfIteratorHelperLoose(tree.args), _step2; !(_step2 = _iterator2()).done; ) {
+            var _char = _step2.value;
+            if (characters[0] === _char) {
+              if (characters.length === 1) {
+                return {
+                  match: true,
+                  matchedChars: characters
+                };
+              }
+              if (last) {
+                return {
+                  overflow: true
+                };
+              }
+              return {
+                match: true,
+                matchedChars: [_char]
+              };
+            }
+          }
+          return;
+        /* istanbul ignore next */
+        default:
+          throw new Error("Unsupported instruction tree: ".concat(tree));
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/AsYouTypeFormatter.js
+var require_AsYouTypeFormatter = __commonJS({
+  "node_modules/libphonenumber-js/build/AsYouTypeFormatter.js"(exports2) {
+    "use strict";
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
+        return typeof obj2;
+      } : function(obj2) {
+        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+      }, _typeof(obj);
+    }
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    Object.defineProperty(exports2, "DIGIT_PLACEHOLDER", {
+      enumerable: true,
+      get: function get() {
+        return _AsYouTypeFormatterUtil.DIGIT_PLACEHOLDER;
+      }
+    });
+    exports2["default"] = void 0;
+    var _AsYouTypeFormatterUtil = require_AsYouTypeFormatter_util();
+    var _AsYouTypeFormatterComplete = _interopRequireWildcard(require_AsYouTypeFormatter_complete());
+    var _AsYouTypeFormatterPatternMatcher = _interopRequireDefault(require_AsYouTypeFormatter_PatternMatcher());
+    var _parseDigits = _interopRequireDefault(require_parseDigits());
+    var _formatNationalNumberUsingFormat = require_formatNationalNumberUsingFormat();
+    var _constants = require_constants3();
+    var _applyInternationalSeparatorStyle = _interopRequireDefault(require_applyInternationalSeparatorStyle());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _getRequireWildcardCache(nodeInterop) {
+      if (typeof WeakMap !== "function") return null;
+      var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
+      var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
+      return (_getRequireWildcardCache = function _getRequireWildcardCache2(nodeInterop2) {
+        return nodeInterop2 ? cacheNodeInterop : cacheBabelInterop;
+      })(nodeInterop);
+    }
+    function _interopRequireWildcard(obj, nodeInterop) {
+      if (!nodeInterop && obj && obj.__esModule) {
+        return obj;
+      }
+      if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
+        return { "default": obj };
+      }
+      var cache = _getRequireWildcardCache(nodeInterop);
+      if (cache && cache.has(obj)) {
+        return cache.get(obj);
+      }
+      var newObj = {};
+      var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+      for (var key in obj) {
+        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+          var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+          if (desc && (desc.get || desc.set)) {
+            Object.defineProperty(newObj, key, desc);
+          } else {
+            newObj[key] = obj[key];
+          }
+        }
+      }
+      newObj["default"] = obj;
+      if (cache) {
+        cache.set(obj, newObj);
+      }
+      return newObj;
+    }
+    function _createForOfIteratorHelperLoose(o2, allowArrayLike) {
+      var it = typeof Symbol !== "undefined" && o2[Symbol.iterator] || o2["@@iterator"];
+      if (it) return (it = it.call(o2)).next.bind(it);
+      if (Array.isArray(o2) || (it = _unsupportedIterableToArray(o2)) || allowArrayLike && o2 && typeof o2.length === "number") {
+        if (it) o2 = it;
+        var i = 0;
+        return function() {
+          if (i >= o2.length) return { done: true };
+          return { done: false, value: o2[i++] };
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    var DUMMY_DIGIT = "9";
+    var LONGEST_NATIONAL_PHONE_NUMBER_LENGTH = 15;
+    var LONGEST_DUMMY_PHONE_NUMBER = (0, _AsYouTypeFormatterUtil.repeat)(DUMMY_DIGIT, LONGEST_NATIONAL_PHONE_NUMBER_LENGTH);
+    var NATIONAL_PREFIX_SEPARATORS_PATTERN = /[- ]/;
+    var SUPPORT_LEGACY_FORMATTING_PATTERNS = true;
+    var CREATE_CHARACTER_CLASS_PATTERN = SUPPORT_LEGACY_FORMATTING_PATTERNS && function() {
+      return /\[([^\[\]])*\]/g;
+    };
+    var CREATE_STANDALONE_DIGIT_PATTERN = SUPPORT_LEGACY_FORMATTING_PATTERNS && function() {
+      return /\d(?=[^,}][^,}])/g;
+    };
+    var NON_ALTERING_FORMAT_REG_EXP = new RegExp("[" + _constants.VALID_PUNCTUATION + "]*\\$1[" + _constants.VALID_PUNCTUATION + "]*(\\$\\d[" + _constants.VALID_PUNCTUATION + "]*)*$");
+    var MIN_LEADING_DIGITS_LENGTH = 3;
+    var AsYouTypeFormatter = /* @__PURE__ */ (function() {
+      function AsYouTypeFormatter2(_ref) {
+        var state = _ref.state, metadata = _ref.metadata;
+        _classCallCheck(this, AsYouTypeFormatter2);
+        this.metadata = metadata;
+        this.resetFormat();
+      }
+      _createClass(AsYouTypeFormatter2, [{
+        key: "resetFormat",
+        value: function resetFormat() {
+          this.chosenFormat = void 0;
+          this.template = void 0;
+          this.nationalNumberTemplate = void 0;
+          this.populatedNationalNumberTemplate = void 0;
+          this.populatedNationalNumberTemplatePosition = -1;
+        }
+      }, {
+        key: "reset",
+        value: function reset2(numberingPlan, state) {
+          this.resetFormat();
+          if (numberingPlan) {
+            this.isNANP = numberingPlan.callingCode() === "1";
+            this.matchingFormats = numberingPlan.formats();
+            if (state.nationalSignificantNumber) {
+              this.narrowDownMatchingFormats(state);
+            }
+          } else {
+            this.isNANP = void 0;
+            this.matchingFormats = [];
+          }
+        }
+        /**
+         * Formats an updated phone number.
+         * @param  {string} nextDigits — Additional phone number digits.
+         * @param  {object} state — `AsYouType` state.
+         * @return {[string]} Returns undefined if the updated phone number can't be formatted using any of the available formats.
+         */
+      }, {
+        key: "format",
+        value: function format(nextDigits, state) {
+          var _this = this;
+          if ((0, _AsYouTypeFormatterComplete.canFormatCompleteNumber)(state.nationalSignificantNumber, this.metadata)) {
+            for (var _iterator = _createForOfIteratorHelperLoose(this.matchingFormats), _step; !(_step = _iterator()).done; ) {
+              var format2 = _step.value;
+              var formattedCompleteNumber = (0, _AsYouTypeFormatterComplete["default"])(state, format2, {
+                metadata: this.metadata,
+                shouldTryNationalPrefixFormattingRule: function shouldTryNationalPrefixFormattingRule(format3) {
+                  return _this.shouldTryNationalPrefixFormattingRule(format3, {
+                    international: state.international,
+                    nationalPrefix: state.nationalPrefix
+                  });
+                },
+                getSeparatorAfterNationalPrefix: function getSeparatorAfterNationalPrefix(format3) {
+                  return _this.getSeparatorAfterNationalPrefix(format3);
+                }
+              });
+              if (formattedCompleteNumber) {
+                this.resetFormat();
+                this.chosenFormat = format2;
+                this.setNationalNumberTemplate(formattedCompleteNumber.replace(/\d/g, _AsYouTypeFormatterUtil.DIGIT_PLACEHOLDER), state);
+                this.populatedNationalNumberTemplate = formattedCompleteNumber;
+                this.populatedNationalNumberTemplatePosition = this.template.lastIndexOf(_AsYouTypeFormatterUtil.DIGIT_PLACEHOLDER);
+                return formattedCompleteNumber;
+              }
+            }
+          }
+          return this.formatNationalNumberWithNextDigits(nextDigits, state);
+        }
+        // Formats the next phone number digits.
+      }, {
+        key: "formatNationalNumberWithNextDigits",
+        value: function formatNationalNumberWithNextDigits(nextDigits, state) {
+          var previouslyChosenFormat = this.chosenFormat;
+          var newlyChosenFormat = this.chooseFormat(state);
+          if (newlyChosenFormat) {
+            if (newlyChosenFormat === previouslyChosenFormat) {
+              return this.formatNextNationalNumberDigits(nextDigits);
+            } else {
+              return this.formatNextNationalNumberDigits(state.getNationalDigits());
+            }
+          }
+        }
+      }, {
+        key: "narrowDownMatchingFormats",
+        value: function narrowDownMatchingFormats(_ref2) {
+          var _this2 = this;
+          var nationalSignificantNumber = _ref2.nationalSignificantNumber, nationalPrefix = _ref2.nationalPrefix, international = _ref2.international;
+          var leadingDigits = nationalSignificantNumber;
+          var leadingDigitsPatternIndex = leadingDigits.length - MIN_LEADING_DIGITS_LENGTH;
+          if (leadingDigitsPatternIndex < 0) {
+            leadingDigitsPatternIndex = 0;
+          }
+          this.matchingFormats = this.matchingFormats.filter(function(format) {
+            return _this2.formatSuits(format, international, nationalPrefix) && _this2.formatMatches(format, leadingDigits, leadingDigitsPatternIndex);
+          });
+          if (this.chosenFormat && this.matchingFormats.indexOf(this.chosenFormat) === -1) {
+            this.resetFormat();
+          }
+        }
+      }, {
+        key: "formatSuits",
+        value: function formatSuits(format, international, nationalPrefix) {
+          if (nationalPrefix && !format.usesNationalPrefix() && // !format.domesticCarrierCodeFormattingRule() &&
+          !format.nationalPrefixIsOptionalWhenFormattingInNationalFormat()) {
+            return false;
+          }
+          if (!international && !nationalPrefix && format.nationalPrefixIsMandatoryWhenFormattingInNationalFormat()) {
+            return false;
+          }
+          return true;
+        }
+      }, {
+        key: "formatMatches",
+        value: function formatMatches(format, leadingDigits, leadingDigitsPatternIndex) {
+          var leadingDigitsPatternsCount = format.leadingDigitsPatterns().length;
+          if (leadingDigitsPatternsCount === 0) {
+            return true;
+          }
+          leadingDigitsPatternIndex = Math.min(leadingDigitsPatternIndex, leadingDigitsPatternsCount - 1);
+          var leadingDigitsPattern = format.leadingDigitsPatterns()[leadingDigitsPatternIndex];
+          if (leadingDigits.length < MIN_LEADING_DIGITS_LENGTH) {
+            try {
+              return new _AsYouTypeFormatterPatternMatcher["default"](leadingDigitsPattern).match(leadingDigits, {
+                allowOverflow: true
+              }) !== void 0;
+            } catch (error) {
+              console.error(error);
+              return true;
+            }
+          }
+          return new RegExp("^(".concat(leadingDigitsPattern, ")")).test(leadingDigits);
+        }
+      }, {
+        key: "getFormatFormat",
+        value: function getFormatFormat(format, international) {
+          return international ? format.internationalFormat() : format.format();
+        }
+      }, {
+        key: "chooseFormat",
+        value: function chooseFormat(state) {
+          var _this3 = this;
+          var _loop = function _loop2() {
+            var format = _step2.value;
+            if (_this3.chosenFormat === format) {
+              return "break";
+            }
+            if (!NON_ALTERING_FORMAT_REG_EXP.test(_this3.getFormatFormat(format, state.international))) {
+              return "continue";
+            }
+            if (!_this3.createTemplateForFormat(format, state)) {
+              _this3.matchingFormats = _this3.matchingFormats.filter(function(_) {
+                return _ !== format;
+              });
+              return "continue";
+            }
+            _this3.chosenFormat = format;
+            return "break";
+          };
+          for (var _iterator2 = _createForOfIteratorHelperLoose(this.matchingFormats.slice()), _step2; !(_step2 = _iterator2()).done; ) {
+            var _ret = _loop();
+            if (_ret === "break") break;
+            if (_ret === "continue") continue;
+          }
+          if (!this.chosenFormat) {
+            this.resetFormat();
+          }
+          return this.chosenFormat;
+        }
+      }, {
+        key: "createTemplateForFormat",
+        value: function createTemplateForFormat(format, state) {
+          if (SUPPORT_LEGACY_FORMATTING_PATTERNS && format.pattern().indexOf("|") >= 0) {
+            return;
+          }
+          var template = this.getTemplateForFormat(format, state);
+          if (template) {
+            this.setNationalNumberTemplate(template, state);
+            return true;
+          }
+        }
+      }, {
+        key: "getSeparatorAfterNationalPrefix",
+        value: function getSeparatorAfterNationalPrefix(format) {
+          if (this.isNANP) {
+            return " ";
+          }
+          if (format && format.nationalPrefixFormattingRule() && NATIONAL_PREFIX_SEPARATORS_PATTERN.test(format.nationalPrefixFormattingRule())) {
+            return " ";
+          }
+          return "";
+        }
+      }, {
+        key: "getInternationalPrefixBeforeCountryCallingCode",
+        value: function getInternationalPrefixBeforeCountryCallingCode(_ref3, options) {
+          var IDDPrefix = _ref3.IDDPrefix, missingPlus = _ref3.missingPlus;
+          if (IDDPrefix) {
+            return options && options.spacing === false ? IDDPrefix : IDDPrefix + " ";
+          }
+          if (missingPlus) {
+            return "";
+          }
+          return "+";
+        }
+      }, {
+        key: "getTemplate",
+        value: function getTemplate(state) {
+          if (!this.template) {
+            return;
+          }
+          var index = -1;
+          var i = 0;
+          var internationalPrefix = state.international ? this.getInternationalPrefixBeforeCountryCallingCode(state, {
+            spacing: false
+          }) : "";
+          while (i < internationalPrefix.length + state.getDigitsWithoutInternationalPrefix().length) {
+            index = this.template.indexOf(_AsYouTypeFormatterUtil.DIGIT_PLACEHOLDER, index + 1);
+            i++;
+          }
+          return (0, _AsYouTypeFormatterUtil.cutAndStripNonPairedParens)(this.template, index + 1);
+        }
+      }, {
+        key: "setNationalNumberTemplate",
+        value: function setNationalNumberTemplate(template, state) {
+          this.nationalNumberTemplate = template;
+          this.populatedNationalNumberTemplate = template;
+          this.populatedNationalNumberTemplatePosition = -1;
+          if (state.international) {
+            this.template = this.getInternationalPrefixBeforeCountryCallingCode(state).replace(/[\d\+]/g, _AsYouTypeFormatterUtil.DIGIT_PLACEHOLDER) + (0, _AsYouTypeFormatterUtil.repeat)(_AsYouTypeFormatterUtil.DIGIT_PLACEHOLDER, state.callingCode.length) + " " + template;
+          } else {
+            this.template = template;
+          }
+        }
+        /**
+         * Generates formatting template for a national phone number,
+         * optionally containing a national prefix, for a format.
+         * @param  {Format} format
+         * @param  {string} nationalPrefix
+         * @return {string}
+         */
+      }, {
+        key: "getTemplateForFormat",
+        value: function getTemplateForFormat(format, _ref4) {
+          var nationalSignificantNumber = _ref4.nationalSignificantNumber, international = _ref4.international, nationalPrefix = _ref4.nationalPrefix, complexPrefixBeforeNationalSignificantNumber = _ref4.complexPrefixBeforeNationalSignificantNumber;
+          var pattern = format.pattern();
+          if (SUPPORT_LEGACY_FORMATTING_PATTERNS) {
+            pattern = pattern.replace(CREATE_CHARACTER_CLASS_PATTERN(), "\\d").replace(CREATE_STANDALONE_DIGIT_PATTERN(), "\\d");
+          }
+          var digits = LONGEST_DUMMY_PHONE_NUMBER.match(pattern)[0];
+          if (nationalSignificantNumber.length > digits.length) {
+            return;
+          }
+          var strictPattern = new RegExp("^" + pattern + "$");
+          var nationalNumberDummyDigits = nationalSignificantNumber.replace(/\d/g, DUMMY_DIGIT);
+          if (strictPattern.test(nationalNumberDummyDigits)) {
+            digits = nationalNumberDummyDigits;
+          }
+          var numberFormat = this.getFormatFormat(format, international);
+          var nationalPrefixIncludedInTemplate;
+          if (this.shouldTryNationalPrefixFormattingRule(format, {
+            international,
+            nationalPrefix
+          })) {
+            var numberFormatWithNationalPrefix = numberFormat.replace(_formatNationalNumberUsingFormat.FIRST_GROUP_PATTERN, format.nationalPrefixFormattingRule());
+            if ((0, _parseDigits["default"])(format.nationalPrefixFormattingRule()) === (nationalPrefix || "") + (0, _parseDigits["default"])("$1")) {
+              numberFormat = numberFormatWithNationalPrefix;
+              nationalPrefixIncludedInTemplate = true;
+              if (nationalPrefix) {
+                var i = nationalPrefix.length;
+                while (i > 0) {
+                  numberFormat = numberFormat.replace(/\d/, _AsYouTypeFormatterUtil.DIGIT_PLACEHOLDER);
+                  i--;
+                }
+              }
+            }
+          }
+          var template = digits.replace(new RegExp(pattern), numberFormat).replace(new RegExp(DUMMY_DIGIT, "g"), _AsYouTypeFormatterUtil.DIGIT_PLACEHOLDER);
+          if (!nationalPrefixIncludedInTemplate) {
+            if (complexPrefixBeforeNationalSignificantNumber) {
+              template = (0, _AsYouTypeFormatterUtil.repeat)(_AsYouTypeFormatterUtil.DIGIT_PLACEHOLDER, complexPrefixBeforeNationalSignificantNumber.length) + " " + template;
+            } else if (nationalPrefix) {
+              template = (0, _AsYouTypeFormatterUtil.repeat)(_AsYouTypeFormatterUtil.DIGIT_PLACEHOLDER, nationalPrefix.length) + this.getSeparatorAfterNationalPrefix(format) + template;
+            }
+          }
+          if (international) {
+            template = (0, _applyInternationalSeparatorStyle["default"])(template);
+          }
+          return template;
+        }
+      }, {
+        key: "formatNextNationalNumberDigits",
+        value: function formatNextNationalNumberDigits(digits) {
+          var result = (0, _AsYouTypeFormatterUtil.populateTemplateWithDigits)(this.populatedNationalNumberTemplate, this.populatedNationalNumberTemplatePosition, digits);
+          if (!result) {
+            this.resetFormat();
+            return;
+          }
+          this.populatedNationalNumberTemplate = result[0];
+          this.populatedNationalNumberTemplatePosition = result[1];
+          return (0, _AsYouTypeFormatterUtil.cutAndStripNonPairedParens)(this.populatedNationalNumberTemplate, this.populatedNationalNumberTemplatePosition + 1);
+        }
+      }, {
+        key: "shouldTryNationalPrefixFormattingRule",
+        value: function shouldTryNationalPrefixFormattingRule(format, _ref5) {
+          var international = _ref5.international, nationalPrefix = _ref5.nationalPrefix;
+          if (format.nationalPrefixFormattingRule()) {
+            var usesNationalPrefix = format.usesNationalPrefix();
+            if (usesNationalPrefix && nationalPrefix || !usesNationalPrefix && !international) {
+              return true;
+            }
+          }
+        }
+      }]);
+      return AsYouTypeFormatter2;
+    })();
+    exports2["default"] = AsYouTypeFormatter;
+  }
+});
+
+// node_modules/libphonenumber-js/build/AsYouTypeParser.js
+var require_AsYouTypeParser = __commonJS({
+  "node_modules/libphonenumber-js/build/AsYouTypeParser.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = void 0;
+    exports2.extractFormattedDigitsAndPlus = extractFormattedDigitsAndPlus;
+    var _extractCountryCallingCode2 = _interopRequireDefault(require_extractCountryCallingCode());
+    var _extractCountryCallingCodeFromInternationalNumberWithoutPlusSign = _interopRequireDefault(require_extractCountryCallingCodeFromInternationalNumberWithoutPlusSign());
+    var _extractNationalNumberFromPossiblyIncompleteNumber = _interopRequireDefault(require_extractNationalNumberFromPossiblyIncompleteNumber());
+    var _stripIddPrefix = _interopRequireDefault(require_stripIddPrefix());
+    var _parseDigits = _interopRequireDefault(require_parseDigits());
+    var _constants = require_constants3();
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _slicedToArray(arr, i) {
+      return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+    }
+    function _nonIterableRest() {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function _iterableToArrayLimit(arr, i) {
+      var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+      if (_i == null) return;
+      var _arr = [];
+      var _n = true;
+      var _d = false;
+      var _s, _e;
+      try {
+        for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
+          _arr.push(_s.value);
+          if (i && _arr.length === i) break;
+        }
+      } catch (err2) {
+        _d = true;
+        _e = err2;
+      } finally {
+        try {
+          if (!_n && _i["return"] != null) _i["return"]();
+        } finally {
+          if (_d) throw _e;
+        }
+      }
+      return _arr;
+    }
+    function _arrayWithHoles(arr) {
+      if (Array.isArray(arr)) return arr;
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    var VALID_FORMATTED_PHONE_NUMBER_DIGITS_PART = "[" + _constants.VALID_PUNCTUATION + _constants.VALID_DIGITS + "]+";
+    var VALID_FORMATTED_PHONE_NUMBER_DIGITS_PART_PATTERN = new RegExp("^" + VALID_FORMATTED_PHONE_NUMBER_DIGITS_PART + "$", "i");
+    var VALID_FORMATTED_PHONE_NUMBER_PART = "(?:[" + _constants.PLUS_CHARS + "][" + _constants.VALID_PUNCTUATION + _constants.VALID_DIGITS + "]*|[" + _constants.VALID_PUNCTUATION + _constants.VALID_DIGITS + "]+)";
+    var AFTER_PHONE_NUMBER_DIGITS_END_PATTERN = new RegExp("[^" + _constants.VALID_PUNCTUATION + _constants.VALID_DIGITS + "]+.*$");
+    var COMPLEX_NATIONAL_PREFIX = /[^\d\[\]]/;
+    var AsYouTypeParser = /* @__PURE__ */ (function() {
+      function AsYouTypeParser2(_ref) {
+        var defaultCountry = _ref.defaultCountry, defaultCallingCode = _ref.defaultCallingCode, metadata = _ref.metadata, onNationalSignificantNumberChange = _ref.onNationalSignificantNumberChange;
+        _classCallCheck(this, AsYouTypeParser2);
+        this.defaultCountry = defaultCountry;
+        this.defaultCallingCode = defaultCallingCode;
+        this.metadata = metadata;
+        this.onNationalSignificantNumberChange = onNationalSignificantNumberChange;
+      }
+      _createClass(AsYouTypeParser2, [{
+        key: "input",
+        value: function input(text, state) {
+          var _extractFormattedDigi = extractFormattedDigitsAndPlus(text), _extractFormattedDigi2 = _slicedToArray(_extractFormattedDigi, 2), formattedDigits = _extractFormattedDigi2[0], hasPlus = _extractFormattedDigi2[1];
+          var digits = (0, _parseDigits["default"])(formattedDigits);
+          var justLeadingPlus;
+          if (hasPlus) {
+            if (!state.digits) {
+              state.startInternationalNumber();
+              if (!digits) {
+                justLeadingPlus = true;
+              }
+            }
+          }
+          if (digits) {
+            this.inputDigits(digits, state);
+          }
+          return {
+            digits,
+            justLeadingPlus
+          };
+        }
+        /**
+         * Inputs "next" phone number digits.
+         * @param  {string} digits
+         * @return {string} [formattedNumber] Formatted national phone number (if it can be formatted at this stage). Returning `undefined` means "don't format the national phone number at this stage".
+         */
+      }, {
+        key: "inputDigits",
+        value: function inputDigits(nextDigits, state) {
+          var digits = state.digits;
+          var hasReceivedThreeLeadingDigits = digits.length < 3 && digits.length + nextDigits.length >= 3;
+          state.appendDigits(nextDigits);
+          if (hasReceivedThreeLeadingDigits) {
+            this.extractIddPrefix(state);
+          }
+          if (this.isWaitingForCountryCallingCode(state)) {
+            if (!this.extractCountryCallingCode(state)) {
+              return;
+            }
+          } else {
+            state.appendNationalSignificantNumberDigits(nextDigits);
+          }
+          if (!state.international) {
+            if (!this.hasExtractedNationalSignificantNumber) {
+              this.extractNationalSignificantNumber(state.getNationalDigits(), function(stateUpdate) {
+                return state.update(stateUpdate);
+              });
+            }
+          }
+        }
+      }, {
+        key: "isWaitingForCountryCallingCode",
+        value: function isWaitingForCountryCallingCode(_ref2) {
+          var international = _ref2.international, callingCode = _ref2.callingCode;
+          return international && !callingCode;
+        }
+        // Extracts a country calling code from a number
+        // being entered in internatonal format.
+      }, {
+        key: "extractCountryCallingCode",
+        value: function extractCountryCallingCode(state) {
+          var _extractCountryCallin = (0, _extractCountryCallingCode2["default"])("+" + state.getDigitsWithoutInternationalPrefix(), this.defaultCountry, this.defaultCallingCode, this.metadata.metadata), countryCallingCode = _extractCountryCallin.countryCallingCode, number = _extractCountryCallin.number;
+          if (countryCallingCode) {
+            state.setCallingCode(countryCallingCode);
+            state.update({
+              nationalSignificantNumber: number
+            });
+            return true;
+          }
+        }
+      }, {
+        key: "reset",
+        value: function reset2(numberingPlan) {
+          if (numberingPlan) {
+            this.hasSelectedNumberingPlan = true;
+            var nationalPrefixForParsing = numberingPlan._nationalPrefixForParsing();
+            this.couldPossiblyExtractAnotherNationalSignificantNumber = nationalPrefixForParsing && COMPLEX_NATIONAL_PREFIX.test(nationalPrefixForParsing);
+          } else {
+            this.hasSelectedNumberingPlan = void 0;
+            this.couldPossiblyExtractAnotherNationalSignificantNumber = void 0;
+          }
+        }
+        /**
+         * Extracts a national (significant) number from user input.
+         * Google's library is different in that it only applies `national_prefix_for_parsing`
+         * and doesn't apply `national_prefix_transform_rule` after that.
+         * https://github.com/google/libphonenumber/blob/a3d70b0487875475e6ad659af404943211d26456/java/libphonenumber/src/com/google/i18n/phonenumbers/AsYouTypeFormatter.java#L539
+         * @return {boolean} [extracted]
+         */
+      }, {
+        key: "extractNationalSignificantNumber",
+        value: function extractNationalSignificantNumber(nationalDigits, setState) {
+          if (!this.hasSelectedNumberingPlan) {
+            return;
+          }
+          var _extractNationalNumbe = (0, _extractNationalNumberFromPossiblyIncompleteNumber["default"])(nationalDigits, this.metadata), nationalPrefix = _extractNationalNumbe.nationalPrefix, nationalNumber = _extractNationalNumbe.nationalNumber, carrierCode = _extractNationalNumbe.carrierCode;
+          if (nationalNumber === nationalDigits) {
+            return;
+          }
+          this.onExtractedNationalNumber(nationalPrefix, carrierCode, nationalNumber, nationalDigits, setState);
+          return true;
+        }
+        /**
+         * In Google's code this function is called "attempt to extract longer NDD".
+         * "Some national prefixes are a substring of others", they say.
+         * @return {boolean} [result] — Returns `true` if extracting a national prefix produced different results from what they were.
+         */
+      }, {
+        key: "extractAnotherNationalSignificantNumber",
+        value: function extractAnotherNationalSignificantNumber(nationalDigits, prevNationalSignificantNumber, setState) {
+          if (!this.hasExtractedNationalSignificantNumber) {
+            return this.extractNationalSignificantNumber(nationalDigits, setState);
+          }
+          if (!this.couldPossiblyExtractAnotherNationalSignificantNumber) {
+            return;
+          }
+          var _extractNationalNumbe2 = (0, _extractNationalNumberFromPossiblyIncompleteNumber["default"])(nationalDigits, this.metadata), nationalPrefix = _extractNationalNumbe2.nationalPrefix, nationalNumber = _extractNationalNumbe2.nationalNumber, carrierCode = _extractNationalNumbe2.carrierCode;
+          if (nationalNumber === prevNationalSignificantNumber) {
+            return;
+          }
+          this.onExtractedNationalNumber(nationalPrefix, carrierCode, nationalNumber, nationalDigits, setState);
+          return true;
+        }
+      }, {
+        key: "onExtractedNationalNumber",
+        value: function onExtractedNationalNumber(nationalPrefix, carrierCode, nationalSignificantNumber, nationalDigits, setState) {
+          var complexPrefixBeforeNationalSignificantNumber;
+          var nationalSignificantNumberMatchesInput;
+          var nationalSignificantNumberIndex = nationalDigits.lastIndexOf(nationalSignificantNumber);
+          if (nationalSignificantNumberIndex >= 0 && nationalSignificantNumberIndex === nationalDigits.length - nationalSignificantNumber.length) {
+            nationalSignificantNumberMatchesInput = true;
+            var prefixBeforeNationalNumber = nationalDigits.slice(0, nationalSignificantNumberIndex);
+            if (prefixBeforeNationalNumber !== nationalPrefix) {
+              complexPrefixBeforeNationalSignificantNumber = prefixBeforeNationalNumber;
+            }
+          }
+          setState({
+            nationalPrefix,
+            carrierCode,
+            nationalSignificantNumber,
+            nationalSignificantNumberMatchesInput,
+            complexPrefixBeforeNationalSignificantNumber
+          });
+          this.hasExtractedNationalSignificantNumber = true;
+          this.onNationalSignificantNumberChange();
+        }
+      }, {
+        key: "reExtractNationalSignificantNumber",
+        value: function reExtractNationalSignificantNumber(state) {
+          if (this.extractAnotherNationalSignificantNumber(state.getNationalDigits(), state.nationalSignificantNumber, function(stateUpdate) {
+            return state.update(stateUpdate);
+          })) {
+            return true;
+          }
+          if (this.extractIddPrefix(state)) {
+            this.extractCallingCodeAndNationalSignificantNumber(state);
+            return true;
+          }
+          if (this.fixMissingPlus(state)) {
+            this.extractCallingCodeAndNationalSignificantNumber(state);
+            return true;
+          }
+        }
+      }, {
+        key: "extractIddPrefix",
+        value: function extractIddPrefix(state) {
+          var international = state.international, IDDPrefix = state.IDDPrefix, digits = state.digits, nationalSignificantNumber = state.nationalSignificantNumber;
+          if (international || IDDPrefix) {
+            return;
+          }
+          var numberWithoutIDD = (0, _stripIddPrefix["default"])(digits, this.defaultCountry, this.defaultCallingCode, this.metadata.metadata);
+          if (numberWithoutIDD !== void 0 && numberWithoutIDD !== digits) {
+            state.update({
+              IDDPrefix: digits.slice(0, digits.length - numberWithoutIDD.length)
+            });
+            this.startInternationalNumber(state, {
+              country: void 0,
+              callingCode: void 0
+            });
+            return true;
+          }
+        }
+      }, {
+        key: "fixMissingPlus",
+        value: function fixMissingPlus(state) {
+          if (!state.international) {
+            var _extractCountryCallin2 = (0, _extractCountryCallingCodeFromInternationalNumberWithoutPlusSign["default"])(state.digits, this.defaultCountry, this.defaultCallingCode, this.metadata.metadata), newCallingCode = _extractCountryCallin2.countryCallingCode, number = _extractCountryCallin2.number;
+            if (newCallingCode) {
+              state.update({
+                missingPlus: true
+              });
+              this.startInternationalNumber(state, {
+                country: state.country,
+                callingCode: newCallingCode
+              });
+              return true;
+            }
+          }
+        }
+      }, {
+        key: "startInternationalNumber",
+        value: function startInternationalNumber(state, _ref3) {
+          var country2 = _ref3.country, callingCode = _ref3.callingCode;
+          state.startInternationalNumber(country2, callingCode);
+          if (state.nationalSignificantNumber) {
+            state.resetNationalSignificantNumber();
+            this.onNationalSignificantNumberChange();
+            this.hasExtractedNationalSignificantNumber = void 0;
+          }
+        }
+      }, {
+        key: "extractCallingCodeAndNationalSignificantNumber",
+        value: function extractCallingCodeAndNationalSignificantNumber(state) {
+          if (this.extractCountryCallingCode(state)) {
+            this.extractNationalSignificantNumber(state.getNationalDigits(), function(stateUpdate) {
+              return state.update(stateUpdate);
+            });
+          }
+        }
+      }]);
+      return AsYouTypeParser2;
+    })();
+    exports2["default"] = AsYouTypeParser;
+    function extractFormattedPhoneNumber(text) {
+      var startsAt = text.search(VALID_FORMATTED_PHONE_NUMBER_PART);
+      if (startsAt < 0) {
+        return;
+      }
+      text = text.slice(startsAt);
+      var hasPlus;
+      if (text[0] === "+") {
+        hasPlus = true;
+        text = text.slice("+".length);
+      }
+      text = text.replace(AFTER_PHONE_NUMBER_DIGITS_END_PATTERN, "");
+      if (hasPlus) {
+        text = "+" + text;
+      }
+      return text;
+    }
+    function _extractFormattedDigitsAndPlus(text) {
+      var extractedNumber = extractFormattedPhoneNumber(text) || "";
+      if (extractedNumber[0] === "+") {
+        return [extractedNumber.slice("+".length), true];
+      }
+      return [extractedNumber];
+    }
+    function extractFormattedDigitsAndPlus(text) {
+      var _extractFormattedDigi3 = _extractFormattedDigitsAndPlus(text), _extractFormattedDigi4 = _slicedToArray(_extractFormattedDigi3, 2), formattedDigits = _extractFormattedDigi4[0], hasPlus = _extractFormattedDigi4[1];
+      if (!VALID_FORMATTED_PHONE_NUMBER_DIGITS_PART_PATTERN.test(formattedDigits)) {
+        formattedDigits = "";
+      }
+      return [formattedDigits, hasPlus];
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/AsYouType.js
+var require_AsYouType = __commonJS({
+  "node_modules/libphonenumber-js/build/AsYouType.js"(exports2) {
+    "use strict";
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
+        return typeof obj2;
+      } : function(obj2) {
+        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+      }, _typeof(obj);
+    }
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = void 0;
+    var _metadata = _interopRequireDefault(require_metadata());
+    var _PhoneNumber = _interopRequireDefault(require_PhoneNumber());
+    var _AsYouTypeState = _interopRequireDefault(require_AsYouTypeState());
+    var _AsYouTypeFormatter = _interopRequireWildcard(require_AsYouTypeFormatter());
+    var _AsYouTypeParser = _interopRequireWildcard(require_AsYouTypeParser());
+    var _getCountryByCallingCode = _interopRequireDefault(require_getCountryByCallingCode());
+    var _getCountryByNationalNumber = _interopRequireDefault(require_getCountryByNationalNumber());
+    var _isObject = _interopRequireDefault(require_isObject());
+    function _getRequireWildcardCache(nodeInterop) {
+      if (typeof WeakMap !== "function") return null;
+      var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
+      var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
+      return (_getRequireWildcardCache = function _getRequireWildcardCache2(nodeInterop2) {
+        return nodeInterop2 ? cacheNodeInterop : cacheBabelInterop;
+      })(nodeInterop);
+    }
+    function _interopRequireWildcard(obj, nodeInterop) {
+      if (!nodeInterop && obj && obj.__esModule) {
+        return obj;
+      }
+      if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
+        return { "default": obj };
+      }
+      var cache = _getRequireWildcardCache(nodeInterop);
+      if (cache && cache.has(obj)) {
+        return cache.get(obj);
+      }
+      var newObj = {};
+      var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+      for (var key in obj) {
+        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+          var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+          if (desc && (desc.get || desc.set)) {
+            Object.defineProperty(newObj, key, desc);
+          } else {
+            newObj[key] = obj[key];
+          }
+        }
+      }
+      newObj["default"] = obj;
+      if (cache) {
+        cache.set(obj, newObj);
+      }
+      return newObj;
+    }
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _slicedToArray(arr, i) {
+      return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+    }
+    function _nonIterableRest() {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function _iterableToArrayLimit(arr, i) {
+      var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+      if (_i == null) return;
+      var _arr = [];
+      var _n = true;
+      var _d = false;
+      var _s, _e;
+      try {
+        for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
+          _arr.push(_s.value);
+          if (i && _arr.length === i) break;
+        }
+      } catch (err2) {
+        _d = true;
+        _e = err2;
+      } finally {
+        try {
+          if (!_n && _i["return"] != null) _i["return"]();
+        } finally {
+          if (_d) throw _e;
+        }
+      }
+      return _arr;
+    }
+    function _arrayWithHoles(arr) {
+      if (Array.isArray(arr)) return arr;
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    var USE_NON_GEOGRAPHIC_COUNTRY_CODE = false;
+    var AsYouType = /* @__PURE__ */ (function() {
+      function AsYouType2(optionsOrDefaultCountry, metadata) {
+        _classCallCheck(this, AsYouType2);
+        this.metadata = new _metadata["default"](metadata);
+        var _this$getCountryAndCa = this.getCountryAndCallingCode(optionsOrDefaultCountry), _this$getCountryAndCa2 = _slicedToArray(_this$getCountryAndCa, 2), defaultCountry = _this$getCountryAndCa2[0], defaultCallingCode = _this$getCountryAndCa2[1];
+        this.defaultCountry = defaultCountry;
+        this.defaultCallingCode = defaultCallingCode;
+        this.reset();
+      }
+      _createClass(AsYouType2, [{
+        key: "getCountryAndCallingCode",
+        value: function getCountryAndCallingCode(optionsOrDefaultCountry) {
+          var defaultCountry;
+          var defaultCallingCode;
+          if (optionsOrDefaultCountry) {
+            if ((0, _isObject["default"])(optionsOrDefaultCountry)) {
+              defaultCountry = optionsOrDefaultCountry.defaultCountry;
+              defaultCallingCode = optionsOrDefaultCountry.defaultCallingCode;
+            } else {
+              defaultCountry = optionsOrDefaultCountry;
+            }
+          }
+          if (defaultCountry && !this.metadata.hasCountry(defaultCountry)) {
+            defaultCountry = void 0;
+          }
+          if (defaultCallingCode) {
+            if (USE_NON_GEOGRAPHIC_COUNTRY_CODE) {
+              if (this.metadata.isNonGeographicCallingCode(defaultCallingCode)) {
+                defaultCountry = "001";
+              }
+            }
+          }
+          return [defaultCountry, defaultCallingCode];
+        }
+        /**
+         * Inputs "next" phone number characters.
+         * @param  {string} text
+         * @return {string} Formatted phone number characters that have been input so far.
+         */
+      }, {
+        key: "input",
+        value: function input(text) {
+          var _this$parser$input = this.parser.input(text, this.state), digits = _this$parser$input.digits, justLeadingPlus = _this$parser$input.justLeadingPlus;
+          if (justLeadingPlus) {
+            this.formattedOutput = "+";
+          } else if (digits) {
+            this.determineTheCountryIfNeeded();
+            if (this.state.nationalSignificantNumber) {
+              this.formatter.narrowDownMatchingFormats(this.state);
+            }
+            var formattedNationalNumber;
+            if (this.metadata.hasSelectedNumberingPlan()) {
+              formattedNationalNumber = this.formatter.format(digits, this.state);
+            }
+            if (formattedNationalNumber === void 0) {
+              if (this.parser.reExtractNationalSignificantNumber(this.state)) {
+                this.determineTheCountryIfNeeded();
+                var nationalDigits = this.state.getNationalDigits();
+                if (nationalDigits) {
+                  formattedNationalNumber = this.formatter.format(nationalDigits, this.state);
+                }
+              }
+            }
+            this.formattedOutput = formattedNationalNumber ? this.getFullNumber(formattedNationalNumber) : this.getNonFormattedNumber();
+          }
+          return this.formattedOutput;
+        }
+      }, {
+        key: "reset",
+        value: function reset2() {
+          var _this = this;
+          this.state = new _AsYouTypeState["default"]({
+            onCountryChange: function onCountryChange(country2) {
+              _this.country = country2;
+            },
+            onCallingCodeChange: function onCallingCodeChange(callingCode, country2) {
+              _this.metadata.selectNumberingPlan(country2, callingCode);
+              _this.formatter.reset(_this.metadata.numberingPlan, _this.state);
+              _this.parser.reset(_this.metadata.numberingPlan);
+            }
+          });
+          this.formatter = new _AsYouTypeFormatter["default"]({
+            state: this.state,
+            metadata: this.metadata
+          });
+          this.parser = new _AsYouTypeParser["default"]({
+            defaultCountry: this.defaultCountry,
+            defaultCallingCode: this.defaultCallingCode,
+            metadata: this.metadata,
+            state: this.state,
+            onNationalSignificantNumberChange: function onNationalSignificantNumberChange() {
+              _this.determineTheCountryIfNeeded();
+              _this.formatter.reset(_this.metadata.numberingPlan, _this.state);
+            }
+          });
+          this.state.reset({
+            country: this.defaultCountry,
+            callingCode: this.defaultCallingCode
+          });
+          this.formattedOutput = "";
+          return this;
+        }
+        /**
+         * Returns `true` if the phone number is being input in international format.
+         * In other words, returns `true` if and only if the parsed phone number starts with a `"+"`.
+         * @return {boolean}
+         */
+      }, {
+        key: "isInternational",
+        value: function isInternational() {
+          return this.state.international;
+        }
+        /**
+         * Returns the "calling code" part of the phone number when it's being input
+         * in an international format.
+         * If no valid calling code has been entered so far, returns `undefined`.
+         * @return {string} [callingCode]
+         */
+      }, {
+        key: "getCallingCode",
+        value: function getCallingCode() {
+          if (this.isInternational()) {
+            return this.state.callingCode;
+          }
+        }
+        // A legacy alias.
+      }, {
+        key: "getCountryCallingCode",
+        value: function getCountryCallingCode() {
+          return this.getCallingCode();
+        }
+        /**
+         * Returns a two-letter country code of the phone number.
+         * Returns `undefined` for "non-geographic" phone numbering plans.
+         * Returns `undefined` if no phone number has been input yet.
+         * @return {string} [country]
+         */
+      }, {
+        key: "getCountry",
+        value: function getCountry() {
+          var digits = this.state.digits;
+          if (digits) {
+            return this._getCountry();
+          }
+        }
+        /**
+         * Returns a two-letter country code of the phone number.
+         * Returns `undefined` for "non-geographic" phone numbering plans.
+         * @return {string} [country]
+         */
+      }, {
+        key: "_getCountry",
+        value: function _getCountry() {
+          var country2 = this.state.country;
+          if (USE_NON_GEOGRAPHIC_COUNTRY_CODE) {
+            if (country2 === "001") {
+              return;
+            }
+          }
+          return country2;
+        }
+      }, {
+        key: "determineTheCountryIfNeeded",
+        value: function determineTheCountryIfNeeded() {
+          if (!this.state.country || this.isCountryCallingCodeAmbiguous()) {
+            this.determineTheCountry();
+          }
+        }
+        // Prepends `+CountryCode ` in case of an international phone number
+      }, {
+        key: "getFullNumber",
+        value: function getFullNumber(formattedNationalNumber) {
+          var _this2 = this;
+          if (this.isInternational()) {
+            var prefix = function prefix2(text) {
+              return _this2.formatter.getInternationalPrefixBeforeCountryCallingCode(_this2.state, {
+                spacing: text ? true : false
+              }) + text;
+            };
+            var callingCode = this.state.callingCode;
+            if (!callingCode) {
+              return prefix("".concat(this.state.getDigitsWithoutInternationalPrefix()));
+            }
+            if (!formattedNationalNumber) {
+              return prefix(callingCode);
+            }
+            return prefix("".concat(callingCode, " ").concat(formattedNationalNumber));
+          }
+          return formattedNationalNumber;
+        }
+      }, {
+        key: "getNonFormattedNationalNumberWithPrefix",
+        value: function getNonFormattedNationalNumberWithPrefix() {
+          var _this$state = this.state, nationalSignificantNumber = _this$state.nationalSignificantNumber, complexPrefixBeforeNationalSignificantNumber = _this$state.complexPrefixBeforeNationalSignificantNumber, nationalPrefix = _this$state.nationalPrefix;
+          var number = nationalSignificantNumber;
+          var prefix = complexPrefixBeforeNationalSignificantNumber || nationalPrefix;
+          if (prefix) {
+            number = prefix + number;
+          }
+          return number;
+        }
+      }, {
+        key: "getNonFormattedNumber",
+        value: function getNonFormattedNumber() {
+          var nationalSignificantNumberMatchesInput = this.state.nationalSignificantNumberMatchesInput;
+          return this.getFullNumber(nationalSignificantNumberMatchesInput ? this.getNonFormattedNationalNumberWithPrefix() : this.state.getNationalDigits());
+        }
+      }, {
+        key: "getNonFormattedTemplate",
+        value: function getNonFormattedTemplate() {
+          var number = this.getNonFormattedNumber();
+          if (number) {
+            return number.replace(/[\+\d]/g, _AsYouTypeFormatter.DIGIT_PLACEHOLDER);
+          }
+        }
+      }, {
+        key: "isCountryCallingCodeAmbiguous",
+        value: function isCountryCallingCodeAmbiguous() {
+          var callingCode = this.state.callingCode;
+          var countryCodes = this.metadata.getCountryCodesForCallingCode(callingCode);
+          return countryCodes && countryCodes.length > 1;
+        }
+        // Determines the country of the phone number
+        // entered so far based on the country phone code
+        // and the national phone number.
+      }, {
+        key: "determineTheCountry",
+        value: function determineTheCountry() {
+          this.state.setCountry((0, _getCountryByCallingCode["default"])(this.isInternational() ? this.state.callingCode : this.defaultCallingCode, {
+            nationalNumber: this.state.nationalSignificantNumber,
+            defaultCountry: this.defaultCountry,
+            metadata: this.metadata
+          }));
+        }
+        /**
+         * Returns a E.164 phone number value for the user's input.
+         *
+         * For example, for country `"US"` and input `"(222) 333-4444"`
+         * it will return `"+12223334444"`.
+         *
+         * For international phone number input, it will also auto-correct
+         * some minor errors such as using a national prefix when writing
+         * an international phone number. For example, if the user inputs
+         * `"+44 0 7400 000000"` then it will return an auto-corrected
+         * `"+447400000000"` phone number value.
+         *
+         * Will return `undefined` if no digits have been input,
+         * or when inputting a phone number in national format and no
+         * default country or default "country calling code" have been set.
+         *
+         * @return {string} [value]
+         */
+      }, {
+        key: "getNumberValue",
+        value: function getNumberValue() {
+          var _this$state2 = this.state, digits = _this$state2.digits, callingCode = _this$state2.callingCode, country2 = _this$state2.country, nationalSignificantNumber = _this$state2.nationalSignificantNumber;
+          if (!digits) {
+            return;
+          }
+          if (this.isInternational()) {
+            if (callingCode) {
+              return "+" + callingCode + nationalSignificantNumber;
+            } else {
+              return "+" + digits;
+            }
+          } else {
+            if (country2 || callingCode) {
+              var callingCode_ = country2 ? this.metadata.countryCallingCode() : callingCode;
+              return "+" + callingCode_ + nationalSignificantNumber;
+            }
+          }
+        }
+        /**
+         * Returns an instance of `PhoneNumber` class.
+         * Will return `undefined` if no national (significant) number
+         * digits have been entered so far, or if no `defaultCountry` has been
+         * set and the user enters a phone number not in international format.
+         */
+      }, {
+        key: "getNumber",
+        value: function getNumber() {
+          var _this$state3 = this.state, nationalSignificantNumber = _this$state3.nationalSignificantNumber, carrierCode = _this$state3.carrierCode, callingCode = _this$state3.callingCode;
+          var country2 = this._getCountry();
+          if (!nationalSignificantNumber) {
+            return;
+          }
+          if (!country2 && !callingCode) {
+            return;
+          }
+          if (country2) {
+            if (country2 === this.defaultCountry) {
+              var metadata = new _metadata["default"](this.metadata.metadata);
+              metadata.selectNumberingPlan(country2);
+              var _callingCode = metadata.numberingPlan.callingCode();
+              var ambiguousCountries = this.metadata.getCountryCodesForCallingCode(_callingCode);
+              if (ambiguousCountries.length > 1) {
+                var exactCountry = (0, _getCountryByNationalNumber["default"])(nationalSignificantNumber, {
+                  countries: ambiguousCountries,
+                  defaultCountry: this.defaultCountry,
+                  metadata: this.metadata.metadata
+                });
+                if (exactCountry) {
+                  country2 = exactCountry;
+                }
+              }
+            }
+          }
+          var phoneNumber = new _PhoneNumber["default"](country2 || callingCode, nationalSignificantNumber, this.metadata.metadata);
+          if (carrierCode) {
+            phoneNumber.carrierCode = carrierCode;
+          }
+          return phoneNumber;
+        }
+        /**
+         * Returns `true` if the phone number is "possible".
+         * Is just a shortcut for `PhoneNumber.isPossible()`.
+         * @return {boolean}
+         */
+      }, {
+        key: "isPossible",
+        value: function isPossible() {
+          var phoneNumber = this.getNumber();
+          if (!phoneNumber) {
+            return false;
+          }
+          return phoneNumber.isPossible();
+        }
+        /**
+         * Returns `true` if the phone number is "valid".
+         * Is just a shortcut for `PhoneNumber.isValid()`.
+         * @return {boolean}
+         */
+      }, {
+        key: "isValid",
+        value: function isValid() {
+          var phoneNumber = this.getNumber();
+          if (!phoneNumber) {
+            return false;
+          }
+          return phoneNumber.isValid();
+        }
+        /**
+         * @deprecated
+         * This method is used in `react-phone-number-input/source/input-control.js`
+         * in versions before `3.0.16`.
+         */
+      }, {
+        key: "getNationalNumber",
+        value: function getNationalNumber() {
+          return this.state.nationalSignificantNumber;
+        }
+        /**
+         * Returns the phone number characters entered by the user.
+         * @return {string}
+         */
+      }, {
+        key: "getChars",
+        value: function getChars() {
+          return (this.state.international ? "+" : "") + this.state.digits;
+        }
+        /**
+         * Returns the template for the formatted phone number.
+         * @return {string}
+         */
+      }, {
+        key: "getTemplate",
+        value: function getTemplate() {
+          return this.formatter.getTemplate(this.state) || this.getNonFormattedTemplate() || "";
+        }
+      }]);
+      return AsYouType2;
+    })();
+    exports2["default"] = AsYouType;
+  }
+});
+
+// node_modules/libphonenumber-js/build/getCountries.js
+var require_getCountries = __commonJS({
+  "node_modules/libphonenumber-js/build/getCountries.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = getCountries;
+    var _metadata = _interopRequireDefault(require_metadata());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function getCountries(metadata) {
+      return new _metadata["default"](metadata).getCountries();
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/getExampleNumber.js
+var require_getExampleNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/getExampleNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = getExampleNumber;
+    var _PhoneNumber = _interopRequireDefault(require_PhoneNumber());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function getExampleNumber(country2, examples, metadata) {
+      if (examples[country2]) {
+        return new _PhoneNumber["default"](country2, examples[country2], metadata);
+      }
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/formatIncompletePhoneNumber.js
+var require_formatIncompletePhoneNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/formatIncompletePhoneNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = formatIncompletePhoneNumber;
+    var _AsYouType = _interopRequireDefault(require_AsYouType());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function formatIncompletePhoneNumber(value, optionsOrDefaultCountry, metadata) {
+      if (!metadata) {
+        metadata = optionsOrDefaultCountry;
+        optionsOrDefaultCountry = void 0;
+      }
+      return new _AsYouType["default"](optionsOrDefaultCountry, metadata).input(value);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/core/index.cjs
+var require_core = __commonJS({
+  "node_modules/libphonenumber-js/core/index.cjs"(exports2, module2) {
+    "use strict";
+    var parsePhoneNumberFromString = require_parsePhoneNumber2().default;
+    exports2 = module2.exports = parsePhoneNumberFromString;
+    exports2["default"] = parsePhoneNumberFromString;
+    exports2.PhoneNumber = require_PhoneNumber().default;
+    exports2.ParseError = require_ParseError().default;
+    var parsePhoneNumberWithError = require_parsePhoneNumberWithError2().default;
+    exports2.parsePhoneNumberWithError = parsePhoneNumberWithError;
+    exports2.parsePhoneNumber = parsePhoneNumberWithError;
+    exports2.parsePhoneNumberFromString = parsePhoneNumberFromString;
+    exports2.isValidPhoneNumber = require_isValidPhoneNumber().default;
+    exports2.isPossiblePhoneNumber = require_isPossiblePhoneNumber().default;
+    exports2.validatePhoneNumberLength = require_validatePhoneNumberLength().default;
+    exports2.findNumbers = require_findNumbers().default;
+    exports2.searchNumbers = require_searchNumbers().default;
+    exports2.findPhoneNumbersInText = require_findPhoneNumbersInText().default;
+    exports2.searchPhoneNumbersInText = require_searchPhoneNumbersInText().default;
+    exports2.PhoneNumberMatcher = require_PhoneNumberMatcher().default;
+    exports2.AsYouType = require_AsYouType().default;
+    exports2.Metadata = require_metadata().default;
+    exports2.isSupportedCountry = require_metadata().isSupportedCountry;
+    exports2.getCountries = require_getCountries().default;
+    exports2.getCountryCallingCode = require_metadata().getCountryCallingCode;
+    exports2.getExtPrefix = require_metadata().getExtPrefix;
+    exports2.getExampleNumber = require_getExampleNumber().default;
+    exports2.formatIncompletePhoneNumber = require_formatIncompletePhoneNumber().default;
+    exports2.parseIncompletePhoneNumber = require_parseIncompletePhoneNumber().default;
+    exports2.parsePhoneNumberCharacter = require_parseIncompletePhoneNumber().parsePhoneNumberCharacter;
+    exports2.parseDigits = require_parseDigits().default;
+    exports2.DIGIT_PLACEHOLDER = require_AsYouTypeFormatter().DIGIT_PLACEHOLDER;
+    exports2.parseRFC3966 = require_RFC3966().parseRFC3966;
+    exports2.formatRFC3966 = require_RFC3966().formatRFC3966;
+  }
+});
+
+// node_modules/libphonenumber-js/min/index.cjs
+var require_min2 = __commonJS({
+  "node_modules/libphonenumber-js/min/index.cjs"(exports2, module2) {
+    "use strict";
+    var metadata = require_metadata_min();
+    var core = require_core();
+    function call(func, _arguments) {
+      var args = Array.prototype.slice.call(_arguments);
+      args.push(metadata);
+      return func.apply(this, args);
+    }
+    function parsePhoneNumberFromString() {
+      return call(core.parsePhoneNumberFromString, arguments);
+    }
+    exports2 = module2.exports = parsePhoneNumberFromString;
+    exports2["default"] = parsePhoneNumberFromString;
+    exports2.PhoneNumber = function PhoneNumber(number) {
+      return core.PhoneNumber.call(this, number, metadata);
+    };
+    exports2.PhoneNumber.prototype = Object.create(core.PhoneNumber.prototype, {});
+    exports2.PhoneNumber.prototype.constructor = exports2.PhoneNumber;
+    exports2.ParseError = core.ParseError;
+    function parsePhoneNumberWithError() {
+      return call(core.parsePhoneNumberWithError, arguments);
+    }
+    exports2.parsePhoneNumber = parsePhoneNumberWithError;
+    exports2.parsePhoneNumberWithError = parsePhoneNumberWithError;
+    exports2.parsePhoneNumberFromString = parsePhoneNumberFromString;
+    exports2.isValidPhoneNumber = function isValidPhoneNumber() {
+      return call(core.isValidPhoneNumber, arguments);
+    };
+    exports2.isPossiblePhoneNumber = function isPossiblePhoneNumber() {
+      return call(core.isPossiblePhoneNumber, arguments);
+    };
+    exports2.validatePhoneNumberLength = function validatePhoneNumberLength() {
+      return call(core.validatePhoneNumberLength, arguments);
+    };
+    exports2.findNumbers = function findNumbers() {
+      return call(core.findNumbers, arguments);
+    };
+    exports2.searchNumbers = function searchNumbers() {
+      return call(core.searchNumbers, arguments);
+    };
+    exports2.findPhoneNumbersInText = function findPhoneNumbersInText() {
+      return call(core.findPhoneNumbersInText, arguments);
+    };
+    exports2.searchPhoneNumbersInText = function searchPhoneNumbersInText() {
+      return call(core.searchPhoneNumbersInText, arguments);
+    };
+    exports2.PhoneNumberMatcher = function PhoneNumberMatcher(text, options) {
+      return core.PhoneNumberMatcher.call(this, text, options, metadata);
+    };
+    exports2.PhoneNumberMatcher.prototype = Object.create(core.PhoneNumberMatcher.prototype, {});
+    exports2.PhoneNumberMatcher.prototype.constructor = exports2.PhoneNumberMatcher;
+    exports2.AsYouType = function AsYouType(country2) {
+      return core.AsYouType.call(this, country2, metadata);
+    };
+    exports2.AsYouType.prototype = Object.create(core.AsYouType.prototype, {});
+    exports2.AsYouType.prototype.constructor = exports2.AsYouType;
+    exports2.isSupportedCountry = function isSupportedCountry(country2) {
+      return call(core.isSupportedCountry, arguments);
+    };
+    exports2.getCountries = function getCountries() {
+      return call(core.getCountries, arguments);
+    };
+    exports2.getCountryCallingCode = function getCountryCallingCode() {
+      return call(core.getCountryCallingCode, arguments);
+    };
+    exports2.getExtPrefix = function getExtPrefix(country2) {
+      return call(core.getExtPrefix, arguments);
+    };
+    exports2.getExampleNumber = function getExampleNumber() {
+      return call(core.getExampleNumber, arguments);
+    };
+    exports2.Metadata = function Metadata() {
+      return core.Metadata.call(this, metadata);
+    };
+    exports2.Metadata.prototype = Object.create(core.Metadata.prototype, {});
+    exports2.Metadata.prototype.constructor = exports2.Metadata;
+    exports2.formatIncompletePhoneNumber = function formatIncompletePhoneNumber() {
+      return call(core.formatIncompletePhoneNumber, arguments);
+    };
+    exports2.parseIncompletePhoneNumber = core.parseIncompletePhoneNumber;
+    exports2.parsePhoneNumberCharacter = core.parsePhoneNumberCharacter;
+    exports2.parseDigits = core.parseDigits;
+    exports2.DIGIT_PLACEHOLDER = core.DIGIT_PLACEHOLDER;
+    exports2.parseRFC3966 = core.parseRFC3966;
+    exports2.formatRFC3966 = core.formatRFC3966;
+  }
+});
+
+// node_modules/libphonenumber-js/build/legacy/parse.js
+var require_parse3 = __commonJS({
+  "node_modules/libphonenumber-js/build/legacy/parse.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = parseNumber;
+    var _parse = _interopRequireDefault(require_parse2());
+    var _normalizeArguments2 = _interopRequireDefault(require_normalizeArguments());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function parseNumber() {
+      var _normalizeArguments = (0, _normalizeArguments2["default"])(arguments), text = _normalizeArguments.text, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      return (0, _parse["default"])(text, options, metadata);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/legacy/format.js
+var require_format2 = __commonJS({
+  "node_modules/libphonenumber-js/build/legacy/format.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = formatNumber2;
+    var _format = _interopRequireDefault(require_format());
+    var _parse = _interopRequireDefault(require_parse2());
+    var _isObject = _interopRequireDefault(require_isObject());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _slicedToArray(arr, i) {
+      return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+    }
+    function _nonIterableRest() {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function _iterableToArrayLimit(arr, i) {
+      var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+      if (_i == null) return;
+      var _arr = [];
+      var _n = true;
+      var _d = false;
+      var _s, _e;
+      try {
+        for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
+          _arr.push(_s.value);
+          if (i && _arr.length === i) break;
+        }
+      } catch (err2) {
+        _d = true;
+        _e = err2;
+      } finally {
+        try {
+          if (!_n && _i["return"] != null) _i["return"]();
+        } finally {
+          if (_d) throw _e;
+        }
+      }
+      return _arr;
+    }
+    function _arrayWithHoles(arr) {
+      if (Array.isArray(arr)) return arr;
+    }
+    function formatNumber2() {
+      var _normalizeArguments = normalizeArguments(arguments), input = _normalizeArguments.input, format = _normalizeArguments.format, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      return (0, _format["default"])(input, format, options, metadata);
+    }
+    function normalizeArguments(args) {
+      var _Array$prototype$slic = Array.prototype.slice.call(args), _Array$prototype$slic2 = _slicedToArray(_Array$prototype$slic, 5), arg_1 = _Array$prototype$slic2[0], arg_2 = _Array$prototype$slic2[1], arg_3 = _Array$prototype$slic2[2], arg_4 = _Array$prototype$slic2[3], arg_5 = _Array$prototype$slic2[4];
+      var input;
+      var format;
+      var options;
+      var metadata;
+      if (typeof arg_1 === "string") {
+        if (typeof arg_3 === "string") {
+          format = arg_3;
+          if (arg_5) {
+            options = arg_4;
+            metadata = arg_5;
+          } else {
+            metadata = arg_4;
+          }
+          input = (0, _parse["default"])(arg_1, {
+            defaultCountry: arg_2,
+            extended: true
+          }, metadata);
+        } else {
+          if (typeof arg_2 !== "string") {
+            throw new Error("`format` argument not passed to `formatNumber(number, format)`");
+          }
+          format = arg_2;
+          if (arg_4) {
+            options = arg_3;
+            metadata = arg_4;
+          } else {
+            metadata = arg_3;
+          }
+          input = (0, _parse["default"])(arg_1, {
+            extended: true
+          }, metadata);
+        }
+      } else if ((0, _isObject["default"])(arg_1)) {
+        input = arg_1;
+        format = arg_2;
+        if (arg_4) {
+          options = arg_3;
+          metadata = arg_4;
+        } else {
+          metadata = arg_3;
+        }
+      } else throw new TypeError("A phone number must either be a string or an object of shape { phone, [country] }.");
+      if (format === "International") {
+        format = "INTERNATIONAL";
+      } else if (format === "National") {
+        format = "NATIONAL";
+      }
+      return {
+        input,
+        format,
+        options,
+        metadata
+      };
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/legacy/getNumberType.js
+var require_getNumberType2 = __commonJS({
+  "node_modules/libphonenumber-js/build/legacy/getNumberType.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = getNumberType;
+    exports2.normalizeArguments = normalizeArguments;
+    var _isViablePhoneNumber = _interopRequireDefault(require_isViablePhoneNumber());
+    var _getNumberType2 = _interopRequireDefault(require_getNumberType());
+    var _isObject = _interopRequireDefault(require_isObject());
+    var _parse = _interopRequireDefault(require_parse2());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _slicedToArray(arr, i) {
+      return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+    }
+    function _nonIterableRest() {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _unsupportedIterableToArray(o2, minLen) {
+      if (!o2) return;
+      if (typeof o2 === "string") return _arrayLikeToArray(o2, minLen);
+      var n2 = Object.prototype.toString.call(o2).slice(8, -1);
+      if (n2 === "Object" && o2.constructor) n2 = o2.constructor.name;
+      if (n2 === "Map" || n2 === "Set") return Array.from(o2);
+      if (n2 === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n2)) return _arrayLikeToArray(o2, minLen);
+    }
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+      for (var i = 0, arr2 = new Array(len); i < len; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    function _iterableToArrayLimit(arr, i) {
+      var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+      if (_i == null) return;
+      var _arr = [];
+      var _n = true;
+      var _d = false;
+      var _s, _e;
+      try {
+        for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
+          _arr.push(_s.value);
+          if (i && _arr.length === i) break;
+        }
+      } catch (err2) {
+        _d = true;
+        _e = err2;
+      } finally {
+        try {
+          if (!_n && _i["return"] != null) _i["return"]();
+        } finally {
+          if (_d) throw _e;
+        }
+      }
+      return _arr;
+    }
+    function _arrayWithHoles(arr) {
+      if (Array.isArray(arr)) return arr;
+    }
+    function getNumberType() {
+      var _normalizeArguments = normalizeArguments(arguments), input = _normalizeArguments.input, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      if (!input.phone) {
+        return;
+      }
+      return (0, _getNumberType2["default"])(input, options, metadata);
+    }
+    function normalizeArguments(args) {
+      var _Array$prototype$slic = Array.prototype.slice.call(args), _Array$prototype$slic2 = _slicedToArray(_Array$prototype$slic, 4), arg_1 = _Array$prototype$slic2[0], arg_2 = _Array$prototype$slic2[1], arg_3 = _Array$prototype$slic2[2], arg_4 = _Array$prototype$slic2[3];
+      var input;
+      var options = {};
+      var metadata;
+      if (typeof arg_1 === "string") {
+        if (!(0, _isObject["default"])(arg_2)) {
+          if (arg_4) {
+            options = arg_3;
+            metadata = arg_4;
+          } else {
+            metadata = arg_3;
+          }
+          if ((0, _isViablePhoneNumber["default"])(arg_1)) {
+            input = (0, _parse["default"])(arg_1, {
+              defaultCountry: arg_2
+            }, metadata);
+          } else {
+            input = {};
+          }
+        } else {
+          if (arg_3) {
+            options = arg_2;
+            metadata = arg_3;
+          } else {
+            metadata = arg_2;
+          }
+          if ((0, _isViablePhoneNumber["default"])(arg_1)) {
+            input = (0, _parse["default"])(arg_1, void 0, metadata);
+          } else {
+            input = {};
+          }
+        }
+      } else if ((0, _isObject["default"])(arg_1)) {
+        input = arg_1;
+        if (arg_3) {
+          options = arg_2;
+          metadata = arg_3;
+        } else {
+          metadata = arg_2;
+        }
+      } else throw new TypeError("A phone number must either be a string or an object of shape { phone, [country] }.");
+      return {
+        input,
+        options,
+        metadata
+      };
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/legacy/isPossibleNumber.js
+var require_isPossibleNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/legacy/isPossibleNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = isPossibleNumber;
+    var _getNumberType = require_getNumberType2();
+    var _isPossible = _interopRequireDefault(require_isPossible());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function isPossibleNumber() {
+      var _normalizeArguments = (0, _getNumberType.normalizeArguments)(arguments), input = _normalizeArguments.input, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      if (!input.phone && !(options && options.v2)) {
+        return false;
+      }
+      return (0, _isPossible["default"])(input, options, metadata);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/legacy/isValidNumber.js
+var require_isValidNumber = __commonJS({
+  "node_modules/libphonenumber-js/build/legacy/isValidNumber.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = isValidNumber;
+    var _isValid = _interopRequireDefault(require_isValid());
+    var _getNumberType = require_getNumberType2();
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function isValidNumber() {
+      var _normalizeArguments = (0, _getNumberType.normalizeArguments)(arguments), input = _normalizeArguments.input, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      if (!input.phone) {
+        return false;
+      }
+      return (0, _isValid["default"])(input, options, metadata);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/legacy/isValidNumberForRegion_.js
+var require_isValidNumberForRegion = __commonJS({
+  "node_modules/libphonenumber-js/build/legacy/isValidNumberForRegion_.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = isValidNumberForRegion;
+    var _isValid = _interopRequireDefault(require_isValid());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function isValidNumberForRegion(input, country2, options, metadata) {
+      options = options || {};
+      return input.country === country2 && (0, _isValid["default"])(input, options, metadata);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/legacy/isValidNumberForRegion.js
+var require_isValidNumberForRegion2 = __commonJS({
+  "node_modules/libphonenumber-js/build/legacy/isValidNumberForRegion.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = isValidNumberForRegion;
+    var _isViablePhoneNumber = _interopRequireDefault(require_isViablePhoneNumber());
+    var _parse = _interopRequireDefault(require_parse2());
+    var _isValidNumberForRegion_ = _interopRequireDefault(require_isValidNumberForRegion());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function isValidNumberForRegion(number, country2, metadata) {
+      if (typeof number !== "string") {
+        throw new TypeError("number must be a string");
+      }
+      if (typeof country2 !== "string") {
+        throw new TypeError("country must be a string");
+      }
+      var input;
+      if ((0, _isViablePhoneNumber["default"])(number)) {
+        input = (0, _parse["default"])(number, {
+          defaultCountry: country2
+        }, metadata);
+      } else {
+        input = {};
+      }
+      return (0, _isValidNumberForRegion_["default"])(input, country2, void 0, metadata);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/build/legacy/findPhoneNumbersInitialImplementation.js
+var require_findPhoneNumbersInitialImplementation = __commonJS({
+  "node_modules/libphonenumber-js/build/legacy/findPhoneNumbersInitialImplementation.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2.PhoneNumberSearch = exports2.EXTN_PATTERNS_FOR_PARSING = void 0;
+    exports2["default"] = findPhoneNumbers;
+    exports2.searchPhoneNumbers = searchPhoneNumbers;
+    var _constants = require_constants3();
+    var _parse = _interopRequireDefault(require_parse2());
+    var _isViablePhoneNumber = require_isViablePhoneNumber();
+    var _createExtensionPattern = _interopRequireDefault(require_createExtensionPattern());
+    var _parsePreCandidate = _interopRequireDefault(require_parsePreCandidate());
+    var _isValidPreCandidate = _interopRequireDefault(require_isValidPreCandidate());
+    var _isValidCandidate = _interopRequireDefault(require_isValidCandidate());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, { value, enumerable: true, configurable: true, writable: true });
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }
+    var EXTN_PATTERNS_FOR_PARSING = (0, _createExtensionPattern["default"])("parsing");
+    exports2.EXTN_PATTERNS_FOR_PARSING = EXTN_PATTERNS_FOR_PARSING;
+    var WHITESPACE_IN_THE_BEGINNING_PATTERN = new RegExp("^[" + _constants.WHITESPACE + "]+");
+    var PUNCTUATION_IN_THE_END_PATTERN = new RegExp("[" + _constants.VALID_PUNCTUATION + "]+$");
+    function findPhoneNumbers(text, options, metadata) {
+      if (options === void 0) {
+        options = {};
+      }
+      var search = new PhoneNumberSearch(text, options, metadata);
+      var phones = [];
+      while (search.hasNext()) {
+        phones.push(search.next());
+      }
+      return phones;
+    }
+    function searchPhoneNumbers(text, options, metadata) {
+      if (options === void 0) {
+        options = {};
+      }
+      var search = new PhoneNumberSearch(text, options, metadata);
+      return _defineProperty({}, Symbol.iterator, function() {
+        return {
+          next: function next() {
+            if (search.hasNext()) {
+              return {
+                done: false,
+                value: search.next()
+              };
+            }
+            return {
+              done: true
+            };
+          }
+        };
+      });
+    }
+    var PhoneNumberSearch = /* @__PURE__ */ (function() {
+      function PhoneNumberSearch2(text, options, metadata) {
+        _classCallCheck(this, PhoneNumberSearch2);
+        this.text = text;
+        this.options = options || {};
+        this.metadata = metadata;
+        this.state = "NOT_READY";
+        this.regexp = new RegExp(_isViablePhoneNumber.VALID_PHONE_NUMBER_WITH_EXTENSION, "ig");
+      }
+      _createClass(PhoneNumberSearch2, [{
+        key: "find",
+        value: function find() {
+          var matches = this.regexp.exec(this.text);
+          if (!matches) {
+            return;
+          }
+          var number = matches[0];
+          var startsAt = matches.index;
+          number = number.replace(WHITESPACE_IN_THE_BEGINNING_PATTERN, "");
+          startsAt += matches[0].length - number.length;
+          number = number.replace(PUNCTUATION_IN_THE_END_PATTERN, "");
+          number = (0, _parsePreCandidate["default"])(number);
+          var result = this.parseCandidate(number, startsAt);
+          if (result) {
+            return result;
+          }
+          return this.find();
+        }
+      }, {
+        key: "parseCandidate",
+        value: function parseCandidate(number, startsAt) {
+          if (!(0, _isValidPreCandidate["default"])(number, startsAt, this.text)) {
+            return;
+          }
+          if (!(0, _isValidCandidate["default"])(number, startsAt, this.text, this.options.extended ? "POSSIBLE" : "VALID")) {
+            return;
+          }
+          var result = (0, _parse["default"])(number, this.options, this.metadata);
+          if (!result.phone) {
+            return;
+          }
+          result.startsAt = startsAt;
+          result.endsAt = startsAt + number.length;
+          return result;
+        }
+      }, {
+        key: "hasNext",
+        value: function hasNext() {
+          if (this.state === "NOT_READY") {
+            this.last_match = this.find();
+            if (this.last_match) {
+              this.state = "READY";
+            } else {
+              this.state = "DONE";
+            }
+          }
+          return this.state === "READY";
+        }
+      }, {
+        key: "next",
+        value: function next() {
+          if (!this.hasNext()) {
+            throw new Error("No next element");
+          }
+          var result = this.last_match;
+          this.last_match = null;
+          this.state = "NOT_READY";
+          return result;
+        }
+      }]);
+      return PhoneNumberSearch2;
+    })();
+    exports2.PhoneNumberSearch = PhoneNumberSearch;
+  }
+});
+
+// node_modules/libphonenumber-js/build/legacy/findPhoneNumbers.js
+var require_findPhoneNumbers = __commonJS({
+  "node_modules/libphonenumber-js/build/legacy/findPhoneNumbers.js"(exports2) {
+    "use strict";
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
+        return typeof obj2;
+      } : function(obj2) {
+        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+      }, _typeof(obj);
+    }
+    Object.defineProperty(exports2, "__esModule", {
+      value: true
+    });
+    exports2["default"] = findPhoneNumbers;
+    exports2.searchPhoneNumbers = searchPhoneNumbers;
+    var _findPhoneNumbersInitialImplementation = _interopRequireWildcard(require_findPhoneNumbersInitialImplementation());
+    var _normalizeArguments3 = _interopRequireDefault(require_normalizeArguments());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _getRequireWildcardCache(nodeInterop) {
+      if (typeof WeakMap !== "function") return null;
+      var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
+      var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
+      return (_getRequireWildcardCache = function _getRequireWildcardCache2(nodeInterop2) {
+        return nodeInterop2 ? cacheNodeInterop : cacheBabelInterop;
+      })(nodeInterop);
+    }
+    function _interopRequireWildcard(obj, nodeInterop) {
+      if (!nodeInterop && obj && obj.__esModule) {
+        return obj;
+      }
+      if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") {
+        return { "default": obj };
+      }
+      var cache = _getRequireWildcardCache(nodeInterop);
+      if (cache && cache.has(obj)) {
+        return cache.get(obj);
+      }
+      var newObj = {};
+      var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+      for (var key in obj) {
+        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+          var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+          if (desc && (desc.get || desc.set)) {
+            Object.defineProperty(newObj, key, desc);
+          } else {
+            newObj[key] = obj[key];
+          }
+        }
+      }
+      newObj["default"] = obj;
+      if (cache) {
+        cache.set(obj, newObj);
+      }
+      return newObj;
+    }
+    function findPhoneNumbers() {
+      var _normalizeArguments = (0, _normalizeArguments3["default"])(arguments), text = _normalizeArguments.text, options = _normalizeArguments.options, metadata = _normalizeArguments.metadata;
+      return (0, _findPhoneNumbersInitialImplementation["default"])(text, options, metadata);
+    }
+    function searchPhoneNumbers() {
+      var _normalizeArguments2 = (0, _normalizeArguments3["default"])(arguments), text = _normalizeArguments2.text, options = _normalizeArguments2.options, metadata = _normalizeArguments2.metadata;
+      return (0, _findPhoneNumbersInitialImplementation.searchPhoneNumbers)(text, options, metadata);
+    }
+  }
+});
+
+// node_modules/libphonenumber-js/index.cjs
+var require_libphonenumber_js = __commonJS({
+  "node_modules/libphonenumber-js/index.cjs"(exports2, module2) {
+    "use strict";
+    var min = require_min2();
+    var metadata = require_metadata_min();
+    function withMetadataArgument(func, _arguments) {
+      var args = Array.prototype.slice.call(_arguments);
+      args.push(metadata);
+      return func.apply(this, args);
+    }
+    exports2 = module2.exports = min.parsePhoneNumberFromString;
+    exports2["default"] = min.parsePhoneNumberFromString;
+    exports2.parsePhoneNumberFromString = min.parsePhoneNumberFromString;
+    exports2.PhoneNumber = min.PhoneNumber;
+    exports2.ParseError = min.ParseError;
+    exports2.parsePhoneNumber = min.parsePhoneNumberWithError;
+    exports2.parsePhoneNumberWithError = min.parsePhoneNumberWithError;
+    exports2.isValidPhoneNumber = min.isValidPhoneNumber;
+    exports2.isPossiblePhoneNumber = min.isPossiblePhoneNumber;
+    exports2.validatePhoneNumberLength = min.validatePhoneNumberLength;
+    var parse_ = require_parse3().default;
+    exports2.parse = function parse() {
+      return withMetadataArgument(parse_, arguments);
+    };
+    exports2.parseNumber = exports2.parse;
+    var format_ = require_format2().default;
+    exports2.format = function format() {
+      return withMetadataArgument(format_, arguments);
+    };
+    exports2.formatNumber = exports2.format;
+    var getNumberType_ = require_getNumberType2().default;
+    exports2.getNumberType = function getNumberType() {
+      return withMetadataArgument(getNumberType_, arguments);
+    };
+    var isPossibleNumber_ = require_isPossibleNumber().default;
+    exports2.isPossibleNumber = function isPossibleNumber() {
+      return withMetadataArgument(isPossibleNumber_, arguments);
+    };
+    var isValidNumber_ = require_isValidNumber().default;
+    exports2.isValidNumber = function isValidNumber() {
+      return withMetadataArgument(isValidNumber_, arguments);
+    };
+    var isValidNumberForRegion_ = require_isValidNumberForRegion2().default;
+    exports2.isValidNumberForRegion = function isValidNumberForRegion() {
+      return withMetadataArgument(isValidNumberForRegion_, arguments);
+    };
+    exports2.getExampleNumber = min.getExampleNumber;
+    exports2.Metadata = min.Metadata;
+    var findPhoneNumbers_ = require_findPhoneNumbers().default;
+    exports2.findPhoneNumbers = function findPhoneNumbers() {
+      return withMetadataArgument(findPhoneNumbers_, arguments);
+    };
+    var searchPhoneNumbers_ = require_findPhoneNumbers().searchPhoneNumbers;
+    exports2.searchPhoneNumbers = function searchPhoneNumbers() {
+      return withMetadataArgument(searchPhoneNumbers_, arguments);
+    };
+    var PhoneNumberSearch_ = require_findPhoneNumbersInitialImplementation().PhoneNumberSearch;
+    exports2.PhoneNumberSearch = function PhoneNumberSearch(text, options) {
+      return PhoneNumberSearch_.call(this, text, options, metadata);
+    };
+    exports2.PhoneNumberSearch.prototype = Object.create(PhoneNumberSearch_.prototype, {});
+    exports2.PhoneNumberSearch.prototype.constructor = exports2.PhoneNumberSearch;
+    exports2.findNumbers = min.findNumbers;
+    exports2.searchNumbers = min.searchNumbers;
+    exports2.findPhoneNumbersInText = min.findPhoneNumbersInText;
+    exports2.searchPhoneNumbersInText = min.searchPhoneNumbersInText;
+    exports2.PhoneNumberMatcher = min.PhoneNumberMatcher;
+    exports2.AsYouType = min.AsYouType;
+    exports2.getCountries = min.getCountries;
+    exports2.getCountryCallingCode = min.getCountryCallingCode;
+    exports2.isSupportedCountry = min.isSupportedCountry;
+    exports2.getExtPrefix = min.getExtPrefix;
+    exports2.parseRFC3966 = min.parseRFC3966;
+    exports2.formatRFC3966 = min.formatRFC3966;
+    exports2.DIGITS = require_parseDigits().DIGITS;
+    exports2.DIGIT_PLACEHOLDER = min.DIGIT_PLACEHOLDER;
+    exports2.getPhoneCode = min.getCountryCallingCode;
+    exports2.formatIncompletePhoneNumber = min.formatIncompletePhoneNumber;
+    exports2.parseIncompletePhoneNumber = min.parseIncompletePhoneNumber;
+    exports2.parsePhoneNumberCharacter = min.parsePhoneNumberCharacter;
+    exports2.parseDigits = min.parseDigits;
   }
 });
 
@@ -57940,7 +65380,7 @@ var require_longbits = __commonJS({
   "node_modules/protobufjs/src/util/longbits.js"(exports2, module2) {
     "use strict";
     module2.exports = LongBits;
-    var util3 = require_minimal();
+    var util4 = require_minimal();
     function LongBits(lo, hi) {
       this.lo = lo >>> 0;
       this.hi = hi >>> 0;
@@ -57977,9 +65417,9 @@ var require_longbits = __commonJS({
     LongBits.from = function from(value) {
       if (typeof value === "number")
         return LongBits.fromNumber(value);
-      if (util3.isString(value)) {
-        if (util3.Long)
-          value = util3.Long.fromString(value);
+      if (util4.isString(value)) {
+        if (util4.Long)
+          value = util4.Long.fromString(value);
         else
           return LongBits.fromNumber(parseInt(value, 10));
       }
@@ -57995,7 +65435,7 @@ var require_longbits = __commonJS({
       return this.lo + this.hi * 4294967296;
     };
     LongBits.prototype.toLong = function toLong(unsigned) {
-      return util3.Long ? new util3.Long(this.lo | 0, this.hi | 0, Boolean(unsigned)) : { low: this.lo | 0, high: this.hi | 0, unsigned: Boolean(unsigned) };
+      return util4.Long ? new util4.Long(this.lo | 0, this.hi | 0, Boolean(unsigned)) : { low: this.lo | 0, high: this.hi | 0, unsigned: Boolean(unsigned) };
     };
     var charCodeAt = String.prototype.charCodeAt;
     LongBits.fromHash = function fromHash(hash2) {
@@ -58041,50 +65481,50 @@ var require_longbits = __commonJS({
 var require_minimal = __commonJS({
   "node_modules/protobufjs/src/util/minimal.js"(exports2) {
     "use strict";
-    var util3 = exports2;
-    util3.asPromise = require_aspromise();
-    util3.base64 = require_base64();
-    util3.EventEmitter = require_eventemitter();
-    util3.float = require_float();
-    util3.inquire = require_inquire();
-    util3.utf8 = require_utf82();
-    util3.pool = require_pool();
-    util3.LongBits = require_longbits();
-    util3.isNode = Boolean(typeof global !== "undefined" && global && global.process && global.process.versions && global.process.versions.node);
-    util3.global = util3.isNode && global || typeof window !== "undefined" && window || typeof self !== "undefined" && self || exports2;
-    util3.emptyArray = Object.freeze ? Object.freeze([]) : (
+    var util4 = exports2;
+    util4.asPromise = require_aspromise();
+    util4.base64 = require_base64();
+    util4.EventEmitter = require_eventemitter();
+    util4.float = require_float();
+    util4.inquire = require_inquire();
+    util4.utf8 = require_utf82();
+    util4.pool = require_pool();
+    util4.LongBits = require_longbits();
+    util4.isNode = Boolean(typeof global !== "undefined" && global && global.process && global.process.versions && global.process.versions.node);
+    util4.global = util4.isNode && global || typeof window !== "undefined" && window || typeof self !== "undefined" && self || exports2;
+    util4.emptyArray = Object.freeze ? Object.freeze([]) : (
       /* istanbul ignore next */
       []
     );
-    util3.emptyObject = Object.freeze ? Object.freeze({}) : (
+    util4.emptyObject = Object.freeze ? Object.freeze({}) : (
       /* istanbul ignore next */
       {}
     );
-    util3.isInteger = Number.isInteger || /* istanbul ignore next */
+    util4.isInteger = Number.isInteger || /* istanbul ignore next */
     function isInteger(value) {
       return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
     };
-    util3.isString = function isString2(value) {
+    util4.isString = function isString2(value) {
       return typeof value === "string" || value instanceof String;
     };
-    util3.isObject = function isObject2(value) {
+    util4.isObject = function isObject2(value) {
       return value && typeof value === "object";
     };
-    util3.isset = /**
+    util4.isset = /**
      * Checks if a property on a message is considered to be present.
      * @param {Object} obj Plain object or message instance
      * @param {string} prop Property name
      * @returns {boolean} `true` if considered to be present, otherwise `false`
      */
-    util3.isSet = function isSet(obj, prop) {
+    util4.isSet = function isSet(obj, prop) {
       var value = obj[prop];
       if (value != null && obj.hasOwnProperty(prop))
         return typeof value !== "object" || (Array.isArray(value) ? value.length : Object.keys(value).length) > 0;
       return false;
     };
-    util3.Buffer = (function() {
+    util4.Buffer = (function() {
       try {
-        var Buffer2 = util3.inquire("buffer").Buffer;
+        var Buffer2 = util4.inquire("buffer").Buffer;
         return Buffer2.prototype.utf8Write ? Buffer2 : (
           /* istanbul ignore next */
           null
@@ -58093,26 +65533,26 @@ var require_minimal = __commonJS({
         return null;
       }
     })();
-    util3._Buffer_from = null;
-    util3._Buffer_allocUnsafe = null;
-    util3.newBuffer = function newBuffer(sizeOrArray) {
-      return typeof sizeOrArray === "number" ? util3.Buffer ? util3._Buffer_allocUnsafe(sizeOrArray) : new util3.Array(sizeOrArray) : util3.Buffer ? util3._Buffer_from(sizeOrArray) : typeof Uint8Array === "undefined" ? sizeOrArray : new Uint8Array(sizeOrArray);
+    util4._Buffer_from = null;
+    util4._Buffer_allocUnsafe = null;
+    util4.newBuffer = function newBuffer(sizeOrArray) {
+      return typeof sizeOrArray === "number" ? util4.Buffer ? util4._Buffer_allocUnsafe(sizeOrArray) : new util4.Array(sizeOrArray) : util4.Buffer ? util4._Buffer_from(sizeOrArray) : typeof Uint8Array === "undefined" ? sizeOrArray : new Uint8Array(sizeOrArray);
     };
-    util3.Array = typeof Uint8Array !== "undefined" ? Uint8Array : Array;
-    util3.Long = /* istanbul ignore next */
-    util3.global.dcodeIO && /* istanbul ignore next */
-    util3.global.dcodeIO.Long || /* istanbul ignore next */
-    util3.global.Long || util3.inquire("long");
-    util3.key2Re = /^true|false|0|1$/;
-    util3.key32Re = /^-?(?:0|[1-9][0-9]*)$/;
-    util3.key64Re = /^(?:[\\x00-\\xff]{8}|-?(?:0|[1-9][0-9]*))$/;
-    util3.longToHash = function longToHash(value) {
-      return value ? util3.LongBits.from(value).toHash() : util3.LongBits.zeroHash;
+    util4.Array = typeof Uint8Array !== "undefined" ? Uint8Array : Array;
+    util4.Long = /* istanbul ignore next */
+    util4.global.dcodeIO && /* istanbul ignore next */
+    util4.global.dcodeIO.Long || /* istanbul ignore next */
+    util4.global.Long || util4.inquire("long");
+    util4.key2Re = /^true|false|0|1$/;
+    util4.key32Re = /^-?(?:0|[1-9][0-9]*)$/;
+    util4.key64Re = /^(?:[\\x00-\\xff]{8}|-?(?:0|[1-9][0-9]*))$/;
+    util4.longToHash = function longToHash(value) {
+      return value ? util4.LongBits.from(value).toHash() : util4.LongBits.zeroHash;
     };
-    util3.longFromHash = function longFromHash(hash2, unsigned) {
-      var bits2 = util3.LongBits.fromHash(hash2);
-      if (util3.Long)
-        return util3.Long.fromBits(bits2.lo, bits2.hi, unsigned);
+    util4.longFromHash = function longFromHash(hash2, unsigned) {
+      var bits2 = util4.LongBits.fromHash(hash2);
+      if (util4.Long)
+        return util4.Long.fromBits(bits2.lo, bits2.hi, unsigned);
       return bits2.toNumber(Boolean(unsigned));
     };
     function merge2(dst, src, ifNotSet) {
@@ -58121,8 +65561,8 @@ var require_minimal = __commonJS({
           dst[keys[i]] = src[keys[i]];
       return dst;
     }
-    util3.merge = merge2;
-    util3.lcFirst = function lcFirst(str) {
+    util4.merge = merge2;
+    util4.lcFirst = function lcFirst(str) {
       return str.charAt(0).toLowerCase() + str.substring(1);
     };
     function newError(name) {
@@ -58169,9 +65609,9 @@ var require_minimal = __commonJS({
       });
       return CustomError;
     }
-    util3.newError = newError;
-    util3.ProtocolError = newError("ProtocolError");
-    util3.oneOfGetter = function getOneOf(fieldNames) {
+    util4.newError = newError;
+    util4.ProtocolError = newError("ProtocolError");
+    util4.oneOfGetter = function getOneOf(fieldNames) {
       var fieldMap = {};
       for (var i = 0; i < fieldNames.length; ++i)
         fieldMap[fieldNames[i]] = 1;
@@ -58181,30 +65621,30 @@ var require_minimal = __commonJS({
             return keys[i2];
       };
     };
-    util3.oneOfSetter = function setOneOf(fieldNames) {
+    util4.oneOfSetter = function setOneOf(fieldNames) {
       return function(name) {
         for (var i = 0; i < fieldNames.length; ++i)
           if (fieldNames[i] !== name)
             delete this[fieldNames[i]];
       };
     };
-    util3.toJSONOptions = {
+    util4.toJSONOptions = {
       longs: String,
       enums: String,
       bytes: String,
       json: true
     };
-    util3._configure = function() {
-      var Buffer2 = util3.Buffer;
+    util4._configure = function() {
+      var Buffer2 = util4.Buffer;
       if (!Buffer2) {
-        util3._Buffer_from = util3._Buffer_allocUnsafe = null;
+        util4._Buffer_from = util4._Buffer_allocUnsafe = null;
         return;
       }
-      util3._Buffer_from = Buffer2.from !== Uint8Array.from && Buffer2.from || /* istanbul ignore next */
+      util4._Buffer_from = Buffer2.from !== Uint8Array.from && Buffer2.from || /* istanbul ignore next */
       function Buffer_from(value, encoding) {
         return new Buffer2(value, encoding);
       };
-      util3._Buffer_allocUnsafe = Buffer2.allocUnsafe || /* istanbul ignore next */
+      util4._Buffer_allocUnsafe = Buffer2.allocUnsafe || /* istanbul ignore next */
       function Buffer_allocUnsafe(size) {
         return new Buffer2(size);
       };
@@ -58217,11 +65657,11 @@ var require_writer = __commonJS({
   "node_modules/protobufjs/src/writer.js"(exports2, module2) {
     "use strict";
     module2.exports = Writer;
-    var util3 = require_minimal();
+    var util4 = require_minimal();
     var BufferWriter;
-    var LongBits = util3.LongBits;
-    var base64 = util3.base64;
-    var utf8 = util3.utf8;
+    var LongBits = util4.LongBits;
+    var base64 = util4.base64;
+    var utf8 = util4.utf8;
     function Op(fn, len, val) {
       this.fn = fn;
       this.len = len;
@@ -58243,7 +65683,7 @@ var require_writer = __commonJS({
       this.states = null;
     }
     var create = function create2() {
-      return util3.Buffer ? function create_buffer_setup() {
+      return util4.Buffer ? function create_buffer_setup() {
         return (Writer.create = function create_buffer() {
           return new BufferWriter();
         })();
@@ -58253,10 +65693,10 @@ var require_writer = __commonJS({
     };
     Writer.create = create();
     Writer.alloc = function alloc(size) {
-      return new util3.Array(size);
+      return new util4.Array(size);
     };
-    if (util3.Array !== Array)
-      Writer.alloc = util3.pool(Writer.alloc, util3.Array.prototype.subarray);
+    if (util4.Array !== Array)
+      Writer.alloc = util4.pool(Writer.alloc, util4.Array.prototype.subarray);
     Writer.prototype._push = function push(fn, len, val) {
       this.tail = this.tail.next = new Op(fn, len, val);
       this.len += len;
@@ -58332,12 +65772,12 @@ var require_writer = __commonJS({
     };
     Writer.prototype.sfixed64 = Writer.prototype.fixed64;
     Writer.prototype.float = function write_float(value) {
-      return this._push(util3.float.writeFloatLE, 4, value);
+      return this._push(util4.float.writeFloatLE, 4, value);
     };
     Writer.prototype.double = function write_double(value) {
-      return this._push(util3.float.writeDoubleLE, 8, value);
+      return this._push(util4.float.writeDoubleLE, 8, value);
     };
-    var writeBytes = util3.Array.prototype.set ? function writeBytes_set(val, buf, pos) {
+    var writeBytes = util4.Array.prototype.set ? function writeBytes_set(val, buf, pos) {
       buf.set(val, pos);
     } : function writeBytes_for(val, buf, pos) {
       for (var i = 0; i < val.length; ++i)
@@ -58347,7 +65787,7 @@ var require_writer = __commonJS({
       var len = value.length >>> 0;
       if (!len)
         return this._push(writeByte, 1, 0);
-      if (util3.isString(value)) {
+      if (util4.isString(value)) {
         var buf = Writer.alloc(len = base64.length(value));
         base64.decode(value, buf, 0);
         value = buf;
@@ -58410,13 +65850,13 @@ var require_writer_buffer = __commonJS({
     module2.exports = BufferWriter;
     var Writer = require_writer();
     (BufferWriter.prototype = Object.create(Writer.prototype)).constructor = BufferWriter;
-    var util3 = require_minimal();
+    var util4 = require_minimal();
     function BufferWriter() {
       Writer.call(this);
     }
     BufferWriter._configure = function() {
-      BufferWriter.alloc = util3._Buffer_allocUnsafe;
-      BufferWriter.writeBytesBuffer = util3.Buffer && util3.Buffer.prototype instanceof Uint8Array && util3.Buffer.prototype.set.name === "set" ? function writeBytesBuffer_set(val, buf, pos) {
+      BufferWriter.alloc = util4._Buffer_allocUnsafe;
+      BufferWriter.writeBytesBuffer = util4.Buffer && util4.Buffer.prototype instanceof Uint8Array && util4.Buffer.prototype.set.name === "set" ? function writeBytesBuffer_set(val, buf, pos) {
         buf.set(val, pos);
       } : function writeBytesBuffer_copy(val, buf, pos) {
         if (val.copy)
@@ -58426,8 +65866,8 @@ var require_writer_buffer = __commonJS({
       };
     };
     BufferWriter.prototype.bytes = function write_bytes_buffer(value) {
-      if (util3.isString(value))
-        value = util3._Buffer_from(value, "base64");
+      if (util4.isString(value))
+        value = util4._Buffer_from(value, "base64");
       var len = value.length >>> 0;
       this.uint32(len);
       if (len)
@@ -58436,14 +65876,14 @@ var require_writer_buffer = __commonJS({
     };
     function writeStringBuffer(val, buf, pos) {
       if (val.length < 40)
-        util3.utf8.write(val, buf, pos);
+        util4.utf8.write(val, buf, pos);
       else if (buf.utf8Write)
         buf.utf8Write(val, pos);
       else
         buf.write(val, pos);
     }
     BufferWriter.prototype.string = function write_string_buffer(value) {
-      var len = util3.Buffer.byteLength(value);
+      var len = util4.Buffer.byteLength(value);
       this.uint32(len);
       if (len)
         this._push(writeStringBuffer, len, value);
@@ -58458,10 +65898,10 @@ var require_reader = __commonJS({
   "node_modules/protobufjs/src/reader.js"(exports2, module2) {
     "use strict";
     module2.exports = Reader;
-    var util3 = require_minimal();
+    var util4 = require_minimal();
     var BufferReader;
-    var LongBits = util3.LongBits;
-    var utf8 = util3.utf8;
+    var LongBits = util4.LongBits;
+    var utf8 = util4.utf8;
     function indexOutOfRange(reader, writeLength) {
       return RangeError("index out of range: " + reader.pos + " + " + (writeLength || 1) + " > " + reader.len);
     }
@@ -58480,15 +65920,15 @@ var require_reader = __commonJS({
       throw Error("illegal buffer");
     };
     var create = function create2() {
-      return util3.Buffer ? function create_buffer_setup(buffer2) {
+      return util4.Buffer ? function create_buffer_setup(buffer2) {
         return (Reader.create = function create_buffer(buffer3) {
-          return util3.Buffer.isBuffer(buffer3) ? new BufferReader(buffer3) : create_array(buffer3);
+          return util4.Buffer.isBuffer(buffer3) ? new BufferReader(buffer3) : create_array(buffer3);
         })(buffer2);
       } : create_array;
     };
     Reader.create = create();
-    Reader.prototype._slice = util3.Array.prototype.subarray || /* istanbul ignore next */
-    util3.Array.prototype.slice;
+    Reader.prototype._slice = util4.Array.prototype.subarray || /* istanbul ignore next */
+    util4.Array.prototype.slice;
     Reader.prototype.uint32 = /* @__PURE__ */ (function read_uint32_setup() {
       var value = 4294967295;
       return function read_uint32() {
@@ -58582,14 +66022,14 @@ var require_reader = __commonJS({
     Reader.prototype.float = function read_float() {
       if (this.pos + 4 > this.len)
         throw indexOutOfRange(this, 4);
-      var value = util3.float.readFloatLE(this.buf, this.pos);
+      var value = util4.float.readFloatLE(this.buf, this.pos);
       this.pos += 4;
       return value;
     };
     Reader.prototype.double = function read_double() {
       if (this.pos + 8 > this.len)
         throw indexOutOfRange(this, 4);
-      var value = util3.float.readDoubleLE(this.buf, this.pos);
+      var value = util4.float.readDoubleLE(this.buf, this.pos);
       this.pos += 8;
       return value;
     };
@@ -58601,7 +66041,7 @@ var require_reader = __commonJS({
       if (Array.isArray(this.buf))
         return this.buf.slice(start, end);
       if (start === end) {
-        var nativeBuffer = util3.Buffer;
+        var nativeBuffer = util4.Buffer;
         return nativeBuffer ? nativeBuffer.alloc(0) : new this.buf.constructor(0);
       }
       return this._slice.call(this.buf, start, end);
@@ -58652,11 +66092,11 @@ var require_reader = __commonJS({
       BufferReader = BufferReader_;
       Reader.create = create();
       BufferReader._configure();
-      var fn = util3.Long ? "toLong" : (
+      var fn = util4.Long ? "toLong" : (
         /* istanbul ignore next */
         "toNumber"
       );
-      util3.merge(Reader.prototype, {
+      util4.merge(Reader.prototype, {
         int64: function read_int64() {
           return readLongVarint.call(this)[fn](false);
         },
@@ -58684,13 +66124,13 @@ var require_reader_buffer = __commonJS({
     module2.exports = BufferReader;
     var Reader = require_reader();
     (BufferReader.prototype = Object.create(Reader.prototype)).constructor = BufferReader;
-    var util3 = require_minimal();
+    var util4 = require_minimal();
     function BufferReader(buffer2) {
       Reader.call(this, buffer2);
     }
     BufferReader._configure = function() {
-      if (util3.Buffer)
-        BufferReader.prototype._slice = util3.Buffer.prototype.slice;
+      if (util4.Buffer)
+        BufferReader.prototype._slice = util4.Buffer.prototype.slice;
     };
     BufferReader.prototype.string = function read_string_buffer() {
       var len = this.uint32();
@@ -58705,12 +66145,12 @@ var require_service = __commonJS({
   "node_modules/protobufjs/src/rpc/service.js"(exports2, module2) {
     "use strict";
     module2.exports = Service;
-    var util3 = require_minimal();
-    (Service.prototype = Object.create(util3.EventEmitter.prototype)).constructor = Service;
+    var util4 = require_minimal();
+    (Service.prototype = Object.create(util4.EventEmitter.prototype)).constructor = Service;
     function Service(rpcImpl, requestDelimited, responseDelimited) {
       if (typeof rpcImpl !== "function")
         throw TypeError("rpcImpl must be a function");
-      util3.EventEmitter.call(this);
+      util4.EventEmitter.call(this);
       this.rpcImpl = rpcImpl;
       this.requestDelimited = Boolean(requestDelimited);
       this.responseDelimited = Boolean(responseDelimited);
@@ -58720,7 +66160,7 @@ var require_service = __commonJS({
         throw TypeError("request must be specified");
       var self2 = this;
       if (!callback)
-        return util3.asPromise(rpcCall, self2, method, requestCtor, responseCtor, request);
+        return util4.asPromise(rpcCall, self2, method, requestCtor, responseCtor, request);
       if (!self2.rpcImpl) {
         setTimeout(function() {
           callback(Error("already ended"));
@@ -161374,7 +168814,7 @@ var require_longbits2 = __commonJS({
   "node_modules/libsignal/node_modules/protobufjs/src/util/longbits.js"(exports2, module2) {
     "use strict";
     module2.exports = LongBits;
-    var util3 = require_minimal3();
+    var util4 = require_minimal3();
     function LongBits(lo, hi) {
       this.lo = lo >>> 0;
       this.hi = hi >>> 0;
@@ -161411,9 +168851,9 @@ var require_longbits2 = __commonJS({
     LongBits.from = function from(value) {
       if (typeof value === "number")
         return LongBits.fromNumber(value);
-      if (util3.isString(value)) {
-        if (util3.Long)
-          value = util3.Long.fromString(value);
+      if (util4.isString(value)) {
+        if (util4.Long)
+          value = util4.Long.fromString(value);
         else
           return LongBits.fromNumber(parseInt(value, 10));
       }
@@ -161429,7 +168869,7 @@ var require_longbits2 = __commonJS({
       return this.lo + this.hi * 4294967296;
     };
     LongBits.prototype.toLong = function toLong(unsigned) {
-      return util3.Long ? new util3.Long(this.lo | 0, this.hi | 0, Boolean(unsigned)) : { low: this.lo | 0, high: this.hi | 0, unsigned: Boolean(unsigned) };
+      return util4.Long ? new util4.Long(this.lo | 0, this.hi | 0, Boolean(unsigned)) : { low: this.lo | 0, high: this.hi | 0, unsigned: Boolean(unsigned) };
     };
     var charCodeAt = String.prototype.charCodeAt;
     LongBits.fromHash = function fromHash(hash2) {
@@ -161475,50 +168915,50 @@ var require_longbits2 = __commonJS({
 var require_minimal3 = __commonJS({
   "node_modules/libsignal/node_modules/protobufjs/src/util/minimal.js"(exports2) {
     "use strict";
-    var util3 = exports2;
-    util3.asPromise = require_aspromise();
-    util3.base64 = require_base64();
-    util3.EventEmitter = require_eventemitter();
-    util3.float = require_float();
-    util3.inquire = require_inquire();
-    util3.utf8 = require_utf82();
-    util3.pool = require_pool();
-    util3.LongBits = require_longbits2();
-    util3.global = typeof window !== "undefined" && window || typeof global !== "undefined" && global || typeof self !== "undefined" && self || exports2;
-    util3.emptyArray = Object.freeze ? Object.freeze([]) : (
+    var util4 = exports2;
+    util4.asPromise = require_aspromise();
+    util4.base64 = require_base64();
+    util4.EventEmitter = require_eventemitter();
+    util4.float = require_float();
+    util4.inquire = require_inquire();
+    util4.utf8 = require_utf82();
+    util4.pool = require_pool();
+    util4.LongBits = require_longbits2();
+    util4.global = typeof window !== "undefined" && window || typeof global !== "undefined" && global || typeof self !== "undefined" && self || exports2;
+    util4.emptyArray = Object.freeze ? Object.freeze([]) : (
       /* istanbul ignore next */
       []
     );
-    util3.emptyObject = Object.freeze ? Object.freeze({}) : (
+    util4.emptyObject = Object.freeze ? Object.freeze({}) : (
       /* istanbul ignore next */
       {}
     );
-    util3.isNode = Boolean(util3.global.process && util3.global.process.versions && util3.global.process.versions.node);
-    util3.isInteger = Number.isInteger || /* istanbul ignore next */
+    util4.isNode = Boolean(util4.global.process && util4.global.process.versions && util4.global.process.versions.node);
+    util4.isInteger = Number.isInteger || /* istanbul ignore next */
     function isInteger(value) {
       return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
     };
-    util3.isString = function isString2(value) {
+    util4.isString = function isString2(value) {
       return typeof value === "string" || value instanceof String;
     };
-    util3.isObject = function isObject2(value) {
+    util4.isObject = function isObject2(value) {
       return value && typeof value === "object";
     };
-    util3.isset = /**
+    util4.isset = /**
      * Checks if a property on a message is considered to be present.
      * @param {Object} obj Plain object or message instance
      * @param {string} prop Property name
      * @returns {boolean} `true` if considered to be present, otherwise `false`
      */
-    util3.isSet = function isSet(obj, prop) {
+    util4.isSet = function isSet(obj, prop) {
       var value = obj[prop];
       if (value != null && obj.hasOwnProperty(prop))
         return typeof value !== "object" || (Array.isArray(value) ? value.length : Object.keys(value).length) > 0;
       return false;
     };
-    util3.Buffer = (function() {
+    util4.Buffer = (function() {
       try {
-        var Buffer2 = util3.inquire("buffer").Buffer;
+        var Buffer2 = util4.inquire("buffer").Buffer;
         return Buffer2.prototype.utf8Write ? Buffer2 : (
           /* istanbul ignore next */
           null
@@ -161527,26 +168967,26 @@ var require_minimal3 = __commonJS({
         return null;
       }
     })();
-    util3._Buffer_from = null;
-    util3._Buffer_allocUnsafe = null;
-    util3.newBuffer = function newBuffer(sizeOrArray) {
-      return typeof sizeOrArray === "number" ? util3.Buffer ? util3._Buffer_allocUnsafe(sizeOrArray) : new util3.Array(sizeOrArray) : util3.Buffer ? util3._Buffer_from(sizeOrArray) : typeof Uint8Array === "undefined" ? sizeOrArray : new Uint8Array(sizeOrArray);
+    util4._Buffer_from = null;
+    util4._Buffer_allocUnsafe = null;
+    util4.newBuffer = function newBuffer(sizeOrArray) {
+      return typeof sizeOrArray === "number" ? util4.Buffer ? util4._Buffer_allocUnsafe(sizeOrArray) : new util4.Array(sizeOrArray) : util4.Buffer ? util4._Buffer_from(sizeOrArray) : typeof Uint8Array === "undefined" ? sizeOrArray : new Uint8Array(sizeOrArray);
     };
-    util3.Array = typeof Uint8Array !== "undefined" ? Uint8Array : Array;
-    util3.Long = /* istanbul ignore next */
-    util3.global.dcodeIO && /* istanbul ignore next */
-    util3.global.dcodeIO.Long || /* istanbul ignore next */
-    util3.global.Long || util3.inquire("long");
-    util3.key2Re = /^true|false|0|1$/;
-    util3.key32Re = /^-?(?:0|[1-9][0-9]*)$/;
-    util3.key64Re = /^(?:[\\x00-\\xff]{8}|-?(?:0|[1-9][0-9]*))$/;
-    util3.longToHash = function longToHash(value) {
-      return value ? util3.LongBits.from(value).toHash() : util3.LongBits.zeroHash;
+    util4.Array = typeof Uint8Array !== "undefined" ? Uint8Array : Array;
+    util4.Long = /* istanbul ignore next */
+    util4.global.dcodeIO && /* istanbul ignore next */
+    util4.global.dcodeIO.Long || /* istanbul ignore next */
+    util4.global.Long || util4.inquire("long");
+    util4.key2Re = /^true|false|0|1$/;
+    util4.key32Re = /^-?(?:0|[1-9][0-9]*)$/;
+    util4.key64Re = /^(?:[\\x00-\\xff]{8}|-?(?:0|[1-9][0-9]*))$/;
+    util4.longToHash = function longToHash(value) {
+      return value ? util4.LongBits.from(value).toHash() : util4.LongBits.zeroHash;
     };
-    util3.longFromHash = function longFromHash(hash2, unsigned) {
-      var bits2 = util3.LongBits.fromHash(hash2);
-      if (util3.Long)
-        return util3.Long.fromBits(bits2.lo, bits2.hi, unsigned);
+    util4.longFromHash = function longFromHash(hash2, unsigned) {
+      var bits2 = util4.LongBits.fromHash(hash2);
+      if (util4.Long)
+        return util4.Long.fromBits(bits2.lo, bits2.hi, unsigned);
       return bits2.toNumber(Boolean(unsigned));
     };
     function merge2(dst, src, ifNotSet) {
@@ -161555,8 +168995,8 @@ var require_minimal3 = __commonJS({
           dst[keys[i]] = src[keys[i]];
       return dst;
     }
-    util3.merge = merge2;
-    util3.lcFirst = function lcFirst(str) {
+    util4.merge = merge2;
+    util4.lcFirst = function lcFirst(str) {
       return str.charAt(0).toLowerCase() + str.substring(1);
     };
     function newError(name) {
@@ -161582,9 +169022,9 @@ var require_minimal3 = __commonJS({
       };
       return CustomError;
     }
-    util3.newError = newError;
-    util3.ProtocolError = newError("ProtocolError");
-    util3.oneOfGetter = function getOneOf(fieldNames) {
+    util4.newError = newError;
+    util4.ProtocolError = newError("ProtocolError");
+    util4.oneOfGetter = function getOneOf(fieldNames) {
       var fieldMap = {};
       for (var i = 0; i < fieldNames.length; ++i)
         fieldMap[fieldNames[i]] = 1;
@@ -161594,30 +169034,30 @@ var require_minimal3 = __commonJS({
             return keys[i2];
       };
     };
-    util3.oneOfSetter = function setOneOf(fieldNames) {
+    util4.oneOfSetter = function setOneOf(fieldNames) {
       return function(name) {
         for (var i = 0; i < fieldNames.length; ++i)
           if (fieldNames[i] !== name)
             delete this[fieldNames[i]];
       };
     };
-    util3.toJSONOptions = {
+    util4.toJSONOptions = {
       longs: String,
       enums: String,
       bytes: String,
       json: true
     };
-    util3._configure = function() {
-      var Buffer2 = util3.Buffer;
+    util4._configure = function() {
+      var Buffer2 = util4.Buffer;
       if (!Buffer2) {
-        util3._Buffer_from = util3._Buffer_allocUnsafe = null;
+        util4._Buffer_from = util4._Buffer_allocUnsafe = null;
         return;
       }
-      util3._Buffer_from = Buffer2.from !== Uint8Array.from && Buffer2.from || /* istanbul ignore next */
+      util4._Buffer_from = Buffer2.from !== Uint8Array.from && Buffer2.from || /* istanbul ignore next */
       function Buffer_from(value, encoding) {
         return new Buffer2(value, encoding);
       };
-      util3._Buffer_allocUnsafe = Buffer2.allocUnsafe || /* istanbul ignore next */
+      util4._Buffer_allocUnsafe = Buffer2.allocUnsafe || /* istanbul ignore next */
       function Buffer_allocUnsafe(size) {
         return new Buffer2(size);
       };
@@ -161630,11 +169070,11 @@ var require_writer2 = __commonJS({
   "node_modules/libsignal/node_modules/protobufjs/src/writer.js"(exports2, module2) {
     "use strict";
     module2.exports = Writer;
-    var util3 = require_minimal3();
+    var util4 = require_minimal3();
     var BufferWriter;
-    var LongBits = util3.LongBits;
-    var base64 = util3.base64;
-    var utf8 = util3.utf8;
+    var LongBits = util4.LongBits;
+    var base64 = util4.base64;
+    var utf8 = util4.utf8;
     function Op(fn, len, val) {
       this.fn = fn;
       this.len = len;
@@ -161655,7 +169095,7 @@ var require_writer2 = __commonJS({
       this.tail = this.head;
       this.states = null;
     }
-    Writer.create = util3.Buffer ? function create_buffer_setup() {
+    Writer.create = util4.Buffer ? function create_buffer_setup() {
       return (Writer.create = function create_buffer() {
         return new BufferWriter();
       })();
@@ -161663,10 +169103,10 @@ var require_writer2 = __commonJS({
       return new Writer();
     };
     Writer.alloc = function alloc(size) {
-      return new util3.Array(size);
+      return new util4.Array(size);
     };
-    if (util3.Array !== Array)
-      Writer.alloc = util3.pool(Writer.alloc, util3.Array.prototype.subarray);
+    if (util4.Array !== Array)
+      Writer.alloc = util4.pool(Writer.alloc, util4.Array.prototype.subarray);
     Writer.prototype._push = function push(fn, len, val) {
       this.tail = this.tail.next = new Op(fn, len, val);
       this.len += len;
@@ -161742,12 +169182,12 @@ var require_writer2 = __commonJS({
     };
     Writer.prototype.sfixed64 = Writer.prototype.fixed64;
     Writer.prototype.float = function write_float(value) {
-      return this._push(util3.float.writeFloatLE, 4, value);
+      return this._push(util4.float.writeFloatLE, 4, value);
     };
     Writer.prototype.double = function write_double(value) {
-      return this._push(util3.float.writeDoubleLE, 8, value);
+      return this._push(util4.float.writeDoubleLE, 8, value);
     };
-    var writeBytes = util3.Array.prototype.set ? function writeBytes_set(val, buf, pos) {
+    var writeBytes = util4.Array.prototype.set ? function writeBytes_set(val, buf, pos) {
       buf.set(val, pos);
     } : function writeBytes_for(val, buf, pos) {
       for (var i = 0; i < val.length; ++i)
@@ -161757,7 +169197,7 @@ var require_writer2 = __commonJS({
       var len = value.length >>> 0;
       if (!len)
         return this._push(writeByte, 1, 0);
-      if (util3.isString(value)) {
+      if (util4.isString(value)) {
         var buf = Writer.alloc(len = base64.length(value));
         base64.decode(value, buf, 0);
         value = buf;
@@ -161818,13 +169258,13 @@ var require_writer_buffer2 = __commonJS({
     module2.exports = BufferWriter;
     var Writer = require_writer2();
     (BufferWriter.prototype = Object.create(Writer.prototype)).constructor = BufferWriter;
-    var util3 = require_minimal3();
-    var Buffer2 = util3.Buffer;
+    var util4 = require_minimal3();
+    var Buffer2 = util4.Buffer;
     function BufferWriter() {
       Writer.call(this);
     }
     BufferWriter.alloc = function alloc_buffer(size) {
-      return (BufferWriter.alloc = util3._Buffer_allocUnsafe)(size);
+      return (BufferWriter.alloc = util4._Buffer_allocUnsafe)(size);
     };
     var writeBytesBuffer = Buffer2 && Buffer2.prototype instanceof Uint8Array && Buffer2.prototype.set.name === "set" ? function writeBytesBuffer_set(val, buf, pos) {
       buf.set(val, pos);
@@ -161835,8 +169275,8 @@ var require_writer_buffer2 = __commonJS({
         buf[pos++] = val[i++];
     };
     BufferWriter.prototype.bytes = function write_bytes_buffer(value) {
-      if (util3.isString(value))
-        value = util3._Buffer_from(value, "base64");
+      if (util4.isString(value))
+        value = util4._Buffer_from(value, "base64");
       var len = value.length >>> 0;
       this.uint32(len);
       if (len)
@@ -161845,7 +169285,7 @@ var require_writer_buffer2 = __commonJS({
     };
     function writeStringBuffer(val, buf, pos) {
       if (val.length < 40)
-        util3.utf8.write(val, buf, pos);
+        util4.utf8.write(val, buf, pos);
       else
         buf.utf8Write(val, pos);
     }
@@ -161864,10 +169304,10 @@ var require_reader2 = __commonJS({
   "node_modules/libsignal/node_modules/protobufjs/src/reader.js"(exports2, module2) {
     "use strict";
     module2.exports = Reader;
-    var util3 = require_minimal3();
+    var util4 = require_minimal3();
     var BufferReader;
-    var LongBits = util3.LongBits;
-    var utf8 = util3.utf8;
+    var LongBits = util4.LongBits;
+    var utf8 = util4.utf8;
     function indexOutOfRange(reader, writeLength) {
       return RangeError("index out of range: " + reader.pos + " + " + (writeLength || 1) + " > " + reader.len);
     }
@@ -161885,13 +169325,13 @@ var require_reader2 = __commonJS({
         return new Reader(buffer2);
       throw Error("illegal buffer");
     };
-    Reader.create = util3.Buffer ? function create_buffer_setup(buffer2) {
+    Reader.create = util4.Buffer ? function create_buffer_setup(buffer2) {
       return (Reader.create = function create_buffer(buffer3) {
-        return util3.Buffer.isBuffer(buffer3) ? new BufferReader(buffer3) : create_array(buffer3);
+        return util4.Buffer.isBuffer(buffer3) ? new BufferReader(buffer3) : create_array(buffer3);
       })(buffer2);
     } : create_array;
-    Reader.prototype._slice = util3.Array.prototype.subarray || /* istanbul ignore next */
-    util3.Array.prototype.slice;
+    Reader.prototype._slice = util4.Array.prototype.subarray || /* istanbul ignore next */
+    util4.Array.prototype.slice;
     Reader.prototype.uint32 = /* @__PURE__ */ (function read_uint32_setup() {
       var value = 4294967295;
       return function read_uint32() {
@@ -161985,14 +169425,14 @@ var require_reader2 = __commonJS({
     Reader.prototype.float = function read_float() {
       if (this.pos + 4 > this.len)
         throw indexOutOfRange(this, 4);
-      var value = util3.float.readFloatLE(this.buf, this.pos);
+      var value = util4.float.readFloatLE(this.buf, this.pos);
       this.pos += 4;
       return value;
     };
     Reader.prototype.double = function read_double() {
       if (this.pos + 8 > this.len)
         throw indexOutOfRange(this, 4);
-      var value = util3.float.readDoubleLE(this.buf, this.pos);
+      var value = util4.float.readDoubleLE(this.buf, this.pos);
       this.pos += 8;
       return value;
     };
@@ -162049,11 +169489,11 @@ var require_reader2 = __commonJS({
     };
     Reader._configure = function(BufferReader_) {
       BufferReader = BufferReader_;
-      var fn = util3.Long ? "toLong" : (
+      var fn = util4.Long ? "toLong" : (
         /* istanbul ignore next */
         "toNumber"
       );
-      util3.merge(Reader.prototype, {
+      util4.merge(Reader.prototype, {
         int64: function read_int64() {
           return readLongVarint.call(this)[fn](false);
         },
@@ -162081,12 +169521,12 @@ var require_reader_buffer2 = __commonJS({
     module2.exports = BufferReader;
     var Reader = require_reader2();
     (BufferReader.prototype = Object.create(Reader.prototype)).constructor = BufferReader;
-    var util3 = require_minimal3();
+    var util4 = require_minimal3();
     function BufferReader(buffer2) {
       Reader.call(this, buffer2);
     }
-    if (util3.Buffer)
-      BufferReader.prototype._slice = util3.Buffer.prototype.slice;
+    if (util4.Buffer)
+      BufferReader.prototype._slice = util4.Buffer.prototype.slice;
     BufferReader.prototype.string = function read_string_buffer() {
       var len = this.uint32();
       return this.buf.utf8Slice(this.pos, this.pos = Math.min(this.pos + len, this.len));
@@ -162099,12 +169539,12 @@ var require_service2 = __commonJS({
   "node_modules/libsignal/node_modules/protobufjs/src/rpc/service.js"(exports2, module2) {
     "use strict";
     module2.exports = Service;
-    var util3 = require_minimal3();
-    (Service.prototype = Object.create(util3.EventEmitter.prototype)).constructor = Service;
+    var util4 = require_minimal3();
+    (Service.prototype = Object.create(util4.EventEmitter.prototype)).constructor = Service;
     function Service(rpcImpl, requestDelimited, responseDelimited) {
       if (typeof rpcImpl !== "function")
         throw TypeError("rpcImpl must be a function");
-      util3.EventEmitter.call(this);
+      util4.EventEmitter.call(this);
       this.rpcImpl = rpcImpl;
       this.requestDelimited = Boolean(requestDelimited);
       this.responseDelimited = Boolean(responseDelimited);
@@ -162114,7 +169554,7 @@ var require_service2 = __commonJS({
         throw TypeError("request must be specified");
       var self2 = this;
       if (!callback)
-        return util3.asPromise(rpcCall, self2, method, requestCtor, responseCtor, request);
+        return util4.asPromise(rpcCall, self2, method, requestCtor, responseCtor, request);
       if (!self2.rpcImpl) {
         setTimeout(function() {
           callback(Error("already ended"));
@@ -165038,7 +172478,7 @@ var init_AxiosError = __esm({
 var require_delayed_stream = __commonJS({
   "node_modules/delayed-stream/lib/delayed_stream.js"(exports2, module2) {
     var Stream = require("stream").Stream;
-    var util3 = require("util");
+    var util4 = require("util");
     module2.exports = DelayedStream;
     function DelayedStream() {
       this.source = null;
@@ -165049,7 +172489,7 @@ var require_delayed_stream = __commonJS({
       this._released = false;
       this._bufferedEvents = [];
     }
-    util3.inherits(DelayedStream, Stream);
+    util4.inherits(DelayedStream, Stream);
     DelayedStream.create = function(source, options) {
       var delayedStream = new this();
       options = options || {};
@@ -165128,7 +172568,7 @@ var require_delayed_stream = __commonJS({
 // node_modules/combined-stream/lib/combined_stream.js
 var require_combined_stream = __commonJS({
   "node_modules/combined-stream/lib/combined_stream.js"(exports2, module2) {
-    var util3 = require("util");
+    var util4 = require("util");
     var Stream = require("stream").Stream;
     var DelayedStream = require_delayed_stream();
     module2.exports = CombinedStream;
@@ -165144,7 +172584,7 @@ var require_combined_stream = __commonJS({
       this._insideLoop = false;
       this._pendingNext = false;
     }
-    util3.inherits(CombinedStream, Stream);
+    util4.inherits(CombinedStream, Stream);
     CombinedStream.create = function(options) {
       var combinedStream = new this();
       options = options || {};
@@ -165564,7 +173004,7 @@ var require_form_data = __commonJS({
   "node_modules/form-data/lib/form_data.js"(exports2, module2) {
     "use strict";
     var CombinedStream = require_combined_stream();
-    var util3 = require("util");
+    var util4 = require("util");
     var path = require("path");
     var http2 = require("http");
     var https2 = require("https");
@@ -165590,7 +173030,7 @@ var require_form_data = __commonJS({
         this[option] = options[option];
       }
     }
-    util3.inherits(FormData3, CombinedStream);
+    util4.inherits(FormData3, CombinedStream);
     FormData3.LINE_BREAK = "\r\n";
     FormData3.DEFAULT_CONTENT_TYPE = "application/octet-stream";
     FormData3.prototype.append = function(field, value, options) {
@@ -167390,14 +174830,14 @@ var require_browser7 = __commonJS({
 var require_node8 = __commonJS({
   "node_modules/debug/src/node.js"(exports2, module2) {
     var tty = require("tty");
-    var util3 = require("util");
+    var util4 = require("util");
     exports2.init = init2;
     exports2.log = log;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
     exports2.useColors = useColors;
-    exports2.destroy = util3.deprecate(
+    exports2.destroy = util4.deprecate(
       () => {
       },
       "Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`."
@@ -167528,7 +174968,7 @@ var require_node8 = __commonJS({
       return (/* @__PURE__ */ new Date()).toISOString() + " ";
     }
     function log(...args) {
-      return process.stderr.write(util3.formatWithOptions(exports2.inspectOpts, ...args) + "\n");
+      return process.stderr.write(util4.formatWithOptions(exports2.inspectOpts, ...args) + "\n");
     }
     function save(namespaces) {
       if (namespaces) {
@@ -167551,11 +174991,11 @@ var require_node8 = __commonJS({
     var { formatters } = module2.exports;
     formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
+      return util4.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
     };
     formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts);
+      return util4.inspect(v, this.inspectOpts);
     };
   }
 });
@@ -173541,7 +180981,7 @@ var require_debug5 = __commonJS({
 });
 
 // node_modules/sharp/node_modules/semver/internal/constants.js
-var require_constants3 = __commonJS({
+var require_constants4 = __commonJS({
   "node_modules/sharp/node_modules/semver/internal/constants.js"(exports2, module2) {
     "use strict";
     var SEMVER_SPEC_VERSION = "2.0.0";
@@ -173580,7 +181020,7 @@ var require_re = __commonJS({
       MAX_SAFE_COMPONENT_LENGTH,
       MAX_SAFE_BUILD_LENGTH,
       MAX_LENGTH
-    } = require_constants3();
+    } = require_constants4();
     var debug31 = require_debug5();
     exports2 = module2.exports = {};
     var re = exports2.re = [];
@@ -173709,7 +181149,7 @@ var require_semver = __commonJS({
   "node_modules/sharp/node_modules/semver/classes/semver.js"(exports2, module2) {
     "use strict";
     var debug31 = require_debug5();
-    var { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants3();
+    var { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants4();
     var { safeRe: re, t: t2 } = require_re();
     var parseOptions = require_parse_options();
     var { compareIdentifiers } = require_identifiers();
@@ -173984,7 +181424,7 @@ var require_semver = __commonJS({
 });
 
 // node_modules/sharp/node_modules/semver/functions/parse.js
-var require_parse2 = __commonJS({
+var require_parse4 = __commonJS({
   "node_modules/sharp/node_modules/semver/functions/parse.js"(exports2, module2) {
     "use strict";
     var SemVer = require_semver();
@@ -174010,7 +181450,7 @@ var require_coerce = __commonJS({
   "node_modules/sharp/node_modules/semver/functions/coerce.js"(exports2, module2) {
     "use strict";
     var SemVer = require_semver();
-    var parse = require_parse2();
+    var parse = require_parse4();
     var { safeRe: re, t: t2 } = require_re();
     var coerce = (version3, options) => {
       if (version3 instanceof SemVer) {
@@ -174479,7 +181919,7 @@ var require_range2 = __commonJS({
       tildeTrimReplace,
       caretTrimReplace
     } = require_re();
-    var { FLAG_INCLUDE_PRERELEASE, FLAG_LOOSE } = require_constants3();
+    var { FLAG_INCLUDE_PRERELEASE, FLAG_LOOSE } = require_constants4();
     var isNullSet = (c) => c.value === "<0.0.0-0";
     var isAny = (c) => c.value === "";
     var isSatisfiable = (comparators, options) => {
@@ -175220,11 +182660,11 @@ var require_sharp = __commonJS({
 // node_modules/sharp/lib/constructor.js
 var require_constructor = __commonJS({
   "node_modules/sharp/lib/constructor.js"(exports2, module2) {
-    var util3 = require("node:util");
+    var util4 = require("node:util");
     var stream5 = require("node:stream");
     var is = require_is();
     require_sharp();
-    var debuglog = util3.debuglog("sharp");
+    var debuglog = util4.debuglog("sharp");
     var queueListener = (queueLength) => {
       Sharp.queue.emit("change", queueLength);
     };
@@ -217516,7 +224956,7 @@ var require_rx = __commonJS({
 });
 
 // node_modules/fast-redact/lib/parse.js
-var require_parse3 = __commonJS({
+var require_parse5 = __commonJS({
   "node_modules/fast-redact/lib/parse.js"(exports2, module2) {
     "use strict";
     var rx = require_rx();
@@ -217968,7 +225408,7 @@ var require_fast_redact = __commonJS({
   "node_modules/fast-redact/index.js"(exports2, module2) {
     "use strict";
     var validator = require_validator();
-    var parse = require_parse3();
+    var parse = require_parse5();
     var redactor = require_redactor();
     var restorer = require_restorer();
     var { groupRedact, nestedRedact } = require_modifiers();
@@ -220010,7 +227450,7 @@ var require_tools = __commonJS({
 });
 
 // node_modules/pino/lib/constants.js
-var require_constants4 = __commonJS({
+var require_constants5 = __commonJS({
   "node_modules/pino/lib/constants.js"(exports2, module2) {
     var DEFAULT_LEVELS = {
       trace: 10,
@@ -220045,7 +227485,7 @@ var require_levels = __commonJS({
       levelCompSym
     } = require_symbols();
     var { noop: noop2, genLog } = require_tools();
-    var { DEFAULT_LEVELS, SORTING_ORDER } = require_constants4();
+    var { DEFAULT_LEVELS, SORTING_ORDER } = require_constants5();
     var levelMethods = {
       fatal: (hook) => {
         const logFatal = genLog(DEFAULT_LEVELS.fatal, hook);
@@ -221045,7 +228485,7 @@ var require_multistream = __commonJS({
   "node_modules/pino/lib/multistream.js"(exports2, module2) {
     "use strict";
     var metadata = Symbol.for("pino.metadata");
-    var { DEFAULT_LEVELS } = require_constants4();
+    var { DEFAULT_LEVELS } = require_constants5();
     var DEFAULT_INFO_LEVEL = DEFAULT_LEVELS.info;
     function multistream(streamsArray, opts) {
       let counter = 0;
@@ -221209,7 +228649,7 @@ var require_pino = __commonJS({
     var symbols = require_symbols();
     var { configure } = require_safe_stable_stringify();
     var { assertDefaultLevelFound, mappings, genLsCache, genLevelComparison, assertLevelComparison } = require_levels();
-    var { DEFAULT_LEVELS, SORTING_ORDER } = require_constants4();
+    var { DEFAULT_LEVELS, SORTING_ORDER } = require_constants5();
     var {
       createArgsNormalizer,
       asChindings,
@@ -223177,7 +230617,7 @@ var require_stream4 = __commonJS({
 });
 
 // node_modules/ws/lib/constants.js
-var require_constants5 = __commonJS({
+var require_constants6 = __commonJS({
   "node_modules/ws/lib/constants.js"(exports2, module2) {
     "use strict";
     var BINARY_TYPES = ["nodebuffer", "arraybuffer", "fragments"];
@@ -223202,7 +230642,7 @@ var require_constants5 = __commonJS({
 var require_buffer_util3 = __commonJS({
   "node_modules/ws/lib/buffer-util.js"(exports2, module2) {
     "use strict";
-    var { EMPTY_BUFFER } = require_constants5();
+    var { EMPTY_BUFFER } = require_constants6();
     var FastBuffer = Buffer[Symbol.species];
     function concat(list, totalLength) {
       if (list.length === 0) return EMPTY_BUFFER;
@@ -223330,7 +230770,7 @@ var require_permessage_deflate3 = __commonJS({
     var zlib2 = require("zlib");
     var bufferUtil = require_buffer_util3();
     var Limiter = require_limiter3();
-    var { kStatusCode } = require_constants5();
+    var { kStatusCode } = require_constants6();
     var FastBuffer = Buffer[Symbol.species];
     var TRAILER = Buffer.from([0, 0, 255, 255]);
     var kPerMessageDeflate = Symbol("permessage-deflate");
@@ -223707,7 +231147,7 @@ var require_validation3 = __commonJS({
   "node_modules/ws/lib/validation.js"(exports2, module2) {
     "use strict";
     var { isUtf8 } = require("buffer");
-    var { hasBlob } = require_constants5();
+    var { hasBlob } = require_constants6();
     var tokenChars = [
       0,
       0,
@@ -223914,7 +231354,7 @@ var require_receiver3 = __commonJS({
       EMPTY_BUFFER,
       kStatusCode,
       kWebSocket
-    } = require_constants5();
+    } = require_constants6();
     var { concat, toArrayBuffer, unmask } = require_buffer_util3();
     var { isValidStatusCode, isValidUTF8 } = require_validation3();
     var FastBuffer = Buffer[Symbol.species];
@@ -224502,7 +231942,7 @@ var require_sender3 = __commonJS({
     var { Duplex } = require("stream");
     var { randomFillSync } = require("crypto");
     var PerMessageDeflate = require_permessage_deflate3();
-    var { EMPTY_BUFFER, kWebSocket, NOOP } = require_constants5();
+    var { EMPTY_BUFFER, kWebSocket, NOOP } = require_constants6();
     var { isBlob: isBlob2, isValidStatusCode } = require_validation3();
     var { mask: applyMask, toBuffer: toBuffer2 } = require_buffer_util3();
     var kByteLength = Symbol("kByteLength");
@@ -224987,7 +232427,7 @@ var require_sender3 = __commonJS({
 var require_event_target3 = __commonJS({
   "node_modules/ws/lib/event-target.js"(exports2, module2) {
     "use strict";
-    var { kForOnEventAttribute, kListener } = require_constants5();
+    var { kForOnEventAttribute, kListener } = require_constants6();
     var kCode = Symbol("kCode");
     var kData = Symbol("kData");
     var kError = Symbol("kError");
@@ -225390,7 +232830,7 @@ var require_websocket5 = __commonJS({
       kStatusCode,
       kWebSocket,
       NOOP
-    } = require_constants5();
+    } = require_constants6();
     var {
       EventTarget: { addEventListener, removeEventListener }
     } = require_event_target3();
@@ -226305,7 +233745,7 @@ var require_websocket_server3 = __commonJS({
     var PerMessageDeflate = require_permessage_deflate3();
     var subprotocol = require_subprotocol3();
     var WebSocket2 = require_websocket5();
-    var { GUID: GUID2, kWebSocket } = require_constants5();
+    var { GUID: GUID2, kWebSocket } = require_constants6();
     var keyRegex = /^[+/0-9A-Za-z]{22}==$/;
     var RUNNING = 0;
     var CLOSING = 1;
@@ -246750,6 +254190,7 @@ var require_CountryFormat = __commonJS({
   "dist/src/utils/CountryFormat.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
+    var libphonenumber_js_1 = require_libphonenumber_js();
     var RuFormat = (carrier) => {
       const areaCode = "7";
       if (!["90", "91", "92"].includes(carrier.toString())) {
@@ -247216,8 +254657,18 @@ var require_CountryFormat = __commonJS({
     };
     var UnitedStates = (state) => {
       const areaCode = "1";
-      const number = Math.floor(Math.random() * 9e6) + 1e6;
-      return areaCode + state + number;
+      let attempts = 0;
+      while (attempts < 20) {
+        const localNumber = Math.floor(Math.random() * 1e7).toString().padStart(7, "0");
+        const candidate = areaCode + state + localNumber;
+        const parsed = (0, libphonenumber_js_1.parsePhoneNumberFromString)("+" + candidate, "US");
+        if (parsed && parsed.isValid()) {
+          return candidate;
+        }
+        attempts++;
+      }
+      const fallback = Math.floor(Math.random() * 9e6) + 1e6;
+      return areaCode + state + fallback.toString().padStart(7, "0");
     };
     var Canada = (carrier) => {
       const areaCode = "1";
@@ -248369,7 +255820,7 @@ var require_Error400 = __commonJS({
 var require_lib9 = __commonJS({
   "node_modules/streamifier/lib/index.js"(exports2, module2) {
     "use strict";
-    var util3 = require("util");
+    var util4 = require("util");
     var stream5 = require("stream");
     module2.exports.createReadStream = function(object, options) {
       return new MultiStream(object, options);
@@ -248386,7 +255837,7 @@ var require_lib9 = __commonJS({
       }
       this._object = object;
     };
-    util3.inherits(MultiStream, stream5.Readable);
+    util4.inherits(MultiStream, stream5.Readable);
     MultiStream.prototype._read = function() {
       this.push(this._object);
       this._object = null;
@@ -248674,6 +256125,7 @@ var require_phoneNumberController = __commonJS({
     };
     Object.defineProperty(exports2, "__esModule", { value: true });
     var multer_1 = __importDefault3(require_multer());
+    var libphonenumber_js_1 = require_libphonenumber_js();
     if (!globalThis.crypto) {
       const { Crypto: Crypto2 } = require_webcrypto();
       globalThis.crypto = new Crypto2();
@@ -248718,6 +256170,19 @@ var require_phoneNumberController = __commonJS({
           fs_1.default.mkdirSync(sessionPath, { recursive: true });
         }
         return sessionPath;
+      }
+      static normalizePhoneNumber(phoneNumber) {
+        const input = phoneNumber?.toString().trim() || "";
+        if (!input)
+          return "";
+        try {
+          const parsed = (0, libphonenumber_js_1.parsePhoneNumberFromString)(input, "US");
+          if (parsed && parsed.isValid() && parsed.country === "US") {
+            return parsed.number.replace(/\D/g, "");
+          }
+        } catch (error) {
+        }
+        return input.replace(/\D/g, "");
       }
       static async initializeAccount(io, index) {
         try {
@@ -249223,7 +256688,8 @@ var require_phoneNumberController = __commonJS({
                 if (index > 0 && config.delayBetweenNumbers > 0) {
                   await new Promise((resolve) => setTimeout(resolve, config.delayBetweenNumbers));
                 }
-                const results = await account.socket.onWhatsApp(`${phoneNumber.replace(/\D/g, "")}@s.whatsapp.net`);
+                const normalized = this.normalizePhoneNumber(phoneNumber);
+                const results = await account.socket.onWhatsApp(`${normalized}@s.whatsapp.net`);
                 const [exists] = Array.isArray(results) ? results : [];
                 if (exists?.exists) {
                   batchResult.phoneNumberRegistred.push(phoneNumber);
@@ -249344,7 +256810,7 @@ var require_phoneNumberController = __commonJS({
           console.log(`[START] Sending to ${phoneNumbers.length} numbers | ${useRandomDelay ? `Random delay 1-${delayMinutes} minutes` : `Fixed delay ${delayMinutes} minutes`} | Using ${validAccounts.length} accounts`);
           for (const [index, phoneNumber] of phoneNumbers.entries()) {
             const iterationStart = Date.now();
-            const jid = phoneNumber.includes("@s.whatsapp.net") ? phoneNumber : `${phoneNumber.replace(/\D/g, "")}@s.whatsapp.net`;
+            const jid = phoneNumber.includes("@s.whatsapp.net") ? phoneNumber : `${this.normalizePhoneNumber(phoneNumber)}@s.whatsapp.net`;
             const { text: messageText } = messages[Math.floor(Math.random() * messages.length)];
             const accountIndex = index % validAccounts.length;
             const account = validAccounts[accountIndex];
@@ -249656,7 +257122,7 @@ var require_phoneNumberController = __commonJS({
         }
         const randomAccount = connectedAccounts[Math.floor(Math.random() * connectedAccounts.length)];
         const rawNumber = req.params.id;
-        const sanitizedNumber = rawNumber.replace(/\D/g, "");
+        const sanitizedNumber = this.normalizePhoneNumber(rawNumber);
         const jid = `${sanitizedNumber}@s.whatsapp.net`;
         try {
           if (!randomAccount.socket) {
@@ -303920,10 +311386,18 @@ var require_EmailFormat = __commonJS({
       static getRandomNumber(length2 = 3) {
         return Math.floor(Math.random() * Math.pow(10, length2));
       }
-      static generateName(culture, gender) {
+      static generateName(culture, gender, type = "person", provider = "all") {
         const cultureData = emailData_1.default[culture];
         if (!cultureData)
           throw new Error(`Culture '${culture}' not supported`);
+        if (type === "company") {
+          const lastName = this.getRandomElement(cultureData.male?.lastNames || []);
+          const suffix = Math.random() > 0.5 ? this.getRandomElement(this.companySuffixes) : "";
+          const companyName = `${lastName}${suffix}`.toLowerCase().replace(/[^a-z0-9]/g, "");
+          const prefix = this.getRandomElement(this.businessPrefixes);
+          const domain2 = `${companyName}.com`;
+          return `${prefix}@${domain2}`;
+        }
         let firstNames = [];
         let lastNames = [];
         if (gender === "other") {
@@ -303941,7 +311415,12 @@ var require_EmailFormat = __commonJS({
         }
         const first = this.getRandomElement(firstNames);
         const last = this.getRandomElement(lastNames);
-        const domain = this.getRandomElement(this.domains);
+        let domain;
+        if (provider && provider !== "all") {
+          domain = provider;
+        } else {
+          domain = this.getRandomElement(this.domains);
+        }
         const number = this.getRandomNumber(2);
         const sep = this.getRandomElement(["", ".", "_"]);
         const formats = [
@@ -303957,7 +311436,8 @@ var require_EmailFormat = __commonJS({
           () => `${last}${sep}${first}${number}`
         ];
         const format = this.getRandomElement(formats);
-        return `${format()}@${domain}`;
+        const emailUser = format().toLowerCase().replace(/[^a-z0-9._-]/g, "");
+        return `${emailUser}@${domain}`;
       }
       static generateFirstName(culture, gender = "male") {
         const cultureData = emailData_1.default[culture.toLowerCase()];
@@ -303979,7 +311459,50 @@ var require_EmailFormat = __commonJS({
       }
     };
     MultiCultureNames.domains = [
-      "gmail.com"
+      "gmail.com",
+      "yahoo.com",
+      "hotmail.com",
+      "outlook.com",
+      "icloud.com",
+      "aol.com",
+      "protonmail.com",
+      "zoho.com",
+      "yandex.com",
+      "mail.com"
+    ];
+    MultiCultureNames.businessPrefixes = [
+      "info",
+      "contact",
+      "support",
+      "sales",
+      "admin",
+      "hello",
+      "team",
+      "jobs",
+      "career",
+      "office",
+      "hr",
+      "inquiry",
+      "media",
+      "press",
+      "help"
+    ];
+    MultiCultureNames.companySuffixes = [
+      "Tech",
+      "Solutions",
+      "Group",
+      "Consulting",
+      "Systems",
+      "Global",
+      "Media",
+      "Labs",
+      "Digital",
+      "Studio",
+      "Ventures",
+      "Holdings",
+      "Inc",
+      "Corp",
+      "Ltd"
     ];
     exports2.default = MultiCultureNames;
   }
@@ -304490,7 +312013,7 @@ var require_shared = __commonJS({
   "node_modules/nodemailer/lib/shared/index.js"(exports2, module2) {
     "use strict";
     var urllib = require("url");
-    var util3 = require("util");
+    var util4 = require("util");
     var fs4 = require("fs");
     var nmfetch = require_fetch();
     var dns = require("dns");
@@ -304983,7 +312506,7 @@ var require_shared = __commonJS({
             prefix = "[#" + entry.cid + "] " + prefix;
           }
         }
-        message = util3.format(message, ...args);
+        message = util4.format(message, ...args);
         message.split(/\r?\n/).forEach((line) => {
           console.log("[%s] %s %s", (/* @__PURE__ */ new Date()).toISOString().substr(0, 19).replace(/T/, " "), levelNames.get(level), prefix + line);
         });
@@ -310770,7 +318293,7 @@ var require_mailer = __commonJS({
     var MailComposer = require_mail_composer();
     var DKIM = require_dkim();
     var httpProxyClient = require_http_proxy_client();
-    var util3 = require("util");
+    var util4 = require("util");
     var urllib = require("url");
     var packageData = require_package4();
     var MailMessage = require_mail_message();
@@ -310960,7 +318483,7 @@ var require_mailer = __commonJS({
         return promise;
       }
       getVersionString() {
-        return util3.format("%s (%s; +%s; %s/%s)", packageData.name, packageData.version, packageData.homepage, this.transporter.name, this.transporter.version);
+        return util4.format("%s (%s; +%s; %s/%s)", packageData.name, packageData.version, packageData.homepage, this.transporter.name, this.transporter.version);
       }
       _processPlugins(step, mail, callback) {
         step = (step || "").toString();
@@ -315323,7 +322846,7 @@ var require_validate = __commonJS({
 });
 
 // node_modules/uuid/dist/cjs/parse.js
-var require_parse4 = __commonJS({
+var require_parse6 = __commonJS({
   "node_modules/uuid/dist/cjs/parse.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
@@ -315478,7 +323001,7 @@ var require_v1ToV6 = __commonJS({
   "node_modules/uuid/dist/cjs/v1ToV6.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
-    var parse_js_1 = require_parse4();
+    var parse_js_1 = require_parse6();
     var stringify_js_1 = require_stringify3();
     function v1ToV6(uuid) {
       const v1Bytes = typeof uuid === "string" ? (0, parse_js_1.default)(uuid) : uuid;
@@ -315516,7 +323039,7 @@ var require_v35 = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.URL = exports2.DNS = exports2.stringToBytes = void 0;
-    var parse_js_1 = require_parse4();
+    var parse_js_1 = require_parse6();
     var stringify_js_1 = require_stringify3();
     function stringToBytes2(str) {
       str = unescape(encodeURIComponent(str));
@@ -315698,7 +323221,7 @@ var require_v6ToV1 = __commonJS({
   "node_modules/uuid/dist/cjs/v6ToV1.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
-    var parse_js_1 = require_parse4();
+    var parse_js_1 = require_parse6();
     var stringify_js_1 = require_stringify3();
     function v6ToV1(uuid) {
       const v6Bytes = typeof uuid === "string" ? (0, parse_js_1.default)(uuid) : uuid;
@@ -315814,7 +323337,7 @@ var require_cjs4 = __commonJS({
     Object.defineProperty(exports2, "NIL", { enumerable: true, get: function() {
       return nil_js_1.default;
     } });
-    var parse_js_1 = require_parse4();
+    var parse_js_1 = require_parse6();
     Object.defineProperty(exports2, "parse", { enumerable: true, get: function() {
       return parse_js_1.default;
     } });
@@ -316183,10 +323706,10 @@ var require_EmailController = __commonJS({
        * @param {number} count - Number of emails to generate.
        * @returns {string[]} Array of generated emails.
        */
-      static generate(count, culture, gender) {
+      static generate(count, culture, gender, type = "person", provider = "all") {
         const emails = [];
         for (let i = 0; i < count; i++) {
-          emails.push(EmailFormat_1.default.generateName(culture, gender));
+          emails.push(EmailFormat_1.default.generateName(culture, gender, type, provider));
         }
         return emails;
       }
@@ -329107,7 +336630,7 @@ var require_messages = __commonJS({
 });
 
 // node_modules/pako/lib/zlib/constants.js
-var require_constants6 = __commonJS({
+var require_constants7 = __commonJS({
   "node_modules/pako/lib/zlib/constants.js"(exports2, module2) {
     "use strict";
     module2.exports = {
@@ -329180,7 +336703,7 @@ var require_deflate = __commonJS({
       Z_DEFAULT_STRATEGY,
       Z_UNKNOWN,
       Z_DEFLATED
-    } = require_constants6();
+    } = require_constants7();
     var MAX_MEM_LEVEL = 9;
     var MAX_WBITS = 15;
     var DEF_MEM_LEVEL = 8;
@@ -330505,7 +338028,7 @@ var require_deflate2 = __commonJS({
       Z_DEFAULT_COMPRESSION,
       Z_DEFAULT_STRATEGY,
       Z_DEFLATED
-    } = require_constants6();
+    } = require_constants7();
     function Deflate(options) {
       this.options = utils.assign({
         level: Z_DEFAULT_COMPRESSION,
@@ -330642,7 +338165,7 @@ var require_deflate2 = __commonJS({
     module2.exports.deflate = deflate;
     module2.exports.deflateRaw = deflateRaw;
     module2.exports.gzip = gzip;
-    module2.exports.constants = require_constants6();
+    module2.exports.constants = require_constants7();
   }
 });
 
@@ -331209,7 +338732,7 @@ var require_inflate = __commonJS({
       Z_MEM_ERROR,
       Z_BUF_ERROR,
       Z_DEFLATED
-    } = require_constants6();
+    } = require_constants7();
     var HEAD = 16180;
     var FLAGS = 16181;
     var TIME = 16182;
@@ -332477,7 +340000,7 @@ var require_inflate2 = __commonJS({
       Z_STREAM_ERROR,
       Z_DATA_ERROR,
       Z_MEM_ERROR
-    } = require_constants6();
+    } = require_constants7();
     function Inflate(options) {
       this.options = utils.assign({
         chunkSize: 1024 * 64,
@@ -332628,7 +340151,7 @@ var require_inflate2 = __commonJS({
     module2.exports.inflate = inflate3;
     module2.exports.inflateRaw = inflateRaw;
     module2.exports.ungzip = inflate3;
-    module2.exports.constants = require_constants6();
+    module2.exports.constants = require_constants7();
   }
 });
 
@@ -332638,7 +340161,7 @@ var require_pako = __commonJS({
     "use strict";
     var { Deflate, deflate, deflateRaw, gzip } = require_deflate2();
     var { Inflate, inflate: inflate3, inflateRaw, ungzip } = require_inflate2();
-    var constants = require_constants6();
+    var constants = require_constants7();
     module2.exports.Deflate = Deflate;
     module2.exports.deflate = deflate;
     module2.exports.deflateRaw = deflateRaw;
@@ -341203,14 +348726,14 @@ var require_browser8 = __commonJS({
 var require_node10 = __commonJS({
   "node_modules/@mtproto/core/node_modules/debug/src/node.js"(exports2, module2) {
     var tty = require("tty");
-    var util3 = require("util");
+    var util4 = require("util");
     exports2.init = init2;
     exports2.log = log;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
     exports2.useColors = useColors;
-    exports2.destroy = util3.deprecate(
+    exports2.destroy = util4.deprecate(
       () => {
       },
       "Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`."
@@ -341341,7 +348864,7 @@ var require_node10 = __commonJS({
       return (/* @__PURE__ */ new Date()).toISOString() + " ";
     }
     function log(...args) {
-      return process.stderr.write(util3.format(...args) + "\n");
+      return process.stderr.write(util4.format(...args) + "\n");
     }
     function save(namespaces) {
       if (namespaces) {
@@ -341364,11 +348887,11 @@ var require_node10 = __commonJS({
     var { formatters } = module2.exports;
     formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
+      return util4.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
     };
     formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util3.inspect(v, this.inspectOpts);
+      return util4.inspect(v, this.inspectOpts);
     };
   }
 });
@@ -344288,7 +351811,7 @@ var require_graceful_fs = __commonJS({
     var polyfills = require_polyfills();
     var legacy = require_legacy_streams();
     var clone = require_clone2();
-    var util3 = require("util");
+    var util4 = require("util");
     var gracefulQueue;
     var previousSymbol;
     if (typeof Symbol === "function" && typeof Symbol.for === "function") {
@@ -344308,11 +351831,11 @@ var require_graceful_fs = __commonJS({
       });
     }
     var debug31 = noop2;
-    if (util3.debuglog)
-      debug31 = util3.debuglog("gfs4");
+    if (util4.debuglog)
+      debug31 = util4.debuglog("gfs4");
     else if (/\bgfs4\b/i.test(process.env.NODE_DEBUG || ""))
       debug31 = function() {
-        var m = util3.format.apply(util3, arguments);
+        var m = util4.format.apply(util4, arguments);
         m = "GFS4: " + m.split(/\n/).join("\nGFS4: ");
         console.error(m);
       };
@@ -355185,6 +362708,148 @@ var require_TelegramController = __commonJS({
           throw error;
         }
       }
+      static async joinGroup(req, io) {
+        const { accountId, inviteLink } = req.body;
+        if (!accountId || !inviteLink) {
+          throw new Error("Account ID and invite link are required");
+        }
+        const account = await this.getAccountById(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected");
+        }
+        try {
+          const mtproto = account.mtproto;
+          let result;
+          if (inviteLink.includes("joinchat") || inviteLink.includes("+")) {
+            const hash2 = inviteLink.split("+")[1] || inviteLink.split("joinchat/")[1];
+            result = await this.callWithDcMigration(mtproto, "messages.importChatInvite", {
+              hash: hash2
+            }, 0, account.id, io);
+          } else {
+            let username = inviteLink.split("/").pop();
+            if (username.startsWith("@"))
+              username = username.substring(1);
+            result = await this.callWithDcMigration(mtproto, "contacts.resolveUsername", {
+              username
+            }, 0, account.id, io);
+            if (result.chats && result.chats.length > 0) {
+              const chat = result.chats[0];
+              const inputChannel = {
+                _: "inputChannel",
+                channel_id: chat.id,
+                access_hash: chat.access_hash
+              };
+              try {
+                await this.callWithDcMigration(mtproto, "channels.joinChannel", {
+                  channel: inputChannel
+                }, 0, account.id, io);
+              } catch (e2) {
+                if (!e2.message?.includes("USER_ALREADY_PARTICIPANT")) {
+                  throw e2;
+                }
+              }
+              return chat;
+            }
+          }
+          return result;
+        } catch (error) {
+          this.displayError(error, io);
+          throw error;
+        }
+      }
+      static async getDialogFilters(req, io) {
+        const { accountId } = req.body;
+        const account = await this.getAccountById(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected");
+        }
+        try {
+          const result = await this.callWithDcMigration(account.mtproto, "messages.getDialogFilters", {}, 0, account.id, io);
+          return result;
+        } catch (error) {
+          this.displayError(error, io);
+          throw error;
+        }
+      }
+      static async scrapeMembers(req, io) {
+        const { accountId, inviteLink } = req.body;
+        try {
+          const chat = await this.joinGroup(req, io);
+          const account = await this.getAccountById(accountId);
+          if (!account || !account.mtproto)
+            throw new Error("Account error");
+          const mtproto = account.mtproto;
+          const inputChannel = {
+            _: "inputChannel",
+            channel_id: chat.id,
+            access_hash: chat.access_hash
+          };
+          const result = await this.callWithDcMigration(mtproto, "channels.getParticipants", {
+            channel: inputChannel,
+            filter: { _: "channelParticipantsRecent" },
+            offset: 0,
+            limit: 200,
+            hash: 0
+          }, 0, account.id, io);
+          return {
+            group: {
+              id: chat.id.toString(),
+              name: chat.title,
+              username: chat.username,
+              memberCount: chat.participants_count,
+              access_hash: chat.access_hash
+            },
+            members: result.users.map((u) => ({
+              id: u.id,
+              firstName: u.first_name,
+              lastName: u.last_name,
+              username: u.username,
+              phone: u.phone,
+              bot: u.bot
+            }))
+          };
+        } catch (error) {
+          this.displayError(error, io);
+          throw error;
+        }
+      }
+      static async autoDiscoverGroups(req, io) {
+        const { accountId, keywords, limit = 20 } = req.body;
+        const account = await this.getAccountById(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected");
+        }
+        try {
+          const mtproto = account.mtproto;
+          const results = [];
+          const keywordsList = Array.isArray(keywords) ? keywords : [keywords];
+          for (const keyword of keywordsList) {
+            const searchResult = await this.callWithDcMigration(mtproto, "contacts.search", {
+              q: keyword,
+              limit
+            }, 0, account.id, io);
+            if (searchResult.chats) {
+              for (const chat of searchResult.chats) {
+                if (chat._ === "channel" || chat._ === "chat") {
+                  results.push({
+                    id: String(chat.id),
+                    title: chat.title,
+                    username: chat.username,
+                    members: chat.participants_count,
+                    type: chat._,
+                    access_hash: chat.access_hash
+                  });
+                }
+              }
+            }
+          }
+          const uniqueResults = results.filter((v, i, a) => a.findIndex((t2) => t2.id === v.id) === i);
+          return uniqueResults;
+        } catch (error) {
+          this.displayError(error, io);
+          throw error;
+        }
+      }
       static async getConnectedAccounts() {
         return Array.from(this.accounts.values()).filter((account) => account.connected).map(({ mtproto, authKey, ...account }) => account);
       }
@@ -355847,6 +363512,180 @@ var require_TelegramController = __commonJS({
           this.currentOperationId = null;
         }
       }
+      static async importMembersToGroup(req, io) {
+        const { accountId, groupId, members, config } = req.body;
+        const delayBetweenMembers = config?.delayBetweenMembers || 2e3;
+        if (!accountId || !groupId || !members || !Array.isArray(members)) {
+          throw new Error("Missing required parameters: accountId, groupId, members (array)");
+        }
+        const account = await this.getAccountById(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected");
+        }
+        const mtproto = account.mtproto;
+        const groups = await this.getGroups({ body: { accountId } });
+        const group = groups.find((g) => g.id === groupId);
+        if (!group)
+          throw new Error("Group not found");
+        const operationId = Math.random().toString(36).substring(2, 15);
+        this.currentOperationId = operationId;
+        const abortController = new AbortController();
+        this.activeOperations.set(operationId, abortController);
+        let cancellationEmitted = false;
+        io.emit("import-progress", {
+          accountId,
+          groupId,
+          total: members.length,
+          processed: 0,
+          added: 0,
+          failed: 0,
+          status: "starting",
+          operationId
+          // Send operationId to client
+        });
+        const result = { added: [], failed: [] };
+        for (let i = 0; i < members.length; i++) {
+          if (abortController.signal.aborted && !cancellationEmitted) {
+            io.emit("import-progress", {
+              accountId,
+              groupId,
+              status: "cancelled",
+              message: "Import cancelled by user",
+              processed: i,
+              total: members.length
+            });
+            cancellationEmitted = true;
+            break;
+          }
+          if (cancellationEmitted)
+            break;
+          const member = members[i];
+          try {
+            let inputUser;
+            let target = member.trim();
+            if (target.includes(",")) {
+              const parts = target.split(",").map((p) => p.trim());
+              target = parts.find((p) => p.startsWith("@") || p.startsWith("+") || /^\d+$/.test(p)) || parts[0];
+            }
+            target = target.replace(/^"|"$/g, "");
+            const isPhone = target.startsWith("+") || /^\d+$/.test(target);
+            if (isPhone) {
+              const cleanPhone = target.replace(/\D/g, "");
+              const importResult = await this.callWithDcMigration(mtproto, "contacts.importContacts", {
+                contacts: [{
+                  _: "inputPhoneContact",
+                  client_id: Date.now(),
+                  phone: cleanPhone,
+                  first_name: target,
+                  last_name: ""
+                }]
+              }, 0, account.id, io);
+              if (importResult.users && importResult.users.length > 0) {
+                const user = importResult.users[0];
+                inputUser = {
+                  _: "inputUser",
+                  user_id: user.id,
+                  access_hash: user.access_hash
+                };
+              } else {
+                throw new Error("User not registered or could not be imported via phone");
+              }
+            } else {
+              let username = target;
+              if (username.startsWith("@"))
+                username = username.substring(1);
+              const resolveResult = await this.callWithDcMigration(mtproto, "contacts.resolveUsername", {
+                username
+              }, 0, account.id, io);
+              if (resolveResult.users && resolveResult.users.length > 0) {
+                const user = resolveResult.users[0];
+                inputUser = {
+                  _: "inputUser",
+                  user_id: user.id,
+                  access_hash: user.access_hash
+                };
+              } else {
+                throw new Error("Username not found");
+              }
+            }
+            if (group.type === "channel") {
+              await this.callWithDcMigration(mtproto, "channels.inviteToChannel", {
+                channel: {
+                  _: "inputChannel",
+                  channel_id: group.id,
+                  access_hash: group.access_hash
+                },
+                users: [inputUser]
+              }, 0, account.id, io);
+            } else {
+              await this.callWithDcMigration(mtproto, "messages.addChatUser", {
+                chat_id: group.id,
+                user_id: inputUser,
+                fwd_limit: 100
+              }, 0, account.id, io);
+            }
+            result.added.push(target);
+          } catch (err2) {
+            const errorMessage = err2.message || err2.errorMessage || "Unknown error";
+            console.error(`Failed to add ${member}:`, errorMessage);
+            if (errorMessage.includes("FLOOD_WAIT") || errorMessage.includes("PEER_FLOOD")) {
+              const seconds = parseInt(errorMessage.match(/\d+/)?.[0] || "60");
+              io.emit("import-progress", {
+                accountId,
+                groupId,
+                status: "paused",
+                message: `Flood wait: ${seconds}s`,
+                processed: i,
+                total: members.length
+              });
+              const waitStart = Date.now();
+              while (Date.now() - waitStart < seconds * 1e3) {
+                if (abortController.signal.aborted)
+                  break;
+                await new Promise((r) => setTimeout(r, 1e3));
+              }
+              if (abortController.signal.aborted) {
+                i--;
+                continue;
+              }
+              i--;
+              continue;
+            }
+            result.failed.push({ member, error: errorMessage });
+          }
+          io.emit("import-progress", {
+            accountId,
+            groupId,
+            total: members.length,
+            processed: i + 1,
+            added: result.added.length,
+            failed: result.failed.length,
+            status: "processing"
+          });
+          const delayStart = Date.now();
+          while (Date.now() - delayStart < delayBetweenMembers) {
+            if (abortController.signal.aborted)
+              break;
+            await new Promise((r) => setTimeout(r, 100));
+          }
+        }
+        this.activeOperations.delete(operationId);
+        if (this.currentOperationId === operationId) {
+          this.currentOperationId = null;
+        }
+        if (!cancellationEmitted) {
+          io.emit("import-progress", {
+            accountId,
+            groupId,
+            total: members.length,
+            processed: members.length,
+            added: result.added.length,
+            failed: result.failed.length,
+            status: "completed"
+          });
+        }
+        return result;
+      }
       static async getGroups(req) {
         const { accountId } = req.body;
         if (!accountId)
@@ -355873,8 +363712,9 @@ var require_TelegramController = __commonJS({
                 memberCount: chat.participants_count || 0,
                 isAdmin: !!(chat.admin_rights || chat.creator),
                 profilePicUrl: void 0,
-                access_hash: chat.access_hash || 0
+                access_hash: chat.access_hash || 0,
                 // Store the access_hash for later use
+                type: chat._
               });
             }
           }
@@ -355885,7 +363725,7 @@ var require_TelegramController = __commonJS({
         }
       }
       static async exportGroupMembers(req, res, io) {
-        const { accountId, groupId, filterType = "recent", maxMembers = 0 } = req.body;
+        const { accountId, groupId, filterType = "recent", maxMembers = 0, format = "csv" } = req.body;
         const operationId = `export-${Date.now()}-${Math.floor(Math.random() * 1e4)}`;
         let totalMembers = 0;
         let lastEmitTime = 0;
@@ -355955,8 +363795,13 @@ var require_TelegramController = __commonJS({
           }
           return;
         }
-        res.setHeader("Content-Type", "text/csv");
-        res.setHeader("Content-Disposition", `attachment; filename="group_${groupId}_members_${filterType}.csv"`);
+        if (format === "txt") {
+          res.setHeader("Content-Type", "text/plain");
+          res.setHeader("Content-Disposition", `attachment; filename="group_${groupId}_members_${filterType}.txt"`);
+        } else {
+          res.setHeader("Content-Type", "text/csv");
+          res.setHeader("Content-Disposition", `attachment; filename="group_${groupId}_members_${filterType}.csv"`);
+        }
         res.write(`# Operation ID: ${operationId}
 `);
         req.on("close", () => {
@@ -356010,7 +363855,7 @@ var require_TelegramController = __commonJS({
               participantFilter = { _: "channelParticipantsRecent" };
               break;
           }
-          res.write("Phone Number,First Name,Last Name,Username\n");
+          res.write("Import Key,Phone,Username,User ID,First Name,Last Name\n");
           res.write("# Export started, retrieving members...\n");
           const batchSize = 200;
           let hasMoreMembers = true;
@@ -356158,7 +364003,17 @@ var require_TelegramController = __commonJS({
                 }
               }
               if (newMembers.length > 0) {
-                const batchContent = newMembers.map((m) => `${m.phone},"${m.firstName?.replace(/"/g, '""') || ""}","${m.lastName?.replace(/"/g, '""') || ""}",${m.username || ""}`).join("\n");
+                let batchContent = "";
+                if (format === "csv") {
+                  batchContent = newMembers.map((m) => {
+                    const importKey = m.phone || (m.username ? `@${m.username}` : m.id);
+                    return `${importKey},${m.phone || ""},${m.username || ""},${m.id},"${m.firstName?.replace(/"/g, '""') || ""}","${m.lastName?.replace(/"/g, '""') || ""}"`;
+                  }).join("\n");
+                } else {
+                  batchContent = newMembers.map((m) => {
+                    return m.phone || (m.username ? `@${m.username}` : m.id);
+                  }).join("\n");
+                }
                 res.write(batchContent + "\n");
                 totalMembers += newMembers.length;
                 if (totalMembers >= memberLimit) {
@@ -356361,6 +364216,85 @@ var require_TelegramController = __commonJS({
       }
       static async sendBulkMessages(req, io) {
         return this.sendMessages(req, io);
+      }
+      static async sendBulkMessagesToGroups(req, io) {
+        const { accountId, groups, message, config } = req.body;
+        const file = req.file;
+        if (!accountId || !groups) {
+          throw new Error("Account ID and groups are required");
+        }
+        const account = await this.getAccountById(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected");
+        }
+        const mtproto = account.mtproto;
+        const result = { sent: [], failed: [] };
+        const groupList = typeof groups === "string" ? JSON.parse(groups) : groups;
+        let inputMedia = null;
+        if (file) {
+          try {
+            const uploadedFile = await this.uploadFile(mtproto, file, accountId, io);
+            inputMedia = {
+              _: "inputMediaUploadedPhoto",
+              file: uploadedFile,
+              ttl_seconds: 0
+            };
+          } catch (e2) {
+            console.error("Failed to upload file:", e2);
+            throw new Error("Failed to upload photo: " + e2.message);
+          }
+        }
+        for (const group of groupList) {
+          try {
+            const peer = {
+              _: "inputPeerChannel",
+              channel_id: group.id,
+              access_hash: group.access_hash
+            };
+            if (inputMedia) {
+              await this.callWithDcMigration(mtproto, "messages.sendMedia", {
+                peer,
+                media: inputMedia,
+                message: message || "",
+                random_id: Math.floor(Math.random() * 1e9)
+              }, 0, account.id, io);
+            } else {
+              await this.callWithDcMigration(mtproto, "messages.sendMessage", {
+                peer,
+                message,
+                random_id: Math.floor(Math.random() * 1e9)
+              }, 0, account.id, io);
+            }
+            result.sent.push(group.id);
+          } catch (e2) {
+            result.failed.push({ id: group.id, error: e2.message });
+          }
+          const delay2 = config?.delayBetweenMessages || 2e3;
+          await new Promise((r) => setTimeout(r, delay2));
+        }
+        return result;
+      }
+      static async uploadFile(mtproto, file, accountId, io) {
+        const CHUNK_SIZE = 512 * 1024;
+        const totalParts = Math.ceil(file.size / CHUNK_SIZE);
+        const fileId = BigInt(Date.now()) + BigInt(Math.floor(Math.random() * 1e6));
+        for (let i = 0; i < totalParts; i++) {
+          const start = i * CHUNK_SIZE;
+          const end = Math.min(start + CHUNK_SIZE, file.size);
+          const part = file.buffer.slice(start, end);
+          await this.callWithDcMigration(mtproto, "upload.saveFilePart", {
+            file_id: fileId.toString(),
+            file_part: i,
+            bytes: part
+          }, 0, accountId, io);
+        }
+        return {
+          _: "inputFile",
+          id: fileId.toString(),
+          parts: totalParts,
+          name: file.originalname,
+          md5_checksum: ""
+        };
       }
       static async sendMessages(req, io) {
         const { accountId, phoneNumbers, message, config } = req.body;
@@ -356733,7 +364667,7 @@ var require_CancellationController = __commonJS({
               message = "WhatsApp verification cancelled successfully";
               break;
             case "email":
-            case "bulkwhatsapp":
+            case "bulkemail":
               cancelled = EmailController_1.default.cancelCurrentOperation();
               message = cancelled ? "Email verification cancelled successfully" : "No active Email process to cancel";
               break;
@@ -356796,6 +364730,48 @@ var require_phone = __commonJS({
       app.post("/message", require_bulkMessage().default(io));
       app.get("/getdetails/:id", require_contactDetails().default(io));
       app.post("/cancel", require_CancelProcess().default(io));
+      app.post("/phone/proxy/save", (req, res) => {
+        try {
+          const { host, port, type } = req.body || {};
+          if (!host || !port) {
+            return res.status(400).json({ error: "Host and port are required" });
+          }
+          const proxy = {
+            ip: host,
+            port: String(port),
+            type: (type || "socks5").toLowerCase(),
+            country: "unknown"
+          };
+          return res.status(200).json(proxy);
+        } catch (e2) {
+          return res.status(500).json({ error: "Failed to save proxy" });
+        }
+      });
+      app.post("/phone/proxy/test", (req, res) => {
+        try {
+          const { host, port, type } = req.body || {};
+          if (!host || !port) {
+            return res.status(400).json({ error: "Host and port are required" });
+          }
+          const proxy = {
+            ip: host,
+            port: String(port),
+            type: (type || "socks5").toLowerCase(),
+            // Simulated country detection; in real implementation, perform a request through proxy
+            country: "us"
+          };
+          return res.status(200).json(proxy);
+        } catch (e2) {
+          return res.status(500).json({ error: "Failed to test proxy" });
+        }
+      });
+      app.post("/phone/proxy/delete", (req, res) => {
+        try {
+          return res.status(200).json({ success: true });
+        } catch (e2) {
+          return res.status(500).json({ error: "Failed to delete proxy" });
+        }
+      });
     };
   }
 });
@@ -356977,9 +364953,11 @@ var require_generate2 = __commonJS({
     exports2.default = (io) => async (req, res, next) => {
       try {
         const number = req.body.much;
-        const country = req.body.country.label;
+        const country2 = req.body.country.label;
         const gender = req.body.gender;
-        const payload = await EmailController_1.default.generate(number, country, gender);
+        const type = req.body.type;
+        const provider = req.body.provider;
+        const payload = await EmailController_1.default.generate(number, country2, gender, type, provider);
         await HandleError_1.default.success(req, res, payload);
       } catch (error) {
         await HandleError_1.default.Error(req, res, error);
@@ -357285,6 +365263,17 @@ var require_telegramRoutes = __commonJS({
           });
         }
       });
+      router.post("/import-members", async (req, res) => {
+        try {
+          const result = await TelegramController_1.default.importMembersToGroup(req, io);
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Import members error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to import members"
+          });
+        }
+      });
       router.post("/groups", async (req, res) => {
         try {
           const groups = await TelegramController_1.default.getGroups(req);
@@ -357350,6 +365339,61 @@ var require_telegramRoutes = __commonJS({
           console.error("Get scheduled messages error:", error);
           res.status(500).json({
             error: error instanceof Error ? error.message : "Failed to get scheduled messages"
+          });
+        }
+      });
+      router.post("/auto-discover-groups", async (req, res) => {
+        try {
+          const results = await TelegramController_1.default.autoDiscoverGroups(req, io);
+          res.status(200).json(results);
+        } catch (error) {
+          console.error("Auto discover groups error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to auto discover groups"
+          });
+        }
+      });
+      router.post("/send-messages-to-groups", TelegramController_1.default.getUploadMiddleware(), async (req, res) => {
+        try {
+          const result = await TelegramController_1.default.sendBulkMessagesToGroups(req, io);
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Send messages to groups error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to send messages to groups"
+          });
+        }
+      });
+      router.post("/dialog-filters", async (req, res) => {
+        try {
+          const result = await TelegramController_1.default.getDialogFilters(req, io);
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Get dialog filters error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to get dialog filters"
+          });
+        }
+      });
+      router.post("/join-group", async (req, res) => {
+        try {
+          const result = await TelegramController_1.default.joinGroup(req, io);
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Join group error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to join group"
+          });
+        }
+      });
+      router.post("/scrape-members", async (req, res) => {
+        try {
+          const result = await TelegramController_1.default.scrapeMembers(req, io);
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Scrape members error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to scrape members"
           });
         }
       });

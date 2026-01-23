@@ -26,6 +26,11 @@ export const selectTelegramGroups = createSelector(
   (telegram) => telegram.groups
 );
 
+export const selectDialogFilters = createSelector(
+  selectTelegramState,
+  (telegram) => telegram.dialogFilters
+);
+
 export const selectTelegramGroup = (groupId: string) => 
   createSelector(
     selectTelegramGroups,

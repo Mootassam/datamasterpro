@@ -558,6 +558,113 @@
 
 }
 
+/* Telegram custom styles */
+.account-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  margin: 4px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.account-chip:hover {
+  border-color: #cbd5e1;
+  background: #f9fafb;
+}
+.account-chip.active {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.telegram-message-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  min-height: 120px;
+  outline: none;
+}
+.telegram-message-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+.file-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.file-name {
+  font-size: 12px;
+  color: #6b7280;
+}
+.telegram-groups-panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+}
+.groups-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.groups-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  max-height: 60vh;
+  overflow: auto;
+}
+.group-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fafafa;
+}
+.group-row.selected {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+.group-info {
+  display: flex;
+  flex-direction: column;
+}
+.group-name {
+  font-weight: 600;
+  color: #111827;
+}
+.group-members {
+  font-size: 12px;
+  color: #6b7280;
+}
+.group-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.export-members-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+}
+.export-members-btn:hover {
+  border-color: #cbd5e1;
+  background: #f9fafb;
+}
 
 
 

@@ -456,10 +456,10 @@ class EmailController {
      * @param {number} count - Number of emails to generate.
      * @returns {string[]} Array of generated emails.
      */
-    static generate(count, culture, gender): string[] {
+    static generate(count, culture, gender, type = 'person', provider = 'all'): string[] {
         const emails: string[] = [];
         for (let i = 0; i < count; i++) {
-            emails.push(EmailFormats.generateName(culture, gender));
+            emails.push(EmailFormats.generateName(culture, gender, type as "person" | "company", provider));
         }
         return emails;
     }

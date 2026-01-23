@@ -32,15 +32,11 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
   if (!isOpen) return null;
 
   const isComplete = progress >= 100;
-  // const [isFewBatches, setIsFewBatches] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkBatchesFit = () => {
       if (trackRef.current) {
-        // const containerWidth = trackRef.current.offsetWidth;
-        // const requiredWidth = total * 44; // 32px per batch + gap
-        // setIsFewBatches(requiredWidth < containerWidth);
       }
     };
 
@@ -49,16 +45,13 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
     return () => window.removeEventListener('resize', checkBatchesFit);
   }, [total, activeService]);
 
-
   const cancel = () => {
     dispatch(ProcessCancel(activeService))
   }
 
-
   return (
     <div className="progress-modal-overlay">
       <div className="progress-modal">
-        {/* Header */}
         <div className="modal-header">
           <h2>
             {isComplete ? (
@@ -76,9 +69,7 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
           </button>
         </div>
 
-        {/* Main Content */}
         <div className="modal-content">
-          {/* Circular Progress */}
           <div className="circular-progress">
             <svg className="progress-ring" viewBox="0 0 100 100">
               <circle
@@ -108,7 +99,6 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
             </div>
           </div>
 
-          {/* Stats Cards */}
           <div className="stats-grids">
             <div className="stat-cards">
               <div className="stat-icon batches">
@@ -141,7 +131,6 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
             </div>
           </div>
 
-          {/* Batch Progress */}
           <div className="batch-progress">
             <div className="progress-header">
               <FiClock className="icon" />
@@ -169,7 +158,6 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
             </div>
           </div>
 
-          {/* Current Batch */}
           {currentBatch.length > 0 && !isComplete && (
             <div className="current-batch">
               <div className="batch-header">
@@ -186,20 +174,14 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
           )}
         </div>
 
-
-
-
-
-        {/* Footer */}
         <div className="modal-footer">
-
           <button
             onClick={cancel}
             style={{
               padding: '10px 20px',
               backgroundColor: '#ffffff',
-              color: '#4f46e5',  // Indigo-600
-              border: '1px solid #c7d2fe',  // Light indigo border
+              color: '#4f46e5',
+              border: '1px solid #c7d2fe',
               borderRadius: '6px',
               fontWeight: 500,
               cursor: 'pointer',

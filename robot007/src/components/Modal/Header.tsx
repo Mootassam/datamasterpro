@@ -1,4 +1,7 @@
-import { FaTelegram, FaUsers, FaWhatsapp } from "react-icons/fa";
+import { FaUsers, FaWhatsapp } from "react-icons/fa";
+
+import { FaTelegram } from "react-icons/fa";
+
 import { RiShieldKeyholeLine } from "react-icons/ri";
 import {
   FiCheckCircle,
@@ -55,11 +58,11 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const dispatch: ThunkDispatch<any, void, AnyAction> = useDispatch();
-  
+
   // Separate account selectors
   const whatsappAccounts = useSelector(allaccounts);
   const telegramAccounts = useSelector(selectConnectedAccounts);
-  
+
   const [isServicesModalOpen, setIsServicesModalOpen] = useState(false);
 
   // Memoized count of connected accounts
@@ -124,7 +127,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
   // Real-time account updates
   useEffect(() => {
     if (!socket) return;
-    
+
     const handleAccountUpdate = () => {
       if (activeService === 'whatsapp') {
         dispatch(allAccounts());
@@ -212,6 +215,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
     }
   };
 
+
   const ServiceIcon = ({ service }: { service: ServiceType }) => {
     switch (service) {
       case "whatsapp":
@@ -240,12 +244,9 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
       </button>
 
       {/* Logo */}
-      <div 
-        className="dm-logo" 
-        onClick={() => {
-          setIsMobileMenuOpen(false);
-          setIsServicesModalOpen(true);
-        }}
+      <div
+        className="dm-logo"
+
         style={{ cursor: "pointer" }}
       >
         <RiShieldKeyholeLine className="dm-logo-icon" />
@@ -256,13 +257,14 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
       <nav
         className={`dm-service-nav ${isMobileMenuOpen ? "dm-nav-open" : ""}`}
       >
+
+        {/* "whatsapp", "telegram", "email" */}
         <div className="dm-service-tabs">
-          {(["whatsapp", "email", 'telegram'] as ServiceType[]).map((service) => (
+          {(["whatsapp"] as ServiceType[]).map((service) => (
             <button
               key={service}
-              className={`dm-service-tab ${
-                activeService === service ? "dm-tab-active" : ""
-              }`}
+              className={`dm-service-tab ${activeService === service ? "dm-tab-active" : ""
+                }`}
               onClick={() => handleServiceClick(service)}
               style={{
                 backgroundColor:
@@ -299,9 +301,8 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
                 </span>
               </div>
               <FiChevronsDown
-                className={`dm-dropdown-arrow ${
-                  isAccountDropdownOpen ? "dm-arrow-rotate" : ""
-                }`}
+                className={`dm-dropdown-arrow ${isAccountDropdownOpen ? "dm-arrow-rotate" : ""
+                  }`}
               />
             </button>
 
@@ -447,18 +448,17 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
 
           {/* Main Connection Button */}
           <button
-            className={`dm-connect-btn ${
-              connectionStatus === "connected" ? "dm-connected" : ""
-            }`}
+            className={`dm-connect-btn ${connectionStatus === "connected" ? "dm-connected" : ""
+              }`}
             onClick={handleMainConnection}
             disabled={connectionLoading}
             aria-label={
               connectionStatus === "connected" ? "Disconnect" : "Connect"
             }
             style={{
-              backgroundColor: 
-                activeService === "telegram" && connectionStatus !== "connected" 
-                  ? "rgb(0, 136, 204)" 
+              backgroundColor:
+                activeService === "telegram" && connectionStatus !== "connected"
+                  ? "rgb(0, 136, 204)"
                   : undefined
             }}
           >
@@ -485,7 +485,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
           <div className="dm-modal-content">
             <h3>Developed by Leo</h3>
             <p className="dm-developer-bio">
-            <a href="mailto:btcgang2@gmail.com?subject=Service%20Request&body=Hello!%20Are%20you%20there">btcgang2@gmail.com</a>  
+              <a href="mailto:btcgang2@gmail.com?subject=Service%20Request&body=Hello!%20Are%20you%20there">btcgang2@gmail.com</a>
             </p>
 
             <ul className="dm-services-list">
@@ -500,20 +500,20 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
 
             {/* Email Button with Pre-filled Message */}
             <div className="dm-contact-buttons">
-            <a
-              href="mailto:btcgang2@gmail.com?subject=Service%20Request&body=Hello!%20Are%20you%20there.%0A%0A(I%20need%20help%20with...)"
-              className="dm-email-button"
-              
-            >
-              Contact Leo via Email
-            </a>
+              <a
+                href="mailto:btcgang2@gmail.com?subject=Service%20Request&body=Hello!%20Are%20you%20there.%0A%0A(I%20need%20help%20with...)"
+                className="dm-email-button"
 
-            <a 
-              onClick={() => setIsServicesModalOpen(false)}
-              className="dm-close-modal"
-            >
-              Close
-            </a>
+              >
+                Contact Leo via Email
+              </a>
+
+              <a
+                onClick={() => setIsServicesModalOpen(false)}
+                className="dm-close-modal"
+              >
+                Close
+              </a>
             </div>
           </div>
         </div>

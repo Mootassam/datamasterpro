@@ -246,6 +246,17 @@ const VerificationSetupModal: React.FC<VerificationSetupModalProps> = ({
               </button>
             </div>
           )}
+          {activeService === "email" && (
+            <div className="header-rights">
+              <button
+                onClick={onCancel}
+                className="close-button"
+                aria-label="Close modal"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Selection notification */}
@@ -329,7 +340,7 @@ const VerificationSetupModal: React.FC<VerificationSetupModalProps> = ({
             <div className="info-content">
               <h3>Why these settings matter</h3>
               <ul>
-                <li>Smaller batches reduce WhatsApp block risk</li>
+                <li>Smaller batches reduce {activeService === 'email' ? 'blocking risk' : 'WhatsApp block risk'}</li>
                 <li>Delays help avoid spam detection</li>
                 <li>Defaults are optimized for safety</li>
               </ul>

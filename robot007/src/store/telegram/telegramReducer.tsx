@@ -7,6 +7,7 @@ const telegramSlice = createSlice({
   initialState:{  
   accounts: [],
   groups: [],
+  dialogFilters: [],
   phoneNumbers: [],
   registeredNumbers: [],
   rejectedNumbers: [],
@@ -28,6 +29,9 @@ const telegramSlice = createSlice({
     },
     setTelegramGroups: (state, action) => {
       state.groups = action.payload;
+    },
+    setDialogFilters: (state, action) => {
+      state.dialogFilters = action.payload;
     },
     setPhoneNumbers: (state, action) => {
       state.phoneNumbers = action.payload;
@@ -81,6 +85,7 @@ const telegramSlice = createSlice({
 export const {
   setTelegramAccounts,
   setTelegramGroups,
+  setDialogFilters,
   setPhoneNumbers,
   setRegisteredNumbers,
   setRejectedNumbers,
