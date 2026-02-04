@@ -173677,7 +173677,7 @@ var init_utils2 = __esm({
       return typeof WorkerGlobalScope !== "undefined" && // eslint-disable-next-line no-undef
       self instanceof WorkerGlobalScope && typeof self.importScripts === "function";
     })();
-    origin = hasBrowserEnv && window.location.href || "http://162.0.228.113";
+    origin = hasBrowserEnv && window.location.href || "http://localhost";
   }
 });
 
@@ -362624,12 +362624,49 @@ var require_node_schedule = __commonJS({
 var require_TelegramController = __commonJS({
   "dist/src/controllers/TelegramController.js"(exports2) {
     "use strict";
+    var __createBinding2 = exports2 && exports2.__createBinding || (Object.create ? (function(o2, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o2, k2, desc);
+    }) : (function(o2, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      o2[k2] = m[k];
+    }));
+    var __setModuleDefault2 = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o2, v) {
+      Object.defineProperty(o2, "default", { enumerable: true, value: v });
+    }) : function(o2, v) {
+      o2["default"] = v;
+    });
+    var __importStar2 = exports2 && exports2.__importStar || /* @__PURE__ */ (function() {
+      var ownKeys2 = function(o2) {
+        ownKeys2 = Object.getOwnPropertyNames || function(o3) {
+          var ar = [];
+          for (var k in o3) if (Object.prototype.hasOwnProperty.call(o3, k)) ar[ar.length] = k;
+          return ar;
+        };
+        return ownKeys2(o2);
+      };
+      return function(mod2) {
+        if (mod2 && mod2.__esModule) return mod2;
+        var result = {};
+        if (mod2 != null) {
+          for (var k = ownKeys2(mod2), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding2(result, mod2, k[i]);
+        }
+        __setModuleDefault2(result, mod2);
+        return result;
+      };
+    })();
     var __importDefault3 = exports2 && exports2.__importDefault || function(mod2) {
       return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
     };
     Object.defineProperty(exports2, "__esModule", { value: true });
     var multer_1 = __importDefault3(require_multer());
-    var core_1 = __importDefault3(require_node11());
+    var core_1 = __importStar2(require_node11());
     var path_1 = __importDefault3(require("path"));
     var os_1 = __importDefault3(require("os"));
     var fs_1 = __importDefault3(require("fs"));
@@ -362639,7 +362676,7 @@ var require_TelegramController = __commonJS({
     var upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage() });
     var API_ID = 29214492;
     var API_HASH = "c69d0e6e1d0714b5d95416208632243e";
-    var TelegramController = class {
+    var TelegramController = class _TelegramController {
       static getSessionPath(phoneNumber) {
         let sessionPath;
         if (process.pkg) {
@@ -362779,34 +362816,58 @@ var require_TelegramController = __commonJS({
           if (!account || !account.mtproto)
             throw new Error("Account error");
           const mtproto = account.mtproto;
-          const inputChannel = {
-            _: "inputChannel",
-            channel_id: chat.id,
-            access_hash: chat.access_hash
-          };
-          const result = await this.callWithDcMigration(mtproto, "channels.getParticipants", {
-            channel: inputChannel,
-            filter: { _: "channelParticipantsRecent" },
-            offset: 0,
-            limit: 200,
-            hash: 0
-          }, 0, account.id, io);
+          let members = [];
+          if (chat._ === "chat") {
+            const fullChatResult = await this.callWithDcMigration(mtproto, "messages.getFullChat", {
+              chat_id: chat.id
+            }, 0, account.id, io);
+            const fullChat = fullChatResult.fullChat;
+            const users = fullChatResult.users;
+            members = fullChat.participants.participants.map((p) => {
+              const user = users.find((u) => u.id === p.user_id);
+              if (!user || user.bot)
+                return null;
+              return {
+                id: user.id.toString(),
+                firstName: user.first_name,
+                lastName: user.last_name,
+                username: user.username,
+                phone: user.phone,
+                isBot: false
+              };
+            }).filter(Boolean);
+          } else {
+            const inputChannel = {
+              _: "inputChannel",
+              channel_id: chat.id,
+              access_hash: chat.access_hash
+            };
+            const result = await this.callWithDcMigration(mtproto, "channels.getParticipants", {
+              channel: inputChannel,
+              filter: { _: "channelParticipantsRecent" },
+              offset: 0,
+              limit: 200,
+              hash: 0
+            }, 0, account.id, io);
+            members = result.users.filter((u) => !u.bot).map((u) => ({
+              id: u.id.toString(),
+              firstName: u.first_name,
+              lastName: u.last_name,
+              username: u.username,
+              phone: u.phone,
+              isBot: false
+            }));
+          }
           return {
             group: {
               id: chat.id.toString(),
               name: chat.title,
               username: chat.username,
-              memberCount: chat.participants_count,
-              access_hash: chat.access_hash
+              memberCount: chat.participants_count || members.length,
+              access_hash: chat.access_hash,
+              type: chat._
             },
-            members: result.users.map((u) => ({
-              id: u.id,
-              firstName: u.first_name,
-              lastName: u.last_name,
-              username: u.username,
-              phone: u.phone,
-              bot: u.bot
-            }))
+            members
           };
         } catch (error) {
           this.displayError(error, io);
@@ -362974,12 +363035,12 @@ var require_TelegramController = __commonJS({
           const passwordInfo = await this.callWithDcMigration(mtproto, "account.getPassword", {});
           const { srp_id, current_algo, srp_B } = passwordInfo;
           const { salt1, salt2, g, p } = current_algo;
-          const srpParams = await this.calculateSRP({
+          const srpParams = await (0, core_1.getSRPParams)({
             g,
             p,
             salt1,
             salt2,
-            srp_B,
+            gB: srp_B,
             password
           });
           const checkPasswordResult = await this.callWithDcMigration(mtproto, "auth.checkPassword", {
@@ -363152,13 +363213,16 @@ var require_TelegramController = __commonJS({
                 throw new Error("No accounts available");
               }
             }
-            const currentBatch = usersArray.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
+            const currentBatch = usersArray.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize).filter((phone) => !processedPhoneNumbers.has(phone));
+            if (currentBatch.length === 0)
+              continue;
             const batchResult = {
               phoneNumberRegistred: [],
               phoneNumberRejected: [],
               totalPhoneNumber: []
             };
-            for (let i = 0; i < currentBatch.length; i++) {
+            let batchProcessed = false;
+            while (!batchProcessed) {
               if (abortController.signal.aborted && !cancellationEmitted) {
                 io.emit("process-cancelled", {
                   reason: "Process cancelled by user",
@@ -363169,12 +363233,34 @@ var require_TelegramController = __commonJS({
               }
               if (cancellationEmitted)
                 break;
-              const phoneNumber = currentBatch[i];
-              if (processedPhoneNumbers.has(phoneNumber))
-                continue;
-              try {
-                if (i > 0 && config.delayBetweenNumbers > 0) {
-                  await new Promise((resolve) => setTimeout(resolve, config.delayBetweenNumbers));
+              if (account && this.isAccountInFloodWait(account.id)) {
+                this.emitAccountsStatus(validAccounts2, io);
+                const newAccount = this.findAvailableAccount(validAccounts2);
+                if (newAccount) {
+                  io.emit("account-switched", {
+                    oldAccountId: account?.id || "",
+                    oldAccountPhone: account?.phoneNumber,
+                    newAccountId: newAccount.id,
+                    newAccountPhone: newAccount.phoneNumber,
+                    reason: "flood_wait",
+                    waitTime: account?.id ? this.getFloodWaitTimeRemaining(account.id) : 0,
+                    formattedWaitTime: account ? this.formatETA(this.getFloodWaitTimeRemaining(account.id)) : "0s",
+                    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+                  });
+                  account = newAccount;
+                } else {
+                  const waitTime = this.getFloodWaitTimeRemaining(account.id);
+                  io.emit("verification-paused", {
+                    message: `All accounts are rate limited. Waiting for ${this.formatETA(waitTime)} before continuing...`,
+                    waitTime,
+                    nextAvailableAccount: {
+                      id: account.id,
+                      phoneNumber: account.phoneNumber,
+                      availableAt: new Date(Date.now() + waitTime * 1e3).toISOString()
+                    },
+                    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+                  });
+                  await new Promise((resolve) => setTimeout(resolve, waitTime * 1e3 + 1e3));
                   if (abortController.signal.aborted && !cancellationEmitted) {
                     io.emit("process-cancelled", {
                       reason: "Process cancelled by user",
@@ -363185,130 +363271,89 @@ var require_TelegramController = __commonJS({
                   }
                   if (cancellationEmitted)
                     break;
-                }
-                if (account && this.isAccountInFloodWait(account.id)) {
                   this.emitAccountsStatus(validAccounts2, io);
-                  const newAccount = this.findAvailableAccount(validAccounts2);
-                  if (newAccount) {
-                    io.emit("account-switched", {
-                      oldAccountId: account?.id || "",
-                      oldAccountPhone: account?.phoneNumber,
-                      newAccountId: newAccount.id,
-                      newAccountPhone: newAccount.phoneNumber,
-                      reason: "flood_wait",
-                      waitTime: account?.id ? this.getFloodWaitTimeRemaining(account.id) : 0,
-                      formattedWaitTime: account ? this.formatETA(this.getFloodWaitTimeRemaining(account.id)) : "0s",
-                      timestamp: (/* @__PURE__ */ new Date()).toISOString()
-                    });
-                    account = newAccount;
-                  } else {
-                    const waitTime = this.getFloodWaitTimeRemaining(account.id);
-                    io.emit("verification-paused", {
-                      message: `All accounts are rate limited. Waiting for ${this.formatETA(waitTime)} before continuing...`,
-                      waitTime,
-                      nextAvailableAccount: {
-                        id: account.id,
-                        phoneNumber: account.phoneNumber,
-                        availableAt: new Date(Date.now() + waitTime * 1e3).toISOString()
-                      },
-                      timestamp: (/* @__PURE__ */ new Date()).toISOString()
-                    });
-                    await new Promise((resolve) => setTimeout(resolve, waitTime * 1e3 + 1e3));
-                    if (abortController.signal.aborted && !cancellationEmitted) {
-                      io.emit("process-cancelled", {
-                        reason: "Process cancelled by user",
-                        partialResults: result
-                      });
-                      cancellationEmitted = true;
-                      break;
-                    }
-                    if (cancellationEmitted)
-                      break;
-                    this.emitAccountsStatus(validAccounts2, io);
-                  }
                 }
-                if (!account || !account.mtproto) {
-                  throw new Error("Account or MTProto instance not available");
-                }
-                const mtproto = account.mtproto;
-                const cleanPhone = phoneNumber.replace(/\D/g, "");
-                batchResult.totalPhoneNumber.push(phoneNumber);
-                const clientId = Date.now();
-                const importResult = await this.callWithDcMigration(mtproto, "contacts.importContacts", {
-                  contacts: [{
+              }
+              if (!account || !account.mtproto) {
+                throw new Error("Account or MTProto instance not available");
+              }
+              const mtproto = account.mtproto;
+              try {
+                const clientIdToPhone = /* @__PURE__ */ new Map();
+                const contacts = currentBatch.map((phoneNumber, idx) => {
+                  const cleanPhone = phoneNumber.replace(/\D/g, "");
+                  const clientId = Date.now() + idx;
+                  clientIdToPhone.set(clientId, phoneNumber);
+                  return {
                     _: "inputPhoneContact",
                     client_id: clientId,
                     phone: cleanPhone,
                     first_name: "Check",
                     last_name: "User"
-                  }]
+                  };
+                });
+                const importResult = await this.callWithDcMigration(mtproto, "contacts.importContacts", {
+                  contacts
                 }, 0, account.id, io);
-                processedPhoneNumbers.add(phoneNumber);
-                console.log(`Raw import result for ${phoneNumber}:`, JSON.stringify(importResult, null, 2));
-                let isRegistered = false;
-                if (importResult.users && importResult.users.length > 0 && importResult.imported && importResult.imported.length > 0) {
-                  const importedContact = importResult.imported[0];
-                  if (importedContact && importedContact.user_id) {
-                    const matchingUser = importResult.users.find((user) => user.id === importedContact.user_id);
-                    isRegistered = !!matchingUser;
-                  }
-                }
-                console.log(`Import result for ${phoneNumber}:`, JSON.stringify({
-                  imported: importResult.imported?.length || 0,
-                  users: importResult.users?.length || 0,
-                  retryContacts: importResult.retry_contacts?.length || 0
-                }));
-                if (isRegistered) {
-                  console.log(`Phone number ${phoneNumber} is registered on Telegram`);
-                  batchResult.phoneNumberRegistred.push(phoneNumber);
-                  io.emit("number-verified", {
-                    phoneNumber,
-                    status: "registered",
-                    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-                    accountId: account.id
-                  });
-                } else {
-                  batchResult.phoneNumberRejected.push(phoneNumber);
-                  io.emit("number-verified", {
-                    phoneNumber,
-                    status: "not_registered",
-                    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-                    accountId: account.id
-                  });
-                }
-                try {
-                  if (isRegistered) {
-                    const importedContact = importResult.imported[0];
-                    const user = importResult.users.find((u) => u && u.id === importedContact.user_id && u.access_hash);
+                const processedInBatch = [];
+                for (const imp of importResult.imported) {
+                  const phoneNumber = clientIdToPhone.get(imp.client_id);
+                  if (phoneNumber) {
+                    const user = importResult.users.find((u) => u.id === imp.user_id);
                     if (user) {
-                      await this.callWithDcMigration(mtproto, "contacts.deleteContacts", {
-                        id: [{
-                          _: "inputUser",
-                          user_id: user.id,
-                          access_hash: user.access_hash
-                        }]
-                      }, 0, account.id, io);
+                      batchResult.phoneNumberRegistred.push(phoneNumber);
+                      io.emit("number-verified", {
+                        phoneNumber,
+                        status: "registered",
+                        timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+                        accountId: account.id
+                      });
+                      processedInBatch.push(phoneNumber);
+                      processedPhoneNumbers.add(phoneNumber);
                     }
                   }
-                } catch (cleanupError) {
-                  console.warn(`Cleanup failed for ${phoneNumber}:`, cleanupError);
                 }
+                for (const phoneNumber of currentBatch) {
+                  if (!processedInBatch.includes(phoneNumber)) {
+                    batchResult.phoneNumberRejected.push(phoneNumber);
+                    io.emit("number-verified", {
+                      phoneNumber,
+                      status: "not_registered",
+                      timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+                      accountId: account.id
+                    });
+                    processedPhoneNumbers.add(phoneNumber);
+                  }
+                }
+                batchResult.totalPhoneNumber.push(...currentBatch);
+                const toDelete = importResult.users.filter((u) => u.access_hash).map((u) => ({
+                  _: "inputUser",
+                  user_id: u.id,
+                  access_hash: u.access_hash
+                }));
+                if (toDelete.length > 0) {
+                  await this.callWithDcMigration(mtproto, "contacts.deleteContacts", {
+                    id: toDelete
+                  }, 0, account.id, io);
+                }
+                batchProcessed = true;
               } catch (error) {
-                if (error.message && error.message.includes("FLOOD_WAIT_ACCOUNT_ROTATION")) {
-                  throw new Error(`Account ${account?.id} is in flood wait. Will retry ${phoneNumber} with another account.`);
-                  i--;
-                  continue;
-                }
-                console.error(`Error processing ${phoneNumber}:`, error);
                 const errorMessage = error instanceof Error ? error.message : String(error);
-                io.emit("verification-error", {
-                  phoneNumber,
-                  error: errorMessage,
-                  timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-                  accountId: account?.id
-                });
-                processedPhoneNumbers.add(phoneNumber);
-                batchResult.phoneNumberRejected.push(phoneNumber);
+                if (errorMessage.includes("FLOOD_WAIT_ACCOUNT_ROTATION")) {
+                  continue;
+                } else {
+                  console.error(`Error processing batch ${batchIndex}:`, error);
+                  io.emit("verification-error", {
+                    batchIndex,
+                    error: errorMessage,
+                    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+                    accountId: account?.id
+                  });
+                  batchResult.phoneNumberRejected.push(...currentBatch);
+                  batchResult.totalPhoneNumber.push(...currentBatch);
+                  currentBatch.forEach((phone) => processedPhoneNumbers.add(phone));
+                  batchProcessed = true;
+                }
               }
             }
             if (cancellationEmitted)
@@ -363458,19 +363503,7 @@ var require_TelegramController = __commonJS({
           const processedCount = processedPhoneNumbers.size;
           const totalCount = usersArray.length;
           const successRate = totalCount > 0 ? Math.round(processedCount / totalCount * 100) : 0;
-          let floodedAccounts = [];
-          try {
-            const floodedAccounts2 = Array.from(this.accounts.values()).filter((acc) => this.isAccountInFloodWait(acc.id));
-            if (floodedAccounts2.length > 0) {
-              console.warn(`${floodedAccounts2.length} accounts are in flood wait:`);
-              for (const acc of floodedAccounts2) {
-                const waitTime = this.getFloodWaitTimeRemaining(acc.id);
-                console.warn(`- Account ${acc.id} (${acc.phoneNumber}): ${waitTime} seconds remaining (${this.formatETA(waitTime)})`);
-              }
-            }
-          } catch (e2) {
-            console.error("Error getting flooded accounts:", e2);
-          }
+          let floodedAccounts = Array.from(this.accounts.values()).filter((acc) => this.isAccountInFloodWait(acc.id));
           io.emit("operation-failed", {
             operation: "saveUsers",
             error: errorMessage,
@@ -363480,31 +363513,21 @@ var require_TelegramController = __commonJS({
               total: totalCount,
               successRate
             },
-            floodedAccounts: floodedAccounts ? floodedAccounts.map((acc) => ({
+            floodedAccounts: floodedAccounts.map((acc) => ({
               id: acc.id,
               phoneNumber: acc.phoneNumber,
               waitTimeSeconds: this.getFloodWaitTimeRemaining(acc.id),
               formattedWaitTime: this.formatETA(this.getFloodWaitTimeRemaining(acc.id))
-            })) : []
+            }))
           });
           result.phoneNumberRegistred = [...new Set(result.phoneNumberRegistred)];
           result.phoneNumberRejected = [...new Set(result.phoneNumberRejected)];
           result.totalPhoneNumber = [...new Set(result.totalPhoneNumber)];
-          if (result && result.totalPhoneNumber.length > 0) {
-            try {
-              if (typeof validAccounts !== "undefined") {
-                if (typeof validAccounts !== "undefined") {
-                  this.emitAccountsStatus(validAccounts, io);
-                }
-              }
-              setTimeout(() => {
-                if (validAccounts) {
-                  this.emitAccountsStatus(validAccounts, io);
-                }
-              }, 6e4);
-            } catch (e2) {
-              console.error("Error emitting account status:", e2);
-            }
+          if (validAccounts && result.totalPhoneNumber.length > 0) {
+            this.emitAccountsStatus(validAccounts, io);
+            setTimeout(() => {
+              this.emitAccountsStatus(validAccounts, io);
+            }, 6e4);
           }
           return result;
         } finally {
@@ -363514,7 +363537,8 @@ var require_TelegramController = __commonJS({
       }
       static async importMembersToGroup(req, io) {
         const { accountId, groupId, members, config } = req.body;
-        const delayBetweenMembers = config?.delayBetweenMembers || 2e3;
+        const delayBetweenBatches = config?.delayBetweenBatches || 2e3;
+        const batchSize = config?.batchSize || 10;
         if (!accountId || !groupId || !members || !Array.isArray(members)) {
           throw new Error("Missing required parameters: accountId, groupId, members (array)");
         }
@@ -363541,148 +363565,226 @@ var require_TelegramController = __commonJS({
           failed: 0,
           status: "starting",
           operationId
-          // Send operationId to client
         });
         const result = { added: [], failed: [] };
-        for (let i = 0; i < members.length; i++) {
-          if (abortController.signal.aborted && !cancellationEmitted) {
-            io.emit("import-progress", {
-              accountId,
-              groupId,
-              status: "cancelled",
-              message: "Import cancelled by user",
-              processed: i,
-              total: members.length
-            });
-            cancellationEmitted = true;
-            break;
-          }
-          if (cancellationEmitted)
-            break;
-          const member = members[i];
-          try {
-            let inputUser;
-            let target = member.trim();
-            if (target.includes(",")) {
-              const parts = target.split(",").map((p) => p.trim());
-              target = parts.find((p) => p.startsWith("@") || p.startsWith("+") || /^\d+$/.test(p)) || parts[0];
-            }
-            target = target.replace(/^"|"$/g, "");
-            const isPhone = target.startsWith("+") || /^\d+$/.test(target);
-            if (isPhone) {
-              const cleanPhone = target.replace(/\D/g, "");
-              const importResult = await this.callWithDcMigration(mtproto, "contacts.importContacts", {
-                contacts: [{
-                  _: "inputPhoneContact",
-                  client_id: Date.now(),
-                  phone: cleanPhone,
-                  first_name: target,
-                  last_name: ""
-                }]
-              }, 0, account.id, io);
-              if (importResult.users && importResult.users.length > 0) {
-                const user = importResult.users[0];
-                inputUser = {
+        let processed = 0;
+        try {
+          if (group.type === "channel") {
+            let batchUsers = [];
+            let batchTargets = [];
+            for (const member of members) {
+              if (abortController.signal.aborted && !cancellationEmitted) {
+                io.emit("import-progress", {
+                  accountId,
+                  groupId,
+                  status: "cancelled",
+                  message: "Import cancelled by user",
+                  processed,
+                  total: members.length
+                });
+                cancellationEmitted = true;
+                break;
+              }
+              if (cancellationEmitted)
+                break;
+              try {
+                let target = member.trim();
+                if (target.includes(",")) {
+                  const parts = target.split(",").map((p) => p.trim());
+                  target = parts.find((p) => p.startsWith("@") || p.startsWith("+") || /^\d+$/.test(p)) || parts[0];
+                }
+                target = target.replace(/^"|"$/g, "");
+                const isPhone = target.startsWith("+") || /^\d+$/.test(target);
+                let user;
+                if (isPhone) {
+                  const cleanPhone = target.replace(/\D/g, "");
+                  const resolveResult = await this.callWithDcMigration(mtproto, "contacts.resolvePhone", {
+                    phone: cleanPhone
+                  }, 0, account.id, io);
+                  if (!resolveResult.users || resolveResult.users.length === 0) {
+                    throw new Error("User not found");
+                  }
+                  user = resolveResult.users[0];
+                } else {
+                  let username = target;
+                  if (username.startsWith("@"))
+                    username = username.substring(1);
+                  const resolveResult = await this.callWithDcMigration(mtproto, "contacts.resolveUsername", {
+                    username
+                  }, 0, account.id, io);
+                  if (!resolveResult.users || resolveResult.users.length === 0) {
+                    throw new Error("User not found");
+                  }
+                  user = resolveResult.users[0];
+                }
+                const inputUser = {
                   _: "inputUser",
                   user_id: user.id,
                   access_hash: user.access_hash
                 };
-              } else {
-                throw new Error("User not registered or could not be imported via phone");
+                batchUsers.push(inputUser);
+                batchTargets.push(target);
+                if (batchUsers.length === batchSize || processed + batchUsers.length === members.length) {
+                  try {
+                    await this.callWithDcMigration(mtproto, "channels.inviteToChannel", {
+                      channel: {
+                        _: "inputChannel",
+                        channel_id: group.id,
+                        access_hash: group.access_hash
+                      },
+                      users: batchUsers
+                    }, 0, account.id, io);
+                    result.added.push(...batchTargets);
+                  } catch (batchErr) {
+                    batchTargets.forEach((t2) => result.failed.push({ member: t2, error: batchErr.message }));
+                  }
+                  processed += batchUsers.length;
+                  io.emit("import-progress", {
+                    accountId,
+                    groupId,
+                    total: members.length,
+                    processed,
+                    added: result.added.length,
+                    failed: result.failed.length,
+                    status: "processing"
+                  });
+                  batchUsers = [];
+                  batchTargets = [];
+                  await new Promise((r) => setTimeout(r, delayBetweenBatches));
+                }
+              } catch (err2) {
+                result.failed.push({ member, error: err2.message });
+                processed++;
+                io.emit("import-progress", {
+                  accountId,
+                  groupId,
+                  total: members.length,
+                  processed,
+                  added: result.added.length,
+                  failed: result.failed.length,
+                  status: "processing"
+                });
+                await new Promise((r) => setTimeout(r, delayBetweenBatches));
               }
-            } else {
-              let username = target;
-              if (username.startsWith("@"))
-                username = username.substring(1);
-              const resolveResult = await this.callWithDcMigration(mtproto, "contacts.resolveUsername", {
-                username
-              }, 0, account.id, io);
-              if (resolveResult.users && resolveResult.users.length > 0) {
-                const user = resolveResult.users[0];
-                inputUser = {
+            }
+          } else {
+            for (const member of members) {
+              if (abortController.signal.aborted && !cancellationEmitted) {
+                io.emit("import-progress", {
+                  accountId,
+                  groupId,
+                  status: "cancelled",
+                  message: "Import cancelled by user",
+                  processed,
+                  total: members.length
+                });
+                cancellationEmitted = true;
+                break;
+              }
+              if (cancellationEmitted)
+                break;
+              try {
+                let target = member.trim();
+                if (target.includes(",")) {
+                  const parts = target.split(",").map((p) => p.trim());
+                  target = parts.find((p) => p.startsWith("@") || p.startsWith("+") || /^\d+$/.test(p)) || parts[0];
+                }
+                target = target.replace(/^"|"$/g, "");
+                const isPhone = target.startsWith("+") || /^\d+$/.test(target);
+                let user;
+                if (isPhone) {
+                  const cleanPhone = target.replace(/\D/g, "");
+                  const resolveResult = await this.callWithDcMigration(mtproto, "contacts.resolvePhone", {
+                    phone: cleanPhone
+                  }, 0, account.id, io);
+                  if (!resolveResult.users || resolveResult.users.length === 0) {
+                    throw new Error("User not found");
+                  }
+                  user = resolveResult.users[0];
+                } else {
+                  let username = target;
+                  if (username.startsWith("@"))
+                    username = username.substring(1);
+                  const resolveResult = await this.callWithDcMigration(mtproto, "contacts.resolveUsername", {
+                    username
+                  }, 0, account.id, io);
+                  if (!resolveResult.users || resolveResult.users.length === 0) {
+                    throw new Error("User not found");
+                  }
+                  user = resolveResult.users[0];
+                }
+                const inputUser = {
                   _: "inputUser",
                   user_id: user.id,
                   access_hash: user.access_hash
                 };
-              } else {
-                throw new Error("Username not found");
+                await this.callWithDcMigration(mtproto, "messages.addChatUser", {
+                  chat_id: group.id,
+                  user_id: inputUser,
+                  fwd_limit: 100
+                }, 0, account.id, io);
+                result.added.push(target);
+              } catch (err2) {
+                const errorMessage = err2.message || "Unknown error";
+                result.failed.push({ member, error: errorMessage });
+                if (errorMessage.includes("FLOOD_WAIT") || errorMessage.includes("PEER_FLOOD")) {
+                  const seconds = parseInt(errorMessage.match(/\d+/)?.[0] || "60");
+                  io.emit("import-progress", {
+                    accountId,
+                    groupId,
+                    status: "paused",
+                    message: `Flood wait: ${seconds}s`,
+                    processed,
+                    total: members.length
+                  });
+                  const waitStart = Date.now();
+                  while (Date.now() - waitStart < seconds * 1e3) {
+                    if (abortController.signal.aborted)
+                      break;
+                    await new Promise((r) => setTimeout(r, 1e3));
+                  }
+                  if (abortController.signal.aborted)
+                    continue;
+                }
               }
-            }
-            if (group.type === "channel") {
-              await this.callWithDcMigration(mtproto, "channels.inviteToChannel", {
-                channel: {
-                  _: "inputChannel",
-                  channel_id: group.id,
-                  access_hash: group.access_hash
-                },
-                users: [inputUser]
-              }, 0, account.id, io);
-            } else {
-              await this.callWithDcMigration(mtproto, "messages.addChatUser", {
-                chat_id: group.id,
-                user_id: inputUser,
-                fwd_limit: 100
-              }, 0, account.id, io);
-            }
-            result.added.push(target);
-          } catch (err2) {
-            const errorMessage = err2.message || err2.errorMessage || "Unknown error";
-            console.error(`Failed to add ${member}:`, errorMessage);
-            if (errorMessage.includes("FLOOD_WAIT") || errorMessage.includes("PEER_FLOOD")) {
-              const seconds = parseInt(errorMessage.match(/\d+/)?.[0] || "60");
+              processed++;
               io.emit("import-progress", {
                 accountId,
                 groupId,
-                status: "paused",
-                message: `Flood wait: ${seconds}s`,
-                processed: i,
-                total: members.length
+                total: members.length,
+                processed,
+                added: result.added.length,
+                failed: result.failed.length,
+                status: "processing"
               });
-              const waitStart = Date.now();
-              while (Date.now() - waitStart < seconds * 1e3) {
-                if (abortController.signal.aborted)
-                  break;
-                await new Promise((r) => setTimeout(r, 1e3));
-              }
-              if (abortController.signal.aborted) {
-                i--;
-                continue;
-              }
-              i--;
-              continue;
+              await new Promise((r) => setTimeout(r, delayBetweenBatches));
             }
-            result.failed.push({ member, error: errorMessage });
           }
+        } catch (err2) {
           io.emit("import-progress", {
             accountId,
             groupId,
-            total: members.length,
-            processed: i + 1,
-            added: result.added.length,
-            failed: result.failed.length,
-            status: "processing"
+            status: "error",
+            message: err2.message,
+            processed,
+            total: members.length
           });
-          const delayStart = Date.now();
-          while (Date.now() - delayStart < delayBetweenMembers) {
-            if (abortController.signal.aborted)
-              break;
-            await new Promise((r) => setTimeout(r, 100));
+        } finally {
+          this.activeOperations.delete(operationId);
+          if (this.currentOperationId === operationId) {
+            this.currentOperationId = null;
           }
-        }
-        this.activeOperations.delete(operationId);
-        if (this.currentOperationId === operationId) {
-          this.currentOperationId = null;
-        }
-        if (!cancellationEmitted) {
-          io.emit("import-progress", {
-            accountId,
-            groupId,
-            total: members.length,
-            processed: members.length,
-            added: result.added.length,
-            failed: result.failed.length,
-            status: "completed"
-          });
+          if (!cancellationEmitted) {
+            io.emit("import-progress", {
+              accountId,
+              groupId,
+              total: members.length,
+              processed: members.length,
+              added: result.added.length,
+              failed: result.failed.length,
+              status: "completed"
+            });
+          }
         }
         return result;
       }
@@ -363713,7 +363815,6 @@ var require_TelegramController = __commonJS({
                 isAdmin: !!(chat.admin_rights || chat.creator),
                 profilePicUrl: void 0,
                 access_hash: chat.access_hash || 0,
-                // Store the access_hash for later use
                 type: chat._
               });
             }
@@ -363828,14 +363929,9 @@ var require_TelegramController = __commonJS({
           const access_hash = group.access_hash || 0;
           let participantFilter = { _: "channelParticipantsRecent" };
           let useMultipleFilters = false;
-          if (group.memberCount) {
-            const memberCount = parseInt(group.memberCount.toString());
-            if (memberCount > 1e4) {
-              useMultipleFilters = filterType === "recent";
-            }
-            if (memberCount > 25e3) {
-              useMultipleFilters = true;
-            }
+          const memberCount = parseInt(group.memberCount.toString());
+          if (memberCount > 1e4) {
+            useMultipleFilters = true;
           }
           switch (filterType) {
             case "admins":
@@ -363866,15 +363962,18 @@ var require_TelegramController = __commonJS({
           const processedUserIds = /* @__PURE__ */ new Set();
           let filterStrategies;
           if (useMultipleFilters) {
-            if (group.memberCount && parseInt(group.memberCount.toString()) > 25e3) {
+            if (memberCount > 25e3) {
               filterStrategies = [
                 { name: "recent", filter: { _: "channelParticipantsRecent" } },
-                // Use multiple search queries with different starting letters to get better coverage
                 { name: "search_a", filter: { _: "channelParticipantsSearch", q: "a" } },
                 { name: "search_e", filter: { _: "channelParticipantsSearch", q: "e" } },
                 { name: "search_i", filter: { _: "channelParticipantsSearch", q: "i" } },
                 { name: "search_o", filter: { _: "channelParticipantsSearch", q: "o" } },
                 { name: "search_u", filter: { _: "channelParticipantsSearch", q: "u" } },
+                { name: "search_s", filter: { _: "channelParticipantsSearch", q: "s" } },
+                { name: "search_t", filter: { _: "channelParticipantsSearch", q: "t" } },
+                { name: "search_r", filter: { _: "channelParticipantsSearch", q: "r" } },
+                { name: "search_n", filter: { _: "channelParticipantsSearch", q: "n" } },
                 { name: "search_empty", filter: { _: "channelParticipantsSearch", q: "" } },
                 { name: "contacts", filter: { _: "channelParticipantsContacts" } },
                 { name: "admins", filter: { _: "channelParticipantsAdmins" } }
@@ -363883,7 +363982,6 @@ var require_TelegramController = __commonJS({
               filterStrategies = [
                 { name: "recent", filter: { _: "channelParticipantsRecent" } },
                 { name: "search", filter: { _: "channelParticipantsSearch", q: "" } },
-                // Empty search gets all members
                 { name: "contacts", filter: { _: "channelParticipantsContacts" } }
               ];
             }
@@ -363892,161 +363990,164 @@ var require_TelegramController = __commonJS({
           }
           let consecutiveEmptyBatches = 0;
           const maxConsecutiveEmptyBatches = 5;
-          for (const strategy of filterStrategies) {
-            if (io) {
-              io.emit("telegram-export-progress", {
-                operationId,
-                status: "progress",
-                accountId,
-                groupId,
-                message: `Using strategy: ${strategy.name}`,
-                currentStrategy: strategy.name
-              });
+          if (group.type === "chat") {
+            const fullChatResult = await this.callWithDcMigration(mtproto, "messages.getFullChat", {
+              chat_id: parseInt(groupId)
+            });
+            const fullChat = fullChatResult.fullChat;
+            const users = fullChatResult.users;
+            const newMembers = fullChat.participants.participants.map((p) => {
+              const user = users.find((u) => u.id === p.user_id);
+              if (!user || user.bot)
+                return null;
+              if (processedUserIds.has(user.id.toString()))
+                return null;
+              processedUserIds.add(user.id.toString());
+              return {
+                id: user.id.toString(),
+                firstName: user.first_name,
+                lastName: user.last_name,
+                username: user.username,
+                phone: user.phone || "",
+                isBot: false
+              };
+            }).filter(Boolean);
+            let batchContent = "";
+            if (format === "csv") {
+              batchContent = newMembers.map((m) => {
+                const importKey = m.phone || (m.username ? `@${m.username}` : m.id);
+                return `${importKey},${m.phone || ""},${m.username || ""},${m.id},"${m.firstName?.replace(/"/g, '""') || ""}","${m.lastName?.replace(/"/g, '""') || ""}"`;
+              }).join("\n");
+            } else {
+              batchContent = newMembers.map((m) => m.phone || (m.username ? `@${m.username}` : m.id)).join("\n");
             }
-            if (!hasMoreMembers)
-              break;
-            console.log(`Using filter strategy: ${strategy.name}`);
-            let strategyOffset = 0;
-            let strategyHasMore = true;
-            let strategyEmptyCount = 0;
-            while (strategyHasMore && hasMoreMembers) {
-              console.log(`Fetching members batch with ${strategy.name} filter at offset ${strategyOffset}`);
-              let participants;
-              let retryCount = 0;
-              let success = false;
-              while (retryCount < maxRetries && !success) {
-                try {
-                  participants = await this.callWithDcMigration(mtproto, "channels.getParticipants", {
-                    channel: {
-                      _: "inputChannel",
-                      channel_id: parseInt(groupId),
-                      access_hash
-                    },
-                    filter: strategy.filter,
-                    offset: strategyOffset,
-                    limit: batchSize,
-                    hash: 0
-                  });
-                  success = true;
-                } catch (error) {
-                  retryCount++;
-                  if (error.message?.includes("FLOOD_WAIT")) {
-                    const waitSeconds = parseInt(error.message.match(/\d+/)?.[0] || "5", 10);
-                    const waitTime = Math.min(waitSeconds * 1e3, 3e4);
-                    if (io) {
-                      io.emit("telegram-export-progress", {
-                        operationId,
-                        status: "warning",
-                        accountId,
-                        groupId,
-                        message: `Rate limited: Waiting ${waitSeconds} seconds`,
-                        waitTime: waitSeconds
-                      });
-                    }
-                    await new Promise((resolve) => setTimeout(resolve, waitTime));
-                  } else if (retryCount >= maxRetries) {
-                    console.log(`Failed with ${strategy.name} strategy after ${maxRetries} retries, trying next strategy`);
-                    strategyHasMore = false;
-                    break;
-                  } else {
-                    const backoffTime = Math.min(1e3 * Math.pow(2, retryCount), 1e4);
-                    console.log(`Backing off for ${backoffTime / 1e3} seconds before retry`);
-                    await new Promise((resolve) => setTimeout(resolve, backoffTime));
-                  }
-                }
-              }
-              if (!success) {
-                continue;
-              }
-              if (!participants || !participants.users || participants.users.length === 0) {
-                strategyEmptyCount++;
-                consecutiveEmptyBatches++;
-                console.log(`Received empty result with ${strategy.name} filter (${strategyEmptyCount}/3)`);
-                if (strategyEmptyCount >= 3) {
-                  strategyHasMore = false;
-                  console.log(`Received multiple empty results with ${strategy.name} filter, trying next strategy`);
-                  continue;
-                }
-                if (consecutiveEmptyBatches >= maxConsecutiveEmptyBatches) {
-                  hasMoreMembers = false;
-                  break;
-                }
-                strategyOffset += batchSize;
-                await new Promise((resolve) => setTimeout(resolve, 1e3));
-                continue;
-              }
-              strategyEmptyCount = 0;
-              consecutiveEmptyBatches = 0;
-              const newMembers = [];
-              for (const user of participants.users) {
-                if (user.bot)
-                  continue;
-                if (processedUserIds.has(user.id.toString()))
-                  continue;
-                processedUserIds.add(user.id.toString());
-                newMembers.push({
-                  id: user.id.toString(),
-                  firstName: user.first_name,
-                  lastName: user.last_name,
-                  username: user.username,
-                  phone: user.phone || "",
-                  isBot: false
+            res.write(batchContent + "\n");
+            totalMembers = newMembers.length;
+          } else {
+            for (const strategy of filterStrategies) {
+              if (io) {
+                io.emit("telegram-export-progress", {
+                  operationId,
+                  status: "progress",
+                  accountId,
+                  groupId,
+                  message: `Using strategy: ${strategy.name}`,
+                  currentStrategy: strategy.name
                 });
               }
-              if (newMembers.length === 0) {
-                strategyEmptyCount++;
-                console.log(`No new members found with ${strategy.name} filter at offset ${strategyOffset}`);
-                if (strategyEmptyCount >= 3) {
-                  strategyHasMore = false;
-                  console.log(`No new members found with ${strategy.name} filter after multiple attempts, trying next strategy`);
-                  continue;
-                }
-              }
-              if (newMembers.length > 0) {
-                let batchContent = "";
-                if (format === "csv") {
-                  batchContent = newMembers.map((m) => {
-                    const importKey = m.phone || (m.username ? `@${m.username}` : m.id);
-                    return `${importKey},${m.phone || ""},${m.username || ""},${m.id},"${m.firstName?.replace(/"/g, '""') || ""}","${m.lastName?.replace(/"/g, '""') || ""}"`;
-                  }).join("\n");
-                } else {
-                  batchContent = newMembers.map((m) => {
-                    return m.phone || (m.username ? `@${m.username}` : m.id);
-                  }).join("\n");
-                }
-                res.write(batchContent + "\n");
-                totalMembers += newMembers.length;
-                if (totalMembers >= memberLimit) {
-                  console.log(`Reached specified member limit (${memberLimit}), stopping fetch`);
-                  hasMoreMembers = false;
-                  break;
-                }
-                if (estimatedMemberCount !== "unknown") {
-                  const progress = Math.min(100, Math.round(totalMembers / parseInt(estimatedMemberCount.toString()) * 100));
-                  console.log(`Progress: ${progress}% (${totalMembers}/${estimatedMemberCount})`);
-                  if (totalMembers % 1e3 === 0 || totalMembers % 5e3 === 0) {
-                    res.write(`# Progress: ${progress}% (${totalMembers}/${estimatedMemberCount})
-`);
+              if (!hasMoreMembers)
+                break;
+              let strategyOffset = 0;
+              let strategyHasMore = true;
+              let strategyEmptyCount = 0;
+              while (strategyHasMore && hasMoreMembers) {
+                let participants;
+                let retryCount = 0;
+                let success = false;
+                while (retryCount < maxRetries && !success) {
+                  try {
+                    participants = await this.callWithDcMigration(mtproto, "channels.getParticipants", {
+                      channel: {
+                        _: "inputChannel",
+                        channel_id: parseInt(groupId),
+                        access_hash
+                      },
+                      filter: strategy.filter,
+                      offset: strategyOffset,
+                      limit: batchSize,
+                      hash: 0
+                    });
+                    success = true;
+                  } catch (error) {
+                    retryCount++;
+                    if (error.message?.includes("FLOOD_WAIT")) {
+                      const waitSeconds = parseInt(error.message.match(/\d+/)?.[0] || "5", 10);
+                      const waitTime = Math.min(waitSeconds * 1e3, 3e4);
+                      if (io) {
+                        io.emit("telegram-export-progress", {
+                          operationId,
+                          status: "warning",
+                          accountId,
+                          groupId,
+                          message: `Rate limited: Waiting ${waitSeconds} seconds`,
+                          waitTime: waitSeconds
+                        });
+                      }
+                      await new Promise((resolve) => setTimeout(resolve, waitTime));
+                    } else if (retryCount >= maxRetries) {
+                      strategyHasMore = false;
+                      break;
+                    } else {
+                      const backoffTime = Math.min(1e3 * Math.pow(2, retryCount), 1e4);
+                      await new Promise((resolve) => setTimeout(resolve, backoffTime));
+                    }
                   }
-                  if (totalMembers >= Number(estimatedMemberCount) * 0.98) {
+                }
+                if (!success)
+                  continue;
+                if (!participants || !participants.users || participants.users.length === 0) {
+                  strategyEmptyCount++;
+                  consecutiveEmptyBatches++;
+                  if (strategyEmptyCount >= 3) {
+                    strategyHasMore = false;
+                    continue;
+                  }
+                  if (consecutiveEmptyBatches >= maxConsecutiveEmptyBatches) {
                     hasMoreMembers = false;
-                    console.log(`Reached estimated member count (${totalMembers}/${estimatedMemberCount}), stopping fetch`);
                     break;
                   }
-                } else {
-                  if (totalMembers % 1e3 === 0 || totalMembers % 5e3 === 0) {
-                    res.write(`# Retrieved ${totalMembers} members so far...
-`);
+                  strategyOffset += batchSize;
+                  await new Promise((resolve) => setTimeout(resolve, 1e3));
+                  continue;
+                }
+                strategyEmptyCount = 0;
+                consecutiveEmptyBatches = 0;
+                const newMembers = [];
+                for (const user of participants.users) {
+                  if (user.bot)
+                    continue;
+                  if (processedUserIds.has(user.id.toString()))
+                    continue;
+                  processedUserIds.add(user.id.toString());
+                  newMembers.push({
+                    id: user.id.toString(),
+                    firstName: user.first_name,
+                    lastName: user.last_name,
+                    username: user.username,
+                    phone: user.phone || "",
+                    isBot: false
+                  });
+                }
+                if (newMembers.length === 0) {
+                  strategyEmptyCount++;
+                  if (strategyEmptyCount >= 3) {
+                    strategyHasMore = false;
+                    continue;
                   }
                 }
-                console.log(`Retrieved ${newMembers.length} new members with ${strategy.name} filter, total so far: ${totalMembers}`);
-                if (io) {
+                if (newMembers.length > 0) {
+                  let batchContent = "";
+                  if (format === "csv") {
+                    batchContent = newMembers.map((m) => {
+                      const importKey = m.phone || (m.username ? `@${m.username}` : m.id);
+                      return `${importKey},${m.phone || ""},${m.username || ""},${m.id},"${m.firstName?.replace(/"/g, '""') || ""}","${m.lastName?.replace(/"/g, '""') || ""}"`;
+                    }).join("\n");
+                  } else {
+                    batchContent = newMembers.map((m) => m.phone || (m.username ? `@${m.username}` : m.id)).join("\n");
+                  }
+                  res.write(batchContent + "\n");
+                  totalMembers += newMembers.length;
+                  if (totalMembers >= memberLimit) {
+                    hasMoreMembers = false;
+                    break;
+                  }
+                  if (estimatedMemberCount !== "unknown" && totalMembers >= Number(estimatedMemberCount) * 0.98) {
+                    hasMoreMembers = false;
+                    break;
+                  }
                   const now = Date.now();
                   if (now - lastEmitTime > 1e3) {
-                    let progressValue = 0;
-                    if (estimatedMemberCount !== "unknown") {
-                      progressValue = Math.min(100, Math.round(totalMembers / parseInt(estimatedMemberCount.toString()) * 100));
-                    }
+                    let progressValue = estimatedMemberCount !== "unknown" ? Math.min(100, Math.round(totalMembers / Number(estimatedMemberCount) * 100)) : 0;
                     io.emit("telegram-export-progress", {
                       operationId,
                       status: "progress",
@@ -364062,20 +364163,16 @@ var require_TelegramController = __commonJS({
                     lastEmitTime = now;
                   }
                 }
-              }
-              strategyOffset += batchSize;
-              const delayMs = Math.min(500 + participants.users.length / 10, 2e3);
-              await new Promise((resolve) => setTimeout(resolve, delayMs));
-              if (strategyOffset % (batchSize * 10) === 0) {
-                console.log(`Taking a longer break after ${strategyOffset} offset to avoid rate limits`);
-                await new Promise((resolve) => setTimeout(resolve, 5e3));
+                strategyOffset += batchSize;
+                const delayMs = Math.min(500 + participants.users.length / 10, 2e3);
+                await new Promise((resolve) => setTimeout(resolve, delayMs));
+                if (strategyOffset % (batchSize * 10) === 0) {
+                  await new Promise((resolve) => setTimeout(resolve, 5e3));
+                }
               }
             }
           }
-          let coveragePercentage = 100;
-          if (estimatedMemberCount !== "unknown") {
-            coveragePercentage = Math.round(totalMembers / parseInt(estimatedMemberCount.toString()) * 100);
-          }
+          let coveragePercentage = estimatedMemberCount !== "unknown" ? Math.round(totalMembers / Number(estimatedMemberCount) * 100) : 100;
           res.write(`# Export completed: ${totalMembers} members exported from group ${groupId}
 `);
           if (maxMembers > 0 && totalMembers >= maxMembers) {
@@ -364089,7 +364186,6 @@ var require_TelegramController = __commonJS({
           res.write(`# Duration: ${((Date.now() - startTime) / 1e3).toFixed(2)} seconds
 `);
           res.end();
-          console.log(`Successfully exported ${totalMembers} members from group ${groupId}`);
           if (io) {
             io.emit("telegram-export-progress", {
               operationId,
@@ -364104,45 +364200,16 @@ var require_TelegramController = __commonJS({
               message: `Export completed: ${totalMembers} members`
             });
           }
-          console.log({
-            event: "group_export_completed",
-            groupId,
-            accountId,
-            filterType,
-            totalMembers,
-            uniqueMembers: processedUserIds.size,
-            estimatedMemberCount,
-            coveragePercentage,
-            filtersUsed: filterStrategies.map((s) => s.name).join(","),
-            memberLimitApplied: maxMembers > 0 ? maxMembers : "none",
-            limitReached: maxMembers > 0 && totalMembers >= maxMembers,
-            duration: `${((Date.now() - startTime) / 1e3).toFixed(2)} seconds`
-          });
         } catch (error) {
-          console.error(`Member export failed:`, error);
           let errorMessage = "Export failed";
           let statusCode = 500;
-          if (error && typeof error === "object" && error.message?.includes("FLOOD_WAIT")) {
+          if (error.message?.includes("FLOOD_WAIT")) {
             const waitTime = error.message.match(/\d+/)?.[0] || "unknown";
             errorMessage = `Rate limited by Telegram. Please try again after ${waitTime} seconds.`;
             statusCode = 429;
-          } else if (error && typeof error === "object") {
-            if (error.message?.includes("CHANNEL_INVALID")) {
-              errorMessage = "Invalid channel or you don't have access to this group.";
-              statusCode = 403;
-            } else if (error.message?.includes("AUTH_KEY_UNREGISTERED")) {
-              errorMessage = "Account session expired. Please reconnect the account.";
-              statusCode = 401;
-            } else if (error.message?.includes("PEER_ID_INVALID")) {
-              errorMessage = "Invalid group ID or the account doesn't have access to this group.";
-              statusCode = 400;
-            } else if (error.message?.includes("CHAT_ADMIN_REQUIRED")) {
-              errorMessage = "Admin privileges required to access this group's members.";
-              statusCode = 403;
-            } else if (error.message?.includes("USER_PRIVACY_RESTRICTED")) {
-              errorMessage = "Some members couldn't be retrieved due to privacy settings.";
-              statusCode = 206;
-            }
+          } else if (error.message?.includes("CHANNEL_INVALID")) {
+            errorMessage = "Invalid channel or you don't have access to this group.";
+            statusCode = 403;
           }
           if (io) {
             io.emit("telegram-export-progress", {
@@ -364157,23 +364224,16 @@ var require_TelegramController = __commonJS({
             });
           }
           if (res.headersSent) {
-            try {
-              res.write(`
+            res.write(`
 # ERROR: ${errorMessage}
 `);
-              res.write(`# ERROR_CODE: ${statusCode}
+            res.write(`# ERROR_CODE: ${statusCode}
 `);
-              res.write(`# MEMBERS_EXPORTED_BEFORE_ERROR: ${totalMembers}
+            res.write(`# MEMBERS_EXPORTED_BEFORE_ERROR: ${totalMembers}
 `);
-              res.write(`# PARTIAL_EXPORT: true
-`);
-              res.write(`# TROUBLESHOOTING: Please check your Telegram account permissions and try again later.
-`);
-              res.end();
-              return;
-            } catch (writeError) {
-              console.error("Failed to write error to response:", writeError);
-            }
+            res.end();
+          } else {
+            res.status(statusCode).json({ error: errorMessage });
           }
         }
       }
@@ -364227,13 +364287,48 @@ var require_TelegramController = __commonJS({
         if (!account || !account.mtproto || !account.connected) {
           throw new Error("Account not connected");
         }
+        const groupList = typeof groups === "string" ? JSON.parse(groups) : groups;
+        let parsedConfig = config;
+        if (typeof config === "string") {
+          try {
+            parsedConfig = JSON.parse(config);
+          } catch (e2) {
+            console.error("Failed to parse config:", e2);
+            parsedConfig = {};
+          }
+        }
+        const campaignId = `campaign-${Date.now()}`;
+        if (parsedConfig.repeatEvery && Number(parsedConfig.repeatEvery) > 0) {
+          const repeatHours = Number(parsedConfig.repeatEvery);
+          const jobName = `recurring-${campaignId}`;
+          node_schedule_1.default.scheduleJob(jobName, `0 0 */${repeatHours} * * *`, async () => {
+            console.log(`Running recurring campaign ${jobName}`);
+            try {
+              await _TelegramController.executeGroupCampaign(account, groupList, message, file, parsedConfig, io, jobName);
+            } catch (error) {
+              console.error(`Recurring campaign ${jobName} failed:`, error);
+            }
+          });
+          io.emit("campaign-scheduled", {
+            jobName,
+            repeatEvery: repeatHours,
+            message: `Campaign scheduled to repeat every ${repeatHours} hours`
+          });
+        }
+        return await this.executeGroupCampaign(account, groupList, message, file, parsedConfig, io, campaignId);
+      }
+      static async executeGroupCampaign(account, groupList, message, file, config, io, campaignId) {
         const mtproto = account.mtproto;
         const result = { sent: [], failed: [] };
-        const groupList = typeof groups === "string" ? JSON.parse(groups) : groups;
+        io.emit("campaign-start", {
+          campaignId,
+          total: groupList.length,
+          message: "Starting campaign..."
+        });
         let inputMedia = null;
         if (file) {
           try {
-            const uploadedFile = await this.uploadFile(mtproto, file, accountId, io);
+            const uploadedFile = await this.uploadFile(mtproto, file, account.id, io);
             inputMedia = {
               _: "inputMediaUploadedPhoto",
               file: uploadedFile,
@@ -364241,10 +364336,13 @@ var require_TelegramController = __commonJS({
             };
           } catch (e2) {
             console.error("Failed to upload file:", e2);
-            throw new Error("Failed to upload photo: " + e2.message);
+            io.emit("campaign-log", { type: "error", message: `Failed to upload file: ${e2.message}`, campaignId });
+            if (!message)
+              throw new Error("Failed to upload file and no text message provided");
           }
         }
-        for (const group of groupList) {
+        for (let i = 0; i < groupList.length; i++) {
+          const group = groupList[i];
           try {
             const peer = {
               _: "inputPeerChannel",
@@ -364266,12 +364364,57 @@ var require_TelegramController = __commonJS({
               }, 0, account.id, io);
             }
             result.sent.push(group.id);
+            io.emit("campaign-progress", {
+              campaignId,
+              total: groupList.length,
+              processed: i + 1,
+              sent: result.sent.length,
+              failed: result.failed.length,
+              lastAction: { type: "success", groupName: group.name || group.title || group.id }
+            });
           } catch (e2) {
-            result.failed.push({ id: group.id, error: e2.message });
+            const errorMessage = e2.message || "Unknown error";
+            result.failed.push({ id: group.id, error: errorMessage });
+            io.emit("campaign-progress", {
+              campaignId,
+              total: groupList.length,
+              processed: i + 1,
+              sent: result.sent.length,
+              failed: result.failed.length,
+              lastAction: { type: "error", groupName: group.name || group.title || group.id, error: errorMessage }
+            });
+            if (errorMessage.includes("FLOOD_WAIT")) {
+              const floodMatch = errorMessage.match(/FLOOD_WAIT_(\d+)/);
+              if (floodMatch) {
+                const seconds = parseInt(floodMatch[1], 10);
+                const waitTime = (seconds + 5) * 1e3;
+                io.emit("campaign-log", {
+                  type: "warning",
+                  message: `Flood wait detected. Pausing for ${seconds + 5} seconds to prevent ban...`,
+                  campaignId
+                });
+                await new Promise((r) => setTimeout(r, waitTime));
+                i--;
+                continue;
+              }
+              io.emit("campaign-log", { type: "warning", message: `Rate limited on group ${group.name}: ${errorMessage}`, campaignId });
+            } else if (errorMessage.includes("PEER_FLOOD")) {
+              const waitTime = 5 * 60 * 1e3;
+              io.emit("campaign-log", {
+                type: "warning",
+                message: `Peer Flood (Spam Limit) detected. Pausing for 5 minutes to restore account health...`,
+                campaignId
+              });
+              await new Promise((r) => setTimeout(r, waitTime));
+              i--;
+              continue;
+            }
           }
-          const delay2 = config?.delayBetweenMessages || 2e3;
-          await new Promise((r) => setTimeout(r, delay2));
+          const delay2 = config?.delayBetweenMessages !== void 0 ? Number(config.delayBetweenMessages) : 2e3;
+          const randomDelay = config?.randomDelay ? Math.floor(Math.random() * 1e3) : 0;
+          await new Promise((r) => setTimeout(r, delay2 + randomDelay));
         }
+        io.emit("campaign-complete", { result, campaignId });
         return result;
       }
       static async uploadFile(mtproto, file, accountId, io) {
@@ -364449,12 +364592,6 @@ var require_TelegramController = __commonJS({
       // ========== HELPER METHODS ========== //
       static saveSession(account) {
         console.log(`Session saved for account ${account.id}`);
-      }
-      static async calculateSRP(params) {
-        return {
-          A: "dummy_A_value",
-          M1: "dummy_M1_value"
-        };
       }
       static formatETA(seconds) {
         if (seconds < 60)

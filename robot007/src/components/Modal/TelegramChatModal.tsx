@@ -125,6 +125,23 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
 
   // Scheduling State
   const [scheduleType, setScheduleType] = useState<"once" | "recurring">("once");
+  const [repeatHours, setRepeatHours] = useState<number>(1);
+  const [campaignProgress, setCampaignProgress] = useState<any>(null);
+  const [toasts, setToasts] = useState<{ id: string; message: string; type: 'success' | 'error' | 'info' }[]>([]);
+
+  // Toast Helper
+  const addToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    const id = message.replace(/\s+/g, '-').toLowerCase();
+    setToasts(prev => {
+      // Prevent duplicates
+      if (prev.some(t => t.id === id)) return prev;
+      return [...prev, { id, message, type }];
+    });
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 3000);
+  };
 
   // Selectors
   const listTelegramGroups = useSelector(selectTelegramGroups as any) as any[];
@@ -141,6 +158,39 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
       }
     }
   }, []);
+
+  // Campaign progress listener
+  useEffect(() => {
+    if (socket) {
+      const handleProgress = (data: any) => {
+          setCampaignProgress(data);
+          if (data.lastAction?.type === 'error') {
+             // Optional: Toast for individual failures might be too noisy, keep it in the progress UI
+          }
+      };
+      
+      const handleComplete = (data: any) => {
+          setIsSending(false);
+          setCampaignProgress(null);
+          addToast(`Campaign Completed! Sent: ${data.result.sent.length}, Failed: ${data.result.failed.length}`, 'success');
+      };
+
+      const handleScheduled = (data: any) => {
+          setIsSending(false);
+          addToast(data.message, 'success');
+      };
+
+      socket.on("campaign-progress", handleProgress);
+      socket.on("campaign-complete", handleComplete);
+      socket.on("campaign-scheduled", handleScheduled);
+      
+      return () => {
+        socket.off("campaign-progress", handleProgress);
+        socket.off("campaign-complete", handleComplete);
+        socket.off("campaign-scheduled", handleScheduled);
+      };
+    }
+  }, [socket]);
 
   // Sync groups state
   useEffect(() => {
@@ -294,15 +344,17 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
             message: validMessages[0].text,
             config: {
                 delayBetweenMessages: delay * 1000,
-                randomDelay: useRandomDelay
+                randomDelay: useRandomDelay,
+                repeatEvery: scheduleType === 'recurring' ? repeatHours : undefined
             },
             file: attachment || undefined
         }));
         
-        alert("Campaign launched successfully!");
+        if (scheduleType === 'once') {
+            addToast("Campaign launched! Watch progress below...", 'info');
+        }
       } catch (error: any) {
-        alert(`Campaign failed: ${error.message}`);
-      } finally {
+        addToast(`Campaign failed: ${error.message}`, 'error');
         setIsSending(false);
       }
     }
@@ -535,8 +587,48 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
                         <option value="recurring">Recurring Domination</option>
                       </select>
                     </div>
+                    {scheduleType === 'recurring' && (
+                        <div className="setting-item">
+                            <label>Repeat Every (Hours)</label>
+                            <input 
+                                type="number" 
+                                min="1" 
+                                value={repeatHours} 
+                                onChange={(e) => setRepeatHours(Number(e.target.value))} 
+                            />
+                        </div>
+                    )}
                   </div>
                 </div>
+
+                {campaignProgress && (
+                    <div className="campaign-progress-bar" style={{ marginTop: '20px', padding: '15px', background: '#f8fafc', borderRadius: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                            <span style={{ fontWeight: 'bold' }}>Campaign Progress</span>
+                            <span>{campaignProgress.processed} / {campaignProgress.total}</span>
+                        </div>
+                        <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ 
+                                width: `${(campaignProgress.processed / campaignProgress.total) * 100}%`, 
+                                height: '100%', 
+                                background: '#3b82f6',
+                                transition: 'width 0.3s ease'
+                            }}></div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '15px', marginTop: '10px', fontSize: '0.9rem' }}>
+                            <span style={{ color: '#16a34a' }}>✓ Sent: {campaignProgress.sent}</span>
+                            <span style={{ color: '#dc2626' }}>✗ Failed: {campaignProgress.failed}</span>
+                        </div>
+                        {campaignProgress.lastAction && (
+                            <div style={{ marginTop: '5px', fontSize: '0.8rem', color: '#64748b' }}>
+                                {campaignProgress.lastAction.type === 'error' 
+                                    ? `Error with ${campaignProgress.lastAction.groupName}: ${campaignProgress.lastAction.error}`
+                                    : `Sent to ${campaignProgress.lastAction.groupName}`
+                                }
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 <button 
                   className="launch-btn" 
@@ -649,6 +741,23 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
               <div className="groups-list-container">
                 <div className="groups-toolbar">
                   <span>{filteredGroups.length} Active Targets</span>
+                  <button 
+                    className="refresh-btn" 
+                    onClick={() => {
+                      if (selectedGroups.length === filteredGroups.length) {
+                        // Deselect all in current view
+                        const filteredIds = filteredGroups.map(g => g.id);
+                        setSelectedGroups(prev => prev.filter(id => !filteredIds.includes(id)));
+                      } else {
+                        // Select all in current view
+                        const filteredIds = filteredGroups.map(g => g.id);
+                        setSelectedGroups(prev => [...new Set([...prev, ...filteredIds])]);
+                      }
+                    }}
+                    style={{ marginRight: '10px' }}
+                  >
+                    <FiCheck /> {selectedGroups.length === filteredGroups.length && filteredGroups.length > 0 ? 'Deselect All' : 'Select All'}
+                  </button>
                   <button className="refresh-btn" onClick={handleRefreshGroups} disabled={isRefreshing}>
                     <FiRefreshCw className={isRefreshing ? "spinning" : ""} /> Sync Targets
                   </button>
@@ -728,6 +837,23 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
           </div>
         </div>
       )}
+      {/* Toasts */}
+      <div className="telegram-toasts" style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 10000, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {toasts.map(t => (
+            <div key={t.id} style={{ 
+                padding: '12px 20px', 
+                background: t.type === 'error' ? '#fee2e2' : t.type === 'success' ? '#dcfce7' : '#eff6ff',
+                color: t.type === 'error' ? '#991b1b' : t.type === 'success' ? '#166534' : '#1e40af',
+                borderRadius: '8px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                border: `1px solid ${t.type === 'error' ? '#fecaca' : t.type === 'success' ? '#bbf7d0' : '#dbeafe'}`,
+                minWidth: '250px',
+                animation: 'slideIn 0.3s ease'
+            }}>
+                {t.message}
+            </div>
+        ))}
+      </div>
     </div>
   );
 };

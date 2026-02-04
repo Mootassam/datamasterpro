@@ -155,7 +155,7 @@ function WhatsAppNumberGenerator() {
   const [verificationConfig, setVerificationConfig] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [telegramApis, setTelegramApis] = useState([]);
-  const [gender, setGender] = useState("male");
+  const [gender, setGender] = useState<{ value: string; label: string } | null>({ value: 'male', label: 'Male' });
   const [progressData, setProgressData] = useState({
     batches: 0,
     progress: 0,
@@ -239,7 +239,7 @@ function WhatsAppNumberGenerator() {
   
   // Email states
   const [emailType, setEmailType] = useState<{ value: string; label: string } | null>({ value: 'person', label: 'Personal' });
-  const [emailProvider, setEmailProvider] = useState<{ value: string; label: string } | null>({ value: 'gmail', label: 'Gmail' });
+  const [emailProvider, setEmailProvider] = useState<{ value: string; label: string } | null>({ value: 'gmail.com', label: 'Gmail' });
 
   // Mock cancel function
   const handleCancelUpload = () => {
@@ -346,7 +346,7 @@ function WhatsAppNumberGenerator() {
 
     try {
       // Create socket with better error handling and reconnection settings
-      newSocket = io("http://162.0.228.113:8088", {
+      newSocket = io("http://localhost:8088", {
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
@@ -878,7 +878,13 @@ function WhatsAppNumberGenerator() {
   const handleGenerate = useCallback(async () => {
     try {
       if (activeService == "email") {
-        await dispatch(generateEmails({ matchCount, country, gender }));
+        await dispatch(generateEmails({ 
+          matchCount, 
+          country, 
+          gender: gender?.value, 
+          type: emailType?.value, 
+          provider: emailProvider?.value 
+        }));
       } else {
         await dispatch(
           generateNumbers({

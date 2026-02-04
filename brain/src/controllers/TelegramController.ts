@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Server } from "socket.io";
 import multer, { Multer } from "multer";
-import MTProto from "@mtproto/core";
+import MTProto, { getSRPParams } from "@mtproto/core";
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
@@ -9,31 +9,25 @@ import streamifier from "streamifier";
 import csvParser from "csv-parser";
 import { Readable } from 'stream';
 import schedule from 'node-schedule';
-
 const upload: Multer = multer({ storage: multer.memoryStorage() });
-
 const API_ID = 29214492;
 const API_HASH = "c69d0e6e1d0714b5d95416208632243e";
-
 interface VerificationConfig {
   batchSize: number;
   delayBetweenNumbers: number;
   delayBetweenBatches: number;
   selectedAccounts?: string[];
 }
-
 interface PhoneNumberResult {
   phoneNumberRegistred: string[];
   phoneNumberRejected: string[];
   totalPhoneNumber: string[];
 }
-
 interface MessageResult {
   messagesSent: string[];
   messagesFailed: string[];
   totalMessages: string[];
 }
-
 interface GroupMember {
   id: string;
   firstName?: string;
@@ -42,7 +36,6 @@ interface GroupMember {
   phone?: string;
   isBot: boolean;
 }
-
 interface GroupInfo {
   id: string;
   name: string;
@@ -53,7 +46,6 @@ interface GroupInfo {
   access_hash?: string | number; // Add access_hash to the interface
   type?: string; // 'channel' or 'chat'
 }
-
 interface ScheduledMessage {
   id: string;
   accountId: string;
@@ -64,7 +56,6 @@ interface ScheduledMessage {
   status: 'scheduled' | 'running' | 'completed' | 'cancelled';
   result?: MessageResult;
 }
-
 interface TelegramAccount {
   id: string;
   phoneNumber: string;
@@ -77,7 +68,6 @@ interface TelegramAccount {
   serverAddress?: string;
   port?: number;
 }
-
 class TelegramController {
   private static accounts: Map<string, TelegramAccount> = new Map();
   private static scheduledMessages: ScheduledMessage[] = [];
@@ -85,30 +75,26 @@ class TelegramController {
     private static currentOperationId: string | null = null;
   private static getSessionPath(phoneNumber: string): string {
     let sessionPath: string;
-    
+   
     if ((process as any).pkg) {
       const homeDir = os.homedir();
       sessionPath = path.join(homeDir, '.telegram-toolkit', 'sessions', `session-${phoneNumber}`);
     } else {
       sessionPath = path.join(__dirname, '..', 'telegram_auth', `session-${phoneNumber}`);
     }
-
     if (!fs.existsSync(path.dirname(sessionPath))) {
       fs.mkdirSync(path.dirname(sessionPath), { recursive: true });
     }
-
     return sessionPath;
   }
-
   private static async initializeAccount(phoneNumber: string, io: Server): Promise<TelegramAccount> {
     const id = phoneNumber.replace(/\D/g, '');
     const sessionPath = this.getSessionPath(id);
-    
+   
     let authKey: string | undefined;
     let dcId: number | undefined;
     let serverAddress: string | undefined;
     let port: number | undefined;
-
     if (fs.existsSync(`${sessionPath}.json`)) {
       try {
         const sessionData = fs.readFileSync(`${sessionPath}.json`, 'utf8');
@@ -123,7 +109,6 @@ class TelegramController {
         console.warn('Error reading session file, creating new session');
       }
     }
-
     try {
       const mtproto = new MTProto({
         api_id: API_ID,
@@ -133,7 +118,7 @@ class TelegramController {
           path: sessionPath + '.json'
         }
       });
-      
+     
       // Add setDefaultDc method to MTProto instance
       if (!mtproto.setDefaultDc) {
         mtproto.setDefaultDc = async function(dcId: number) {
@@ -145,7 +130,6 @@ class TelegramController {
           return true;
         };
       }
-
       const account: TelegramAccount = {
         id,
         phoneNumber,
@@ -156,7 +140,6 @@ class TelegramController {
         serverAddress,
         port
       };
-
       this.accounts.set(id, account);
       return account;
     } catch (error :any) {
@@ -164,23 +147,19 @@ class TelegramController {
       throw error;
     }
   }
-
   static async joinGroup(req: Request, io: Server): Promise<any> {
     const { accountId, inviteLink } = req.body;
-    
+   
     if (!accountId || !inviteLink) {
       throw new Error("Account ID and invite link are required");
     }
-
     const account = await this.getAccountById(accountId);
     if (!account || !account.mtproto || !account.connected) {
       throw new Error("Account not connected");
     }
-
     try {
       const mtproto = account.mtproto;
       let result;
-
       // Handle t.me/joinchat/ or t.me/+ links (Private links)
       if (inviteLink.includes('joinchat') || inviteLink.includes('+')) {
          const hash = inviteLink.split('+')[1] || inviteLink.split('joinchat/')[1];
@@ -191,11 +170,11 @@ class TelegramController {
          // Handle public usernames (t.me/username or @username)
          let username = inviteLink.split('/').pop();
          if (username.startsWith('@')) username = username.substring(1);
-         
+        
          result = await this.callWithDcMigration(mtproto, 'contacts.resolveUsername', {
             username: username
          }, 0, account.id, io);
-         
+        
          // If resolved, we might need to join if not already a member
          if (result.chats && result.chats.length > 0) {
              const chat = result.chats[0];
@@ -204,7 +183,7 @@ class TelegramController {
                  channel_id: chat.id,
                  access_hash: chat.access_hash
              };
-             
+            
              try {
                  await this.callWithDcMigration(mtproto, 'channels.joinChannel', {
                     channel: inputChannel
@@ -219,22 +198,18 @@ class TelegramController {
              return chat;
          }
       }
-
       return result;
-
     } catch (error: any) {
       this.displayError(error, io);
       throw error;
     }
   }
-
   static async getDialogFilters(req: Request, io: Server): Promise<any> {
       const { accountId } = req.body;
       const account = await this.getAccountById(accountId);
       if (!account || !account.mtproto || !account.connected) {
         throw new Error("Account not connected");
       }
-
       try {
           const result = await this.callWithDcMigration(account.mtproto, 'messages.getDialogFilters', {}, 0, account.id, io);
           return result;
@@ -243,82 +218,108 @@ class TelegramController {
           throw error;
       }
   }
-
   static async scrapeMembers(req: Request, io: Server): Promise<any> {
     const { accountId, inviteLink } = req.body;
-    
+   
     try {
         // First join/resolve the group
         const chat = await this.joinGroup(req, io);
-        
+       
         // Get account
         const account = await this.getAccountById(accountId);
         if (!account || !account.mtproto) throw new Error("Account error");
-        
+       
         const mtproto = account.mtproto;
+       
+        let members: GroupMember[] = [];
         
-        // Prepare input channel
-        // Note: joinGroup returns the chat object which should have id and access_hash
-        const inputChannel = {
-            _: 'inputChannel',
-            channel_id: chat.id,
-            access_hash: chat.access_hash
-        };
-        
-        // Fetch recent participants (limit to 200 for preview/instant scrape)
-        // For full export, user should use the export feature
-        const result = await this.callWithDcMigration(mtproto, 'channels.getParticipants', {
-            channel: inputChannel,
-            filter: { _: 'channelParticipantsRecent' },
-            offset: 0,
-            limit: 200,
-            hash: 0
-        }, 0, account.id, io);
-        
+        if (chat._ === 'chat') {
+            // For basic chats
+            const fullChatResult = await this.callWithDcMigration(mtproto, 'messages.getFullChat', {
+                chat_id: chat.id
+            }, 0, account.id, io);
+            
+            const fullChat = fullChatResult.fullChat;
+            const users = fullChatResult.users;
+            
+            members = fullChat.participants.participants
+                .map((p: any) => {
+                    const user = users.find((u: any) => u.id === p.user_id);
+                    if (!user || user.bot) return null;
+                    return {
+                        id: user.id.toString(),
+                        firstName: user.first_name,
+                        lastName: user.last_name,
+                        username: user.username,
+                        phone: user.phone,
+                        isBot: false
+                    };
+                })
+                .filter(Boolean);
+        } else {
+            // For channels/supergroups
+            const inputChannel = {
+                _: 'inputChannel',
+                channel_id: chat.id,
+                access_hash: chat.access_hash
+            };
+           
+            const result = await this.callWithDcMigration(mtproto, 'channels.getParticipants', {
+                channel: inputChannel,
+                filter: { _: 'channelParticipantsRecent' },
+                offset: 0,
+                limit: 200,
+                hash: 0
+            }, 0, account.id, io);
+           
+            members = result.users
+                .filter((u: any) => !u.bot)
+                .map((u: any) => ({
+                    id: u.id.toString(),
+                    firstName: u.first_name,
+                    lastName: u.last_name,
+                    username: u.username,
+                    phone: u.phone,
+                    isBot: false
+                }));
+        }
+       
         return {
             group: {
                 id: chat.id.toString(),
                 name: chat.title,
                 username: chat.username,
-                memberCount: chat.participants_count,
-                access_hash: chat.access_hash
+                memberCount: chat.participants_count || members.length,
+                access_hash: chat.access_hash,
+                type: chat._
             },
-            members: result.users.map((u: any) => ({
-                id: u.id,
-                firstName: u.first_name,
-                lastName: u.last_name,
-                username: u.username,
-                phone: u.phone,
-                bot: u.bot
-            }))
+            members
         };
-        
+       
     } catch (error: any) {
         this.displayError(error, io);
         throw error;
     }
   }
-
   static async autoDiscoverGroups(req: Request, io: Server): Promise<any> {
     const { accountId, keywords, limit = 20 } = req.body;
-    
+   
     const account = await this.getAccountById(accountId);
     if (!account || !account.mtproto || !account.connected) {
       throw new Error("Account not connected");
     }
-
     try {
       const mtproto = account.mtproto;
       const results: any[] = [];
-      
+     
       const keywordsList = Array.isArray(keywords) ? keywords : [keywords];
-      
+     
       for (const keyword of keywordsList) {
           const searchResult = await this.callWithDcMigration(mtproto, 'contacts.search', {
               q: keyword,
               limit: limit
           }, 0, account.id, io);
-          
+         
           if (searchResult.chats) {
               for (const chat of searchResult.chats) {
                   if (chat._ === 'channel' || chat._ === 'chat') {
@@ -334,43 +335,36 @@ class TelegramController {
               }
           }
       }
-      
+     
       // Remove duplicates
       const uniqueResults = results.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
-      
+     
       return uniqueResults;
     } catch (error: any) {
       this.displayError(error, io);
       throw error;
     }
   }
-
   static async getConnectedAccounts(): Promise<TelegramAccount[]> {
     return Array.from(this.accounts.values())
       .filter(account => account.connected)
       .map(({ mtproto, authKey, ...account }) => account);
   }
-
   static async getAccountById(accountId: string): Promise<TelegramAccount | undefined> {
     return this.accounts.get(accountId);
   }
-
   static async logout(accountId: string, io: Server): Promise<void> {
     const account = this.accounts.get(accountId);
     if (!account) return;
-
     try {
       if (account.mtproto && account.connected) {
         await account.mtproto.call('auth.logOut');
       }
-
       const sessionPath = this.getSessionPath(account.id);
       if (fs.existsSync(`${sessionPath}.json`)) {
         fs.unlinkSync(`${sessionPath}.json`);
       }
-
       this.accounts.delete(accountId);
-
       io.emit("logout-success", {
         accountId: accountId,
         message: "Logged out successfully"
@@ -379,24 +373,19 @@ class TelegramController {
       this.displayError(error, io);
     }
   }
-
   static async logoutAll(io: Server): Promise<void> {
-    const logoutPromises = Array.from(this.accounts.keys()).map(accountId => 
+    const logoutPromises = Array.from(this.accounts.keys()).map(accountId =>
       this.logout(accountId, io).catch(console.error)
     );
-
     await Promise.allSettled(logoutPromises);
     io.emit("success", { message: "All accounts logged out successfully" });
   }
-
   static async login(req: Request, io: Server): Promise<{ phoneCodeHash: string, accountId: string }> {
     const { phoneNumber } = req.body;
     if (!phoneNumber) throw new Error("Phone number is required");
-
     try {
       const account = await this.initializeAccount(phoneNumber, io);
       const mtproto = account.mtproto!;
-
       const result = await this.callWithDcMigration(mtproto, 'auth.sendCode', {
         phone_number: phoneNumber,
         settings: {
@@ -406,13 +395,11 @@ class TelegramController {
           allow_app_hash: true,
         },
       });
-
       io.emit("login-code-sent", {
         accountId: account.id,
         phoneNumber: account.phoneNumber,
         timestamp: new Date().toISOString()
       });
-
       return {
         phoneCodeHash: result.phone_code_hash,
         accountId: account.id
@@ -422,22 +409,18 @@ class TelegramController {
       throw error;
     }
   }
-
   static async confirmOTP(req: Request, io: Server): Promise<void> {
     const { accountId, phoneCode, phoneCodeHash } = req.body;
     if (!accountId || !phoneCode || !phoneCodeHash) {
       throw new Error("Account ID, phone code, and phone code hash are required");
     }
-
     const account = this.accounts.get(accountId);
     if (!account || !account.mtproto) {
       throw new Error(`Account ${accountId} not found or not initialized`);
     }
-
     try {
       const mtproto = account.mtproto;
       let signInResult;
-
       try {
         signInResult = await this.callWithDcMigration(mtproto, 'auth.signIn', {
           phone_number: account.phoneNumber,
@@ -454,18 +437,15 @@ class TelegramController {
         }
         throw error;
       }
-
       const user = signInResult.user;
       account.name = user.first_name || user.username || account.phoneNumber;
       account.connected = true;
-
       io.emit("client-connect", {
         accountId: account.id,
         phoneNumber: account.phoneNumber,
         name: account.name,
         timestamp: new Date().toISOString()
       });
-
       io.emit("success", {
         message: "Login successful",
         accountId: account.id,
@@ -477,34 +457,28 @@ class TelegramController {
       throw error;
     }
   }
-
   static async confirm2FA(req: Request, io: Server): Promise<void> {
     const { accountId, password } = req.body;
     if (!accountId || !password) {
       throw new Error("Account ID and password are required");
     }
-
     const account = this.accounts.get(accountId);
     if (!account || !account.mtproto) {
       throw new Error(`Account ${accountId} not found or not initialized`);
     }
-
     try {
       const mtproto = account.mtproto;
       const passwordInfo = await this.callWithDcMigration(mtproto, 'account.getPassword', {});
-
       const { srp_id, current_algo, srp_B } = passwordInfo;
       const { salt1, salt2, g, p } = current_algo;
-
-      const srpParams = await this.calculateSRP({
+      const srpParams = await getSRPParams({
         g,
         p,
         salt1,
         salt2,
-        srp_B,
+        gB: srp_B,
         password
       });
-
       const checkPasswordResult = await this.callWithDcMigration(mtproto, 'auth.checkPassword', {
         password: {
           _: 'inputCheckPasswordSRP',
@@ -513,18 +487,15 @@ class TelegramController {
           M1: srpParams.M1
         }
       });
-
       const user = checkPasswordResult.user;
       account.name = user.first_name || user.username || account.phoneNumber;
       account.connected = true;
-
       io.emit("client-connect", {
         accountId: account.id,
         phoneNumber: account.phoneNumber,
         name: account.name,
         timestamp: new Date().toISOString()
       });
-
       io.emit("success", {
         message: "2FA confirmed successfully",
         accountId: account.id,
@@ -536,11 +507,9 @@ class TelegramController {
       throw error;
     }
   }
-
   static async cancelAccountConnection(accountId: string, io: Server): Promise<void> {
     const account = this.accounts.get(accountId);
     if (!account) return;
-
     this.accounts.delete(accountId);
     io.emit("client-disconnect", {
       accountId: accountId,
@@ -548,11 +517,9 @@ class TelegramController {
       timestamp: new Date().toISOString()
     });
   }
-
     static cancelCurrentOperation(): boolean {
         if (!this.currentOperationId) return false;
         console.log("cancel the process");
-
         const controller = this.activeOperations.get(this.currentOperationId);
         if (controller) {
             controller.abort();
@@ -566,20 +533,17 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
   const { phoneNumbers, config } = req.body;
   const selectedAccounts = config.selectedAccounts || [];
     let validAccounts: TelegramAccount[] = [];
-
   // Create unique operation ID and abort controller
   const operationId = Math.random().toString(36).substring(2, 15);
   this.currentOperationId = operationId;
   const abortController = new AbortController();
   this.activeOperations.set(operationId, abortController);
-
   const usersArray = Array.isArray(phoneNumbers) ? phoneNumbers : [];
   const result: PhoneNumberResult = {
     phoneNumberRegistred: [],
     phoneNumberRejected: [],
     totalPhoneNumber: []
   };
-
   if (usersArray.length === 0 || selectedAccounts.length === 0) {
     io.emit("display-error", {
       code: 400,
@@ -588,10 +552,8 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
     });
     return result;
   }
-
   const processedPhoneNumbers = new Set<string>();
   let cancellationEmitted = false;
-
   try {
     // Load and validate accounts
     const validAccounts: TelegramAccount[] = [];
@@ -605,13 +567,12 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
         cancellationEmitted = true;
         break;
       }
-      
+     
       const account = await this.getAccountById(accountId);
       if (account && account.mtproto && account.connected) {
         validAccounts.push(account);
       }
     }
-
     // Handle cancellation during account validation
     if (abortController.signal.aborted && !cancellationEmitted) {
       io.emit("process-cancelled", {
@@ -621,7 +582,6 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
       cancellationEmitted = true;
     }
     if (cancellationEmitted) return result;
-
     if (validAccounts.length === 0) {
       io.emit("display-error", {
         code: 400,
@@ -630,11 +590,9 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
       });
       return result;
     }
-
     const startTime = Date.now();
     const batchSize = config.batchSize || 25;
     const totalBatches = Math.ceil(usersArray.length / batchSize);
-
     io.emit("progress", {
       progress: 0,
       batchesCompleted: 0,
@@ -642,9 +600,8 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
       registered: 0,
       rejected: 0,
     });
-
     this.emitAccountsStatus(validAccounts, io);
-    
+   
     // Process batches
     for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
       // PRIMARY CANCELLATION CHECKPOINT - Before each batch
@@ -657,17 +614,17 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
         break;
       }
       if (cancellationEmitted) break;
-      
+     
       // Find available account
       let account = this.findAvailableAccount(validAccounts);
-      
+     
       // Handle flood wait
       if (!account) {
         this.emitAccountsStatus(validAccounts, io);
-        
+       
         let minWaitTime = Infinity;
         let accountWithMinWait ;
-        
+       
         for (const acc of validAccounts) {
           const waitTime = this.getFloodWaitTimeRemaining(acc.id);
           if (waitTime < minWaitTime) {
@@ -675,7 +632,7 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
             accountWithMinWait = acc;
           }
         }
-        
+       
         if (accountWithMinWait) {
           io.emit("verification-paused", {
             message: `All accounts are rate limited. Waiting for ${this.formatETA(minWaitTime)} before continuing...`,
@@ -686,10 +643,10 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
               availableAt: new Date(Date.now() + minWaitTime * 1000).toISOString()
             }
           });
-          
+         
           // Wait with cancellation check
           await new Promise(resolve => setTimeout(resolve, minWaitTime * 1000 + 1000));
-          
+         
           // Check cancellation after waiting
           if (abortController.signal.aborted && !cancellationEmitted) {
             io.emit("process-cancelled", {
@@ -700,24 +657,27 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
             break;
           }
           if (cancellationEmitted) break;
-          
+         
           account = accountWithMinWait;
           this.emitAccountsStatus(validAccounts, io);
         } else {
           throw new Error("No accounts available");
         }
       }
+     
+      // Process phone numbers in batch
+      const currentBatch = usersArray.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize).filter(phone => !processedPhoneNumbers.has(phone));
+      if (currentBatch.length === 0) continue;
       
-      // Process phone numbers
-      const currentBatch = usersArray.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
       const batchResult: PhoneNumberResult = {
         phoneNumberRegistred: [],
         phoneNumberRejected: [],
         totalPhoneNumber: []
       };
-
-      for (let i = 0; i < currentBatch.length; i++) {
-        // SECONDARY CANCELLATION CHECKPOINT - Before each number
+      
+      let batchProcessed = false;
+      while (!batchProcessed) {
+        // SECONDARY CANCELLATION CHECKPOINT
         if (abortController.signal.aborted && !cancellationEmitted) {
           io.emit("process-cancelled", {
             reason: "Process cancelled by user",
@@ -728,15 +688,39 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
         }
         if (cancellationEmitted) break;
         
-        const phoneNumber = currentBatch[i];
-        if (processedPhoneNumbers.has(phoneNumber)) continue;
-
-        try {
-          // Apply delay between numbers
-          if (i > 0 && config.delayBetweenNumbers > 0) {
-            await new Promise(resolve => setTimeout(resolve, config.delayBetweenNumbers));
+        // Account availability check
+        if (account && this.isAccountInFloodWait(account.id)) {
+          this.emitAccountsStatus(validAccounts, io);
+          const newAccount = this.findAvailableAccount(validAccounts);
+          
+          if (newAccount) {
+            io.emit("account-switched", {
+              oldAccountId: account?.id || '',
+              oldAccountPhone: account?.phoneNumber,
+              newAccountId: newAccount.id,
+              newAccountPhone: newAccount.phoneNumber,
+              reason: "flood_wait",
+              waitTime: account?.id ? this.getFloodWaitTimeRemaining(account.id) : 0,
+              formattedWaitTime: account ? this.formatETA(this.getFloodWaitTimeRemaining(account.id)) : '0s',
+              timestamp: new Date().toISOString()
+            });
+            account = newAccount;
+          } else {
+            const waitTime = this.getFloodWaitTimeRemaining(account.id);
+            io.emit("verification-paused", {
+              message: `All accounts are rate limited. Waiting for ${this.formatETA(waitTime)} before continuing...`,
+              waitTime,
+              nextAvailableAccount: {
+                id: account.id,
+                phoneNumber: account.phoneNumber,
+                availableAt: new Date(Date.now() + waitTime * 1000).toISOString()
+              },
+              timestamp: new Date().toISOString()
+            });
             
-            // Check cancellation after delay
+            await new Promise(resolve => setTimeout(resolve, waitTime * 1000 + 1000));
+            
+            // Check cancellation after flood wait
             if (abortController.signal.aborted && !cancellationEmitted) {
               io.emit("process-cancelled", {
                 reason: "Process cancelled by user",
@@ -746,183 +730,119 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
               break;
             }
             if (cancellationEmitted) break;
-          }
-
-          // Account availability check (existing logic)
-          if (account && this.isAccountInFloodWait(account.id)) {
-            this.emitAccountsStatus(validAccounts, io);
-            const newAccount = this.findAvailableAccount(validAccounts);
             
-            if (newAccount) {
-              io.emit("account-switched", {
-                oldAccountId: account?.id || '',
-                oldAccountPhone: account?.phoneNumber,
-                newAccountId: newAccount.id,
-                newAccountPhone: newAccount.phoneNumber,
-                reason: "flood_wait",
-                waitTime: account?.id ? this.getFloodWaitTimeRemaining(account.id) : 0,
-                formattedWaitTime: account ? this.formatETA(this.getFloodWaitTimeRemaining(account.id)) : '0s',
-                timestamp: new Date().toISOString()
-              });
-              account = newAccount;
-            } else {
-              const waitTime = this.getFloodWaitTimeRemaining(account.id);
-              io.emit("verification-paused", {
-                message: `All accounts are rate limited. Waiting for ${this.formatETA(waitTime)} before continuing...`,
-                waitTime,
-                nextAvailableAccount: {
-                  id: account.id,
-                  phoneNumber: account.phoneNumber,
-                  availableAt: new Date(Date.now() + waitTime * 1000).toISOString()
-                },
-                timestamp: new Date().toISOString()
-              });
-              
-              await new Promise(resolve => setTimeout(resolve, waitTime * 1000 + 1000));
-              
-              // Check cancellation after flood wait
-              if (abortController.signal.aborted && !cancellationEmitted) {
-                io.emit("process-cancelled", {
-                  reason: "Process cancelled by user",
-                  partialResults: result
-                });
-                cancellationEmitted = true;
-                break;
-              }
-              if (cancellationEmitted) break;
-              
-              this.emitAccountsStatus(validAccounts, io);
-            }
+            this.emitAccountsStatus(validAccounts, io);
           }
-
-          // Existing phone number processing logic
-          if (!account || !account.mtproto) {
-            throw new Error('Account or MTProto instance not available');
-          }
-          const mtproto = account.mtproto;
-          const cleanPhone = phoneNumber.replace(/\D/g, '');
-          batchResult.totalPhoneNumber.push(phoneNumber);
-          
-          const clientId = Date.now();
-          const importResult = await this.callWithDcMigration(mtproto, 'contacts.importContacts', {
-            contacts: [{
+        }
+        
+        if (!account || !account.mtproto) {
+          throw new Error('Account or MTProto instance not available');
+        }
+        
+        const mtproto = account.mtproto;
+        
+        try {
+          const clientIdToPhone = new Map<number, string>();
+          const contacts = currentBatch.map((phoneNumber, idx) => {
+            const cleanPhone = phoneNumber.replace(/\D/g, '');
+            const clientId = Date.now() + idx;
+            clientIdToPhone.set(clientId, phoneNumber);
+            return {
               _: 'inputPhoneContact',
               client_id: clientId,
               phone: cleanPhone,
               first_name: 'Check',
               last_name: 'User'
-            }]
+            };
+          });
+          
+          const importResult = await this.callWithDcMigration(mtproto, 'contacts.importContacts', {
+            contacts
           }, 0, account.id, io);
           
-          processedPhoneNumbers.add(phoneNumber);
+          const processedInBatch: string[] = [];
           
-          // Log the raw import result for debugging
-          console.log(`Raw import result for ${phoneNumber}:`, JSON.stringify(importResult, null, 2));
-
-          // Determine registration status
-          let isRegistered = false;
-          
-          if (importResult.users && importResult.users.length > 0 && 
-              importResult.imported && importResult.imported.length > 0) {
-              
-              // Get the imported contact
-              const importedContact = importResult.imported[0];
-              
-              // Check if the imported contact has a valid user_id
-              if (importedContact && importedContact.user_id) {
-                  // Find the corresponding user in the users array
-                  const matchingUser = importResult.users.find(user => user.id === importedContact.user_id);
-                  
-                  // If we found a matching user, the number is registered
-                  isRegistered = !!matchingUser;
-              }
-          }
-
-          // Log the import result for debugging
-          console.log(`Import result for ${phoneNumber}:`, JSON.stringify({
-            imported: importResult.imported?.length || 0,
-            users: importResult.users?.length || 0,
-            retryContacts: importResult.retry_contacts?.length || 0
-          }));
-          
-          if (isRegistered) {
-            console.log(`Phone number ${phoneNumber} is registered on Telegram`);
-            batchResult.phoneNumberRegistred.push(phoneNumber);
-            
-            // Emit real-time update for registered number
-            io.emit("number-verified", {
-              phoneNumber,
-              status: "registered",
-              timestamp: new Date().toISOString(),
-              accountId: account.id
-            });
-          } else {
-            batchResult.phoneNumberRejected.push(phoneNumber);
-            
-            // Emit real-time update for rejected number
-            io.emit("number-verified", {
-              phoneNumber,
-              status: "not_registered",
-              timestamp: new Date().toISOString(),
-              accountId: account.id
-            });
-          }
-
-          // Cleanup: Delete imported contact if it was added
-          try {
-            if (isRegistered) {
-              // Find the user object for the imported contact
-              const importedContact = importResult.imported[0];
-              const user = importResult.users.find(u => 
-                u && u.id === importedContact.user_id && u.access_hash
-              );
-
+          for (const imp of importResult.imported) {
+            const phoneNumber = clientIdToPhone.get(imp.client_id);
+            if (phoneNumber) {
+              const user = importResult.users.find((u: any) => u.id === imp.user_id);
               if (user) {
-                await this.callWithDcMigration(mtproto, 'contacts.deleteContacts', {
-                  id: [{
-                    _: 'inputUser',
-                    user_id: user.id,
-                    access_hash: user.access_hash
-                  }]
-                }, 0, account.id, io);
+                batchResult.phoneNumberRegistred.push(phoneNumber);
+                io.emit("number-verified", {
+                  phoneNumber,
+                  status: "registered",
+                  timestamp: new Date().toISOString(),
+                  accountId: account.id
+                });
+                processedInBatch.push(phoneNumber);
+                processedPhoneNumbers.add(phoneNumber);
               }
             }
-          } catch (cleanupError) {
-            console.warn(`Cleanup failed for ${phoneNumber}:`, cleanupError);
-          }
-        } catch (error:any) {
-          // Check if this is a FLOOD_WAIT error
-          if (error.message && error.message.includes('FLOOD_WAIT_ACCOUNT_ROTATION')) {
-            throw new Error(`Account ${account?.id} is in flood wait. Will retry ${phoneNumber} with another account.`)
-            // Don't mark this phone number as processed so it will be retried
-            i--; // Retry this index
-            continue;
           }
           
-          console.error(`Error processing ${phoneNumber}:`, error);
-          // Log detailed error information
+          for (const phoneNumber of currentBatch) {
+            if (!processedInBatch.includes(phoneNumber)) {
+              batchResult.phoneNumberRejected.push(phoneNumber);
+              io.emit("number-verified", {
+                phoneNumber,
+                status: "not_registered",
+                timestamp: new Date().toISOString(),
+                accountId: account.id
+              });
+              processedPhoneNumbers.add(phoneNumber);
+            }
+          }
+          
+          batchResult.totalPhoneNumber.push(...currentBatch);
+          
+          // Cleanup
+          const toDelete = importResult.users
+            .filter((u: any) => u.access_hash)
+            .map((u: any) => ({
+              _: 'inputUser',
+              user_id: u.id,
+              access_hash: u.access_hash
+            }));
+          
+          if (toDelete.length > 0) {
+            await this.callWithDcMigration(mtproto, 'contacts.deleteContacts', {
+              id: toDelete
+            }, 0, account.id, io);
+          }
+          
+          batchProcessed = true;
+          
+        } catch (error: any) {
           const errorMessage = error instanceof Error ? error.message : String(error);
-          io.emit("verification-error", {
-            phoneNumber,
-            error: errorMessage,
-            timestamp: new Date().toISOString(),
-            accountId: account?.id
-          });
-          // Mark this phone number as processed to avoid infinite retries
-          processedPhoneNumbers.add(phoneNumber);
-          // Any error means the number is rejected
-          batchResult.phoneNumberRejected.push(phoneNumber);
+          
+          if (errorMessage.includes('FLOOD_WAIT_ACCOUNT_ROTATION')) {
+            // Continue to switch account
+            continue;
+          } else {
+            console.error(`Error processing batch ${batchIndex}:`, error);
+            io.emit("verification-error", {
+              batchIndex,
+              error: errorMessage,
+              timestamp: new Date().toISOString(),
+              accountId: account?.id
+            });
+            // Mark all as rejected on error
+            batchResult.phoneNumberRejected.push(...currentBatch);
+            batchResult.totalPhoneNumber.push(...currentBatch);
+            currentBatch.forEach(phone => processedPhoneNumbers.add(phone));
+            batchProcessed = true;
+          }
         }
       }
-
-      // Break if cancellation occurred in inner loop
+      
+      // Break if cancellation occurred
       if (cancellationEmitted) break;
-
+      
       // Aggregate batch results
       result.phoneNumberRegistred.push(...batchResult.phoneNumberRegistred);
       result.phoneNumberRejected.push(...batchResult.phoneNumberRejected);
       result.totalPhoneNumber.push(...batchResult.totalPhoneNumber);
-
+      
       const progress = Math.round(((batchIndex + 1) / totalBatches) * 100);
       const now = Date.now();
       const elapsedMs = now - startTime;
@@ -930,7 +850,7 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
       const avgTimePerBatch = elapsedMs / (batchIndex + 1);
       const etaMs = avgTimePerBatch * batchesRemaining;
       const etaSeconds = Math.round(etaMs / 1000);
-
+      
       io.emit("progress", {
         progress,
         batchesCompleted: batchIndex + 1,
@@ -941,14 +861,14 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
         etaSeconds,
         currentAccount: account?.id
       });
-
+      
       io.emit("data-updated", {
         phoneNumberRegistred: result.phoneNumberRegistred,
         phoneNumberRejected: result.phoneNumberRejected,
         totalPhoneNumber: result.totalPhoneNumber,
         progress
       });
-
+      
       // TERTIARY CANCELLATION CHECKPOINT - Before batch delay
       if (abortController.signal.aborted && !cancellationEmitted) {
         io.emit("process-cancelled", {
@@ -959,7 +879,7 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
         break;
       }
       if (cancellationEmitted) break;
-
+      
       if (batchIndex < totalBatches - 1 && config.delayBetweenBatches > 0) {
         await new Promise(resolve => setTimeout(resolve, config.delayBetweenBatches));
         
@@ -979,7 +899,6 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
       if (batchIndex < totalBatches - 1) {
         const nextAccount = this.findAvailableAccount(validAccounts);
         if (!nextAccount) {
-          // If no accounts are available, find the one with the shortest wait time
           let minWaitTime = Infinity;
           let accountWithMinWait ;
           
@@ -992,7 +911,6 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
           }
           
           if (accountWithMinWait && minWaitTime > 0) {
-            // Notify that we're waiting for an account to become available
             io.emit("verification-paused", {
               message: `All accounts are rate limited. Waiting for ${this.formatETA(minWaitTime)} before continuing with the next batch...`,
               waitTime: minWaitTime,
@@ -1000,7 +918,6 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
               totalBatches
             });
             
-            // Wait for the account with the shortest wait time
             await new Promise(resolve => setTimeout(resolve, minWaitTime * 1000 + 1000));
             
             // Check cancellation after waiting
@@ -1017,7 +934,7 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
         }
       }
     }
-
+    
     // Only run completion logic if not cancelled
     if (!cancellationEmitted) {
       // Final validation of results
@@ -1028,29 +945,24 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
         processed: processedPhoneNumbers.size
       });
       
-      // Check if all phone numbers were processed
       const unprocessedNumbers = usersArray.filter(phone => !processedPhoneNumbers.has(phone));
       if (unprocessedNumbers.length > 0) {
         console.warn(`Warning: ${unprocessedNumbers.length} phone numbers were not processed:`);
         console.warn(unprocessedNumbers.slice(0, 10).join(', ') + (unprocessedNumbers.length > 10 ? '...' : ''));
       }
       
-      // Ensure no duplicates in the result arrays
       result.phoneNumberRegistred = [...new Set(result.phoneNumberRegistred)];
       result.phoneNumberRejected = [...new Set(result.phoneNumberRejected)];
       result.totalPhoneNumber = [...new Set(result.totalPhoneNumber)];
       
-      // Sanity check: ensure the sum of registered and rejected equals total
       const totalProcessed = result.phoneNumberRegistred.length + result.phoneNumberRejected.length;
       if (totalProcessed !== result.totalPhoneNumber.length) {
         console.warn(`Result count mismatch: registered (${result.phoneNumberRegistred.length}) + rejected (${result.phoneNumberRejected.length}) != total (${result.totalPhoneNumber.length})`);
       }
       
-      // Check for accounts in flood wait
       const floodedAccounts = validAccounts.filter(acc => this.isAccountInFloodWait(acc.id));
       if (floodedAccounts.length > 0) {
         console.warn(`Warning: ${floodedAccounts.length} accounts are still in flood wait:`);
- 
         for (const acc of floodedAccounts) {
           const waitTime = this.getFloodWaitTimeRemaining(acc.id);
           console.warn(`- Account ${acc.id} (${acc.phoneNumber}): ${waitTime} seconds remaining (${this.formatETA(waitTime)})`);
@@ -1067,7 +979,6 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
         etaSeconds: 0
       });
       
-      // Send final results to client
       io.emit("verification-complete", {
         registered: result.phoneNumberRegistred.length,
         rejected: result.phoneNumberRejected.length,
@@ -1082,41 +993,23 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
         })),
         timestamp: new Date().toISOString()
       });
-
-      // Send final account status update
+      
       this.emitAccountsStatus(validAccounts, io);
       
-      // Schedule a follow-up account status update after 1 minute
       setTimeout(() => {
         this.emitAccountsStatus(validAccounts, io);
       }, 60000);
     }
-
     return result;
   } catch (error:any) {
-    // Provide detailed error information
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('SaveUsers operation failed:', error);
     
-    // Check if any phone numbers were processed successfully
     const processedCount = processedPhoneNumbers.size;
     const totalCount = usersArray.length;
     const successRate = totalCount > 0 ? Math.round((processedCount / totalCount) * 100) : 0;
     
-    // Check for accounts in flood wait
-    let floodedAccounts: TelegramAccount[] = [];
-    try {
-      const floodedAccounts = Array.from(this.accounts.values()).filter(acc => this.isAccountInFloodWait(acc.id));
-      if (floodedAccounts.length > 0) {
-        console.warn(`${floodedAccounts.length} accounts are in flood wait:`);
-        for (const acc of floodedAccounts) {
-          const waitTime = this.getFloodWaitTimeRemaining(acc.id);
-          console.warn(`- Account ${acc.id} (${acc.phoneNumber}): ${waitTime} seconds remaining (${this.formatETA(waitTime)})`); 
-        }
-      }
-    } catch (e) {
-      console.error('Error getting flooded accounts:', e);
-    }
+    let floodedAccounts = Array.from(this.accounts.values()).filter(acc => this.isAccountInFloodWait(acc.id));
     
     io.emit("operation-failed", {
       operation: "saveUsers",
@@ -1127,289 +1020,337 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
         total: totalCount,
         successRate: successRate
       },
-      floodedAccounts: floodedAccounts ? floodedAccounts.map(acc => ({
+      floodedAccounts: floodedAccounts.map(acc => ({
         id: acc.id,
         phoneNumber: acc.phoneNumber,
         waitTimeSeconds: this.getFloodWaitTimeRemaining(acc.id),
         formattedWaitTime: this.formatETA(this.getFloodWaitTimeRemaining(acc.id))
-      })) : []
+      }))
     });
     
-    // Include partial results in the return value
     result.phoneNumberRegistred = [...new Set(result.phoneNumberRegistred)];
     result.phoneNumberRejected = [...new Set(result.phoneNumberRejected)];
     result.totalPhoneNumber = [...new Set(result.totalPhoneNumber)];
     
-    // Send account status update even in error case
-    if (result && result.totalPhoneNumber.length > 0) {
-      try {
-// Skip emitting account status if validAccounts is not defined
-if (typeof validAccounts !== 'undefined') {
-// Skip emitting account status if validAccounts is not defined
-if (typeof validAccounts !== 'undefined') {
-  this.emitAccountsStatus(validAccounts, io);
-}
-}
-        
-        // Schedule a follow-up account status update after 1 minute
-        setTimeout(() => {
-          if (validAccounts) {
-            this.emitAccountsStatus(validAccounts, io);
-          }
-        }, 60000);
-      } catch (e) {
-        console.error('Error emitting account status:', e);
-      }
+    if (validAccounts && result.totalPhoneNumber.length > 0) {
+      this.emitAccountsStatus(validAccounts, io);
+      setTimeout(() => {
+        this.emitAccountsStatus(validAccounts, io);
+      }, 60000);
     }
     
     return result;
   } finally {
-    // Cleanup operation - runs whether successful or failed or cancelled
     this.activeOperations.delete(operationId);
     this.currentOperationId = null;
   }
 }
-
   static async importMembersToGroup(req: Request, io: Server): Promise<any> {
     const { accountId, groupId, members, config } = req.body;
-    const delayBetweenMembers = config?.delayBetweenMembers || 2000;
-
+    const delayBetweenBatches = config?.delayBetweenBatches || 2000;
+    const batchSize = config?.batchSize || 10; // Optimized batch size for channels
+    
     if (!accountId || !groupId || !members || !Array.isArray(members)) {
-       throw new Error("Missing required parameters: accountId, groupId, members (array)");
+      throw new Error("Missing required parameters: accountId, groupId, members (array)");
     }
-
     const account = await this.getAccountById(accountId);
     if (!account || !account.mtproto || !account.connected) {
       throw new Error("Account not connected");
     }
-
     const mtproto = account.mtproto;
-
-    // Get Group Info to determine type and access_hash
+    // Get Group Info
     const groups = await this.getGroups({ body: { accountId } } as Request);
     const group = groups.find(g => g.id === groupId);
     
     if (!group) throw new Error("Group not found");
     
-    // Cancel import logic
     const operationId = Math.random().toString(36).substring(2, 15);
     this.currentOperationId = operationId;
     const abortController = new AbortController();
     this.activeOperations.set(operationId, abortController);
     let cancellationEmitted = false;
-
-    io.emit("import-progress", { 
+    
+    io.emit("import-progress", {
         accountId,
         groupId,
-        total: members.length, 
-        processed: 0, 
-        added: 0, 
+        total: members.length,
+        processed: 0,
+        added: 0,
         failed: 0,
         status: 'starting',
-        operationId // Send operationId to client
+        operationId
     });
-
+    
     const result: { added: string[], failed: any[] } = { added: [], failed: [] };
-
-    for (let i = 0; i < members.length; i++) {
-        // Check for cancellation
-        if (abortController.signal.aborted && !cancellationEmitted) {
+    let processed = 0;
+    
+    try {
+      if (group.type === 'channel') {
+        // Batch import for channels
+        let batchUsers: any[] = [];
+        let batchTargets: string[] = [];
+        
+        for (const member of members) {
+          if (abortController.signal.aborted && !cancellationEmitted) {
             io.emit("import-progress", {
                 accountId,
                 groupId,
                 status: 'cancelled',
                 message: "Import cancelled by user",
-                processed: i,
+                processed,
                 total: members.length
             });
             cancellationEmitted = true;
             break;
-        }
-        if (cancellationEmitted) break;
-
-        const member = members[i];
-        try {
-            let inputUser;
-            
-            // Clean member string and detect type
-            // Handle CSV format (e.g. "Target,Username,Phone...") - pick first non-empty suitable value
+          }
+          if (cancellationEmitted) break;
+          
+          try {
             let target = member.trim();
             if (target.includes(',')) {
-                const parts = target.split(',').map(p => p.trim());
-                // Try to find a valid username or phone in the parts
-                // Prioritize the first column as requested by "Target" format, but be flexible
-                target = parts.find(p => p.startsWith('@') || p.startsWith('+') || /^\d+$/.test(p)) || parts[0];
+              const parts = target.split(',').map(p => p.trim());
+              target = parts.find(p => p.startsWith('@') || p.startsWith('+') || /^\d+$/.test(p)) || parts[0];
             }
-
-            // Remove quotes if present
             target = target.replace(/^"|"$/g, '');
-
-            // Check if phone number or username
+            
             const isPhone = target.startsWith('+') || /^\d+$/.test(target);
+            let user;
             
             if (isPhone) {
-                 const cleanPhone = target.replace(/\D/g, '');
-                 const importResult = await this.callWithDcMigration(mtproto, 'contacts.importContacts', {
-                    contacts: [{
-                      _: 'inputPhoneContact',
-                      client_id: Date.now(),
-                      phone: cleanPhone,
-                      first_name: target, 
-                      last_name: ''
-                    }]
-                 }, 0, account.id, io);
-                 
-                 if (importResult.users && importResult.users.length > 0) {
-                     const user = importResult.users[0];
-                     inputUser = {
-                         _: 'inputUser',
-                         user_id: user.id,
-                         access_hash: user.access_hash
-                     };
-                 } else {
-                    // Try to resolve as username if phone import fails (edge case)
-                    throw new Error("User not registered or could not be imported via phone");
-                 }
+              const cleanPhone = target.replace(/\D/g, '');
+              const resolveResult = await this.callWithDcMigration(mtproto, 'contacts.resolvePhone', {
+                phone: cleanPhone
+              }, 0, account.id, io);
+              
+              if (!resolveResult.users || resolveResult.users.length === 0) {
+                throw new Error("User not found");
+              }
+              user = resolveResult.users[0];
             } else {
-                // Username
-                let username = target;
-                if (username.startsWith('@')) username = username.substring(1);
-                
-                // If it looks like a user ID (pure digits but treated as username above?), we can't easily import by ID alone without access_hash
-                // But if the user provided an ID, we might try inputUser with access_hash 0 (rarely works)
-                // For now, assume username
-                
-                 const resolveResult = await this.callWithDcMigration(mtproto, 'contacts.resolveUsername', {
-                    username: username
-                 }, 0, account.id, io);
-                 
-                 if (resolveResult.users && resolveResult.users.length > 0) {
-                     const user = resolveResult.users[0];
-                     inputUser = {
-                         _: 'inputUser',
-                         user_id: user.id,
-                         access_hash: user.access_hash
-                     };
-                 } else {
-                     throw new Error("Username not found");
-                 }
+              let username = target;
+              if (username.startsWith('@')) username = username.substring(1);
+              
+              const resolveResult = await this.callWithDcMigration(mtproto, 'contacts.resolveUsername', {
+                username
+              }, 0, account.id, io);
+              
+              if (!resolveResult.users || resolveResult.users.length === 0) {
+                throw new Error("User not found");
+              }
+              user = resolveResult.users[0];
             }
             
-            // Invite
-            if (group.type === 'channel') {
+            const inputUser = {
+              _: 'inputUser',
+              user_id: user.id,
+              access_hash: user.access_hash
+            };
+            
+            batchUsers.push(inputUser);
+            batchTargets.push(target);
+            
+            if (batchUsers.length === batchSize || processed + batchUsers.length === members.length) {
+              try {
                 await this.callWithDcMigration(mtproto, 'channels.inviteToChannel', {
-                    channel: {
-                        _: 'inputChannel',
-                        channel_id: group.id,
-                        access_hash: group.access_hash
-                    },
-                    users: [inputUser]
+                  channel: {
+                    _: 'inputChannel',
+                    channel_id: group.id,
+                    access_hash: group.access_hash
+                  },
+                  users: batchUsers
                 }, 0, account.id, io);
+                
+                result.added.push(...batchTargets);
+              } catch (batchErr: any) {
+                // If batch fails, add all to failed
+                batchTargets.forEach(t => result.failed.push({ member: t, error: batchErr.message }));
+              }
+              
+              processed += batchUsers.length;
+              
+              io.emit("import-progress", {
+                accountId,
+                groupId,
+                total: members.length,
+                processed,
+                added: result.added.length,
+                failed: result.failed.length,
+                status: 'processing'
+              });
+              
+              batchUsers = [];
+              batchTargets = [];
+              
+              await new Promise(r => setTimeout(r, delayBetweenBatches));
+            }
+          } catch (err: any) {
+            result.failed.push({ member, error: err.message });
+            processed++;
+            
+            io.emit("import-progress", {
+              accountId,
+              groupId,
+              total: members.length,
+              processed,
+              added: result.added.length,
+              failed: result.failed.length,
+              status: 'processing'
+            });
+            
+            await new Promise(r => setTimeout(r, delayBetweenBatches));
+          }
+        }
+      } else {
+        // One by one for basic chats
+        for (const member of members) {
+          if (abortController.signal.aborted && !cancellationEmitted) {
+            io.emit("import-progress", {
+                accountId,
+                groupId,
+                status: 'cancelled',
+                message: "Import cancelled by user",
+                processed,
+                total: members.length
+            });
+            cancellationEmitted = true;
+            break;
+          }
+          if (cancellationEmitted) break;
+          
+          try {
+            let target = member.trim();
+            if (target.includes(',')) {
+              const parts = target.split(',').map(p => p.trim());
+              target = parts.find(p => p.startsWith('@') || p.startsWith('+') || /^\d+$/.test(p)) || parts[0];
+            }
+            target = target.replace(/^"|"$/g, '');
+            
+            const isPhone = target.startsWith('+') || /^\d+$/.test(target);
+            let user;
+            
+            if (isPhone) {
+              const cleanPhone = target.replace(/\D/g, '');
+              const resolveResult = await this.callWithDcMigration(mtproto, 'contacts.resolvePhone', {
+                phone: cleanPhone
+              }, 0, account.id, io);
+              
+              if (!resolveResult.users || resolveResult.users.length === 0) {
+                throw new Error("User not found");
+              }
+              user = resolveResult.users[0];
             } else {
-                // Basic Chat
-                await this.callWithDcMigration(mtproto, 'messages.addChatUser', {
-                    chat_id: group.id,
-                    user_id: inputUser,
-                    fwd_limit: 100 
-                }, 0, account.id, io);
+              let username = target;
+              if (username.startsWith('@')) username = username.substring(1);
+              
+              const resolveResult = await this.callWithDcMigration(mtproto, 'contacts.resolveUsername', {
+                username
+              }, 0, account.id, io);
+              
+              if (!resolveResult.users || resolveResult.users.length === 0) {
+                throw new Error("User not found");
+              }
+              user = resolveResult.users[0];
             }
             
-            // Success
-            result.added.push(target);
+            const inputUser = {
+              _: 'inputUser',
+              user_id: user.id,
+              access_hash: user.access_hash
+            };
             
-        } catch (err: any) {
-             const errorMessage = err.message || err.errorMessage || "Unknown error";
-             console.error(`Failed to add ${member}:`, errorMessage);
-             
-             if (errorMessage.includes('FLOOD_WAIT') || errorMessage.includes('PEER_FLOOD')) {
-                 const seconds = parseInt(errorMessage.match(/\d+/)?.[0] || "60");
-                 io.emit("import-progress", { 
-                    accountId,
-                    groupId,
-                    status: 'paused',
-                    message: `Flood wait: ${seconds}s`,
-                    processed: i, 
-                    total: members.length 
-                });
-                 
-                 // Wait with cancellation check
-                 const waitStart = Date.now();
-                 while (Date.now() - waitStart < seconds * 1000) {
-                     if (abortController.signal.aborted) break;
-                     await new Promise(r => setTimeout(r, 1000));
-                 }
-                 
-                 if (abortController.signal.aborted) {
-                     i--; // Retry this one? No, if cancelled, just break
-                     continue; // Loop will catch cancellation at top
-                 }
-
-                 i--; // Retry current member
-                 continue;
-             }
-             
-             result.failed.push({ member, error: errorMessage });
-        }
-        
-        io.emit("import-progress", { 
+            await this.callWithDcMigration(mtproto, 'messages.addChatUser', {
+              chat_id: group.id,
+              user_id: inputUser,
+              fwd_limit: 100
+            }, 0, account.id, io);
+            
+            result.added.push(target);
+          } catch (err: any) {
+            const errorMessage = err.message || "Unknown error";
+            result.failed.push({ member, error: errorMessage });
+            
+            if (errorMessage.includes('FLOOD_WAIT') || errorMessage.includes('PEER_FLOOD')) {
+              const seconds = parseInt(errorMessage.match(/\d+/)?.[0] || "60");
+              io.emit("import-progress", {
+                accountId,
+                groupId,
+                status: 'paused',
+                message: `Flood wait: ${seconds}s`,
+                processed,
+                total: members.length
+              });
+              
+              const waitStart = Date.now();
+              while (Date.now() - waitStart < seconds * 1000) {
+                if (abortController.signal.aborted) break;
+                await new Promise(r => setTimeout(r, 1000));
+              }
+              
+              if (abortController.signal.aborted) continue;
+            }
+          }
+          
+          processed++;
+          
+          io.emit("import-progress", {
             accountId,
             groupId,
-            total: members.length, 
-            processed: i + 1, 
-            added: result.added.length, 
+            total: members.length,
+            processed,
+            added: result.added.length,
             failed: result.failed.length,
             status: 'processing'
-        });
-        
-        // Delay with cancellation check
-        const delayStart = Date.now();
-        while (Date.now() - delayStart < delayBetweenMembers) {
-            if (abortController.signal.aborted) break;
-            await new Promise(r => setTimeout(r, 100));
+          });
+          
+          await new Promise(r => setTimeout(r, delayBetweenBatches));
         }
-    }
-    
-    // Cleanup
-    this.activeOperations.delete(operationId);
-    if (this.currentOperationId === operationId) {
+      }
+    } catch (err: any) {
+      io.emit("import-progress", {
+        accountId,
+        groupId,
+        status: 'error',
+        message: err.message,
+        processed,
+        total: members.length
+      });
+    } finally {
+      this.activeOperations.delete(operationId);
+      if (this.currentOperationId === operationId) {
         this.currentOperationId = null;
-    }
-    
-    if (!cancellationEmitted) {
-        io.emit("import-progress", { 
-            accountId,
-            groupId,
-            total: members.length, 
-            processed: members.length, 
-            added: result.added.length, 
-            failed: result.failed.length,
-            status: 'completed'
+      }
+      
+      if (!cancellationEmitted) {
+        io.emit("import-progress", {
+          accountId,
+          groupId,
+          total: members.length,
+          processed: members.length,
+          added: result.added.length,
+          failed: result.failed.length,
+          status: 'completed'
         });
+      }
     }
     
     return result;
   }
-
   static async getGroups(req: Request): Promise<GroupInfo[]> {
     const { accountId } = req.body;
     if (!accountId) throw new Error("Account ID required");
-
     const account = await this.getAccountById(accountId);
     if (!account || !account.mtproto || !account.connected) {
       throw new Error(`Account ${accountId} not available`);
     }
-
     try {
       const mtproto = account.mtproto;
       const groups: GroupInfo[] = [];
-
       const dialogs = await this.callWithDcMigration(mtproto, 'messages.getDialogs', {
         offset_date: 0,
         offset_id: 0,
         offset_peer: { _: 'inputPeerEmpty' },
         limit: 100
       });
-
       for (const chat of dialogs.chats) {
         if (chat._ === 'channel' || chat._ === 'chat') {
           groups.push({
@@ -1419,36 +1360,32 @@ if (typeof validAccounts !== 'undefined') {
             memberCount: chat.participants_count || 0,
             isAdmin: !!(chat.admin_rights || chat.creator),
             profilePicUrl: undefined,
-            access_hash: chat.access_hash || 0, // Store the access_hash for later use
+            access_hash: chat.access_hash || 0,
             type: chat._
           });
         }
       }
-
       return groups;
     } catch (error :any) {
       console.error(`Group fetch failed: ${error}`);
       throw error;
     }
   }
-
  static async exportGroupMembers(req: Request, res: Response, io: Server): Promise<void> {
     const { accountId, groupId, filterType = 'recent', maxMembers = 0, format = 'csv' } = req.body;
     const operationId = `export-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     let totalMembers = 0;
-    let lastEmitTime = 0; // For throttling events
-
+    let lastEmitTime = 0;
     // Validate required parameters
     if (!accountId) {
         res.status(400).json({ error: "Account ID is required", code: "MISSING_ACCOUNT_ID" });
         return;
     }
-    
+   
     if (!groupId) {
         res.status(400).json({ error: "Group ID is required", code: "MISSING_GROUP_ID" });
         return;
     }
-
     // Emit initial event
     if (io) {
         io.emit('telegram-export-progress', {
@@ -1462,10 +1399,9 @@ if (typeof validAccounts !== 'undefined') {
             message: `Export started for group ${groupId}`
         });
     }
-
     // Get account and validate it's available
     const account = await this.getAccountById(accountId).catch(error => {
-        
+       
         if (io) {
             io.emit('telegram-export-progress', {
                 operationId,
@@ -1477,14 +1413,14 @@ if (typeof validAccounts !== 'undefined') {
                 message: `Account retrieval failed`
             });
         }
-        
+       
         return null;
     });
-    
+   
     if (!account) {
         const errorMsg = `Account ${accountId} not found`;
         res.status(404).json({ error: errorMsg, code: "ACCOUNT_NOT_FOUND" });
-        
+       
         if (io) {
             io.emit('telegram-export-progress', {
                 operationId,
@@ -1498,11 +1434,11 @@ if (typeof validAccounts !== 'undefined') {
         }
         return;
     }
-    
+   
     if (!account.connected || !account.mtproto) {
         const errorMsg = `Account ${accountId} is not connected`;
         res.status(400).json({ error: errorMsg, code: "ACCOUNT_NOT_CONNECTED" });
-        
+       
         if (io) {
             io.emit('telegram-export-progress', {
                 operationId,
@@ -1516,7 +1452,7 @@ if (typeof validAccounts !== 'undefined') {
         }
         return;
     }
-    
+   
     // Set up response headers
     if (format === 'txt') {
         res.setHeader('Content-Type', 'text/plain');
@@ -1526,10 +1462,10 @@ if (typeof validAccounts !== 'undefined') {
         res.setHeader('Content-Disposition', `attachment; filename="group_${groupId}_members_${filterType}.csv"`);
     }
     res.write(`# Operation ID: ${operationId}\n`);
-    
+   
     // Handle client disconnect
     req.on('close', () => {
-        
+       
         if (io) {
             io.emit('telegram-export-progress', {
                 operationId,
@@ -1541,40 +1477,30 @@ if (typeof validAccounts !== 'undefined') {
             });
         }
     });
-
     try {
         const startTime = Date.now();
         const mtproto = account.mtproto;
-        
-        // First, get the group information to retrieve the access_hash
+       
+        // Get the group information
         const groups = await this.getGroups({ body: { accountId } } as Request);
         const group = groups.find(g => g.id === groupId);
-        
+       
         if (!group) {
             const errorMsg = `Group ${groupId} not found`;
             throw new Error(errorMsg);
         }
-        
+       
         const access_hash = group.access_hash || 0;
-        
-        // Determine the filter type based on the request
+       
+        // Determine the filter type
         let participantFilter: any = { _: 'channelParticipantsRecent' };
         let useMultipleFilters = false;
-        
-        // For large groups, we might need to try different filter strategies
-        if (group.memberCount) {
-            const memberCount = parseInt(group.memberCount.toString());
-            if (memberCount > 10000) {
-                useMultipleFilters = filterType === 'recent';
-            }
-            
-            // For extremely large groups, use even more aggressive strategies
-            if (memberCount > 25000) {
-                // Force multi-filter regardless of filter type for very large groups
-                useMultipleFilters = true;
-            }
+       
+        const memberCount = parseInt(group.memberCount.toString());
+        if (memberCount > 10000) {
+            useMultipleFilters = true;
         }
-        
+       
         switch (filterType) {
             case 'admins':
                 participantFilter = { _: 'channelParticipantsAdmins' };
@@ -1593,270 +1519,235 @@ if (typeof validAccounts !== 'undefined') {
                 participantFilter = { _: 'channelParticipantsRecent' };
                 break;
         }
-
         // Write CSV header
         res.write('Import Key,Phone,Username,User ID,First Name,Last Name\n');
         res.write('# Export started, retrieving members...\n');
-        
-        // Implement pagination to fetch all members
-        const batchSize = 200; // Maximum allowed by Telegram API
+       
+        const batchSize = 200;
         let hasMoreMembers = true;
         let emptyResultCount = 0;
-        const maxRetries = 5; // Increased for better resilience
-        
-        // Respect maxMembers parameter if set (0 means no limit)
+        const maxRetries = 5;
+       
         const memberLimit = maxMembers > 0 ? maxMembers : Number.MAX_SAFE_INTEGER;
-        
-        // Get total member count if available
+       
         const estimatedMemberCount = group.memberCount || 'unknown';
-        
-        // For tracking unique users to avoid duplicates when using multiple filters
+       
         const processedUserIds = new Set<string>();
-        
-        // Define filter strategies for large groups
+       
         let filterStrategies;
-        
+       
         if (useMultipleFilters) {
-            // For extremely large groups (>25000), use more aggressive strategies
-            if (group.memberCount && parseInt(group.memberCount.toString()) > 25000) {
+            if (memberCount > 25000) {
                 filterStrategies = [
                     { name: 'recent', filter: { _: 'channelParticipantsRecent' } },
-                    // Use multiple search queries with different starting letters to get better coverage
                     { name: 'search_a', filter: { _: 'channelParticipantsSearch', q: 'a' } },
                     { name: 'search_e', filter: { _: 'channelParticipantsSearch', q: 'e' } },
                     { name: 'search_i', filter: { _: 'channelParticipantsSearch', q: 'i' } },
                     { name: 'search_o', filter: { _: 'channelParticipantsSearch', q: 'o' } },
                     { name: 'search_u', filter: { _: 'channelParticipantsSearch', q: 'u' } },
+                    { name: 'search_s', filter: { _: 'channelParticipantsSearch', q: 's' } },
+                    { name: 'search_t', filter: { _: 'channelParticipantsSearch', q: 't' } },
+                    { name: 'search_r', filter: { _: 'channelParticipantsSearch', q: 'r' } },
+                    { name: 'search_n', filter: { _: 'channelParticipantsSearch', q: 'n' } },
                     { name: 'search_empty', filter: { _: 'channelParticipantsSearch', q: '' } },
                     { name: 'contacts', filter: { _: 'channelParticipantsContacts' } },
                     { name: 'admins', filter: { _: 'channelParticipantsAdmins' } }
                 ];
             } else {
-                // Standard multi-filter strategy for large groups
                 filterStrategies = [
                     { name: 'recent', filter: { _: 'channelParticipantsRecent' } },
-                    { name: 'search', filter: { _: 'channelParticipantsSearch', q: '' } }, // Empty search gets all members
+                    { name: 'search', filter: { _: 'channelParticipantsSearch', q: '' } },
                     { name: 'contacts', filter: { _: 'channelParticipantsContacts' } }
                 ];
             }
         } else {
-            // Single filter strategy
             filterStrategies = [{ name: filterType, filter: participantFilter }];
         }
-        
-        // Track consecutive empty batches across all filter strategies
+       
         let consecutiveEmptyBatches = 0;
         const maxConsecutiveEmptyBatches = 5;
-        
-        // Continue fetching until we've retrieved all members
-        for (const strategy of filterStrategies) {
-            if (io) {
-                io.emit('telegram-export-progress', {
-                    operationId,
-                    status: 'progress',
-                    accountId,
-                    groupId,
-                    message: `Using strategy: ${strategy.name}`,
-                    currentStrategy: strategy.name
-                });
-            }
-
-            if (!hasMoreMembers) break;
+       
+        if (group.type === 'chat') {
+            // Handle basic chats
+            const fullChatResult = await this.callWithDcMigration(mtproto, 'messages.getFullChat', {
+                chat_id: parseInt(groupId)
+            });
             
-            console.log(`Using filter strategy: ${strategy.name}`);
-            let strategyOffset = 0;
-            let strategyHasMore = true;
-            let strategyEmptyCount = 0;
+            const fullChat = fullChatResult.fullChat;
+            const users = fullChatResult.users;
             
-            while (strategyHasMore && hasMoreMembers) {
-                console.log(`Fetching members batch with ${strategy.name} filter at offset ${strategyOffset}`);
-                
-                let participants;
-                let retryCount = 0;
-                let success = false;
-                
-                // Implement retry logic
-                while (retryCount < maxRetries && !success) {
-                    try {
-                        participants = await this.callWithDcMigration(mtproto, 'channels.getParticipants', {
-                            channel: {
-                                _: 'inputChannel',
-                                channel_id: parseInt(groupId),
-                                access_hash: access_hash
-                            },
-                            filter: strategy.filter,
-                            offset: strategyOffset,
-                            limit: batchSize,
-                            hash: 0
-                        });
-                        success = true;
-                    } catch (error: any) {
-                        retryCount++;
-                        
-                        // If it's a FLOOD_WAIT error, wait the specified time before retrying
-                        if (error.message?.includes('FLOOD_WAIT')) {
-                            const waitSeconds = parseInt(error.message.match(/\d+/)?.[0] || '5', 10);
-                            const waitTime = Math.min(waitSeconds * 1000, 30000); // Cap at 30 seconds
-                            
-                            // Notify frontend about rate limit
-                            if (io) {
-                                io.emit('telegram-export-progress', {
-                                    operationId,
-                                    status: 'warning',
-                                    accountId,
-                                    groupId,
-                                    message: `Rate limited: Waiting ${waitSeconds} seconds`,
-                                    waitTime: waitSeconds
-                                });
-                            }
-                            
-                            await new Promise(resolve => setTimeout(resolve, waitTime));
-                        } else if (retryCount >= maxRetries) {
-                            // If we've exhausted retries, try next strategy
-                            console.log(`Failed with ${strategy.name} strategy after ${maxRetries} retries, trying next strategy`);
-                            strategyHasMore = false;
-                            break;
-                        } else {
-                            // For other errors, use exponential backoff
-                            const backoffTime = Math.min(1000 * Math.pow(2, retryCount), 10000);
-                            console.log(`Backing off for ${backoffTime/1000} seconds before retry`);
-                            await new Promise(resolve => setTimeout(resolve, backoffTime));
-                        }
-                    }
-                }
-                
-                // If we couldn't get participants after retries, move to next strategy
-                if (!success) {
-                    continue;
-                }
-            
-                if (!participants || !participants.users || participants.users.length === 0) {
-                    strategyEmptyCount++;
-                    consecutiveEmptyBatches++;
-                    console.log(`Received empty result with ${strategy.name} filter (${strategyEmptyCount}/3)`);
-                    
-                    // If we get 3 empty results in a row with this strategy, move to next strategy
-                    if (strategyEmptyCount >= 3) {
-                        strategyHasMore = false;
-                        console.log(`Received multiple empty results with ${strategy.name} filter, trying next strategy`);
-                        continue;
-                    }
-                    
-                    // If we get too many consecutive empty batches across all strategies, stop
-                    if (consecutiveEmptyBatches >= maxConsecutiveEmptyBatches) {
-                        hasMoreMembers = false;
-                        break;
-                    }
-                    
-                    // Skip this batch and continue to the next offset
-                    strategyOffset += batchSize;
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    continue;
-                }
-                
-                // Reset empty result counters if we got results
-                strategyEmptyCount = 0;
-                consecutiveEmptyBatches = 0;
-                
-                // Process this batch of members, filtering out duplicates
-                const newMembers: GroupMember[] = [];
-                
-                for (const user of participants.users) {
-                    // Skip bots
-                    if (user.bot) continue;
-                    
-                    // Skip already processed users (for multi-filter strategy)
-                    if (processedUserIds.has(user.id.toString())) continue;
-                    
-                    // Add to processed set
+            const newMembers: GroupMember[] = fullChat.participants.participants
+                .map((p: any) => {
+                    const user = users.find((u: any) => u.id === p.user_id);
+                    if (!user || user.bot) return null;
+                    if (processedUserIds.has(user.id.toString())) return null;
                     processedUserIds.add(user.id.toString());
-                    
-                    // Add to new members list
-                    newMembers.push({
+                    return {
                         id: user.id.toString(),
                         firstName: user.first_name,
                         lastName: user.last_name,
                         username: user.username,
                         phone: user.phone || '',
                         isBot: false
+                    };
+                })
+                .filter(Boolean);
+            
+            let batchContent = '';
+            if (format === 'csv') {
+                batchContent = newMembers.map(m => {
+                    const importKey = m.phone || (m.username ? `@${m.username}` : m.id);
+                    return `${importKey},${m.phone || ''},${m.username || ''},${m.id},"${m.firstName?.replace(/"/g, '""') || ''}","${m.lastName?.replace(/"/g, '""') || ''}"`;
+                }).join('\n');
+            } else {
+                batchContent = newMembers.map(m => m.phone || (m.username ? `@${m.username}` : m.id)).join('\n');
+            }
+            
+            res.write(batchContent + '\n');
+            totalMembers = newMembers.length;
+        } else {
+            // Handle channels
+            for (const strategy of filterStrategies) {
+                if (io) {
+                    io.emit('telegram-export-progress', {
+                        operationId,
+                        status: 'progress',
+                        accountId,
+                        groupId,
+                        message: `Using strategy: ${strategy.name}`,
+                        currentStrategy: strategy.name
                     });
                 }
+                if (!hasMoreMembers) break;
                 
-                // If we didn't find any new members in this batch, increment empty count
-                if (newMembers.length === 0) {
-                    strategyEmptyCount++;
-                    console.log(`No new members found with ${strategy.name} filter at offset ${strategyOffset}`);
-                    
-                    // If we get 3 empty results in a row with this strategy, move to next strategy
-                    if (strategyEmptyCount >= 3) {
-                        strategyHasMore = false;
-                        console.log(`No new members found with ${strategy.name} filter after multiple attempts, trying next strategy`);
-                        continue;
-                    }
-                }
+                let strategyOffset = 0;
+                let strategyHasMore = true;
+                let strategyEmptyCount = 0;
                 
-                // Write this batch to the response
-                if (newMembers.length > 0) {
-                    let batchContent = '';
-                    if (format === 'csv') {
-                        batchContent = newMembers.map(m => {
-                            // Prioritize phone, then username, then ID for import key
-                            const importKey = m.phone || (m.username ? `@${m.username}` : m.id);
-                            return `${importKey},${m.phone || ''},${m.username || ''},${m.id},"${m.firstName?.replace(/"/g, '""') || ''}","${m.lastName?.replace(/"/g, '""') || ''}"`;
-                        }).join('\n');
-                    } else {
-                        // TXT format - just the import key (username or phone)
-                        batchContent = newMembers.map(m => {
-                            return m.phone || (m.username ? `@${m.username}` : m.id);
-                        }).join('\n');
+                while (strategyHasMore && hasMoreMembers) {
+                    let participants;
+                    let retryCount = 0;
+                    let success = false;
+                    
+                    while (retryCount < maxRetries && !success) {
+                        try {
+                            participants = await this.callWithDcMigration(mtproto, 'channels.getParticipants', {
+                                channel: {
+                                    _: 'inputChannel',
+                                    channel_id: parseInt(groupId),
+                                    access_hash
+                                },
+                                filter: strategy.filter,
+                                offset: strategyOffset,
+                                limit: batchSize,
+                                hash: 0
+                            });
+                            success = true;
+                        } catch (error: any) {
+                            retryCount++;
+                            
+                            if (error.message?.includes('FLOOD_WAIT')) {
+                                const waitSeconds = parseInt(error.message.match(/\d+/)?.[0] || '5', 10);
+                                const waitTime = Math.min(waitSeconds * 1000, 30000);
+                                
+                                if (io) {
+                                    io.emit('telegram-export-progress', {
+                                        operationId,
+                                        status: 'warning',
+                                        accountId,
+                                        groupId,
+                                        message: `Rate limited: Waiting ${waitSeconds} seconds`,
+                                        waitTime: waitSeconds
+                                    });
+                                }
+                                
+                                await new Promise(resolve => setTimeout(resolve, waitTime));
+                            } else if (retryCount >= maxRetries) {
+                                strategyHasMore = false;
+                                break;
+                            } else {
+                                const backoffTime = Math.min(1000 * Math.pow(2, retryCount), 10000);
+                                await new Promise(resolve => setTimeout(resolve, backoffTime));
+                            }
+                        }
                     }
                     
-                    res.write(batchContent + '\n');
+                    if (!success) continue;
                     
-                    // Update counters
-                    totalMembers += newMembers.length;
-                    
-                    // Check if we've reached the member limit
-                    if (totalMembers >= memberLimit) {
-                        console.log(`Reached specified member limit (${memberLimit}), stopping fetch`);
-                        hasMoreMembers = false;
-                        break;
-                    }
-                    
-                    // Calculate and log progress percentage if we know the total count
-                    if (estimatedMemberCount !== 'unknown') {
-const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemberCount.toString())) * 100));
-                        console.log(`Progress: ${progress}% (${totalMembers}/${estimatedMemberCount})`);
+                    if (!participants || !participants.users || participants.users.length === 0) {
+                        strategyEmptyCount++;
+                        consecutiveEmptyBatches++;
                         
-                        // Send progress update to client every 1000 members or when progress changes significantly
-                        if (totalMembers % 1000 === 0 || totalMembers % 5000 === 0) {
-                            res.write(`# Progress: ${progress}% (${totalMembers}/${estimatedMemberCount})\n`);
+                        if (strategyEmptyCount >= 3) {
+                            strategyHasMore = false;
+                            continue;
                         }
                         
-                        // Check if we've reached the estimated total (with a small margin of error)
-                        if (totalMembers >= Number(estimatedMemberCount) * 0.98) {
+                        if (consecutiveEmptyBatches >= maxConsecutiveEmptyBatches) {
                             hasMoreMembers = false;
-                            console.log(`Reached estimated member count (${totalMembers}/${estimatedMemberCount}), stopping fetch`);
                             break;
                         }
-                    } else {
-                        // If we don't know the total, just report the current count
-                        if (totalMembers % 1000 === 0 || totalMembers % 5000 === 0) {
-                            res.write(`# Retrieved ${totalMembers} members so far...\n`);
+                        
+                        strategyOffset += batchSize;
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        continue;
+                    }
+                    
+                    strategyEmptyCount = 0;
+                    consecutiveEmptyBatches = 0;
+                    
+                    const newMembers: GroupMember[] = [];
+                    
+                    for (const user of participants.users) {
+                        if (user.bot) continue;
+                        if (processedUserIds.has(user.id.toString())) continue;
+                        processedUserIds.add(user.id.toString());
+                        newMembers.push({
+                            id: user.id.toString(),
+                            firstName: user.first_name,
+                            lastName: user.last_name,
+                            username: user.username,
+                            phone: user.phone || '',
+                            isBot: false
+                        });
+                    }
+                    
+                    if (newMembers.length === 0) {
+                        strategyEmptyCount++;
+                        if (strategyEmptyCount >= 3) {
+                            strategyHasMore = false;
+                            continue;
                         }
                     }
                     
-                    console.log(`Retrieved ${newMembers.length} new members with ${strategy.name} filter, total so far: ${totalMembers}`);
-                    
-                    // Emit progress event with throttling
-                    if (io) {
+                    if (newMembers.length > 0) {
+                        let batchContent = '';
+                        if (format === 'csv') {
+                            batchContent = newMembers.map(m => {
+                                const importKey = m.phone || (m.username ? `@${m.username}` : m.id);
+                                return `${importKey},${m.phone || ''},${m.username || ''},${m.id},"${m.firstName?.replace(/"/g, '""') || ''}","${m.lastName?.replace(/"/g, '""') || ''}"`;
+                            }).join('\n');
+                        } else {
+                            batchContent = newMembers.map(m => m.phone || (m.username ? `@${m.username}` : m.id)).join('\n');
+                        }
+                        
+                        res.write(batchContent + '\n');
+                        
+                        totalMembers += newMembers.length;
+                        
+                        if (totalMembers >= memberLimit) {
+                            hasMoreMembers = false;
+                            break;
+                        }
+                        
+                        if (estimatedMemberCount !== 'unknown' && totalMembers >= Number(estimatedMemberCount) * 0.98) {
+                            hasMoreMembers = false;
+                            break;
+                        }
+                        
                         const now = Date.now();
-                        if (now - lastEmitTime > 1000) { // Throttle to 1 event per second
-                            let progressValue = 0;
-                            if (estimatedMemberCount !== 'unknown') {
-                                progressValue = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemberCount.toString())) * 100));
-                            }
-                            
+                        if (now - lastEmitTime > 1000) {
+                            let progressValue = estimatedMemberCount !== 'unknown' ? Math.min(100, Math.round((totalMembers / Number(estimatedMemberCount)) * 100)) : 0;
                             io.emit('telegram-export-progress', {
                                 operationId,
                                 status: 'progress',
@@ -1872,45 +1763,30 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
                             lastEmitTime = now;
                         }
                     }
-                }
-                
-                // Increment offset for next batch
-                strategyOffset += batchSize;
-                
-                // Adaptive delay based on batch size to avoid rate limits
-                const delayMs = Math.min(500 + (participants.users.length / 10), 2000);
-                await new Promise(resolve => setTimeout(resolve, delayMs));
-                
-                // For very large groups, periodically take longer breaks to avoid rate limits
-                if (strategyOffset % (batchSize * 10) === 0) {
-                    console.log(`Taking a longer break after ${strategyOffset} offset to avoid rate limits`);
-                    await new Promise(resolve => setTimeout(resolve, 5000));
+                    
+                    strategyOffset += batchSize;
+                    
+                    const delayMs = Math.min(500 + (participants.users.length / 10), 2000);
+                    await new Promise(resolve => setTimeout(resolve, delayMs));
+                    
+                    if (strategyOffset % (batchSize * 10) === 0) {
+                        await new Promise(resolve => setTimeout(resolve, 5000));
+                    }
                 }
             }
         }
         
-        // Calculate coverage percentage
-        let coveragePercentage = 100;
-        if (estimatedMemberCount !== 'unknown') {
-            coveragePercentage = Math.round((totalMembers / parseInt(estimatedMemberCount.toString())) * 100);
-        }
+        let coveragePercentage = estimatedMemberCount !== 'unknown' ? Math.round((totalMembers / Number(estimatedMemberCount)) * 100) : 100;
         
-        // Send completion message with statistics
         res.write(`# Export completed: ${totalMembers} members exported from group ${groupId}\n`);
-        
-        // Include limit information if a limit was applied
         if (maxMembers > 0 && totalMembers >= maxMembers) {
             res.write(`# Note: Export stopped after reaching specified limit of ${maxMembers} members\n`);
         }
-        
         res.write(`# Coverage: ${coveragePercentage}% of estimated ${estimatedMemberCount} members\n`);
         res.write(`# Unique members found: ${processedUserIds.size}\n`);
         res.write(`# Duration: ${((Date.now() - startTime) / 1000).toFixed(2)} seconds\n`);
         res.end();
         
-        console.log(`Successfully exported ${totalMembers} members from group ${groupId}`);
-        
-        // Emit completion event
         if (io) {
             io.emit('telegram-export-progress', {
                 operationId,
@@ -1925,54 +1801,19 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
                 message: `Export completed: ${totalMembers} members`
             });
         }
-        
-        // Log detailed information for monitoring
-        console.log({
-            event: 'group_export_completed',
-            groupId,
-            accountId,
-            filterType,
-            totalMembers,
-            uniqueMembers: processedUserIds.size,
-            estimatedMemberCount,
-            coveragePercentage,
-            filtersUsed: filterStrategies.map(s => s.name).join(','),
-            memberLimitApplied: maxMembers > 0 ? maxMembers : 'none',
-            limitReached: maxMembers > 0 && totalMembers >= maxMembers,
-            duration: `${((Date.now() - startTime) / 1000).toFixed(2)} seconds`
-        });
-
     } catch (error: any) {
-        console.error(`Member export failed:`, error);
-        
-        // Provide more detailed error information
         let errorMessage = "Export failed";
         let statusCode = 500;
         
-        if (error && typeof error === 'object' && error.message?.includes('FLOOD_WAIT')) {
+        if (error.message?.includes('FLOOD_WAIT')) {
             const waitTime = error.message.match(/\d+/)?.[0] || 'unknown';
             errorMessage = `Rate limited by Telegram. Please try again after ${waitTime} seconds.`;
-            statusCode = 429; // Too Many Requests
-        } else if (error && typeof error === 'object') {
-            if (error.message?.includes('CHANNEL_INVALID')) {
-                errorMessage = "Invalid channel or you don't have access to this group.";
-                statusCode = 403; // Forbidden
-            } else if (error.message?.includes('AUTH_KEY_UNREGISTERED')) {
-                errorMessage = "Account session expired. Please reconnect the account.";
-                statusCode = 401; // Unauthorized
-            } else if (error.message?.includes('PEER_ID_INVALID')) {
-                errorMessage = "Invalid group ID or the account doesn't have access to this group.";
-                statusCode = 400; // Bad Request
-            } else if (error.message?.includes('CHAT_ADMIN_REQUIRED')) {
-                errorMessage = "Admin privileges required to access this group's members.";
-                statusCode = 403; // Forbidden
-            } else if (error.message?.includes('USER_PRIVACY_RESTRICTED')) {
-                errorMessage = "Some members couldn't be retrieved due to privacy settings.";
-                statusCode = 206; // Partial Content
-            }
-        }
+            statusCode = 429;
+        } else if (error.message?.includes('CHANNEL_INVALID')) {
+            errorMessage = "Invalid channel or you don't have access to this group.";
+            statusCode = 403;
+        } // add more
         
-        // Emit error event
         if (io) {
             io.emit('telegram-export-progress', {
                 operationId,
@@ -1986,54 +1827,37 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
             });
         }
         
-        // If we've already started sending CSV data, add error as a comment in the CSV
         if (res.headersSent) {
-            try {
-                // Add detailed error information as CSV comments
-                res.write(`\n# ERROR: ${errorMessage}\n`);
-                res.write(`# ERROR_CODE: ${statusCode}\n`);
-                res.write(`# MEMBERS_EXPORTED_BEFORE_ERROR: ${totalMembers}\n`);
-                res.write(`# PARTIAL_EXPORT: true\n`);
-                res.write(`# TROUBLESHOOTING: Please check your Telegram account permissions and try again later.\n`);
-                res.end();
-                return;
-            } catch (writeError) {
-                console.error('Failed to write error to response:', writeError);
-            }
+            res.write(`\n# ERROR: ${errorMessage}\n`);
+            res.write(`# ERROR_CODE: ${statusCode}\n`);
+            res.write(`# MEMBERS_EXPORTED_BEFORE_ERROR: ${totalMembers}\n`);
+            res.end();
+        } else {
+            res.status(statusCode).json({ error: errorMessage });
         }
-        
-        // If headers haven't been sent yet, return a proper JSON error response
-  
     }
 }
-
-
   static async processCSVFile(file: { buffer: Buffer }): Promise<string[]> {
     if (!file || !file.buffer) {
       throw new Error('Invalid file or missing buffer');
     }
-
     try {
       return new Promise((resolve, reject) => {
         const phoneNumbers: string[] = [];
         const invalidEntries: {row: number, value: string}[] = [];
         let rowCount = 0;
-        
+       
         const stream = streamifier.createReadStream(file.buffer);
-        
+       
         stream
           .pipe(csvParser())
           .on('data', (row: any) => {
             rowCount++;
-            // Get the first column value, regardless of column name
             const phoneNumber = Object.values(row)[0]?.toString().trim();
-            
-            // Basic phone number validation (can be enhanced)
+           
             if (phoneNumber) {
-              // Remove any non-digit characters for consistency
               const cleanedNumber = phoneNumber.replace(/\D/g, '');
-              
-              // Only add if it has a reasonable length for a phone number
+             
               if (cleanedNumber.length >= 7 && cleanedNumber.length <= 15) {
                 phoneNumbers.push(cleanedNumber);
               } else {
@@ -2058,35 +1882,76 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
       throw new Error(`Failed to process CSV file: ${error && typeof error === 'object' ? error.message : 'Unknown error'}`);
     }
   }
-
-
   static async sendBulkMessages(req: Request, io: Server): Promise<MessageResult> {
-
     return this.sendMessages(req, io);
   }
-
   static async sendBulkMessagesToGroups(req: Request, io: Server): Promise<any> {
       const { accountId, groups, message, config } = req.body;
       const file = (req as any).file;
-      
+     
       if (!accountId || !groups) {
           throw new Error("Account ID and groups are required");
       }
-      
+     
       const account = await this.getAccountById(accountId);
       if (!account || !account.mtproto || !account.connected) {
           throw new Error("Account not connected");
       }
-      
-      const mtproto = account.mtproto;
-      const result: { sent: string[], failed: { id: string, error: string }[] } = { sent: [], failed: [] };
-      // Handle both stringified JSON and direct array
+
       const groupList = typeof groups === 'string' ? JSON.parse(groups) : groups;
       
+      let parsedConfig = config;
+      if (typeof config === 'string') {
+          try {
+              parsedConfig = JSON.parse(config);
+          } catch (e) {
+              console.error("Failed to parse config:", e);
+              parsedConfig = {}; 
+          }
+      }
+
+      const campaignId = `campaign-${Date.now()}`;
+
+      // Handle Recurrence
+      if (parsedConfig.repeatEvery && Number(parsedConfig.repeatEvery) > 0) {
+          const repeatHours = Number(parsedConfig.repeatEvery);
+          const jobName = `recurring-${campaignId}`;
+          
+          // Schedule future runs (every X hours)
+          schedule.scheduleJob(jobName, `0 0 */${repeatHours} * * *`, async () => {
+              console.log(`Running recurring campaign ${jobName}`);
+              try {
+                  await TelegramController.executeGroupCampaign(account, groupList, message, file, parsedConfig, io, jobName);
+              } catch (error) {
+                  console.error(`Recurring campaign ${jobName} failed:`, error);
+              }
+          });
+          
+          io.emit("campaign-scheduled", {
+              jobName,
+              repeatEvery: repeatHours,
+              message: `Campaign scheduled to repeat every ${repeatHours} hours`
+          });
+      }
+
+      // Execute immediately
+      return await this.executeGroupCampaign(account, groupList, message, file, parsedConfig, io, campaignId);
+  }
+
+  private static async executeGroupCampaign(account: TelegramAccount, groupList: any[], message: string, file: any, config: any, io: Server, campaignId?: string): Promise<any> {
+      const mtproto = account.mtproto;
+      const result: { sent: string[], failed: { id: string, error: string }[] } = { sent: [], failed: [] };
+      
+      io.emit("campaign-start", { 
+          campaignId, 
+          total: groupList.length,
+          message: "Starting campaign..."
+      });
+     
       let inputMedia: any = null;
       if (file) {
           try {
-              const uploadedFile = await this.uploadFile(mtproto, file, accountId, io);
+              const uploadedFile = await this.uploadFile(mtproto, file, account.id, io);
               inputMedia = {
                   _: 'inputMediaUploadedPhoto',
                   file: uploadedFile,
@@ -2094,18 +1959,24 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
               };
           } catch (e: any) {
               console.error("Failed to upload file:", e);
-              throw new Error("Failed to upload photo: " + e.message);
+              io.emit("campaign-log", { type: "error", message: `Failed to upload file: ${e.message}`, campaignId });
+              // Continue without file? Or abort? 
+              // Probably abort if file was intended
+              if (!message) throw new Error("Failed to upload file and no text message provided");
           }
       }
-      
-      for (const group of groupList) {
+     
+      for (let i = 0; i < groupList.length; i++) {
+          const group = groupList[i];
+          // Check for cancellation (if we implement abort controller later)
+          
           try {
               const peer = {
                   _: 'inputPeerChannel',
                   channel_id: group.id,
                   access_hash: group.access_hash
               };
-              
+             
               if (inputMedia) {
                    await this.callWithDcMigration(mtproto, 'messages.sendMedia', {
                       peer: peer,
@@ -2120,46 +1991,99 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
                       random_id: Math.floor(Math.random() * 1000000000)
                   }, 0, account.id, io);
               }
-              
+             
               (result.sent as any[]).push(group.id);
+              
+              // Real-time update
+              io.emit("campaign-progress", {
+                  campaignId,
+                  total: groupList.length,
+                  processed: i + 1,
+                  sent: result.sent.length,
+                  failed: result.failed.length,
+                  lastAction: { type: 'success', groupName: group.name || group.title || group.id }
+              });
+              
           } catch (e: any) {
-              (result.failed as { id: any; error: string }[]).push({ id: group.id, error: e.message });
+              const errorMessage = e.message || "Unknown error";
+              (result.failed as { id: any; error: string }[]).push({ id: group.id, error: errorMessage });
+              
+              io.emit("campaign-progress", {
+                  campaignId,
+                  total: groupList.length,
+                  processed: i + 1,
+                  sent: result.sent.length,
+                  failed: result.failed.length,
+                  lastAction: { type: 'error', groupName: group.name || group.title || group.id, error: errorMessage }
+              });
+
+              if (errorMessage.includes('FLOOD_WAIT')) {
+                  const floodMatch = errorMessage.match(/FLOOD_WAIT_(\d+)/);
+                  if (floodMatch) {
+                      const seconds = parseInt(floodMatch[1], 10);
+                      const waitTime = (seconds + 5) * 1000;
+                      
+                      io.emit("campaign-log", { 
+                          type: "warning", 
+                          message: `Flood wait detected. Pausing for ${seconds + 5} seconds to prevent ban...`, 
+                          campaignId 
+                      });
+                      
+                      // Wait out the flood limit
+                      await new Promise(r => setTimeout(r, waitTime));
+                      
+                      // Retry this group
+                      i--; 
+                      continue;
+                  }
+                  io.emit("campaign-log", { type: "warning", message: `Rate limited on group ${group.name}: ${errorMessage}`, campaignId });
+              } else if (errorMessage.includes('PEER_FLOOD')) {
+                  const waitTime = 5 * 60 * 1000; // 5 minutes
+                  io.emit("campaign-log", { 
+                      type: "warning", 
+                      message: `Peer Flood (Spam Limit) detected. Pausing for 5 minutes to restore account health...`, 
+                      campaignId 
+                  });
+                  await new Promise(r => setTimeout(r, waitTime));
+                  i--; // Retry this group
+                  continue;
+              }
           }
-          
+         
           // Delay
-          const delay = config?.delayBetweenMessages || 2000;
-          await new Promise(r => setTimeout(r, delay));
+          const delay = config?.delayBetweenMessages !== undefined ? Number(config.delayBetweenMessages) : 2000;
+          const randomDelay = config?.randomDelay ? Math.floor(Math.random() * 1000) : 0;
+          await new Promise(r => setTimeout(r, delay + randomDelay));
       }
-      
+     
+      io.emit("campaign-complete", { result, campaignId });
       return result;
   }
-
   private static async uploadFile(mtproto: any, file: any, accountId: string, io: Server): Promise<any> {
     const CHUNK_SIZE = 512 * 1024; // 512KB
     const totalParts = Math.ceil(file.size / CHUNK_SIZE);
     const fileId = BigInt(Date.now()) + BigInt(Math.floor(Math.random() * 1000000));
-    
+   
     for (let i = 0; i < totalParts; i++) {
         const start = i * CHUNK_SIZE;
         const end = Math.min(start + CHUNK_SIZE, file.size);
         const part = file.buffer.slice(start, end);
-        
+       
         await this.callWithDcMigration(mtproto, 'upload.saveFilePart', {
             file_id: fileId.toString(),
             file_part: i,
             bytes: part
         }, 0, accountId, io);
     }
-    
+   
     return {
         _: 'inputFile',
         id: fileId.toString(),
         parts: totalParts,
         name: file.originalname,
-        md5_checksum: '' 
+        md5_checksum: ''
     };
   }
-
   static async sendMessages(req: Request, io: Server): Promise<MessageResult> {
     const { accountId, phoneNumbers, message, config } = req.body;
     const result: MessageResult = {
@@ -2167,7 +2091,6 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
       messagesFailed: [],
       totalMessages: []
     };
-
     if (!accountId || !phoneNumbers?.length || !message) {
       io.emit("display-error", {
         code: 400,
@@ -2176,7 +2099,6 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
       });
       return result;
     }
-
     const account = await this.getAccountById(accountId);
     if (!account || !account.mtproto || !account.connected) {
       io.emit("display-error", {
@@ -2186,7 +2108,6 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
       });
       return result;
     }
-
     try {
       const mtproto = account.mtproto;
       const batchSize = config?.batchSize || 25;
@@ -2194,7 +2115,6 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
       const delayBetweenMessages = config?.delayBetweenMessages || 1000;
       const delayBetweenBatches = config?.delayBetweenBatches || 5000;
       const scheduledTime = config?.scheduledTime ? new Date(config.scheduledTime) : null;
-
       if (scheduledTime && scheduledTime > new Date()) {
         const scheduledMessage: ScheduledMessage = {
           id: Date.now().toString(),
@@ -2205,9 +2125,8 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
           scheduledTime,
           status: 'scheduled'
         };
-
         this.scheduledMessages.push(scheduledMessage);
-        
+       
         schedule.scheduleJob(scheduledTime, async () => {
           const index = this.scheduledMessages.findIndex(msg => msg.id === scheduledMessage.id);
           if (index !== -1) {
@@ -2217,17 +2136,14 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
             this.scheduledMessages[index].result = sendResult;
           }
         });
-
         io.emit("message-scheduled", {
           id: scheduledMessage.id,
           scheduledTime,
           phoneNumbers: phoneNumbers.length,
           message: message.substring(0, 50) + (message.length > 50 ? '...' : '')
         });
-
         return result;
       }
-
       io.emit("progress", {
         progress: 0,
         batchesCompleted: 0,
@@ -2235,25 +2151,20 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
         sent: 0,
         failed: 0,
       });
-
       for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
         const currentBatch = phoneNumbers.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
-
         for (const [index, phoneNumber] of currentBatch.entries()) {
-          
+         
           try {
             if (index > 0 && delayBetweenMessages > 0) {
               await new Promise(resolve => setTimeout(resolve, delayBetweenMessages));
             }
-
             const resolveResult = await mtproto.call('contacts.resolvePhone', {
               phone: phoneNumber.replace(/\D/g, '')
             }).catch(() => null);
-
             if (!resolveResult?.users?.length) {
               throw new Error('User not found');
             }
-
             const user = resolveResult.users[0];
             await mtproto.call('messages.sendMessage', {
               peer: {
@@ -2264,14 +2175,12 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
               message,
               random_id: Math.floor(Math.random() * 1000000000)
             });
-
             result.messagesSent.push(phoneNumber);
           } catch (error :any) {
             result.messagesFailed.push(phoneNumber);
           }
           result.totalMessages.push(phoneNumber);
         }
-
         const progress = Math.round(((batchIndex + 1) / totalBatches) * 100);
         io.emit("progress", {
           progress,
@@ -2280,19 +2189,16 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
           sent: result.messagesSent.length,
           failed: result.messagesFailed.length,
         });
-
         io.emit("data-updated", {
           messagesSent: result.messagesSent,
           messagesFailed: result.messagesFailed,
           totalMessages: result.totalMessages,
           progress
         });
-
         if (batchIndex < totalBatches - 1 && delayBetweenBatches > 0) {
           await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
         }
       }
-
       io.emit("progress", {
         progress: 100,
         batchesCompleted: totalBatches,
@@ -2301,25 +2207,20 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
         failed: result.messagesFailed.length,
         eta: "Completed"
       });
-
       return result;
     } catch (error :any) {
       this.displayError(error, io);
       return result;
     }
   }
-
   static async getScheduledMessages(): Promise<ScheduledMessage[]> {
     return this.scheduledMessages;
   }
-
   static async cancelScheduledMessage(req: Request, io: Server): Promise<boolean> {
     const { messageId } = req.body;
     if (!messageId) throw new Error("Message ID required");
-
     const index = this.scheduledMessages.findIndex(msg => msg.id === messageId);
     if (index === -1) return false;
-
     const jobs = schedule.scheduledJobs;
     for (const jobName in jobs) {
       if (jobName.includes(messageId)) {
@@ -2327,27 +2228,16 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
         break;
       }
     }
-
     this.scheduledMessages.splice(index, 1);
     return true;
   }
-
   static getUploadMiddleware() {
     return upload.single('file');
   }
-
   // ========== HELPER METHODS ========== //
   private static saveSession(account: TelegramAccount): void {
     console.log(`Session saved for account ${account.id}`);
   }
-
-  private static async calculateSRP(params: any): Promise<{ A: string, M1: string }> {
-    return {
-      A: 'dummy_A_value',
-      M1: 'dummy_M1_value'
-    };
-  }
-
   private static formatETA(seconds: number): string {
     if (seconds < 60) return `${seconds} seconds`;
     const minutes = Math.floor(seconds / 60);
@@ -2355,13 +2245,13 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
     if (hours > 0) return `${hours}h ${minutes % 60}m`;
     return `${minutes}m ${seconds % 60}s`;
   }
-  
+ 
   // Emit account status updates to the client
   private static emitAccountsStatus(accounts: TelegramAccount[], io: Server): void {
     const accountsStatus = accounts.map(account => {
       const isInFloodWait = this.isAccountInFloodWait(account.id);
       const waitTimeRemaining = isInFloodWait ? this.getFloodWaitTimeRemaining(account.id) : 0;
-      
+     
       return {
         id: account.id,
         phoneNumber: account.phoneNumber,
@@ -2372,7 +2262,7 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
         availableAt: isInFloodWait ? new Date(Date.now() + waitTimeRemaining * 1000).toISOString() : null
       };
     });
-    
+   
     io.emit('accounts-status-update', {
       accounts: accountsStatus,
       timestamp: new Date().toISOString(),
@@ -2380,42 +2270,41 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
       floodWaitCount: accountsStatus.filter(acc => acc.status === 'flood_wait').length
     });
   }
-
   // Track flood wait status for each account
   private static floodWaitStatus: Map<string, { until: Date, waitSeconds: number }> = new Map();
-  
+ 
   // Check if an account is in flood wait
   private static isAccountInFloodWait(accountId: string): boolean {
     const status = this.floodWaitStatus.get(accountId);
     if (!status) return false;
-    
+   
     // Check if the flood wait period has expired
     if (new Date() > status.until) {
       this.floodWaitStatus.delete(accountId);
       return false;
     }
-    
+   
     return true;
   }
-  
+ 
   // Get time remaining for flood wait in seconds
   private static getFloodWaitTimeRemaining(accountId: string): number {
     const status = this.floodWaitStatus.get(accountId);
     if (!status) return 0;
-    
+   
     const now = new Date();
     if (now > status.until) return 0;
-    
+   
     return Math.ceil((status.until.getTime() - now.getTime()) / 1000);
   }
-  
+ 
   // Set an account as being in flood wait
   private static setAccountFloodWait(accountId: string, waitSeconds: number, io?: Server): void {
     const until = new Date(Date.now() + waitSeconds * 1000);
     this.floodWaitStatus.set(accountId, { until, waitSeconds });
-    
+   
     console.log(`Account ${accountId} is in flood wait for ${waitSeconds} seconds until ${until.toISOString()}`);
-    
+   
     // Emit event if io is provided
     if (io) {
       io.emit("account-flood-wait", {
@@ -2424,30 +2313,30 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
         until: until.toISOString(),
         message: `Account ${accountId} is rate limited. Waiting for ${this.formatETA(waitSeconds)}...`
       });
-      
+     
       // Start countdown updates
       this.startFloodWaitCountdown(accountId, io);
     }
   }
-  
+ 
   // Start a countdown for flood wait
   private static startFloodWaitCountdown(accountId: string, io: Server): void {
     const UPDATE_INTERVAL = 1000; // Update every second
-    
+   
     const intervalId = setInterval(() => {
       const remainingSeconds = this.getFloodWaitTimeRemaining(accountId);
-      
+     
       if (remainingSeconds <= 0) {
         clearInterval(intervalId);
         this.floodWaitStatus.delete(accountId);
-        
+       
         io.emit("account-flood-wait-complete", {
           accountId,
           message: `Account ${accountId} is no longer rate limited and can be used again.`
         });
         return;
       }
-      
+     
       io.emit("account-flood-wait-update", {
         accountId,
         remainingSeconds,
@@ -2455,7 +2344,7 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
       });
     }, UPDATE_INTERVAL);
   }
-  
+ 
   // Find a non-flooded account from a list of accounts
   private static findAvailableAccount(accounts: TelegramAccount[]): TelegramAccount | null {
     for (const account of accounts) {
@@ -2465,17 +2354,17 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
     }
     return null;
   }
-  
+ 
   private static async callWithDcMigration(mtproto: any, method: string, params: any, retryCount = 0, accountId?: string, io?: Server): Promise<any> {
     const MAX_RETRIES = 3;
     const RETRY_DELAY = 1000; // 1 second delay between retries
-    
+   
     try {
       console.log(`Calling Telegram API method: ${method}${accountId ? ` with account ${accountId}` : ''}`);
       return await mtproto.call(method, params);
     } catch (error: any) {
       console.error(`Error in Telegram API call ${method}:`, error);
-      
+     
       // Handle DC migration errors
       if (error.error_code === 303) {
         const migrationMatch = error.error_message.match(/^(PHONE|NETWORK|USER)_MIGRATE_(\d+)$/);
@@ -2486,18 +2375,18 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
           return await mtproto.call(method, params);
         }
       }
-      
+     
       // Handle flood wait errors with improved tracking
       if (error.error_code === 420) {
         const waitMatch = error.error_message.match(/^FLOOD_WAIT_(\d+)$/);
         if (waitMatch) {
           const waitSeconds = parseInt(waitMatch[1]);
           console.log(`Flood wait error, waiting for ${waitSeconds} seconds...`);
-          
+         
           // If we have account ID and io, track the flood wait status
           if (accountId && io) {
             this.setAccountFloodWait(accountId, waitSeconds, io);
-            
+           
             // Throw a special error that can be caught by the caller
              throw new Error(`FLOOD_WAIT_ACCOUNT_ROTATION: Account ${accountId} is in flood wait for ${waitSeconds} seconds`);
           } else {
@@ -2507,7 +2396,7 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
           }
         }
       }
-      
+     
       // Handle network errors with retry logic
       if ((error.error_code === 500 || error.error_code === 503 || error.error_message?.includes('NETWORK')) && retryCount < MAX_RETRIES) {
         const nextRetry = retryCount + 1;
@@ -2515,19 +2404,17 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
         return this.callWithDcMigration(mtproto, method, params, nextRetry, accountId, io);
       }
-      
+     
       // Rethrow with more context
       const enhancedError = new Error(`Telegram API error in ${method}: ${error.error_message || error.message}`);
       (enhancedError as any).originalError = error;
       throw enhancedError;
     }
   }
-
   private static displayError(error: any, io: Server): void {
     let errorCode = 500;
     let errorMessage = 'Unknown error';
     let action = 'retry';
-
     if (error?.error_message) {
       const errorMappings: Record<string, { code: number, message: string, action: string }> = {
         'AUTH_KEY_INVALID': { code: 401, message: 'Authentication invalid - relogin required', action: 'relogin' },
@@ -2538,7 +2425,6 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
         'PHONE_CODE_EXPIRED': { code: 400, message: 'Verification code expired', action: 'request_new_code' },
         'API_ID_INVALID': { code: 400, message: 'Invalid API ID', action: 'check_credentials' }
       };
-
       if (errorMappings[error.error_message]) {
         ({ code: errorCode, message: errorMessage, action } = errorMappings[error.error_message]);
       } else if (error.error_message.startsWith('FLOOD_WAIT_')) {
@@ -2551,7 +2437,6 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
     } else if (error?.message) {
       errorMessage = error.message;
     }
-
     io.emit("display-error", {
       code: errorCode,
       message: errorMessage,
@@ -2559,5 +2444,4 @@ const progress = Math.min(100, Math.round((totalMembers / parseInt(estimatedMemb
     });
   }
 }
-
 export default TelegramController;

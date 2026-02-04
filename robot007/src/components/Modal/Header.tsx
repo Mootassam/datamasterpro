@@ -258,9 +258,8 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
         className={`dm-service-nav ${isMobileMenuOpen ? "dm-nav-open" : ""}`}
       >
 
-        {/* "whatsapp", "telegram", "email" */}
         <div className="dm-service-tabs">
-          {(["whatsapp"] as ServiceType[]).map((service) => (
+          {(["whatsapp", "telegram", "email"] as ServiceType[]).map((service) => (
             <button
               key={service}
               className={`dm-service-tab ${activeService === service ? "dm-tab-active" : ""
