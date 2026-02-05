@@ -210,3 +210,45 @@ export const sendBulkMessagesToTelegramGroups = async (
   });
   return response.data;
 };
+
+// Discover public groups/channels with filters
+export const discoverPublicGroupsOrChannels = async (
+  accountId: string,
+  keyword: string,
+  limit: number,
+  settings: { onlyChannels?: boolean; onlyGroups?: boolean }
+) => {
+  const response = await authAxios.post("/telegram/discover-public-groups", {
+    accountId,
+    keyword,
+    limit,
+    settings
+  });
+  return response.data;
+};
+export const exportJoinedLinks = async (accountId: string) => {
+  const response = await authAxios.post("/telegram/export-joined-links", { accountId }, { responseType: 'blob' });
+  return response.data;
+};
+export const downloadText = (blob: Blob, filename: string = "joined_links.txt") => {
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute("download", filename);
+  link.style.display = "none";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+// Bulk Join Groups
+export const joinBulkGroups = async (
+  accountId: string,
+  groups: string[],
+  config: any
+) => {
+  const response = await authAxios.post("/telegram/join-bulk-groups", {
+    accountId,
+    groups,
+    config
+  });
+  return response.data;
+};

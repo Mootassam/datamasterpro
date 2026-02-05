@@ -134,6 +134,17 @@ const telegramRoutes = (io) => {
       });
     }
   });
+  
+  router.post("/export-joined-links", async (req: Request, res: Response) => {
+    try {
+      await TelegramController.exportJoinedLinks(req, res);
+    } catch (error) {
+      console.error("Export joined links error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to export joined links" 
+      });
+    }
+  });
 
   // Upload CSV file with phone numbers
   router.post("/upload-csv", TelegramController.getUploadMiddleware(), async (req: Request, res: Response) => {
@@ -203,6 +214,19 @@ const telegramRoutes = (io) => {
       });
     }
   });
+  
+  // Discover public groups or channels (with filters)
+  router.post("/discover-public-groups", async (req: Request, res: Response) => {
+    try {
+      const results = await TelegramController.discoverPublicGroupsOrChannels(req, io);
+      res.status(200).json(results);
+    } catch (error) {
+      console.error("Discover public groups error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to discover public groups" 
+      });
+    }
+  });
 
   // Send bulk messages to groups
   router.post("/send-messages-to-groups", TelegramController.getUploadMiddleware(), async (req: Request, res: Response) => {
@@ -239,6 +263,19 @@ const telegramRoutes = (io) => {
       console.error("Join group error:", error);
       res.status(500).json({ 
         error: error instanceof Error ? error.message : "Failed to join group" 
+      });
+    }
+  });
+
+  // Bulk join groups
+  router.post("/join-bulk-groups", async (req: Request, res: Response) => {
+    try {
+      const result = await TelegramController.joinBulkGroups(req, io);
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Join bulk groups error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to join bulk groups" 
       });
     }
   });

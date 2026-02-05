@@ -173,14 +173,16 @@
   background: #e0f2fe;
   color: #0284c7;
   border: none;
-  padding: 8px 16px;
+  padding: 10px 16px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   transition: all 0.2s;
+  white-space: normal;
+  text-align: left;
 }
 
 .select-groups-btn:hover {
@@ -626,7 +628,7 @@
 
 .groups-grid {
   padding: 25px;
-  overflow-y: auto;
+  padding-bottom: 120px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
@@ -637,6 +639,7 @@
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 16px;
+  min-height: 120px;
   cursor: pointer;
   transition: all 0.2s;
   position: relative;

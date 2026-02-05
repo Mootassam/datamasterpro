@@ -134,6 +134,40 @@ export const sendBulkMessagesToTelegramGroups = createAsyncThunk(
   }
 );
 
+export const joinBulkGroups = createAsyncThunk(
+  "telegram/joinBulkGroups",
+  async (
+    {
+      accountId,
+      groups,
+      config
+    }: {
+      accountId: string;
+      groups: string[];
+      config: any;
+    },
+    { dispatch }
+  ) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      dispatch(setCurrentOperation("Joining groups..."));
+      const result = await TelegramServices.joinBulkGroups(
+        accountId,
+        groups,
+        config
+      );
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to join groups"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+      dispatch(setCurrentOperation(null));
+    }
+  }
+);
+
 export const loginTelegram = createAsyncThunk(
   "telegram/login",
   async (phoneNumber: string, { dispatch }) => {
@@ -375,6 +409,53 @@ export const autoDiscoverTelegramGroups = createAsyncThunk(
   }
 );
 
+export const discoverPublicGroupsOrChannels = createAsyncThunk(
+  "telegram/discoverPublicGroupsOrChannels",
+  async (
+    {
+      accountId,
+      keyword,
+      limit,
+      settings
+    }: {
+      accountId: string;
+      keyword: string;
+      limit: number;
+      settings: { onlyChannels?: boolean; onlyGroups?: boolean };
+    },
+    { dispatch }
+  ) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      const result = await TelegramServices.discoverPublicGroupsOrChannels(accountId, keyword, limit, settings);
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to discover public groups"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+    }
+  }
+);
+
+export const exportJoinedLinksTxt = createAsyncThunk(
+  "telegram/exportJoinedLinksTxt",
+  async ({ accountId }: { accountId: string }, { dispatch }) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      const blob = await TelegramServices.exportJoinedLinks(accountId);
+      TelegramServices.downloadText(blob, `joined_links_${accountId}.txt`);
+      return true;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to export joined links"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+    }
+  }
+);
 export const importMembersToGroup = createAsyncThunk(
   "telegram/importMembers",
   async (

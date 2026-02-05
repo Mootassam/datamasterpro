@@ -25,10 +25,11 @@ import {
   importMembersToGroup,
   scrapeTelegramMembers,
   fetchDialogFilters,
-  joinTelegramGroup,
-  autoDiscoverTelegramGroups,
-  sendBulkMessagesToTelegramGroups
+  discoverPublicGroupsOrChannels,
+    sendBulkMessagesToTelegramGroups,
+    joinBulkGroups
 } from "../../store/telegram/TelegramActions";
+  import { exportJoinedLinksTxt } from "../../store/telegram/TelegramActions";
 import { useSelector } from "react-redux";
 import { 
   selectTelegramGroups, 
@@ -103,9 +104,18 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
 
   // Discovery State
   const [discoveryKeywords, setDiscoveryKeywords] = useState("");
-  const [discoveryLimit, setDiscoveryLimit] = useState(20);
   const [discoveredGroups, setDiscoveredGroups] = useState<any[]>([]);
   const [isDiscovering, setIsDiscovering] = useState(false);
+  const [discoverFilter, setDiscoverFilter] = useState<'all' | 'channels' | 'groups'>('all');
+  const [selectedTargets, setSelectedTargets] = useState<string[]>([]);
+  const [joinGroupList, setJoinGroupList] = useState("");
+
+  // Debug/Placeholder usage to prevent build error until Home view is implemented
+  useEffect(() => {
+    if (joinGroupList) {
+        console.log("Targets added to join list:", joinGroupList);
+    }
+  }, [joinGroupList]);
 
   // Group & Folder State
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
@@ -122,6 +132,7 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
   const [importMembersList, setImportMembersList] = useState("");
   const [importDelay, setImportDelay] = useState(2000);
   const [importProgress, setImportProgress] = useState<any>(null);
+  const [joinProgress, setJoinProgress] = useState<any>(null);
 
   // Scheduling State
   const [scheduleType, setScheduleType] = useState<"once" | "recurring">("once");
@@ -180,14 +191,37 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
           addToast(data.message, 'success');
       };
 
+      const handleJoinStart = (data: any) => {
+          setJoinProgress({ status: 'starting', processed: 0, total: data.total ?? 0, joined: 0, failed: 0 });
+      };
+      const handleJoinProgress = (data: any) => {
+          setJoinProgress(data);
+      };
+      const handleJoinComplete = (data: any) => {
+          setJoinProgress(null);
+          addToast(`Join Completed! ✓ Joined: ${data.result.joined.length}, ✗ Failed: ${data.result.failed.length}`, 'success');
+      };
+      const handleJoinLog = (data: any) => {
+          if (data?.type === 'warning') addToast(data.message, 'info');
+          if (data?.type === 'error') addToast(data.message, 'error');
+      };
+
       socket.on("campaign-progress", handleProgress);
       socket.on("campaign-complete", handleComplete);
       socket.on("campaign-scheduled", handleScheduled);
+      socket.on("join-start", handleJoinStart);
+      socket.on("join-progress", handleJoinProgress);
+      socket.on("join-complete", handleJoinComplete);
+      socket.on("join-log", handleJoinLog);
       
       return () => {
         socket.off("campaign-progress", handleProgress);
         socket.off("campaign-complete", handleComplete);
         socket.off("campaign-scheduled", handleScheduled);
+        socket.off("join-start", handleJoinStart);
+        socket.off("join-progress", handleJoinProgress);
+        socket.off("join-complete", handleJoinComplete);
+        socket.off("join-log", handleJoinLog);
       };
     }
   }, [socket]);
@@ -297,30 +331,21 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
     if (!discoveryKeywords || !selectedAccount) return;
     try {
       setIsDiscovering(true);
-      const keywords = discoveryKeywords.split(',').map(k => k.trim()).filter(k => k);
-      const results = await dispatch(autoDiscoverTelegramGroups({
+      const results = await dispatch(discoverPublicGroupsOrChannels({
         accountId: selectedAccount.id,
-        keywords,
-        limit: discoveryLimit
+        keyword: discoveryKeywords,
+        limit: 1000,
+        settings: {
+          onlyChannels: discoverFilter === 'channels',
+          onlyGroups: discoverFilter === 'groups'
+        }
       }));
       setDiscoveredGroups((results as any).payload);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Discovery failed:", error);
+      addToast(`Discovery failed: ${error.message || "Unknown error"}`, 'error');
     } finally {
       setIsDiscovering(false);
-    }
-  };
-
-  const handleJoinDiscoveredGroup = async (group: any) => {
-    if (!selectedAccount) return;
-    try {
-        await dispatch(joinTelegramGroup({
-            accountId: selectedAccount.id,
-            inviteLink: group.username ? `https://t.me/${group.username}` : group.id
-        }));
-        alert(`Joined ${group.title}!`);
-    } catch (error: any) {
-        alert(`Failed to join: ${error.message}`);
     }
   };
 
@@ -421,26 +446,34 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
                 <p>Uncover hidden communities and expand your reach instantly.</p>
               </div>
 
-              <div className="scraper-input-section">
-                <div className="url-input-wrapper">
+              <div className="scraper-input-section" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <div className="url-input-wrapper" style={{ flex: 1, minWidth: '200px' }}>
                   <FiSearch />
                   <input 
                     type="text" 
                     placeholder="Enter keywords (e.g. 'Crypto', 'Marketing', 'Real Estate')" 
                     value={discoveryKeywords}
                     onChange={(e) => setDiscoveryKeywords(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleDiscover()}
                   />
                 </div>
-                <div className="limit-input-wrapper" style={{width: '100px', marginLeft: '10px'}}>
-                    <input 
-                        type="number" 
-                        min="1" 
-                        max="100" 
-                        value={discoveryLimit} 
-                        onChange={(e) => setDiscoveryLimit(Number(e.target.value))}
-                        title="Limit per keyword"
-                        style={{width: '100%', padding: '16px', borderRadius: '12px', border: '2px solid #e2e8f0', fontSize: '1.1rem'}}
-                    />
+                
+                <div className="filter-toggle" style={{ display: 'flex', gap: '4px', background: '#f1f5f9', padding: '4px', borderRadius: '8px' }}>
+                  <button 
+                    className={`view-btn ${discoverFilter === 'all' ? 'active' : ''}`} 
+                    onClick={() => setDiscoverFilter('all')}
+                    style={{ border: 'none', background: discoverFilter === 'all' ? '#fff' : 'transparent', boxShadow: discoverFilter === 'all' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}
+                  >All</button>
+                  <button 
+                    className={`view-btn ${discoverFilter === 'channels' ? 'active' : ''}`} 
+                    onClick={() => setDiscoverFilter('channels')}
+                    style={{ border: 'none', background: discoverFilter === 'channels' ? '#fff' : 'transparent', boxShadow: discoverFilter === 'channels' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}
+                  >Channels</button>
+                  <button 
+                    className={`view-btn ${discoverFilter === 'groups' ? 'active' : ''}`} 
+                    onClick={() => setDiscoverFilter('groups')}
+                    style={{ border: 'none', background: discoverFilter === 'groups' ? '#fff' : 'transparent', boxShadow: discoverFilter === 'groups' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}
+                  >Groups</button>
                 </div>
                 <button 
                   className="scrape-btn" 
@@ -452,23 +485,175 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
                 </button>
               </div>
 
+              {discoveredGroups.length > 0 && (
+                <div className="results-toolbar" style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    margin: '20px 0 15px', 
+                    padding: '12px 16px',
+                    background: '#f8fafc',
+                    borderRadius: '8px',
+                    border: '1px solid #e2e8f0'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontWeight: '700', color: '#334155', fontSize: '1rem' }}>
+                        {discoveredGroups.length}
+                    </span>
+                    <span style={{ color: '#64748b', fontSize: '0.95rem' }}>Results Found</span>
+                  </div>
+                  <button 
+                    className="secondary-action"
+                    onClick={() => {
+                        const allLinks = discoveredGroups.map(g => g.username ? `@${g.username}` : String(g.id));
+                        const allSelected = allLinks.every(link => selectedTargets.includes(link));
+                        
+                        if (allSelected) {
+                            setSelectedTargets(prev => prev.filter(t => !allLinks.includes(t)));
+                        } else {
+                            setSelectedTargets(prev => [...new Set([...prev, ...allLinks])]);
+                        }
+                    }}
+                    style={{ 
+                        fontSize: '0.9rem', 
+                        padding: '8px 16px',
+                        background: '#fff',
+                        border: '1px solid #cbd5e1',
+                        color: '#475569',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '500',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.borderColor = '#94a3b8'}
+                    onMouseOut={(e) => e.currentTarget.style.borderColor = '#cbd5e1'}
+                  >
+                    {discoveredGroups.every(g => selectedTargets.includes(g.username ? `@${g.username}` : String(g.id))) 
+                        ? <><FiX /> Deselect All</> 
+                        : <><FiCheck /> Select All</>}
+                  </button>
+                </div>
+              )}
+
               <div className="groups-grid">
-                  {discoveredGroups.map((group) => (
-                    <div key={group.id} className="group-card">
-                      <div className="group-card-header">
-                        <div className="group-avatar">{group.title.charAt(0)}</div>
-                        <div className="group-info">
-                          <h5>{group.title}</h5>
-                          <span>@{group.username} • {group.members} members</span>
+                  {discoveredGroups.map((group) => {
+                    const link = group.username ? `@${group.username}` : String(group.id);
+                    const isSelected = selectedTargets.includes(link);
+                    return (
+                    <div 
+                        key={group.id} 
+                        className="group-card" 
+                        style={{ 
+                            border: isSelected ? '2px solid #3b82f6' : '1px solid #e2e8f0',
+                            background: isSelected ? '#eff6ff' : '#fff',
+                            borderRadius: '12px',
+                            padding: '16px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            boxShadow: isSelected ? '0 4px 6px -1px rgba(59, 130, 246, 0.1)' : '0 1px 3px rgba(0,0,0,0.05)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '12px',
+                            position: 'relative',
+                            overflow: 'hidden'
+                        }}
+                        onMouseOver={(e) => {
+                            if (!isSelected) {
+                                e.currentTarget.style.transform = 'translateY(-2px)';
+                                e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+                            }
+                        }}
+                        onMouseOut={(e) => {
+                            if (!isSelected) {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
+                            }
+                        }}
+                        onClick={() => {
+                            setSelectedTargets(prev => prev.includes(link) ? prev.filter(l => l !== link) : [...prev, link]);
+                        }}
+                    >
+                      <div className="group-card-header" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div className="group-avatar" style={{ 
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '12px',
+                            background: isSelected ? '#3b82f6' : 'linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%)', 
+                            color: '#fff',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.25rem',
+                            fontWeight: '600',
+                            flexShrink: 0,
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        }}>
+                            {group.title.charAt(0)}
                         </div>
+                        <div className="group-info" style={{ flex: 1, minWidth: 0 }}>
+                          <h5 style={{ 
+                              margin: '0 0 4px 0', 
+                              fontSize: '1rem', 
+                              fontWeight: '600', 
+                              color: isSelected ? '#1e40af' : '#1e293b',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                          }} title={group.title}>{group.title}</h5>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: '#64748b' }}>
+                            <span style={{ 
+                                background: isSelected ? '#dbeafe' : '#f1f5f9',
+                                color: isSelected ? '#1e40af' : '#475569', 
+                                padding: '2px 8px', 
+                                borderRadius: '4px', 
+                                fontSize: '0.7rem', 
+                                fontWeight: '600',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px'
+                            }}>{group.type === 'channel' ? 'CHANNEL' : 'GROUP'}</span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <FiUserPlus size={12} /> {group.members?.toLocaleString() || 0}
+                            </span>
+                          </div>
+                        </div>
+                        {isSelected && (
+                            <div style={{ 
+                                color: '#3b82f6', 
+                                background: '#dbeafe', 
+                                padding: '8px', 
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                <FiCheck size={18} />
+                            </div>
+                        )}
                       </div>
-                      <div className="group-card-actions">
-                        <button onClick={() => handleJoinDiscoveredGroup(group)} className="primary-action" style={{backgroundColor: '#e0f2fe', color: '#0284c7', border: 'none'}}>
-                            <FiUserPlus /> Join Group
-                        </button>
-                      </div>
+                      
+                      {group.username ? (
+                          <div style={{ 
+                              marginTop: 'auto', 
+                              paddingTop: '12px', 
+                              borderTop: '1px solid', 
+                              borderColor: isSelected ? '#bfdbfe' : '#f1f5f9',
+                              fontSize: '0.85rem',
+                              color: isSelected ? '#2563eb' : '#64748b',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px'
+                          }}>
+                              <FiLink size={14} /> 
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>t.me/{group.username}</span>
+                          </div>
+                      ) : (
+                          <div style={{ marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid #f1f5f9', height: '29px' }}></div>
+                      )}
                     </div>
-                  ))}
+                  )})}
                   {discoveredGroups.length === 0 && !isDiscovering && (
                       <div className="empty-state" style={{width: '100%', textAlign: 'center', color: '#64748b', marginTop: '50px'}}>
                           <FiGlobe size={48} style={{opacity: 0.5, marginBottom: '20px'}}/>
@@ -476,6 +661,37 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
                       </div>
                   )}
               </div>
+              
+              {selectedTargets.length > 0 && (
+                <div className="discovery-footer" style={{ 
+                    position: 'sticky', 
+                    bottom: '0', 
+                    background: '#fff', 
+                    padding: '16px', 
+                    borderTop: '1px solid #e2e8f0',
+                    boxShadow: '0 -4px 6px -1px rgba(0,0,0,0.05)',
+                    display: 'flex', 
+                    justifyContent: 'center',
+                    marginTop: 'auto'
+                }}>
+                  <button 
+                    className="launch-btn" 
+                    onClick={() => {
+                      const unique = Array.from(new Set([...selectedTargets]));
+                      setJoinGroupList(prev => {
+                        const prevLines = prev.split('\n').map(l => l.trim()).filter(l => l);
+                        const merged = Array.from(new Set([...prevLines, ...unique]));
+                        return merged.join('\n');
+                      });
+                      setActiveView('home');
+                      addToast(`${unique.length} targets added to join list`, 'success');
+                    }}
+                    style={{ width: '100%', maxWidth: '400px' }}
+                  >
+                    ADD SELECTED TO TARGETS ({selectedTargets.length})
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -534,6 +750,347 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
         </div>
 
         <div className="telegram-modal-body no-padding">
+
+          {/* HOME VIEW */}
+          {activeView === 'home' && (
+            <div className="campaigns-view">
+              <div className="campaign-setup">
+                <div className="section-header">
+                  <h4><FiUserPlus /> Auto-Join Groups</h4>
+                </div>
+                
+                <div className="message-composer">
+                   <div className="message-input-group">
+                     <textarea 
+                       value={joinGroupList} 
+                       onChange={(e) => setJoinGroupList(e.target.value)}
+                       placeholder="Paste group links here (one per line)...&#10;@username&#10;https://t.me/joinchat/..."
+                     />
+                   </div>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', fontSize: '0.9rem', color: '#64748b' }}>
+                     <span>{joinGroupList.split('\n').filter(l => l.trim()).length} targets loaded</span>
+                     <button 
+                        className="secondary-action" 
+                        onClick={() => setJoinGroupList('')}
+                        style={{ border: 'none', background: 'transparent', color: '#dc2626', cursor: 'pointer' }}
+                     >
+                        Clear List
+                     </button>
+                   </div>
+                </div>
+
+                <div className="campaign-settings">
+                  <h4><FiClock /> Joining Speed</h4>
+                  <div className="settings-grid">
+                    <div className="setting-item">
+                      <label>Delay (seconds)</label>
+                      <input type="number" value={delay} onChange={(e) => setDelay(Number(e.target.value))} />
+                    </div>
+                  </div>
+                </div>
+
+                <button 
+                  className="launch-btn" 
+                  onClick={async () => {
+                     const targets = joinGroupList.split('\n').filter(l => l.trim());
+                     if (!selectedAccount) {
+                       addToast("Select an account first", 'error');
+                       return;
+                     }
+                     if (targets.length === 0) {
+                       addToast("Add at least one group target", 'error');
+                       return;
+                     }
+                     setJoinProgress({ status: 'starting', processed: 0, total: targets.length, joined: 0, failed: 0 });
+                     addToast(`Starting to join ${targets.length} groups...`, 'info');
+                     try {
+                       await (dispatch as any)(joinBulkGroups({
+                          accountId: selectedAccount!.id,
+                          groups: targets,
+                          config: { delayBetweenJoins: delay * 1000 }
+                       })).unwrap();
+                     } catch (err: any) {
+                       addToast(err?.message || "Failed to start join process", 'error');
+                     }
+                  }}
+                  disabled={!joinGroupList.trim()}
+                >
+                  START JOINING PROCESS 🚀
+                </button>
+                
+                {joinProgress && (
+                  <div className="campaign-settings" style={{ marginTop: 16 }}>
+                    <h4><FiClock /> Progress</h4>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, color: '#334155', fontWeight: 600 }}>
+                      <span>Processed: {joinProgress.processed ?? 0} / {joinProgress.total ?? 0}</span>
+                      <span>✓ Joined: {joinProgress.joined ?? 0}</span>
+                      <span>✗ Failed: {joinProgress.failed ?? 0}</span>
+                    </div>
+                    <div style={{ marginTop: 10, height: 10, background: '#e2e8f0', borderRadius: 6, overflow: 'hidden' }}>
+                      <div style={{ width: `${Math.min(100, Math.floor(((joinProgress.processed ?? 0) / Math.max(1, joinProgress.total ?? 1)) * 100))}%`, height: '100%', background: '#10b981' }} />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
+          {/* DISCOVERY VIEW */}
+          {activeView === 'discovery' && (
+            <div className="scraper-view">
+              <div className="scraper-header">
+                <h2><FiGlobe /> Global Group Discovery</h2>
+                <p>Uncover hidden communities and expand your reach instantly.</p>
+              </div>
+
+              <div className="scraper-input-section" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <div className="url-input-wrapper" style={{ flex: 1, minWidth: '200px' }}>
+                  <FiSearch />
+                  <input 
+                    type="text" 
+                    placeholder="Enter keywords (e.g. 'Crypto', 'Marketing', 'Real Estate')" 
+                    value={discoveryKeywords}
+                    onChange={(e) => setDiscoveryKeywords(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleDiscover()}
+                  />
+                </div>
+                
+                <div className="filter-toggle" style={{ display: 'flex', gap: '4px', background: '#f1f5f9', padding: '4px', borderRadius: '8px' }}>
+                  <button 
+                    className={`view-btn ${discoverFilter === 'all' ? 'active' : ''}`} 
+                    onClick={() => setDiscoverFilter('all')}
+                    style={{ border: 'none', background: discoverFilter === 'all' ? '#fff' : 'transparent', boxShadow: discoverFilter === 'all' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}
+                  >All</button>
+                  <button 
+                    className={`view-btn ${discoverFilter === 'channels' ? 'active' : ''}`} 
+                    onClick={() => setDiscoverFilter('channels')}
+                    style={{ border: 'none', background: discoverFilter === 'channels' ? '#fff' : 'transparent', boxShadow: discoverFilter === 'channels' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}
+                  >Channels</button>
+                  <button 
+                    className={`view-btn ${discoverFilter === 'groups' ? 'active' : ''}`} 
+                    onClick={() => setDiscoverFilter('groups')}
+                    style={{ border: 'none', background: discoverFilter === 'groups' ? '#fff' : 'transparent', boxShadow: discoverFilter === 'groups' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}
+                  >Groups</button>
+                </div>
+                <button 
+                  className="scrape-btn" 
+                  onClick={handleDiscover}
+                  disabled={isDiscovering || !discoveryKeywords}
+                >
+                  {isDiscovering ? <FiRefreshCw className="spinning" /> : <FiSearch />}
+                  {isDiscovering ? "SEARCHING..." : "DISCOVER"}
+                </button>
+              </div>
+
+              {discoveredGroups.length > 0 && (
+                <div className="results-toolbar" style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    margin: '20px 0 15px', 
+                    padding: '12px 16px',
+                    background: '#f8fafc',
+                    borderRadius: '8px',
+                    border: '1px solid #e2e8f0'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontWeight: '700', color: '#334155', fontSize: '1rem' }}>
+                        {discoveredGroups.length}
+                    </span>
+                    <span style={{ color: '#64748b', fontSize: '0.95rem' }}>Results Found</span>
+                  </div>
+                  <button 
+                    className="secondary-action"
+                    onClick={() => {
+                        const allLinks = discoveredGroups.map(g => g.username ? `@${g.username}` : String(g.id));
+                        const allSelected = allLinks.every(link => selectedTargets.includes(link));
+                        
+                        if (allSelected) {
+                            setSelectedTargets(prev => prev.filter(t => !allLinks.includes(t)));
+                        } else {
+                            setSelectedTargets(prev => [...new Set([...prev, ...allLinks])]);
+                        }
+                    }}
+                    style={{ 
+                        fontSize: '0.9rem', 
+                        padding: '8px 16px',
+                        background: '#fff',
+                        border: '1px solid #cbd5e1',
+                        color: '#475569',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '500',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.borderColor = '#94a3b8'}
+                    onMouseOut={(e) => e.currentTarget.style.borderColor = '#cbd5e1'}
+                  >
+                    {discoveredGroups.every(g => selectedTargets.includes(g.username ? `@${g.username}` : String(g.id))) 
+                        ? <><FiX /> Deselect All</> 
+                        : <><FiCheck /> Select All</>}
+                  </button>
+                </div>
+              )}
+
+              <div className="groups-grid">
+                  {discoveredGroups.map((group) => {
+                    const link = group.username ? `@${group.username}` : String(group.id);
+                    const isSelected = selectedTargets.includes(link);
+                    return (
+                    <div 
+                        key={group.id} 
+                        className="group-card" 
+                        style={{ 
+                            border: isSelected ? '2px solid #3b82f6' : '1px solid #e2e8f0',
+                            background: isSelected ? '#eff6ff' : '#fff',
+                            borderRadius: '12px',
+                            padding: '16px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            boxShadow: isSelected ? '0 4px 6px -1px rgba(59, 130, 246, 0.1)' : '0 1px 3px rgba(0,0,0,0.05)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '12px',
+                            position: 'relative',
+                            overflow: 'hidden'
+                        }}
+                        onMouseOver={(e) => {
+                            if (!isSelected) {
+                                e.currentTarget.style.transform = 'translateY(-2px)';
+                                e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+                            }
+                        }}
+                        onMouseOut={(e) => {
+                            if (!isSelected) {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
+                            }
+                        }}
+                        onClick={() => {
+                            setSelectedTargets(prev => prev.includes(link) ? prev.filter(l => l !== link) : [...prev, link]);
+                        }}
+                    >
+                      <div className="group-card-header" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div className="group-avatar" style={{ 
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '12px',
+                            background: isSelected ? '#3b82f6' : 'linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%)', 
+                            color: '#fff',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.25rem',
+                            fontWeight: '600',
+                            flexShrink: 0,
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        }}>
+                            {group.title.charAt(0)}
+                        </div>
+                        <div className="group-info" style={{ flex: 1, minWidth: 0 }}>
+                          <h5 style={{ 
+                              margin: '0 0 4px 0', 
+                              fontSize: '1rem', 
+                              fontWeight: '600', 
+                              color: isSelected ? '#1e40af' : '#1e293b',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                          }} title={group.title}>{group.title}</h5>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: '#64748b' }}>
+                            <span style={{ 
+                                background: isSelected ? '#dbeafe' : '#f1f5f9',
+                                color: isSelected ? '#1e40af' : '#475569', 
+                                padding: '2px 8px', 
+                                borderRadius: '4px', 
+                                fontSize: '0.7rem', 
+                                fontWeight: '600',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px'
+                            }}>{group.type === 'channel' ? 'CHANNEL' : 'GROUP'}</span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <FiUserPlus size={12} /> {group.members?.toLocaleString() || 0}
+                            </span>
+                          </div>
+                        </div>
+                        {isSelected && (
+                            <div style={{ 
+                                color: '#3b82f6', 
+                                background: '#dbeafe', 
+                                padding: '8px', 
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                <FiCheck size={18} />
+                            </div>
+                        )}
+                      </div>
+                      
+                      {group.username ? (
+                          <div style={{ 
+                              marginTop: 'auto', 
+                              paddingTop: '12px', 
+                              borderTop: '1px solid', 
+                              borderColor: isSelected ? '#bfdbfe' : '#f1f5f9',
+                              fontSize: '0.85rem',
+                              color: isSelected ? '#2563eb' : '#64748b',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px'
+                          }}>
+                              <FiLink size={14} /> 
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>t.me/{group.username}</span>
+                          </div>
+                      ) : (
+                          <div style={{ marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid #f1f5f9', height: '29px' }}></div>
+                      )}
+                    </div>
+                  )})}
+                  {discoveredGroups.length === 0 && !isDiscovering && (
+                      <div className="empty-state" style={{width: '100%', textAlign: 'center', color: '#64748b', marginTop: '50px'}}>
+                          <FiGlobe size={48} style={{opacity: 0.5, marginBottom: '20px'}}/>
+                          <p>Enter keywords to find relevant groups globally.</p>
+                      </div>
+                  )}
+              </div>
+              
+              {selectedTargets.length > 0 && (
+                <div className="discovery-footer" style={{ 
+                    position: 'sticky', 
+                    bottom: '0', 
+                    background: '#fff', 
+                    padding: '16px', 
+                    borderTop: '1px solid #e2e8f0',
+                    boxShadow: '0 -4px 6px -1px rgba(0,0,0,0.05)',
+                    display: 'flex', 
+                    justifyContent: 'center',
+                    marginTop: 'auto'
+                }}>
+                  <button 
+                    className="launch-btn" 
+                    onClick={() => {
+                      const unique = Array.from(new Set([...selectedTargets]));
+                      setJoinGroupList(prev => {
+                        const prevLines = prev.split('\n').map(l => l.trim()).filter(l => l);
+                        const merged = Array.from(new Set([...prevLines, ...unique]));
+                        return merged.join('\n');
+                      });
+                      setActiveView('home');
+                      addToast(`${unique.length} targets added to join list`, 'success');
+                    }}
+                    style={{ width: '100%', maxWidth: '400px' }}
+                  >
+                    ADD SELECTED TO TARGETS ({selectedTargets.length})
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
           
           {/* CAMPAIGNS VIEW */}
           {activeView === 'campaigns' && (
@@ -542,7 +1099,7 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
                 <div className="section-header">
                   <h4><FiTarget /> Precision Targeting</h4>
                   <button className="select-groups-btn" onClick={() => setActiveView('groups')}>
-                    {selectedGroups.length} Targets Selected <FiChevronRight />
+                 {selectedGroups.length} Targets Selected <FiChevronRight />
                   </button>
                 </div>
                 
@@ -760,6 +1317,19 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
                   </button>
                   <button className="refresh-btn" onClick={handleRefreshGroups} disabled={isRefreshing}>
                     <FiRefreshCw className={isRefreshing ? "spinning" : ""} /> Sync Targets
+                  </button>
+                  <button 
+                    className="refresh-btn" 
+                    onClick={() => {
+                      if (!selectedAccount) {
+                        addToast("Select an account first", 'error');
+                        return;
+                      }
+                      (dispatch as any)(exportJoinedLinksTxt({ accountId: selectedAccount.id }));
+                    }}
+                    style={{ marginLeft: '10px' }}
+                  >
+                    <FiDownload /> Extract Joined Links (.txt)
                   </button>
                 </div>
                 

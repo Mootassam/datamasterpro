@@ -362911,6 +362911,48 @@ var require_TelegramController = __commonJS({
           throw error;
         }
       }
+      static async discoverPublicGroupsOrChannels(req, io) {
+        const { accountId, keyword, limit = 1e3, settings } = req.body;
+        const onlyChannels = settings?.onlyChannels === true;
+        const onlyGroups = settings?.onlyGroups === true;
+        const account = await this.getAccountById(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected");
+        }
+        try {
+          const mtproto = account.mtproto;
+          const q = String(keyword || "").trim();
+          if (!q)
+            throw new Error("Keyword is required");
+          const searchResult = await this.callWithDcMigration(mtproto, "contacts.search", {
+            q,
+            limit
+          }, 0, account.id, io);
+          const items = [];
+          if (searchResult?.chats?.length) {
+            for (const chat of searchResult.chats) {
+              const type = chat._;
+              if (onlyChannels && type !== "channel")
+                continue;
+              if (onlyGroups && type !== "chat")
+                continue;
+              items.push({
+                id: String(chat.id),
+                title: chat.title,
+                username: chat.username,
+                type,
+                members: chat.participants_count,
+                access_hash: chat.access_hash
+              });
+            }
+          }
+          const unique = items.filter((v, i, a) => a.findIndex((t2) => t2.id === v.id) === i);
+          return unique;
+        } catch (error) {
+          this.displayError(error, io);
+          throw error;
+        }
+      }
       static async getConnectedAccounts() {
         return Array.from(this.accounts.values()).filter((account) => account.connected).map(({ mtproto, authKey, ...account }) => account);
       }
@@ -363815,7 +363857,8 @@ var require_TelegramController = __commonJS({
                 isAdmin: !!(chat.admin_rights || chat.creator),
                 profilePicUrl: void 0,
                 access_hash: chat.access_hash || 0,
-                type: chat._
+                type: chat._,
+                username: chat.username
               });
             }
           }
@@ -363824,6 +363867,62 @@ var require_TelegramController = __commonJS({
           console.error(`Group fetch failed: ${error}`);
           throw error;
         }
+      }
+      static async exportJoinedLinks(req, res) {
+        const { accountId } = req.body;
+        if (!accountId) {
+          res.status(400).json({ error: "Account ID required" });
+          return;
+        }
+        const account = await this.getAccountById(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          res.status(400).json({ error: "Account not connected" });
+          return;
+        }
+        const mtproto = account.mtproto;
+        const groups = await this.getGroups(req);
+        res.setHeader("Content-Type", "text/plain");
+        res.setHeader("Content-Disposition", `attachment; filename="joined_links_${accountId}.txt"`);
+        const written = /* @__PURE__ */ new Set();
+        for (const g of groups) {
+          try {
+            if (g.username) {
+              const link = `https://t.me/${g.username}`;
+              if (!written.has(link)) {
+                res.write(link + "\n");
+                written.add(link);
+              }
+              continue;
+            }
+            if (g.type === "chat") {
+              try {
+                const invite = await this.callWithDcMigration(mtproto, "messages.exportChatInvite", {
+                  peer: { _: "inputPeerChat", chat_id: parseInt(g.id) }
+                }, 0, account.id, null);
+                const link = invite?.link || invite?.invite?.link;
+                if (link && !written.has(link)) {
+                  res.write(link + "\n");
+                  written.add(link);
+                }
+              } catch {
+              }
+            } else if (g.type === "channel") {
+              try {
+                const invite = await this.callWithDcMigration(mtproto, "channels.exportInvite", {
+                  channel: { _: "inputChannel", channel_id: parseInt(g.id), access_hash: g.access_hash }
+                }, 0, account.id, null);
+                const link = invite?.link || invite?.invite?.link;
+                if (link && !written.has(link)) {
+                  res.write(link + "\n");
+                  written.add(link);
+                }
+              } catch {
+              }
+            }
+          } catch {
+          }
+        }
+        res.end();
       }
       static async exportGroupMembers(req, res, io) {
         const { accountId, groupId, filterType = "recent", maxMembers = 0, format = "csv" } = req.body;
@@ -364273,6 +364372,123 @@ var require_TelegramController = __commonJS({
           console.error("Error processing CSV file:", error);
           throw new Error(`Failed to process CSV file: ${error && typeof error === "object" ? error.message : "Unknown error"}`);
         }
+      }
+      static async joinBulkGroups(req, io) {
+        const { accountId, groups, config } = req.body;
+        if (!accountId || !groups || !Array.isArray(groups)) {
+          throw new Error("Account ID and groups array are required");
+        }
+        const account = await this.getAccountById(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected");
+        }
+        const mtproto = account.mtproto;
+        const result = { joined: [], failed: [] };
+        const campaignId = `join-${Date.now()}`;
+        io.emit("join-start", {
+          campaignId,
+          total: groups.length,
+          message: "Starting bulk join..."
+        });
+        for (let i = 0; i < groups.length; i++) {
+          const groupLink = groups[i].trim();
+          if (!groupLink)
+            continue;
+          try {
+            let inputPeer;
+            let isInvite = false;
+            let cleanLink = groupLink.replace("https://t.me/", "").replace("t.me/", "").replace("@", "");
+            if (cleanLink.startsWith("+") || groupLink.includes("joinchat")) {
+              isInvite = true;
+              cleanLink = cleanLink.replace("+", "").replace("joinchat/", "");
+            }
+            if (isInvite) {
+              await this.callWithDcMigration(mtproto, "messages.importChatInvite", {
+                hash: cleanLink
+              }, 0, account.id, io);
+            } else {
+              await this.callWithDcMigration(mtproto, "channels.joinChannel", {
+                channel: {
+                  _: "inputChannel",
+                  channel_id: cleanLink,
+                  // This usually requires resolving first if it's a username, let's use contacts.resolveUsername
+                  access_hash: 0
+                  // Placeholder
+                }
+              }, 0, account.id, io).catch(async () => {
+                const resolved = await this.callWithDcMigration(mtproto, "contacts.resolveUsername", {
+                  username: cleanLink
+                }, 0, account.id, io);
+                if (resolved && resolved.chats && resolved.chats.length > 0) {
+                  const chat = resolved.chats[0];
+                  return await this.callWithDcMigration(mtproto, "channels.joinChannel", {
+                    channel: {
+                      _: "inputChannel",
+                      channel_id: chat.id,
+                      access_hash: chat.access_hash
+                    }
+                  }, 0, account.id, io);
+                } else {
+                  throw new Error("Could not resolve username");
+                }
+              });
+            }
+            result.joined.push(groupLink);
+            io.emit("join-progress", {
+              campaignId,
+              total: groups.length,
+              processed: i + 1,
+              joined: result.joined.length,
+              failed: result.failed.length,
+              lastAction: { type: "success", group: groupLink }
+            });
+          } catch (e2) {
+            const errorMessage = e2.message || "Unknown error";
+            result.failed.push({ group: groupLink, error: errorMessage });
+            io.emit("join-progress", {
+              campaignId,
+              total: groups.length,
+              processed: i + 1,
+              joined: result.joined.length,
+              failed: result.failed.length,
+              lastAction: { type: "error", group: groupLink, error: errorMessage }
+            });
+            if (errorMessage.includes("FLOOD_WAIT")) {
+              const floodMatch = errorMessage.match(/FLOOD_WAIT_(\d+)/);
+              if (floodMatch) {
+                const seconds = parseInt(floodMatch[1], 10);
+                const waitTime = (seconds + 5) * 1e3;
+                io.emit("join-log", {
+                  type: "warning",
+                  message: `Flood wait detected. Pausing for ${seconds + 5} seconds...`,
+                  campaignId
+                });
+                await new Promise((r) => setTimeout(r, waitTime));
+                i--;
+                continue;
+              }
+            } else if (errorMessage.includes("PEER_FLOOD") || errorMessage.includes("CHANNELS_TOO_MUCH")) {
+              const waitTime = 5 * 60 * 1e3;
+              io.emit("join-log", {
+                type: "warning",
+                message: `Limit reached (${errorMessage}). Pausing for 5 minutes...`,
+                campaignId
+              });
+              await new Promise((r) => setTimeout(r, waitTime));
+              if (errorMessage.includes("CHANNELS_TOO_MUCH")) {
+                io.emit("join-log", { type: "error", message: "Account reached max channel limit.", campaignId });
+              } else {
+                i--;
+                continue;
+              }
+            }
+          }
+          const delay2 = config?.delayBetweenJoins || 1e4;
+          const randomDelay = config?.randomDelay ? Math.floor(Math.random() * 2e3) : 0;
+          await new Promise((r) => setTimeout(r, delay2 + randomDelay));
+        }
+        io.emit("join-complete", { result, campaignId });
+        return result;
       }
       static async sendBulkMessages(req, io) {
         return this.sendMessages(req, io);
@@ -365432,6 +365648,16 @@ var require_telegramRoutes = __commonJS({
           });
         }
       });
+      router.post("/export-joined-links", async (req, res) => {
+        try {
+          await TelegramController_1.default.exportJoinedLinks(req, res);
+        } catch (error) {
+          console.error("Export joined links error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to export joined links"
+          });
+        }
+      });
       router.post("/upload-csv", TelegramController_1.default.getUploadMiddleware(), async (req, res) => {
         try {
           if (!("file" in req)) {
@@ -365490,6 +365716,17 @@ var require_telegramRoutes = __commonJS({
           });
         }
       });
+      router.post("/discover-public-groups", async (req, res) => {
+        try {
+          const results = await TelegramController_1.default.discoverPublicGroupsOrChannels(req, io);
+          res.status(200).json(results);
+        } catch (error) {
+          console.error("Discover public groups error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to discover public groups"
+          });
+        }
+      });
       router.post("/send-messages-to-groups", TelegramController_1.default.getUploadMiddleware(), async (req, res) => {
         try {
           const result = await TelegramController_1.default.sendBulkMessagesToGroups(req, io);
@@ -365520,6 +365757,17 @@ var require_telegramRoutes = __commonJS({
           console.error("Join group error:", error);
           res.status(500).json({
             error: error instanceof Error ? error.message : "Failed to join group"
+          });
+        }
+      });
+      router.post("/join-bulk-groups", async (req, res) => {
+        try {
+          const result = await TelegramController_1.default.joinBulkGroups(req, io);
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Join bulk groups error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to join bulk groups"
           });
         }
       });

@@ -45,6 +45,7 @@ interface GroupInfo {
   profilePicUrl?: string;
   access_hash?: string | number; // Add access_hash to the interface
   type?: string; // 'channel' or 'chat'
+  username?: string; // public @username if available
 }
 interface ScheduledMessage {
   id: string;
@@ -340,6 +341,50 @@ class TelegramController {
       const uniqueResults = results.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
      
       return uniqueResults;
+    } catch (error: any) {
+      this.displayError(error, io);
+      throw error;
+    }
+  }
+  static async discoverPublicGroupsOrChannels(req: Request, io: Server): Promise<any> {
+    const { accountId, keyword, limit = 1000, settings } = req.body;
+    const onlyChannels = settings?.onlyChannels === true;
+    const onlyGroups = settings?.onlyGroups === true;
+    
+    const account = await this.getAccountById(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+      throw new Error("Account not connected");
+    }
+    try {
+      const mtproto = account.mtproto;
+      const q = String(keyword || '').trim();
+      if (!q) throw new Error("Keyword is required");
+      
+      const searchResult = await this.callWithDcMigration(mtproto, 'contacts.search', {
+        q,
+        limit
+      }, 0, account.id, io);
+      
+      const items: any[] = [];
+      if (searchResult?.chats?.length) {
+        for (const chat of searchResult.chats) {
+          const type = chat._; // 'channel' or 'chat'
+          if (onlyChannels && type !== 'channel') continue;
+          if (onlyGroups && type !== 'chat') continue;
+          
+          items.push({
+            id: String(chat.id),
+            title: chat.title,
+            username: chat.username,
+            type,
+            members: chat.participants_count,
+            access_hash: chat.access_hash
+          });
+        }
+      }
+      // Deduplicate by id
+      const unique = items.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
+      return unique;
     } catch (error: any) {
       this.displayError(error, io);
       throw error;
@@ -1361,7 +1406,8 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
             isAdmin: !!(chat.admin_rights || chat.creator),
             profilePicUrl: undefined,
             access_hash: chat.access_hash || 0,
-            type: chat._
+            type: chat._,
+            username: chat.username
           });
         }
       }
@@ -1370,6 +1416,59 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
       console.error(`Group fetch failed: ${error}`);
       throw error;
     }
+  }
+  static async exportJoinedLinks(req: Request, res: Response): Promise<void> {
+    const { accountId } = req.body;
+    if (!accountId) {
+      res.status(400).json({ error: "Account ID required" });
+      return;
+    }
+    const account = await this.getAccountById(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+      res.status(400).json({ error: "Account not connected" });
+      return;
+    }
+    const mtproto = account.mtproto;
+    const groups = await this.getGroups(req);
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Content-Disposition', `attachment; filename="joined_links_${accountId}.txt"`);
+    const written = new Set<string>();
+    for (const g of groups) {
+      try {
+        if (g.username) {
+          const link = `https://t.me/${g.username}`;
+          if (!written.has(link)) {
+            res.write(link + '\n');
+            written.add(link);
+          }
+          continue;
+        }
+        if (g.type === 'chat') {
+          try {
+            const invite = await this.callWithDcMigration(mtproto, 'messages.exportChatInvite', {
+              peer: { _: 'inputPeerChat', chat_id: parseInt(g.id) }
+            }, 0, account.id, null as any);
+            const link = invite?.link || invite?.invite?.link;
+            if (link && !written.has(link)) {
+              res.write(link + '\n');
+              written.add(link);
+            }
+          } catch {}
+        } else if (g.type === 'channel') {
+          try {
+            const invite = await this.callWithDcMigration(mtproto, 'channels.exportInvite', {
+              channel: { _: 'inputChannel', channel_id: parseInt(g.id), access_hash: g.access_hash }
+            }, 0, account.id, null as any);
+            const link = invite?.link || invite?.invite?.link;
+            if (link && !written.has(link)) {
+              res.write(link + '\n');
+              written.add(link);
+            }
+          } catch {}
+        }
+      } catch {}
+    }
+    res.end();
   }
  static async exportGroupMembers(req: Request, res: Response, io: Server): Promise<void> {
     const { accountId, groupId, filterType = 'recent', maxMembers = 0, format = 'csv' } = req.body;
@@ -1882,6 +1981,148 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
       throw new Error(`Failed to process CSV file: ${error && typeof error === 'object' ? error.message : 'Unknown error'}`);
     }
   }
+  static async joinBulkGroups(req: Request, io: Server): Promise<any> {
+    const { accountId, groups, config } = req.body;
+    
+    if (!accountId || !groups || !Array.isArray(groups)) {
+        throw new Error("Account ID and groups array are required");
+    }
+
+    const account = await this.getAccountById(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+        throw new Error("Account not connected");
+    }
+
+    const mtproto = account.mtproto;
+    const result: { joined: string[], failed: { group: string, error: string }[] } = { joined: [], failed: [] };
+    const campaignId = `join-${Date.now()}`;
+
+    io.emit("join-start", { 
+        campaignId, 
+        total: groups.length,
+        message: "Starting bulk join..."
+    });
+
+    for (let i = 0; i < groups.length; i++) {
+        const groupLink = groups[i].trim();
+        if (!groupLink) continue;
+
+        try {
+            // Determine if it's a public username or private invite link
+            let inputPeer;
+            let isInvite = false;
+            let cleanLink = groupLink.replace('https://t.me/', '').replace('t.me/', '').replace('@', '');
+            
+            if (cleanLink.startsWith('+') || groupLink.includes('joinchat')) {
+                // Private invite link
+                isInvite = true;
+                cleanLink = cleanLink.replace('+', '').replace('joinchat/', '');
+            }
+
+            if (isInvite) {
+                 await this.callWithDcMigration(mtproto, 'messages.importChatInvite', {
+                    hash: cleanLink
+                }, 0, account.id, io);
+            } else {
+                 await this.callWithDcMigration(mtproto, 'channels.joinChannel', {
+                    channel: {
+                        _: 'inputChannel',
+                        channel_id: cleanLink, // This usually requires resolving first if it's a username, let's use contacts.resolveUsername
+                        access_hash: 0 // Placeholder
+                    }
+                }, 0, account.id, io).catch(async () => {
+                     // Fallback: Resolve username first
+                     const resolved = await this.callWithDcMigration(mtproto, 'contacts.resolveUsername', {
+                        username: cleanLink
+                     }, 0, account.id, io);
+                     
+                     if (resolved && resolved.chats && resolved.chats.length > 0) {
+                         const chat = resolved.chats[0];
+                         return await this.callWithDcMigration(mtproto, 'channels.joinChannel', {
+                             channel: {
+                                 _: 'inputChannel',
+                                 channel_id: chat.id,
+                                 access_hash: chat.access_hash
+                             }
+                         }, 0, account.id, io);
+                     } else {
+                         throw new Error("Could not resolve username");
+                     }
+                });
+            }
+
+            result.joined.push(groupLink);
+            
+            io.emit("join-progress", {
+                campaignId,
+                total: groups.length,
+                processed: i + 1,
+                joined: result.joined.length,
+                failed: result.failed.length,
+                lastAction: { type: 'success', group: groupLink }
+            });
+
+        } catch (e: any) {
+            const errorMessage = e.message || "Unknown error";
+            result.failed.push({ group: groupLink, error: errorMessage });
+            
+            io.emit("join-progress", {
+                campaignId,
+                total: groups.length,
+                processed: i + 1,
+                joined: result.joined.length,
+                failed: result.failed.length,
+                lastAction: { type: 'error', group: groupLink, error: errorMessage }
+            });
+
+            // Anti-Ban Logic
+            if (errorMessage.includes('FLOOD_WAIT')) {
+                const floodMatch = errorMessage.match(/FLOOD_WAIT_(\d+)/);
+                if (floodMatch) {
+                    const seconds = parseInt(floodMatch[1], 10);
+                    const waitTime = (seconds + 5) * 1000;
+                    
+                    io.emit("join-log", { 
+                        type: "warning", 
+                        message: `Flood wait detected. Pausing for ${seconds + 5} seconds...`, 
+                        campaignId 
+                    });
+                    
+                    await new Promise(r => setTimeout(r, waitTime));
+                    i--; // Retry
+                    continue;
+                }
+            } else if (errorMessage.includes('PEER_FLOOD') || errorMessage.includes('CHANNELS_TOO_MUCH')) {
+                 const waitTime = 5 * 60 * 1000; // 5 minutes
+                 io.emit("join-log", { 
+                      type: "warning", 
+                      message: `Limit reached (${errorMessage}). Pausing for 5 minutes...`, 
+                      campaignId 
+                 });
+                 await new Promise(r => setTimeout(r, waitTime));
+                 // For CHANNELS_TOO_MUCH we might want to skip retry or stop, but for now retry
+                 if (errorMessage.includes('CHANNELS_TOO_MUCH')) {
+                     // Actually if channels too much, retry won't help unless we leave some. 
+                     // But maybe it's a temp limit? Usually it means max 500 channels.
+                     // Let's just log and continue to next
+                     io.emit("join-log", { type: "error", message: "Account reached max channel limit.", campaignId });
+                 } else {
+                     i--; 
+                     continue;
+                 }
+            }
+        }
+
+        // Delay
+        const delay = config?.delayBetweenJoins || 10000; // Default 10s for joins
+        const randomDelay = config?.randomDelay ? Math.floor(Math.random() * 2000) : 0;
+        await new Promise(r => setTimeout(r, delay + randomDelay));
+    }
+
+    io.emit("join-complete", { result, campaignId });
+    return result;
+  }
+
   static async sendBulkMessages(req: Request, io: Server): Promise<MessageResult> {
     return this.sendMessages(req, io);
   }
