@@ -5,7 +5,7 @@ services:
     build: ./brain
     image: brain_backend:latest
     ports:
-      - 8087:8088
+      - 8087:8087
     restart: unless-stopped
 
 
