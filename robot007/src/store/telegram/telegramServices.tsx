@@ -145,6 +145,16 @@ export const cancelCurrentOperation = async () => {
   return response.data;
 };
 
+export const cancelScheduledCampaign = async (campaignId: string) => {
+  const response = await authAxios.delete(`/telegram/scheduled-campaigns/${campaignId}`);
+  return response.data;
+};
+
+export const cancelRunningCampaign = async (campaignId: string) => {
+  const response = await authAxios.post("/telegram/cancel-running-campaign", { campaignId });
+  return response.data;
+};
+
 // Helper function to download CSV data
 export const downloadCSV = (data: any, filename: string = "telegram_data.csv") => {
   const blob = new Blob([data], { type: "text/csv" });

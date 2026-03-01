@@ -2503,6 +2503,11 @@ node-abi@^3.3.0:
   dependencies:
     semver "^7.3.5"
 
+node-cron@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.npmjs.org/node-cron/-/node-cron-4.2.1.tgz"
+  integrity sha512-lgimEHPE/QDgFlywTd8yTR61ptugX3Qer29efeyWw2rv259HtGBNn1vZVmp8lB9uo9wC0t/AT4iGqXxia+CJFg==
+
 node-fetch@^2.6.6:
   version "2.7.0"
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.7.0.tgz"

@@ -23,6 +23,11 @@ const io = new SocketIOServer(server, {
 
 });
 
+// Restore Telegram connected accounts on server start
+TelegramController.restoreConnectedAccounts(io).catch(err => {
+  console.error('Failed to restore Telegram accounts:', err);
+});
+
 // Middlewares
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 

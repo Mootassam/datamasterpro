@@ -14,8 +14,10 @@ const TableProps = ({
   filteredNumbers, 
   setChatModalOpen, 
   getDetail, 
-  activeService ,
-  setEmailModalOpen
+  activeService,
+  setEmailModalOpen,
+  favorites = [] as string[],
+  onClearFavorites,
 }) => {
   const [hoveredRow, setHoveredRow] = useState(null);
 
@@ -81,27 +83,62 @@ const TableProps = ({
             >
               All
             </button>
-            <button
-              className={`filter-tab ${filter === 'registered' ? 'active' : ''}`}
-              onClick={() => setFilter('registered')}
-            >
-              <FaCheck className="filter-icon" />
-              Registered
-            </button>
-            <button
-              className={`filter-tab ${filter === 'rejected' ? 'active' : ''}`}
-              onClick={() => setFilter('rejected')}
-            >
-              <FaTimes className="filter-icon" />
-              Rejected
-            </button>
-            <button
-              className={`filter-tab ${filter === 'pending' ? 'active' : ''}`}
-              onClick={() => setFilter('pending')}
-            >
-              Pending
-            </button>
+            {activeService === 'whatsapp' ? (
+              <>
+                <button
+                  className={`filter-tab ${filter === 'registered' ? 'active' : ''}`}
+                  onClick={() => setFilter('registered')}
+                >
+                  <FaCheck className="filter-icon" />
+                  Registered
+                </button>
+                <button
+                  className={`filter-tab ${filter === 'favorites' ? 'active' : ''}`}
+                  onClick={() => setFilter('favorites')}
+                >
+                  Favorites
+                </button>
+                <button
+                  className={`filter-tab ${filter === 'withPhoto' ? 'active' : ''}`}
+                  onClick={() => setFilter('withPhoto')}
+                >
+                  With Photo
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className={`filter-tab ${filter === 'registered' ? 'active' : ''}`}
+                  onClick={() => setFilter('registered')}
+                >
+                  <FaCheck className="filter-icon" />
+                  Registered
+                </button>
+                <button
+                  className={`filter-tab ${filter === 'rejected' ? 'active' : ''}`}
+                  onClick={() => setFilter('rejected')}
+                >
+                  <FaTimes className="filter-icon" />
+                  Rejected
+                </button>
+                <button
+                  className={`filter-tab ${filter === 'pending' ? 'active' : ''}`}
+                  onClick={() => setFilter('pending')}
+                >
+                  Pending
+                </button>
+              </>
+            )}
           </div>
+
+          {activeService === 'whatsapp' && favorites.length > 0 && onClearFavorites && (
+            <button
+              className="clear-favorites-btn"
+              onClick={onClearFavorites}
+            >
+              Clear Favorites
+            </button>
+          )}
 
       {(activeService === "whatsapp" || activeService === "telegram" || activeService === "email") && (
   <div className="bulk-action-buttons">

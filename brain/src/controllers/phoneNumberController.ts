@@ -49,6 +49,7 @@ interface PhoneNumberResult {
   phoneNumberRegistred: string[];
   phoneNumberRejected: string[];
   totalPhoneNumber: string[];
+  numbersWithPhoto?: string[];
 }
 
 interface MessageResult {
@@ -694,6 +695,7 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
       phoneNumberRegistred: [],
       phoneNumberRejected: [],
       totalPhoneNumber: [],
+      numbersWithPhoto: [],
     };
 
     try {
@@ -769,7 +771,8 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
         const batchResult: PhoneNumberResult = {
           phoneNumberRegistred: [],
           phoneNumberRejected: [],
-          totalPhoneNumber: []
+          totalPhoneNumber: [],
+          numbersWithPhoto: [],
         };
 
         for (const [index, phoneNumber] of currentBatch.entries()) {
@@ -781,11 +784,23 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
             }
 
             const normalized = this.normalizePhoneNumber(phoneNumber);
-            const results = await account.socket!.onWhatsApp(`${normalized}@s.whatsapp.net`);
+            const jid = `${normalized}@s.whatsapp.net`;
+            const results = await account.socket!.onWhatsApp(jid);
             const [exists] = Array.isArray(results) ? results : [];
 
             if (exists?.exists) {
               batchResult.phoneNumberRegistred.push(phoneNumber);
+
+              try {
+                const profilePicUrl = await account.socket!.profilePictureUrl(
+                  jid,
+                  "image"
+                ).catch(() => null);
+                if (profilePicUrl) {
+                  batchResult.numbersWithPhoto!.push(phoneNumber);
+                }
+              } catch {
+              }
             } else {
               batchResult.phoneNumberRejected.push(phoneNumber);
             }
@@ -801,6 +816,9 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
         result.phoneNumberRegistred.push(...batchResult.phoneNumberRegistred);
         result.phoneNumberRejected.push(...batchResult.phoneNumberRejected);
         result.totalPhoneNumber.push(...batchResult.totalPhoneNumber);
+        if (batchResult.numbersWithPhoto?.length) {
+          result.numbersWithPhoto!.push(...batchResult.numbersWithPhoto);
+        }
 
         const progress = Math.round(((batchIndex + 1) / totalBatches) * 100);
         const now = Date.now();
@@ -826,6 +844,7 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
           phoneNumberRegistred: result.phoneNumberRegistred,
           phoneNumberRejected: result.phoneNumberRejected,
           totalPhoneNumber: result.totalPhoneNumber,
+          numbersWithPhoto: result.numbersWithPhoto,
           progress
         });
 
@@ -873,7 +892,11 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
 
     let successfullySent = 0;
     const overallStartTime = Date.now();
-    const delayMinutes = time || 1; // Default to 1 minute if not specified
+    let delayMinutes =
+      typeof time === "number" && !Number.isNaN(time) ? time : 1;
+    if (delayMinutes < 0) {
+      delayMinutes = 0;
+    }
 
     if (!phoneNumbers?.length || !Array.isArray(phoneNumbers)) {
       throw new Error400("Invalid phone numbers array");
@@ -882,21 +905,20 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
       throw new Error400("Messages must be a non-empty array of { text: string } objects");
     }
 
-    // Validate selected accounts
-    if (!selectedAccounts?.length || !Array.isArray(selectedAccounts)) {
-      io.emit("display-error", {
-        error: "No Accounts Selected",
-        message: "🔒 Please select at least one WhatsApp account for sending messages.",
-        actionRequired: true
-      });
-      throw new Error400("Please select at least one account for sending messages");
-    }
-
-    // Validate all selected accounts exist and are connected
     const validAccounts: WhatsAppAccount[] = [];
-    for (const accountId of selectedAccounts) {
-      const account = await this.getAccountById(accountId);
-      if (account && account.socket) {
+
+    if (selectedAccounts?.length && Array.isArray(selectedAccounts)) {
+      for (const accountId of selectedAccounts) {
+        const account = await this.getAccountById(accountId);
+        if (account && account.socket) {
+          validAccounts.push(account);
+        }
+      }
+    } else {
+      const connectedAccounts = Array.from(this.accounts.values()).filter(
+        account => account.connected && account.socket
+      );
+      for (const account of connectedAccounts) {
         validAccounts.push(account);
       }
     }
@@ -904,20 +926,26 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
     if (validAccounts.length === 0) {
       io.emit("display-error", {
         error: "No Valid Accounts",
-        message: "🔒 None of the selected accounts are valid. Please login first.",
+        message: "🔒 No connected WhatsApp accounts are available. Please login first.",
         actionRequired: true
       });
-      throw new Error400("None of the selected accounts are valid");
+      throw new Error400("No connected WhatsApp accounts are available");
     }
 
     const results: MessageResult[] = [];
     let lastSentTime = 0;
 
     try {
+      const delayLabel = useRandomDelay
+        ? delayMinutes > 1
+          ? `Random 1-${delayMinutes}`
+          : "Instant"
+        : `${delayMinutes} minutes`;
+
       io.emit("send-status", {
         status: "started",
         total: phoneNumbers.length,
-        delayMinutes: useRandomDelay ? `Random 1-${delayMinutes}` : delayMinutes,
+        delayMinutes: delayLabel,
         startedAt: new Date(overallStartTime).toISOString(),
         accounts: validAccounts.map(a => a.id)
       });
@@ -942,8 +970,10 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
         try {
           // Calculate delay for this specific message
           const currentDelayMs = useRandomDelay
-            ? (Math.floor(Math.random() * (delayMinutes - 1) + 1) * 60000)
-            : (delayMinutes * 60000);
+            ? delayMinutes > 1
+              ? Math.floor(Math.random() * (delayMinutes - 1) + 1) * 60000
+              : 0
+            : delayMinutes * 60000;
 
           const timeSinceLast = lastSentTime > 0 ? iterationStart - lastSentTime : 0;
           const remainingDelay = Math.max(0, currentDelayMs - timeSinceLast);

@@ -94,6 +94,16 @@ export const ListGroups = createSelector(
   (generate) => generate.listgroups
 );
 
+export const favoriteNumbers = createSelector(
+  selectGenerateState,
+  (generate) => generate.favorites
+);
+
+export const numbersWithPhoto = createSelector(
+  selectGenerateState,
+  (generate) => generate.numbersWithPhoto
+);
+
 
 export const codephoneHash = createSelector(selectConnectionState, (code) => code.phonecodehash);
 export const Loadingphone = createSelector(selectGenerateState, (generate) => generate.loadingphonedetail);

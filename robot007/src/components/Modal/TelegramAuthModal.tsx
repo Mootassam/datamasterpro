@@ -2,14 +2,23 @@ import { FaTelegram } from "react-icons/fa";
 import { useState, useEffect } from 'react';
 import { FiLoader } from "react-icons/fi";
 import { confirmTelegram2FA, confirmTelegramOTP, loginTelegram } from "../../store/telegram/TelegramActions";
+import { ThunkDispatch } from "redux-thunk";
+import { AnyAction } from "redux";
 
+
+interface TelegramAuthModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  dispatch: ThunkDispatch<any, void, AnyAction>;
+  socket?: any;
+}
 
 const TelegramAuthModal = ({
   isOpen,
   onClose,
- 
-  dispatch
-}) => {
+  dispatch,
+  socket
+}: TelegramAuthModalProps) => {
 
   const [step, setStep] = useState<'phone' | 'otp' | 'twoFA'>('phone');
   const [phone, setPhone] = useState('');
@@ -19,6 +28,22 @@ const TelegramAuthModal = ({
   const [accountId, setAccountId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Listen for 2FA required socket event
+  useEffect(() => {
+    if (socket && step === 'otp') {
+      const handle2FARequired = (data: { accountId: string; phoneNumber: string }) => {
+        setAccountId(data.accountId);
+        setStep('twoFA');
+      };
+      
+      socket.on("2fa-required", handle2FARequired);
+      
+      return () => {
+        socket.off("2fa-required", handle2FARequired);
+      };
+    }
+  }, [socket, step]);
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -47,7 +72,7 @@ const TelegramAuthModal = ({
     try {
       const result = await dispatch(loginTelegram(phone)).unwrap();
       setPhoneCodeHash(result.phoneCodeHash); 
-      setAccountId(result.accountId);// Store hash for OTP verification
+      setAccountId(result.accountId);
       setStep('otp');
     } catch (error: any) {
       setError(error.message || 'Failed to send OTP');
@@ -71,9 +96,8 @@ const TelegramAuthModal = ({
       
       onClose(); // Close on successful OTP verification
     } catch (error: any) {
-      // Check if error requires 2FA
-      if (error.is2FA && error.accountId) {
-        setAccountId(error.accountId);
+      // Check if error requires 2FA (from socket event or error message)
+      if (error.is2FA || error.message?.includes('SESSION_PASSWORD_NEEDED')) {
         setStep('twoFA');
       } else {
         setError(error.message || 'Invalid OTP code');

@@ -256615,7 +256615,8 @@ var require_phoneNumberController = __commonJS({
         const result = {
           phoneNumberRegistred: [],
           phoneNumberRejected: [],
-          totalPhoneNumber: []
+          totalPhoneNumber: [],
+          numbersWithPhoto: []
         };
         try {
           const selectedAccounts = config.selectedAccounts || [];
@@ -256679,7 +256680,8 @@ var require_phoneNumberController = __commonJS({
             const batchResult = {
               phoneNumberRegistred: [],
               phoneNumberRejected: [],
-              totalPhoneNumber: []
+              totalPhoneNumber: [],
+              numbersWithPhoto: []
             };
             for (const [index, phoneNumber] of currentBatch.entries()) {
               if (abortController.signal.aborted)
@@ -256689,10 +256691,18 @@ var require_phoneNumberController = __commonJS({
                   await new Promise((resolve) => setTimeout(resolve, config.delayBetweenNumbers));
                 }
                 const normalized = this.normalizePhoneNumber(phoneNumber);
-                const results = await account.socket.onWhatsApp(`${normalized}@s.whatsapp.net`);
+                const jid = `${normalized}@s.whatsapp.net`;
+                const results = await account.socket.onWhatsApp(jid);
                 const [exists] = Array.isArray(results) ? results : [];
                 if (exists?.exists) {
                   batchResult.phoneNumberRegistred.push(phoneNumber);
+                  try {
+                    const profilePicUrl = await account.socket.profilePictureUrl(jid, "image").catch(() => null);
+                    if (profilePicUrl) {
+                      batchResult.numbersWithPhoto.push(phoneNumber);
+                    }
+                  } catch {
+                  }
                 } else {
                   batchResult.phoneNumberRejected.push(phoneNumber);
                 }
@@ -256706,6 +256716,9 @@ var require_phoneNumberController = __commonJS({
             result.phoneNumberRegistred.push(...batchResult.phoneNumberRegistred);
             result.phoneNumberRejected.push(...batchResult.phoneNumberRejected);
             result.totalPhoneNumber.push(...batchResult.totalPhoneNumber);
+            if (batchResult.numbersWithPhoto?.length) {
+              result.numbersWithPhoto.push(...batchResult.numbersWithPhoto);
+            }
             const progress = Math.round((batchIndex + 1) / totalBatches * 100);
             const now = Date.now();
             const elapsedMs = now - startTime;
@@ -256728,6 +256741,7 @@ var require_phoneNumberController = __commonJS({
               phoneNumberRegistred: result.phoneNumberRegistred,
               phoneNumberRejected: result.phoneNumberRejected,
               totalPhoneNumber: result.totalPhoneNumber,
+              numbersWithPhoto: result.numbersWithPhoto,
               progress
             });
             if (batchIndex < totalBatches - 1 && config.delayBetweenBatches > 0) {
@@ -256767,43 +256781,46 @@ var require_phoneNumberController = __commonJS({
         const { phoneNumbers, messages, time, useRandomDelay, selectedAccounts } = req.body;
         let successfullySent = 0;
         const overallStartTime = Date.now();
-        const delayMinutes = time || 1;
+        let delayMinutes = typeof time === "number" && !Number.isNaN(time) ? time : 1;
+        if (delayMinutes < 0) {
+          delayMinutes = 0;
+        }
         if (!phoneNumbers?.length || !Array.isArray(phoneNumbers)) {
           throw new Error400_1.default("Invalid phone numbers array");
         }
         if (!messages?.length || !Array.isArray(messages) || !messages.every((m) => m?.text)) {
           throw new Error400_1.default("Messages must be a non-empty array of { text: string } objects");
         }
-        if (!selectedAccounts?.length || !Array.isArray(selectedAccounts)) {
-          io.emit("display-error", {
-            error: "No Accounts Selected",
-            message: "\u{1F512} Please select at least one WhatsApp account for sending messages.",
-            actionRequired: true
-          });
-          throw new Error400_1.default("Please select at least one account for sending messages");
-        }
         const validAccounts = [];
-        for (const accountId of selectedAccounts) {
-          const account = await this.getAccountById(accountId);
-          if (account && account.socket) {
+        if (selectedAccounts?.length && Array.isArray(selectedAccounts)) {
+          for (const accountId of selectedAccounts) {
+            const account = await this.getAccountById(accountId);
+            if (account && account.socket) {
+              validAccounts.push(account);
+            }
+          }
+        } else {
+          const connectedAccounts = Array.from(this.accounts.values()).filter((account) => account.connected && account.socket);
+          for (const account of connectedAccounts) {
             validAccounts.push(account);
           }
         }
         if (validAccounts.length === 0) {
           io.emit("display-error", {
             error: "No Valid Accounts",
-            message: "\u{1F512} None of the selected accounts are valid. Please login first.",
+            message: "\u{1F512} No connected WhatsApp accounts are available. Please login first.",
             actionRequired: true
           });
-          throw new Error400_1.default("None of the selected accounts are valid");
+          throw new Error400_1.default("No connected WhatsApp accounts are available");
         }
         const results = [];
         let lastSentTime = 0;
         try {
+          const delayLabel = useRandomDelay ? delayMinutes > 1 ? `Random 1-${delayMinutes}` : "Instant" : `${delayMinutes} minutes`;
           io.emit("send-status", {
             status: "started",
             total: phoneNumbers.length,
-            delayMinutes: useRandomDelay ? `Random 1-${delayMinutes}` : delayMinutes,
+            delayMinutes: delayLabel,
             startedAt: new Date(overallStartTime).toISOString(),
             accounts: validAccounts.map((a) => a.id)
           });
@@ -256816,7 +256833,7 @@ var require_phoneNumberController = __commonJS({
             const account = validAccounts[accountIndex];
             account.lastUsed = /* @__PURE__ */ new Date();
             try {
-              const currentDelayMs = useRandomDelay ? Math.floor(Math.random() * (delayMinutes - 1) + 1) * 6e4 : delayMinutes * 6e4;
+              const currentDelayMs = useRandomDelay ? delayMinutes > 1 ? Math.floor(Math.random() * (delayMinutes - 1) + 1) * 6e4 : 0 : delayMinutes * 6e4;
               const timeSinceLast = lastSentTime > 0 ? iterationStart - lastSentTime : 0;
               const remainingDelay = Math.max(0, currentDelayMs - timeSinceLast);
               if (remainingDelay > 0 && index > 0) {
@@ -354322,6 +354339,1350 @@ var require_node11 = __commonJS({
   }
 });
 
+// node_modules/node-cron/dist/cjs/create-id.js
+var require_create_id = __commonJS({
+  "node_modules/node-cron/dist/cjs/create-id.js"(exports2) {
+    "use strict";
+    var __importDefault3 = exports2 && exports2.__importDefault || function(mod2) {
+      return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.createID = createID;
+    var node_crypto_1 = __importDefault3(require("node:crypto"));
+    function createID(prefix = "", length2 = 16) {
+      const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const values = node_crypto_1.default.randomBytes(length2);
+      const id = Array.from(values, (v) => charset[v % charset.length]).join("");
+      return prefix ? `${prefix}-${id}` : id;
+    }
+  }
+});
+
+// node_modules/node-cron/dist/cjs/logger.js
+var require_logger = __commonJS({
+  "node_modules/node-cron/dist/cjs/logger.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    var levelColors = {
+      INFO: "\x1B[36m",
+      WARN: "\x1B[33m",
+      ERROR: "\x1B[31m",
+      DEBUG: "\x1B[35m"
+    };
+    var GREEN = "\x1B[32m";
+    var RESET = "\x1B[0m";
+    function log(level, message, extra) {
+      const timestamp = (/* @__PURE__ */ new Date()).toISOString();
+      const color = levelColors[level] ?? "";
+      const prefix = `[${timestamp}] [PID: ${process.pid}] ${GREEN}[NODE-CRON]${GREEN} ${color}[${level}]${RESET}`;
+      const output = `${prefix} ${message}`;
+      switch (level) {
+        case "ERROR":
+          console.error(output, extra ?? "");
+          break;
+        case "DEBUG":
+          console.debug(output, extra ?? "");
+          break;
+        case "WARN":
+          console.warn(output);
+          break;
+        case "INFO":
+        default:
+          console.info(output);
+          break;
+      }
+    }
+    var logger = {
+      info(message) {
+        log("INFO", message);
+      },
+      warn(message) {
+        log("WARN", message);
+      },
+      error(message, err2) {
+        if (message instanceof Error) {
+          log("ERROR", message.message, message);
+        } else {
+          log("ERROR", message, err2);
+        }
+      },
+      debug(message, err2) {
+        if (message instanceof Error) {
+          log("DEBUG", message.message, message);
+        } else {
+          log("DEBUG", message, err2);
+        }
+      }
+    };
+    exports2.default = logger;
+  }
+});
+
+// node_modules/node-cron/dist/cjs/promise/tracked-promise.js
+var require_tracked_promise = __commonJS({
+  "node_modules/node-cron/dist/cjs/promise/tracked-promise.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.TrackedPromise = void 0;
+    var TrackedPromise = class {
+      promise;
+      error;
+      state;
+      value;
+      constructor(executor) {
+        this.state = "pending";
+        this.promise = new Promise((resolve, reject) => {
+          executor((value) => {
+            this.state = "fulfilled";
+            this.value = value;
+            resolve(value);
+          }, (error) => {
+            this.state = "rejected";
+            this.error = error;
+            reject(error);
+          });
+        });
+      }
+      getPromise() {
+        return this.promise;
+      }
+      getState() {
+        return this.state;
+      }
+      isPending() {
+        return this.state === "pending";
+      }
+      isFulfilled() {
+        return this.state === "fulfilled";
+      }
+      isRejected() {
+        return this.state === "rejected";
+      }
+      getValue() {
+        return this.value;
+      }
+      getError() {
+        return this.error;
+      }
+      then(onfulfilled, onrejected) {
+        return this.promise.then(onfulfilled, onrejected);
+      }
+      catch(onrejected) {
+        return this.promise.catch(onrejected);
+      }
+      finally(onfinally) {
+        return this.promise.finally(onfinally);
+      }
+    };
+    exports2.TrackedPromise = TrackedPromise;
+  }
+});
+
+// node_modules/node-cron/dist/cjs/scheduler/runner.js
+var require_runner = __commonJS({
+  "node_modules/node-cron/dist/cjs/scheduler/runner.js"(exports2) {
+    "use strict";
+    var __importDefault3 = exports2 && exports2.__importDefault || function(mod2) {
+      return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.Runner = void 0;
+    var create_id_1 = require_create_id();
+    var logger_1 = __importDefault3(require_logger());
+    var tracked_promise_1 = require_tracked_promise();
+    function emptyOnFn() {
+    }
+    function emptyHookFn() {
+      return true;
+    }
+    function defaultOnError(date, error) {
+      logger_1.default.error("Task failed with error!", error);
+    }
+    var Runner = class {
+      timeMatcher;
+      onMatch;
+      noOverlap;
+      maxExecutions;
+      maxRandomDelay;
+      runCount;
+      running;
+      heartBeatTimeout;
+      onMissedExecution;
+      onOverlap;
+      onError;
+      beforeRun;
+      onFinished;
+      onMaxExecutions;
+      constructor(timeMatcher, onMatch, options) {
+        this.timeMatcher = timeMatcher;
+        this.onMatch = onMatch;
+        this.noOverlap = options == void 0 || options.noOverlap === void 0 ? false : options.noOverlap;
+        this.maxExecutions = options?.maxExecutions;
+        this.maxRandomDelay = options?.maxRandomDelay || 0;
+        this.onMissedExecution = options?.onMissedExecution || emptyOnFn;
+        this.onOverlap = options?.onOverlap || emptyOnFn;
+        this.onError = options?.onError || defaultOnError;
+        this.onFinished = options?.onFinished || emptyHookFn;
+        this.beforeRun = options?.beforeRun || emptyHookFn;
+        this.onMaxExecutions = options?.onMaxExecutions || emptyOnFn;
+        this.runCount = 0;
+        this.running = false;
+      }
+      start() {
+        this.running = true;
+        let lastExecution;
+        let expectedNextExecution;
+        const scheduleNextHeartBeat = (currentDate) => {
+          if (this.running) {
+            clearTimeout(this.heartBeatTimeout);
+            this.heartBeatTimeout = setTimeout(heartBeat, getDelay(this.timeMatcher, currentDate));
+          }
+        };
+        const runTask = (date) => {
+          return new Promise(async (resolve) => {
+            const execution = {
+              id: (0, create_id_1.createID)("exec"),
+              reason: "scheduled"
+            };
+            const shouldExecute = await this.beforeRun(date, execution);
+            const randomDelay = Math.floor(Math.random() * this.maxRandomDelay);
+            if (shouldExecute) {
+              setTimeout(async () => {
+                try {
+                  this.runCount++;
+                  execution.startedAt = /* @__PURE__ */ new Date();
+                  const result = await this.onMatch(date, execution);
+                  execution.finishedAt = /* @__PURE__ */ new Date();
+                  execution.result = result;
+                  this.onFinished(date, execution);
+                  if (this.maxExecutions && this.runCount >= this.maxExecutions) {
+                    this.onMaxExecutions(date);
+                    this.stop();
+                  }
+                } catch (error) {
+                  execution.finishedAt = /* @__PURE__ */ new Date();
+                  execution.error = error;
+                  this.onError(date, error, execution);
+                }
+                resolve(true);
+              }, randomDelay);
+            }
+          });
+        };
+        const checkAndRun = (date) => {
+          return new tracked_promise_1.TrackedPromise(async (resolve, reject) => {
+            try {
+              if (this.timeMatcher.match(date)) {
+                await runTask(date);
+              }
+              resolve(true);
+            } catch (err2) {
+              reject(err2);
+            }
+          });
+        };
+        const heartBeat = async () => {
+          const currentDate = nowWithoutMs();
+          if (expectedNextExecution && expectedNextExecution.getTime() < currentDate.getTime()) {
+            while (expectedNextExecution.getTime() < currentDate.getTime()) {
+              logger_1.default.warn(`missed execution at ${expectedNextExecution}! Possible blocking IO or high CPU user at the same process used by node-cron.`);
+              expectedNextExecution = this.timeMatcher.getNextMatch(expectedNextExecution);
+              runAsync(this.onMissedExecution, expectedNextExecution, defaultOnError);
+            }
+          }
+          if (lastExecution && lastExecution.getState() === "pending") {
+            runAsync(this.onOverlap, currentDate, defaultOnError);
+            if (this.noOverlap) {
+              logger_1.default.warn("task still running, new execution blocked by overlap prevention!");
+              expectedNextExecution = this.timeMatcher.getNextMatch(currentDate);
+              scheduleNextHeartBeat(currentDate);
+              return;
+            }
+          }
+          lastExecution = checkAndRun(currentDate);
+          expectedNextExecution = this.timeMatcher.getNextMatch(currentDate);
+          scheduleNextHeartBeat(currentDate);
+        };
+        this.heartBeatTimeout = setTimeout(() => {
+          heartBeat();
+        }, getDelay(this.timeMatcher, nowWithoutMs()));
+      }
+      nextRun() {
+        return this.timeMatcher.getNextMatch(/* @__PURE__ */ new Date());
+      }
+      stop() {
+        this.running = false;
+        if (this.heartBeatTimeout) {
+          clearTimeout(this.heartBeatTimeout);
+          this.heartBeatTimeout = void 0;
+        }
+      }
+      isStarted() {
+        return !!this.heartBeatTimeout && this.running;
+      }
+      isStopped() {
+        return !this.isStarted();
+      }
+      async execute() {
+        const date = /* @__PURE__ */ new Date();
+        const execution = {
+          id: (0, create_id_1.createID)("exec"),
+          reason: "invoked"
+        };
+        try {
+          const shouldExecute = await this.beforeRun(date, execution);
+          if (shouldExecute) {
+            this.runCount++;
+            execution.startedAt = /* @__PURE__ */ new Date();
+            const result = await this.onMatch(date, execution);
+            execution.finishedAt = /* @__PURE__ */ new Date();
+            execution.result = result;
+            this.onFinished(date, execution);
+          }
+        } catch (error) {
+          execution.finishedAt = /* @__PURE__ */ new Date();
+          execution.error = error;
+          this.onError(date, error, execution);
+        }
+      }
+    };
+    exports2.Runner = Runner;
+    async function runAsync(fn, date, onError) {
+      try {
+        await fn(date);
+      } catch (error) {
+        onError(date, error);
+      }
+    }
+    function getDelay(timeMatcher, currentDate) {
+      const maxDelay = 864e5;
+      const nextRun = timeMatcher.getNextMatch(currentDate);
+      const now = /* @__PURE__ */ new Date();
+      const delay2 = nextRun.getTime() - now.getTime();
+      if (delay2 > maxDelay) {
+        return maxDelay;
+      }
+      return Math.max(0, delay2);
+    }
+    function nowWithoutMs() {
+      const date = /* @__PURE__ */ new Date();
+      date.setMilliseconds(0);
+      return date;
+    }
+  }
+});
+
+// node_modules/node-cron/dist/cjs/pattern/convertion/month-names-conversion.js
+var require_month_names_conversion = __commonJS({
+  "node_modules/node-cron/dist/cjs/pattern/convertion/month-names-conversion.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.default = /* @__PURE__ */ (() => {
+      const months = [
+        "january",
+        "february",
+        "march",
+        "april",
+        "may",
+        "june",
+        "july",
+        "august",
+        "september",
+        "october",
+        "november",
+        "december"
+      ];
+      const shortMonths = [
+        "jan",
+        "feb",
+        "mar",
+        "apr",
+        "may",
+        "jun",
+        "jul",
+        "aug",
+        "sep",
+        "oct",
+        "nov",
+        "dec"
+      ];
+      function convertMonthName(expression, items) {
+        for (let i = 0; i < items.length; i++) {
+          expression = expression.replace(new RegExp(items[i], "gi"), i + 1);
+        }
+        return expression;
+      }
+      function interprete(monthExpression) {
+        monthExpression = convertMonthName(monthExpression, months);
+        monthExpression = convertMonthName(monthExpression, shortMonths);
+        return monthExpression;
+      }
+      return interprete;
+    })();
+  }
+});
+
+// node_modules/node-cron/dist/cjs/pattern/convertion/week-day-names-conversion.js
+var require_week_day_names_conversion = __commonJS({
+  "node_modules/node-cron/dist/cjs/pattern/convertion/week-day-names-conversion.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.default = /* @__PURE__ */ (() => {
+      const weekDays = [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday"
+      ];
+      const shortWeekDays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+      function convertWeekDayName(expression, items) {
+        for (let i = 0; i < items.length; i++) {
+          expression = expression.replace(new RegExp(items[i], "gi"), i);
+        }
+        return expression;
+      }
+      function convertWeekDays(expression) {
+        expression = expression.replace("7", "0");
+        expression = convertWeekDayName(expression, weekDays);
+        return convertWeekDayName(expression, shortWeekDays);
+      }
+      return convertWeekDays;
+    })();
+  }
+});
+
+// node_modules/node-cron/dist/cjs/pattern/convertion/asterisk-to-range-conversion.js
+var require_asterisk_to_range_conversion = __commonJS({
+  "node_modules/node-cron/dist/cjs/pattern/convertion/asterisk-to-range-conversion.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.default = /* @__PURE__ */ (() => {
+      function convertAsterisk(expression, replecement) {
+        if (expression.indexOf("*") !== -1) {
+          return expression.replace("*", replecement);
+        }
+        return expression;
+      }
+      function convertAsterisksToRanges(expressions) {
+        expressions[0] = convertAsterisk(expressions[0], "0-59");
+        expressions[1] = convertAsterisk(expressions[1], "0-59");
+        expressions[2] = convertAsterisk(expressions[2], "0-23");
+        expressions[3] = convertAsterisk(expressions[3], "1-31");
+        expressions[4] = convertAsterisk(expressions[4], "1-12");
+        expressions[5] = convertAsterisk(expressions[5], "0-6");
+        return expressions;
+      }
+      return convertAsterisksToRanges;
+    })();
+  }
+});
+
+// node_modules/node-cron/dist/cjs/pattern/convertion/range-conversion.js
+var require_range_conversion = __commonJS({
+  "node_modules/node-cron/dist/cjs/pattern/convertion/range-conversion.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.default = /* @__PURE__ */ (() => {
+      function replaceWithRange(expression, text, init2, end, stepTxt) {
+        const step = parseInt(stepTxt);
+        const numbers = [];
+        let last = parseInt(end);
+        let first = parseInt(init2);
+        if (first > last) {
+          last = parseInt(init2);
+          first = parseInt(end);
+        }
+        for (let i = first; i <= last; i += step) {
+          numbers.push(i);
+        }
+        return expression.replace(new RegExp(text, "i"), numbers.join());
+      }
+      function convertRange(expression) {
+        const rangeRegEx = /(\d+)-(\d+)(\/(\d+)|)/;
+        let match = rangeRegEx.exec(expression);
+        while (match !== null && match.length > 0) {
+          expression = replaceWithRange(expression, match[0], match[1], match[2], match[4] || "1");
+          match = rangeRegEx.exec(expression);
+        }
+        return expression;
+      }
+      function convertAllRanges(expressions) {
+        for (let i = 0; i < expressions.length; i++) {
+          expressions[i] = convertRange(expressions[i]);
+        }
+        return expressions;
+      }
+      return convertAllRanges;
+    })();
+  }
+});
+
+// node_modules/node-cron/dist/cjs/pattern/convertion/index.js
+var require_convertion = __commonJS({
+  "node_modules/node-cron/dist/cjs/pattern/convertion/index.js"(exports2) {
+    "use strict";
+    var __importDefault3 = exports2 && exports2.__importDefault || function(mod2) {
+      return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    var month_names_conversion_1 = __importDefault3(require_month_names_conversion());
+    var week_day_names_conversion_1 = __importDefault3(require_week_day_names_conversion());
+    var asterisk_to_range_conversion_1 = __importDefault3(require_asterisk_to_range_conversion());
+    var range_conversion_1 = __importDefault3(require_range_conversion());
+    exports2.default = /* @__PURE__ */ (() => {
+      function appendSeccondExpression(expressions) {
+        if (expressions.length === 5) {
+          return ["0"].concat(expressions);
+        }
+        return expressions;
+      }
+      function removeSpaces(str) {
+        return str.replace(/\s{2,}/g, " ").trim();
+      }
+      function normalizeIntegers(expressions) {
+        for (let i = 0; i < expressions.length; i++) {
+          const numbers = expressions[i].split(",");
+          for (let j = 0; j < numbers.length; j++) {
+            numbers[j] = parseInt(numbers[j]);
+          }
+          expressions[i] = numbers;
+        }
+        return expressions;
+      }
+      function interprete(expression) {
+        let expressions = removeSpaces(`${expression}`).split(" ");
+        expressions = appendSeccondExpression(expressions);
+        expressions[4] = (0, month_names_conversion_1.default)(expressions[4]);
+        expressions[5] = (0, week_day_names_conversion_1.default)(expressions[5]);
+        expressions = (0, asterisk_to_range_conversion_1.default)(expressions);
+        expressions = (0, range_conversion_1.default)(expressions);
+        expressions = normalizeIntegers(expressions);
+        return expressions;
+      }
+      return interprete;
+    })();
+  }
+});
+
+// node_modules/node-cron/dist/cjs/time/localized-time.js
+var require_localized_time = __commonJS({
+  "node_modules/node-cron/dist/cjs/time/localized-time.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.LocalizedTime = void 0;
+    var LocalizedTime = class {
+      timestamp;
+      parts;
+      timezone;
+      constructor(date, timezone) {
+        this.timestamp = date.getTime();
+        this.timezone = timezone;
+        this.parts = buildDateParts(date, timezone);
+      }
+      toDate() {
+        return new Date(this.timestamp);
+      }
+      toISO() {
+        const gmt = this.parts.gmt.replace(/^GMT/, "");
+        const offset = gmt ? gmt : "Z";
+        const pad = (n2) => String(n2).padStart(2, "0");
+        return `${this.parts.year}-${pad(this.parts.month)}-${pad(this.parts.day)}T${pad(this.parts.hour)}:${pad(this.parts.minute)}:${pad(this.parts.second)}.${String(this.parts.milisecond).padStart(3, "0")}` + offset;
+      }
+      getParts() {
+        return this.parts;
+      }
+      set(field, value) {
+        this.parts[field] = value;
+        const newDate = new Date(this.toISO());
+        this.timestamp = newDate.getTime();
+        this.parts = buildDateParts(newDate, this.timezone);
+      }
+    };
+    exports2.LocalizedTime = LocalizedTime;
+    function buildDateParts(date, timezone) {
+      const dftOptions = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        weekday: "short",
+        hour12: false
+      };
+      if (timezone) {
+        dftOptions.timeZone = timezone;
+      }
+      const dateFormat = new Intl.DateTimeFormat("en-US", dftOptions);
+      const parts = dateFormat.formatToParts(date).filter((part) => {
+        return part.type !== "literal";
+      }).reduce((acc, part) => {
+        acc[part.type] = part.value;
+        return acc;
+      }, {});
+      return {
+        day: parseInt(parts.day),
+        month: parseInt(parts.month),
+        year: parseInt(parts.year),
+        hour: parts.hour === "24" ? 0 : parseInt(parts.hour),
+        minute: parseInt(parts.minute),
+        second: parseInt(parts.second),
+        milisecond: date.getMilliseconds(),
+        weekday: parts.weekday,
+        gmt: getTimezoneGMT(date, timezone)
+      };
+    }
+    function getTimezoneGMT(date, timezone) {
+      const utcDate = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }));
+      const tzDate = new Date(date.toLocaleString("en-US", { timeZone: timezone }));
+      let offsetInMinutes = (utcDate.getTime() - tzDate.getTime()) / 6e4;
+      const sign = offsetInMinutes <= 0 ? "+" : "-";
+      offsetInMinutes = Math.abs(offsetInMinutes);
+      if (offsetInMinutes === 0)
+        return "Z";
+      const hours = Math.floor(offsetInMinutes / 60).toString().padStart(2, "0");
+      const minutes = Math.floor(offsetInMinutes % 60).toString().padStart(2, "0");
+      return `GMT${sign}${hours}:${minutes}`;
+    }
+  }
+});
+
+// node_modules/node-cron/dist/cjs/time/matcher-walker.js
+var require_matcher_walker = __commonJS({
+  "node_modules/node-cron/dist/cjs/time/matcher-walker.js"(exports2) {
+    "use strict";
+    var __importDefault3 = exports2 && exports2.__importDefault || function(mod2) {
+      return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.MatcherWalker = void 0;
+    var convertion_1 = __importDefault3(require_convertion());
+    var localized_time_1 = require_localized_time();
+    var time_matcher_1 = require_time_matcher();
+    var week_day_names_conversion_1 = __importDefault3(require_week_day_names_conversion());
+    var MatcherWalker = class {
+      cronExpression;
+      baseDate;
+      pattern;
+      expressions;
+      timeMatcher;
+      timezone;
+      constructor(cronExpression, baseDate, timezone) {
+        this.cronExpression = cronExpression;
+        this.baseDate = baseDate;
+        this.timeMatcher = new time_matcher_1.TimeMatcher(cronExpression, timezone);
+        this.timezone = timezone;
+        this.expressions = (0, convertion_1.default)(cronExpression);
+      }
+      isMatching() {
+        return this.timeMatcher.match(this.baseDate);
+      }
+      matchNext() {
+        const findNextDateIgnoringWeekday = () => {
+          const baseDate = new Date(this.baseDate.getTime());
+          baseDate.setMilliseconds(0);
+          const localTime = new localized_time_1.LocalizedTime(baseDate, this.timezone);
+          const dateParts = localTime.getParts();
+          const date2 = new localized_time_1.LocalizedTime(localTime.toDate(), this.timezone);
+          const seconds = this.expressions[0];
+          const nextSecond = availableValue(seconds, dateParts.second);
+          if (nextSecond) {
+            date2.set("second", nextSecond);
+            if (this.timeMatcher.match(date2.toDate())) {
+              return date2;
+            }
+          }
+          date2.set("second", seconds[0]);
+          const minutes = this.expressions[1];
+          const nextMinute = availableValue(minutes, dateParts.minute);
+          if (nextMinute) {
+            date2.set("minute", nextMinute);
+            if (this.timeMatcher.match(date2.toDate())) {
+              return date2;
+            }
+          }
+          date2.set("minute", minutes[0]);
+          const hours = this.expressions[2];
+          const nextHour = availableValue(hours, dateParts.hour);
+          if (nextHour) {
+            date2.set("hour", nextHour);
+            if (this.timeMatcher.match(date2.toDate())) {
+              return date2;
+            }
+          }
+          date2.set("hour", hours[0]);
+          const days = this.expressions[3];
+          const nextDay = availableValue(days, dateParts.day);
+          if (nextDay) {
+            date2.set("day", nextDay);
+            if (this.timeMatcher.match(date2.toDate())) {
+              return date2;
+            }
+          }
+          date2.set("day", days[0]);
+          const months = this.expressions[4];
+          const nextMonth = availableValue(months, dateParts.month);
+          if (nextMonth) {
+            date2.set("month", nextMonth);
+            if (this.timeMatcher.match(date2.toDate())) {
+              return date2;
+            }
+          }
+          date2.set("year", date2.getParts().year + 1);
+          date2.set("month", months[0]);
+          return date2;
+        };
+        const date = findNextDateIgnoringWeekday();
+        const weekdays = this.expressions[5];
+        let currentWeekday = parseInt((0, week_day_names_conversion_1.default)(date.getParts().weekday));
+        while (!(weekdays.indexOf(currentWeekday) > -1)) {
+          date.set("year", date.getParts().year + 1);
+          currentWeekday = parseInt((0, week_day_names_conversion_1.default)(date.getParts().weekday));
+        }
+        return date;
+      }
+    };
+    exports2.MatcherWalker = MatcherWalker;
+    function availableValue(values, currentValue) {
+      const availableValues = values.sort((a, b) => a - b).filter((s) => s > currentValue);
+      if (availableValues.length > 0)
+        return availableValues[0];
+      return false;
+    }
+  }
+});
+
+// node_modules/node-cron/dist/cjs/time/time-matcher.js
+var require_time_matcher = __commonJS({
+  "node_modules/node-cron/dist/cjs/time/time-matcher.js"(exports2) {
+    "use strict";
+    var __importDefault3 = exports2 && exports2.__importDefault || function(mod2) {
+      return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.TimeMatcher = void 0;
+    var index_1 = __importDefault3(require_convertion());
+    var week_day_names_conversion_1 = __importDefault3(require_week_day_names_conversion());
+    var localized_time_1 = require_localized_time();
+    var matcher_walker_1 = require_matcher_walker();
+    function matchValue(allowedValues, value) {
+      return allowedValues.indexOf(value) !== -1;
+    }
+    var TimeMatcher = class {
+      timezone;
+      pattern;
+      expressions;
+      constructor(pattern, timezone) {
+        this.timezone = timezone;
+        this.pattern = pattern;
+        this.expressions = (0, index_1.default)(pattern);
+      }
+      match(date) {
+        const localizedTime = new localized_time_1.LocalizedTime(date, this.timezone);
+        const parts = localizedTime.getParts();
+        const runOnSecond = matchValue(this.expressions[0], parts.second);
+        const runOnMinute = matchValue(this.expressions[1], parts.minute);
+        const runOnHour = matchValue(this.expressions[2], parts.hour);
+        const runOnDay = matchValue(this.expressions[3], parts.day);
+        const runOnMonth = matchValue(this.expressions[4], parts.month);
+        const runOnWeekDay = matchValue(this.expressions[5], parseInt((0, week_day_names_conversion_1.default)(parts.weekday)));
+        return runOnSecond && runOnMinute && runOnHour && runOnDay && runOnMonth && runOnWeekDay;
+      }
+      getNextMatch(date) {
+        const walker = new matcher_walker_1.MatcherWalker(this.pattern, date, this.timezone);
+        const next = walker.matchNext();
+        return next.toDate();
+      }
+    };
+    exports2.TimeMatcher = TimeMatcher;
+  }
+});
+
+// node_modules/node-cron/dist/cjs/tasks/state-machine.js
+var require_state_machine = __commonJS({
+  "node_modules/node-cron/dist/cjs/tasks/state-machine.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.StateMachine = void 0;
+    var allowedTransitions = {
+      "stopped": ["stopped", "idle", "destroyed"],
+      "idle": ["idle", "running", "stopped", "destroyed"],
+      "running": ["running", "idle", "stopped", "destroyed"],
+      "destroyed": ["destroyed"]
+    };
+    var StateMachine = class {
+      state;
+      constructor(initial = "stopped") {
+        this.state = initial;
+      }
+      changeState(state) {
+        if (allowedTransitions[this.state].includes(state)) {
+          this.state = state;
+        } else {
+          throw new Error(`invalid transition from ${this.state} to ${state}`);
+        }
+      }
+    };
+    exports2.StateMachine = StateMachine;
+  }
+});
+
+// node_modules/node-cron/dist/cjs/tasks/inline-scheduled-task.js
+var require_inline_scheduled_task = __commonJS({
+  "node_modules/node-cron/dist/cjs/tasks/inline-scheduled-task.js"(exports2) {
+    "use strict";
+    var __importDefault3 = exports2 && exports2.__importDefault || function(mod2) {
+      return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.InlineScheduledTask = void 0;
+    var events_1 = __importDefault3(require("events"));
+    var runner_1 = require_runner();
+    var time_matcher_1 = require_time_matcher();
+    var create_id_1 = require_create_id();
+    var state_machine_1 = require_state_machine();
+    var logger_1 = __importDefault3(require_logger());
+    var localized_time_1 = require_localized_time();
+    var TaskEmitter = class extends events_1.default {
+    };
+    var InlineScheduledTask = class {
+      emitter;
+      cronExpression;
+      timeMatcher;
+      runner;
+      id;
+      name;
+      stateMachine;
+      timezone;
+      constructor(cronExpression, taskFn, options) {
+        this.emitter = new TaskEmitter();
+        this.cronExpression = cronExpression;
+        this.id = (0, create_id_1.createID)("task", 12);
+        this.name = options?.name || this.id;
+        this.timezone = options?.timezone;
+        this.timeMatcher = new time_matcher_1.TimeMatcher(cronExpression, options?.timezone);
+        this.stateMachine = new state_machine_1.StateMachine();
+        const runnerOptions = {
+          timezone: options?.timezone,
+          noOverlap: options?.noOverlap,
+          maxExecutions: options?.maxExecutions,
+          maxRandomDelay: options?.maxRandomDelay,
+          beforeRun: (date, execution) => {
+            if (execution.reason === "scheduled") {
+              this.changeState("running");
+            }
+            this.emitter.emit("execution:started", this.createContext(date, execution));
+            return true;
+          },
+          onFinished: (date, execution) => {
+            if (execution.reason === "scheduled") {
+              this.changeState("idle");
+            }
+            this.emitter.emit("execution:finished", this.createContext(date, execution));
+            return true;
+          },
+          onError: (date, error, execution) => {
+            logger_1.default.error(error);
+            this.emitter.emit("execution:failed", this.createContext(date, execution));
+            this.changeState("idle");
+          },
+          onOverlap: (date) => {
+            this.emitter.emit("execution:overlap", this.createContext(date));
+          },
+          onMissedExecution: (date) => {
+            this.emitter.emit("execution:missed", this.createContext(date));
+          },
+          onMaxExecutions: (date) => {
+            this.emitter.emit("execution:maxReached", this.createContext(date));
+            this.destroy();
+          }
+        };
+        this.runner = new runner_1.Runner(this.timeMatcher, (date, execution) => {
+          return taskFn(this.createContext(date, execution));
+        }, runnerOptions);
+      }
+      getNextRun() {
+        if (this.stateMachine.state !== "stopped") {
+          return this.runner.nextRun();
+        }
+        return null;
+      }
+      changeState(state) {
+        if (this.runner.isStarted()) {
+          this.stateMachine.changeState(state);
+        }
+      }
+      start() {
+        if (this.runner.isStopped()) {
+          this.runner.start();
+          this.stateMachine.changeState("idle");
+          this.emitter.emit("task:started", this.createContext(/* @__PURE__ */ new Date()));
+        }
+      }
+      stop() {
+        if (this.runner.isStarted()) {
+          this.runner.stop();
+          this.stateMachine.changeState("stopped");
+          this.emitter.emit("task:stopped", this.createContext(/* @__PURE__ */ new Date()));
+        }
+      }
+      getStatus() {
+        return this.stateMachine.state;
+      }
+      destroy() {
+        if (this.stateMachine.state === "destroyed")
+          return;
+        this.stop();
+        this.stateMachine.changeState("destroyed");
+        this.emitter.emit("task:destroyed", this.createContext(/* @__PURE__ */ new Date()));
+      }
+      execute() {
+        return new Promise((resolve, reject) => {
+          const onFail = (context) => {
+            this.off("execution:finished", onFail);
+            reject(context.execution?.error);
+          };
+          const onFinished = (context) => {
+            this.off("execution:failed", onFail);
+            resolve(context.execution?.result);
+          };
+          this.once("execution:finished", onFinished);
+          this.once("execution:failed", onFail);
+          this.runner.execute();
+        });
+      }
+      on(event, fun) {
+        this.emitter.on(event, fun);
+      }
+      off(event, fun) {
+        this.emitter.off(event, fun);
+      }
+      once(event, fun) {
+        this.emitter.once(event, fun);
+      }
+      createContext(executionDate, execution) {
+        const localTime = new localized_time_1.LocalizedTime(executionDate, this.timezone);
+        const ctx = {
+          date: localTime.toDate(),
+          dateLocalIso: localTime.toISO(),
+          triggeredAt: /* @__PURE__ */ new Date(),
+          task: this,
+          execution
+        };
+        return ctx;
+      }
+    };
+    exports2.InlineScheduledTask = InlineScheduledTask;
+  }
+});
+
+// node_modules/node-cron/dist/cjs/task-registry.js
+var require_task_registry = __commonJS({
+  "node_modules/node-cron/dist/cjs/task-registry.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.TaskRegistry = void 0;
+    var tasks = /* @__PURE__ */ new Map();
+    var TaskRegistry = class {
+      add(task) {
+        if (this.has(task.id)) {
+          throw Error(`task ${task.id} already registred!`);
+        }
+        tasks.set(task.id, task);
+        task.on("task:destroyed", () => {
+          this.remove(task);
+        });
+      }
+      get(taskId) {
+        return tasks.get(taskId);
+      }
+      remove(task) {
+        if (this.has(task.id)) {
+          task?.destroy();
+          tasks.delete(task.id);
+        }
+      }
+      all() {
+        return tasks;
+      }
+      has(taskId) {
+        return tasks.has(taskId);
+      }
+      killAll() {
+        tasks.forEach((id) => this.remove(id));
+      }
+    };
+    exports2.TaskRegistry = TaskRegistry;
+  }
+});
+
+// node_modules/node-cron/dist/cjs/pattern/validation/pattern-validation.js
+var require_pattern_validation = __commonJS({
+  "node_modules/node-cron/dist/cjs/pattern/validation/pattern-validation.js"(exports2) {
+    "use strict";
+    var __importDefault3 = exports2 && exports2.__importDefault || function(mod2) {
+      return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    var index_1 = __importDefault3(require_convertion());
+    var validationRegex = /^(?:\d+|\*|\*\/\d+)$/;
+    function isValidExpression(expression, min, max2) {
+      const options = expression;
+      for (const option of options) {
+        const optionAsInt = parseInt(option, 10);
+        if (!Number.isNaN(optionAsInt) && (optionAsInt < min || optionAsInt > max2) || !validationRegex.test(option))
+          return false;
+      }
+      return true;
+    }
+    function isInvalidSecond(expression) {
+      return !isValidExpression(expression, 0, 59);
+    }
+    function isInvalidMinute(expression) {
+      return !isValidExpression(expression, 0, 59);
+    }
+    function isInvalidHour(expression) {
+      return !isValidExpression(expression, 0, 23);
+    }
+    function isInvalidDayOfMonth(expression) {
+      return !isValidExpression(expression, 1, 31);
+    }
+    function isInvalidMonth(expression) {
+      return !isValidExpression(expression, 1, 12);
+    }
+    function isInvalidWeekDay(expression) {
+      return !isValidExpression(expression, 0, 7);
+    }
+    function validateFields(patterns, executablePatterns) {
+      if (isInvalidSecond(executablePatterns[0]))
+        throw new Error(`${patterns[0]} is a invalid expression for second`);
+      if (isInvalidMinute(executablePatterns[1]))
+        throw new Error(`${patterns[1]} is a invalid expression for minute`);
+      if (isInvalidHour(executablePatterns[2]))
+        throw new Error(`${patterns[2]} is a invalid expression for hour`);
+      if (isInvalidDayOfMonth(executablePatterns[3]))
+        throw new Error(`${patterns[3]} is a invalid expression for day of month`);
+      if (isInvalidMonth(executablePatterns[4]))
+        throw new Error(`${patterns[4]} is a invalid expression for month`);
+      if (isInvalidWeekDay(executablePatterns[5]))
+        throw new Error(`${patterns[5]} is a invalid expression for week day`);
+    }
+    function validate(pattern) {
+      if (typeof pattern !== "string")
+        throw new TypeError("pattern must be a string!");
+      const patterns = pattern.split(" ");
+      const executablePatterns = (0, index_1.default)(pattern);
+      if (patterns.length === 5)
+        patterns.unshift("0");
+      validateFields(patterns, executablePatterns);
+    }
+    exports2.default = validate;
+  }
+});
+
+// node_modules/node-cron/dist/cjs/tasks/background-scheduled-task/background-scheduled-task.js
+var require_background_scheduled_task = __commonJS({
+  "node_modules/node-cron/dist/cjs/tasks/background-scheduled-task/background-scheduled-task.js"(exports2) {
+    "use strict";
+    var __importDefault3 = exports2 && exports2.__importDefault || function(mod2) {
+      return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    var path_1 = require("path");
+    var child_process_1 = require("child_process");
+    var create_id_1 = require_create_id();
+    var stream_1 = require("stream");
+    var state_machine_1 = require_state_machine();
+    var localized_time_1 = require_localized_time();
+    var logger_1 = __importDefault3(require_logger());
+    var time_matcher_1 = require_time_matcher();
+    var daemonPath = (0, path_1.resolve)(__dirname, "daemon.js");
+    var TaskEmitter = class extends stream_1.EventEmitter {
+    };
+    var BackgroundScheduledTask = class {
+      emitter;
+      id;
+      name;
+      cronExpression;
+      taskPath;
+      options;
+      forkProcess;
+      stateMachine;
+      constructor(cronExpression, taskPath, options) {
+        this.cronExpression = cronExpression;
+        this.taskPath = taskPath;
+        this.options = options;
+        this.id = (0, create_id_1.createID)("task");
+        this.name = options?.name || this.id;
+        this.emitter = new TaskEmitter();
+        this.stateMachine = new state_machine_1.StateMachine("stopped");
+        this.on("task:stopped", () => {
+          this.forkProcess?.kill();
+          this.forkProcess = void 0;
+          this.stateMachine.changeState("stopped");
+        });
+        this.on("task:destroyed", () => {
+          this.forkProcess?.kill();
+          this.forkProcess = void 0;
+          this.stateMachine.changeState("destroyed");
+        });
+      }
+      getNextRun() {
+        if (this.stateMachine.state !== "stopped") {
+          const timeMatcher = new time_matcher_1.TimeMatcher(this.cronExpression, this.options?.timezone);
+          return timeMatcher.getNextMatch(/* @__PURE__ */ new Date());
+        }
+        return null;
+      }
+      start() {
+        return new Promise((resolve, reject) => {
+          if (this.forkProcess) {
+            return resolve(void 0);
+          }
+          const timeout = setTimeout(() => {
+            reject(new Error("Start operation timed out"));
+          }, 5e3);
+          try {
+            this.forkProcess = (0, child_process_1.fork)(daemonPath);
+            this.forkProcess.on("error", (err2) => {
+              clearTimeout(timeout);
+              reject(new Error(`Error on daemon: ${err2.message}`));
+            });
+            this.forkProcess.on("exit", (code, signal) => {
+              if (code !== 0 && signal !== "SIGTERM") {
+                const erro = new Error(`node-cron daemon exited with code ${code || signal}`);
+                logger_1.default.error(erro);
+                clearTimeout(timeout);
+                reject(erro);
+              }
+            });
+            this.forkProcess.on("message", (message) => {
+              if (message.jsonError) {
+                if (message.context?.execution) {
+                  message.context.execution.error = deserializeError(message.jsonError);
+                  delete message.jsonError;
+                }
+              }
+              if (message.context?.task?.state) {
+                this.stateMachine.changeState(message.context?.task?.state);
+              }
+              if (message.context) {
+                const execution = message.context?.execution;
+                delete execution?.hasError;
+                const context = this.createContext(new Date(message.context.date), execution);
+                this.emitter.emit(message.event, context);
+              }
+            });
+            this.once("task:started", () => {
+              this.stateMachine.changeState("idle");
+              clearTimeout(timeout);
+              resolve(void 0);
+            });
+            this.forkProcess.send({
+              command: "task:start",
+              path: this.taskPath,
+              cron: this.cronExpression,
+              options: this.options
+            });
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+      stop() {
+        return new Promise((resolve, reject) => {
+          if (!this.forkProcess) {
+            return resolve(void 0);
+          }
+          const timeoutId = setTimeout(() => {
+            clearTimeout(timeoutId);
+            reject(new Error("Stop operation timed out"));
+          }, 5e3);
+          const cleanupAndResolve = () => {
+            clearTimeout(timeoutId);
+            this.off("task:stopped", onStopped);
+            this.forkProcess = void 0;
+            resolve(void 0);
+          };
+          const onStopped = () => {
+            cleanupAndResolve();
+          };
+          this.once("task:stopped", onStopped);
+          this.forkProcess.send({
+            command: "task:stop"
+          });
+        });
+      }
+      getStatus() {
+        return this.stateMachine.state;
+      }
+      destroy() {
+        return new Promise((resolve, reject) => {
+          if (!this.forkProcess) {
+            return resolve(void 0);
+          }
+          const timeoutId = setTimeout(() => {
+            clearTimeout(timeoutId);
+            reject(new Error("Destroy operation timed out"));
+          }, 5e3);
+          const onDestroy = () => {
+            clearTimeout(timeoutId);
+            this.off("task:destroyed", onDestroy);
+            resolve(void 0);
+          };
+          this.once("task:destroyed", onDestroy);
+          this.forkProcess.send({
+            command: "task:destroy"
+          });
+        });
+      }
+      execute() {
+        return new Promise((resolve, reject) => {
+          if (!this.forkProcess) {
+            return reject(new Error("Cannot execute background task because it hasn't been started yet. Please initialize the task using the start() method before attempting to execute it."));
+          }
+          const timeoutId = setTimeout(() => {
+            cleanupListeners();
+            reject(new Error("Execution timeout exceeded"));
+          }, 5e3);
+          const cleanupListeners = () => {
+            clearTimeout(timeoutId);
+            this.off("execution:finished", onFinished);
+            this.off("execution:failed", onFail);
+          };
+          const onFinished = (context) => {
+            cleanupListeners();
+            resolve(context.execution?.result);
+          };
+          const onFail = (context) => {
+            cleanupListeners();
+            reject(context.execution?.error || new Error("Execution failed without specific error"));
+          };
+          this.once("execution:finished", onFinished);
+          this.once("execution:failed", onFail);
+          this.forkProcess.send({
+            command: "task:execute"
+          });
+        });
+      }
+      on(event, fun) {
+        this.emitter.on(event, fun);
+      }
+      off(event, fun) {
+        this.emitter.off(event, fun);
+      }
+      once(event, fun) {
+        this.emitter.once(event, fun);
+      }
+      createContext(executionDate, execution) {
+        const localTime = new localized_time_1.LocalizedTime(executionDate, this.options?.timezone);
+        const ctx = {
+          date: localTime.toDate(),
+          dateLocalIso: localTime.toISO(),
+          triggeredAt: /* @__PURE__ */ new Date(),
+          task: this,
+          execution
+        };
+        return ctx;
+      }
+    };
+    function deserializeError(str) {
+      const data3 = JSON.parse(str);
+      const Err = globalThis[data3.name] || Error;
+      const err2 = new Err(data3.message);
+      if (data3.stack) {
+        err2.stack = data3.stack;
+      }
+      Object.keys(data3).forEach((key) => {
+        if (!["name", "message", "stack"].includes(key)) {
+          err2[key] = data3[key];
+        }
+      });
+      return err2;
+    }
+    exports2.default = BackgroundScheduledTask;
+  }
+});
+
+// node_modules/node-cron/dist/cjs/node-cron.js
+var require_node_cron = __commonJS({
+  "node_modules/node-cron/dist/cjs/node-cron.js"(exports2) {
+    "use strict";
+    var __importDefault3 = exports2 && exports2.__importDefault || function(mod2) {
+      return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.nodeCron = exports2.getTask = exports2.getTasks = void 0;
+    exports2.schedule = schedule;
+    exports2.createTask = createTask;
+    exports2.solvePath = solvePath;
+    exports2.validate = validate;
+    var inline_scheduled_task_1 = require_inline_scheduled_task();
+    var task_registry_1 = require_task_registry();
+    var pattern_validation_1 = __importDefault3(require_pattern_validation());
+    var background_scheduled_task_1 = __importDefault3(require_background_scheduled_task());
+    var path_1 = __importDefault3(require("path"));
+    var url_1 = require("url");
+    var registry = new task_registry_1.TaskRegistry();
+    function schedule(expression, func, options) {
+      const task = createTask(expression, func, options);
+      task.start();
+      return task;
+    }
+    function createTask(expression, func, options) {
+      let task;
+      if (func instanceof Function) {
+        task = new inline_scheduled_task_1.InlineScheduledTask(expression, func, options);
+      } else {
+        const taskPath = solvePath(func);
+        task = new background_scheduled_task_1.default(expression, taskPath, options);
+      }
+      registry.add(task);
+      return task;
+    }
+    function solvePath(filePath) {
+      if (path_1.default.isAbsolute(filePath))
+        return (0, url_1.pathToFileURL)(filePath).href;
+      if (filePath.startsWith("file://"))
+        return filePath;
+      const stackLines = new Error().stack?.split("\n");
+      if (stackLines) {
+        stackLines?.shift();
+        const callerLine = stackLines?.find((line) => {
+          return line.indexOf(__filename) === -1;
+        });
+        const match = callerLine?.match(/(file:\/\/)?(((\/?)(\w:))?([/\\].+)):\d+:\d+/);
+        if (match) {
+          const dir = `${match[5] ?? ""}${path_1.default.dirname(match[6])}`;
+          return (0, url_1.pathToFileURL)(path_1.default.resolve(dir, filePath)).href;
+        }
+      }
+      throw new Error(`Could not locate task file ${filePath}`);
+    }
+    function validate(expression) {
+      try {
+        (0, pattern_validation_1.default)(expression);
+        return true;
+      } catch (e2) {
+        return false;
+      }
+    }
+    exports2.getTasks = registry.all;
+    exports2.getTask = registry.get;
+    exports2.nodeCron = {
+      schedule,
+      createTask,
+      validate,
+      getTasks: exports2.getTasks,
+      getTask: exports2.getTask
+    };
+    exports2.default = exports2.nodeCron;
+  }
+});
+
 // node_modules/luxon/build/node/luxon.js
 var require_luxon = __commonJS({
   "node_modules/luxon/build/node/luxon.js"(exports2) {
@@ -362672,6 +364033,7 @@ var require_TelegramController = __commonJS({
     var fs_1 = __importDefault3(require("fs"));
     var streamifier_1 = __importDefault3(require_lib9());
     var csv_parser_1 = __importDefault3(require_csv_parser());
+    var node_cron_1 = __importDefault3(require_node_cron());
     var node_schedule_1 = __importDefault3(require_node_schedule());
     var upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage() });
     var API_ID = 29214492;
@@ -362690,13 +364052,14 @@ var require_TelegramController = __commonJS({
         }
         return sessionPath;
       }
-      static async initializeAccount(phoneNumber, io) {
+      static async initializeAccount(phoneNumber, io, restoreConnected = false) {
         const id = phoneNumber.replace(/\D/g, "");
         const sessionPath = this.getSessionPath(id);
         let authKey;
         let dcId;
         let serverAddress;
         let port;
+        let sessionExists = false;
         if (fs_1.default.existsSync(`${sessionPath}.json`)) {
           try {
             const sessionData = fs_1.default.readFileSync(`${sessionPath}.json`, "utf8");
@@ -362706,6 +364069,7 @@ var require_TelegramController = __commonJS({
               dcId = session.dcId;
               serverAddress = session.serverAddress;
               port = session.port;
+              sessionExists = true;
             }
           } catch (error) {
             console.warn("Error reading session file, creating new session");
@@ -362728,10 +364092,29 @@ var require_TelegramController = __commonJS({
               return true;
             };
           }
+          let isConnected = false;
+          let accountName = void 0;
+          if (sessionExists && restoreConnected) {
+            try {
+              const user = await mtproto.call("users.getFullUser", {
+                id: {
+                  _: "inputUserSelf"
+                }
+              });
+              if (user && user.users && user.users.length > 0) {
+                isConnected = true;
+                accountName = user.users[0].first_name || user.users[0].username || phoneNumber;
+                console.log(`Restored connection for account ${id}`);
+              }
+            } catch (error) {
+              console.warn(`Could not restore session for ${id}:`, error.message || "Session may be expired");
+            }
+          }
           const account = {
             id,
             phoneNumber,
-            connected: false,
+            name: accountName,
+            connected: isConnected,
             mtproto,
             authKey,
             dcId,
@@ -362743,6 +364126,38 @@ var require_TelegramController = __commonJS({
         } catch (error) {
           this.displayError(error, io);
           throw error;
+        }
+      }
+      // Restore all connected accounts from saved sessions
+      static async restoreConnectedAccounts(io) {
+        let sessionDir;
+        if (process.pkg) {
+          const homeDir = os_1.default.homedir();
+          sessionDir = path_1.default.join(homeDir, ".telegram-toolkit", "sessions");
+        } else {
+          sessionDir = path_1.default.join(__dirname, "..", "telegram_auth");
+        }
+        if (!fs_1.default.existsSync(sessionDir)) {
+          console.log("No sessions directory found");
+          return;
+        }
+        const files = fs_1.default.readdirSync(sessionDir).filter((f) => f.endsWith(".json") && f.startsWith("session-"));
+        for (const file of files) {
+          const phoneNumber = file.replace("session-", "").replace(".json", "");
+          try {
+            const account = await this.initializeAccount(phoneNumber, io, true);
+            if (account.connected) {
+              io.emit("client-connect", {
+                accountId: account.id,
+                phoneNumber: account.phoneNumber,
+                name: account.name,
+                timestamp: (/* @__PURE__ */ new Date()).toISOString()
+              });
+              console.log(`Restored Telegram account: ${account.phoneNumber}`);
+            }
+          } catch (error) {
+            console.warn(`Failed to restore account ${phoneNumber}:`, error);
+          }
         }
       }
       static async joinGroup(req, io) {
@@ -364494,7 +365909,7 @@ var require_TelegramController = __commonJS({
         return this.sendMessages(req, io);
       }
       static async sendBulkMessagesToGroups(req, io) {
-        const { accountId, groups, message, config } = req.body;
+        const { accountId, groups, message, config, campaignId: providedCampaignId } = req.body;
         const file = req.file;
         if (!accountId || !groups) {
           throw new Error("Account ID and groups are required");
@@ -364513,32 +365928,91 @@ var require_TelegramController = __commonJS({
             parsedConfig = {};
           }
         }
-        const campaignId = `campaign-${Date.now()}`;
+        const campaignId = providedCampaignId || `campaign-${Date.now()}`;
+        const abortController = new AbortController();
+        this.activeCampaigns.set(campaignId, {
+          abortController,
+          repeatCount: 1,
+          startTime: /* @__PURE__ */ new Date()
+        });
         if (parsedConfig.repeatEvery && Number(parsedConfig.repeatEvery) > 0) {
-          const repeatHours = Number(parsedConfig.repeatEvery);
-          const jobName = `recurring-${campaignId}`;
-          node_schedule_1.default.scheduleJob(jobName, `0 0 */${repeatHours} * * *`, async () => {
-            console.log(`Running recurring campaign ${jobName}`);
+          const repeatInterval = Number(parsedConfig.repeatEvery);
+          const repeatUnit = parsedConfig.repeatUnit || "hours";
+          const maxRepeats = parsedConfig.maxRepeats ? Number(parsedConfig.maxRepeats) : void 0;
+          let cronExpression = "";
+          if (repeatUnit === "minutes") {
+            cronExpression = `*/${repeatInterval} * * * *`;
+          } else {
+            cronExpression = `0 */${repeatInterval} * * *`;
+          }
+          console.log(`Scheduling recurring campaign with cron: ${cronExpression}`);
+          const job = node_cron_1.default.schedule(cronExpression, async () => {
+            console.log(`Running recurring campaign ${campaignId}`);
             try {
-              await _TelegramController.executeGroupCampaign(account, groupList, message, file, parsedConfig, io, jobName);
+              const existingCampaign = this.activeCampaigns.get(campaignId);
+              if (existingCampaign) {
+                existingCampaign.repeatCount++;
+                if (maxRepeats && existingCampaign.repeatCount > maxRepeats) {
+                  console.log(`Campaign ${campaignId} reached max repeats (${maxRepeats}), cancelling`);
+                  if (existingCampaign.job)
+                    existingCampaign.job.stop();
+                  io.emit("campaign-repeat-complete", {
+                    campaignId,
+                    repeatNumber: existingCampaign.repeatCount - 1,
+                    maxRepeats,
+                    message: `Campaign "${campaignId}" completed ${maxRepeats} repeats`
+                  });
+                  return;
+                }
+                io.emit("campaign-repeat-start", {
+                  campaignId,
+                  repeatNumber: existingCampaign.repeatCount,
+                  maxRepeats,
+                  total: groupList.length,
+                  message: `Campaign repeat ${existingCampaign.repeatCount} started`
+                });
+              }
+              await _TelegramController.executeGroupCampaign(account, groupList, message, file, parsedConfig, io, campaignId, abortController);
+              io.emit("campaign-repeat-complete", {
+                campaignId,
+                repeatNumber: existingCampaign?.repeatCount || 1,
+                maxRepeats,
+                message: `Campaign repeat completed`
+              });
             } catch (error) {
-              console.error(`Recurring campaign ${jobName} failed:`, error);
+              console.error(`Recurring campaign ${campaignId} failed:`, error);
             }
           });
+          const campaignEntry = this.activeCampaigns.get(campaignId);
+          if (campaignEntry) {
+            campaignEntry.job = job;
+          }
           io.emit("campaign-scheduled", {
-            jobName,
-            repeatEvery: repeatHours,
-            message: `Campaign scheduled to repeat every ${repeatHours} hours`
+            campaignId,
+            repeatEvery: repeatInterval,
+            repeatUnit,
+            maxRepeats,
+            message: maxRepeats ? `Campaign scheduled to repeat every ${repeatInterval} ${repeatUnit}, max ${maxRepeats} times` : `Campaign scheduled to repeat every ${repeatInterval} ${repeatUnit}`
           });
         }
-        return await this.executeGroupCampaign(account, groupList, message, file, parsedConfig, io, campaignId);
+        return await this.executeGroupCampaign(account, groupList, message, file, parsedConfig, io, campaignId, abortController);
       }
-      static async executeGroupCampaign(account, groupList, message, file, config, io, campaignId) {
+      static async executeGroupCampaign(account, groupList, message, file, config, io, campaignId, abortController) {
         const mtproto = account.mtproto;
         const result = { sent: [], failed: [] };
+        const currentCampaign = this.activeCampaigns.get(campaignId);
+        const repeatCount = currentCampaign?.repeatCount || 1;
+        io.emit("campaign-repeat-start", {
+          campaignId,
+          repeatNumber: repeatCount,
+          maxRepeats: config?.maxRepeats ? Number(config.maxRepeats) : void 0,
+          total: groupList.length,
+          message: `Campaign repeat ${repeatCount} started`
+        });
         io.emit("campaign-start", {
           campaignId,
           total: groupList.length,
+          repeatCount,
           message: "Starting campaign..."
         });
         let inputMedia = null;
@@ -364558,6 +366032,14 @@ var require_TelegramController = __commonJS({
           }
         }
         for (let i = 0; i < groupList.length; i++) {
+          if (abortController?.signal?.aborted) {
+            io.emit("campaign-cancelled", {
+              campaignId,
+              processed: i,
+              message: "Campaign cancelled by user"
+            });
+            return { sent: result.sent, failed: result.failed };
+          }
           const group = groupList[i];
           try {
             const peer = {
@@ -364586,6 +366068,7 @@ var require_TelegramController = __commonJS({
               processed: i + 1,
               sent: result.sent.length,
               failed: result.failed.length,
+              repeatCount,
               lastAction: { type: "success", groupName: group.name || group.title || group.id }
             });
           } catch (e2) {
@@ -364597,6 +366080,7 @@ var require_TelegramController = __commonJS({
               processed: i + 1,
               sent: result.sent.length,
               failed: result.failed.length,
+              repeatCount,
               lastAction: { type: "error", groupName: group.name || group.title || group.id, error: errorMessage }
             });
             if (errorMessage.includes("FLOOD_WAIT")) {
@@ -364784,6 +366268,18 @@ var require_TelegramController = __commonJS({
       }
       static async getScheduledMessages() {
         return this.scheduledMessages;
+      }
+      static async cancelRunningCampaign(campaignId) {
+        const campaign = this.activeCampaigns.get(campaignId);
+        if (!campaign) {
+          return false;
+        }
+        if (campaign.job) {
+          campaign.job.stop();
+        }
+        campaign.abortController.abort();
+        this.activeCampaigns.delete(campaignId);
+        return true;
       }
       static async cancelScheduledMessage(req, io) {
         const { messageId } = req.body;
@@ -364980,11 +366476,128 @@ var require_TelegramController = __commonJS({
           action
         });
       }
+      static async executeScheduledCampaign(accountId, groupList, message, file, config, io, campaignId, abortSignal) {
+        const account = await this.getAccountById(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected");
+        }
+        const mtproto = account.mtproto;
+        const result = { sent: [], failed: [] };
+        io.emit("scheduled-campaign-start", {
+          campaignId,
+          total: groupList.length,
+          message: "Starting scheduled campaign..."
+        });
+        let inputMedia = null;
+        if (file) {
+          try {
+            const uploadedFile = await this.uploadFile(mtproto, file, account.id, io);
+            inputMedia = {
+              _: "inputMediaUploadedPhoto",
+              file: uploadedFile,
+              ttl_seconds: 0
+            };
+          } catch (e2) {
+            console.error("Failed to upload file:", e2);
+            io.emit("scheduled-campaign-log", { type: "error", message: `Failed to upload file: ${e2.message}`, campaignId });
+            if (!message)
+              throw new Error("Failed to upload file and no text message provided");
+          }
+        }
+        for (let i = 0; i < groupList.length; i++) {
+          if (abortSignal?.aborted) {
+            io.emit("scheduled-campaign-cancelled", {
+              campaignId,
+              processed: i,
+              message: "Campaign cancelled by user"
+            });
+            break;
+          }
+          const group = groupList[i];
+          const repeatMatch = campaignId?.match(/-repeat-(\d+)$/);
+          const repeatNum = repeatMatch ? parseInt(repeatMatch[1]) : 1;
+          try {
+            const peer = {
+              _: "inputPeerChannel",
+              channel_id: group.id,
+              access_hash: group.access_hash
+            };
+            if (inputMedia) {
+              await this.callWithDcMigration(mtproto, "messages.sendMedia", {
+                peer,
+                media: inputMedia,
+                message: message || "",
+                random_id: Math.floor(Math.random() * 1e9)
+              }, 0, account.id, io);
+            } else {
+              await this.callWithDcMigration(mtproto, "messages.sendMessage", {
+                peer,
+                message,
+                random_id: Math.floor(Math.random() * 1e9)
+              }, 0, account.id, io);
+            }
+            result.sent.push(group.id);
+            io.emit("scheduled-campaign-progress", {
+              campaignId,
+              total: groupList.length,
+              processed: i + 1,
+              sent: result.sent.length,
+              failed: result.failed.length,
+              repeatCount: repeatNum,
+              lastAction: { type: "success", groupName: group.name || group.title || group.id }
+            });
+          } catch (e2) {
+            const errorMessage = e2.message || "Unknown error";
+            result.failed.push({ id: group.id, error: errorMessage });
+            io.emit("scheduled-campaign-progress", {
+              campaignId,
+              total: groupList.length,
+              processed: i + 1,
+              sent: result.sent.length,
+              failed: result.failed.length,
+              repeatCount: repeatNum,
+              lastAction: { type: "error", groupName: group.name || group.title || group.id, error: errorMessage }
+            });
+            if (errorMessage.includes("FLOOD_WAIT")) {
+              const floodMatch = errorMessage.match(/FLOOD_WAIT_(\d+)/);
+              if (floodMatch) {
+                const seconds = parseInt(floodMatch[1], 10);
+                const waitTime = (seconds + 5) * 1e3;
+                io.emit("scheduled-campaign-log", {
+                  type: "warning",
+                  message: `Flood wait detected. Pausing for ${seconds + 5} seconds to prevent ban...`,
+                  campaignId
+                });
+                await new Promise((r) => setTimeout(r, waitTime));
+                i--;
+                continue;
+              }
+              io.emit("scheduled-campaign-log", { type: "warning", message: `Rate limited on group ${group.name}: ${errorMessage}`, campaignId });
+            } else if (errorMessage.includes("PEER_FLOOD")) {
+              const waitTime = 5 * 60 * 1e3;
+              io.emit("scheduled-campaign-log", {
+                type: "warning",
+                message: `Peer Flood (Spam Limit) detected. Pausing for 5 minutes to restore account health...`,
+                campaignId
+              });
+              await new Promise((r) => setTimeout(r, waitTime));
+              i--;
+              continue;
+            }
+          }
+          const delay2 = config?.delayBetweenMessages !== void 0 ? Number(config.delayBetweenMessages) : 2e3;
+          const randomDelay = config?.randomDelay ? Math.floor(Math.random() * 1e3) : 0;
+          await new Promise((r) => setTimeout(r, delay2 + randomDelay));
+        }
+        io.emit("scheduled-campaign-complete", { result, campaignId });
+        return result;
+      }
     };
     TelegramController.accounts = /* @__PURE__ */ new Map();
     TelegramController.scheduledMessages = [];
     TelegramController.activeOperations = /* @__PURE__ */ new Map();
     TelegramController.currentOperationId = null;
+    TelegramController.activeCampaigns = /* @__PURE__ */ new Map();
     TelegramController.floodWaitStatus = /* @__PURE__ */ new Map();
     exports2.default = TelegramController;
   }
@@ -365526,6 +367139,284 @@ var require_email = __commonJS({
   }
 });
 
+// dist/src/controllers/CampaignSchedulerController.js
+var require_CampaignSchedulerController = __commonJS({
+  "dist/src/controllers/CampaignSchedulerController.js"(exports2) {
+    "use strict";
+    var __importDefault3 = exports2 && exports2.__importDefault || function(mod2) {
+      return mod2 && mod2.__esModule ? mod2 : { "default": mod2 };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    var node_cron_1 = __importDefault3(require_node_cron());
+    var TelegramController_1 = __importDefault3(require_TelegramController());
+    var CampaignSchedulerController = class {
+      static async createScheduledCampaign(req, io) {
+        const { name, accountId, groups, message, config, schedule, file } = req.body;
+        if (!name || !accountId || !groups || !message || !schedule) {
+          throw new Error("Missing required parameters: name, accountId, groups, message, schedule");
+        }
+        const campaignId = `campaign-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const campaign = {
+          id: campaignId,
+          name,
+          accountId,
+          groups,
+          message,
+          file,
+          config,
+          schedule,
+          status: "scheduled",
+          createdAt: /* @__PURE__ */ new Date(),
+          updatedAt: /* @__PURE__ */ new Date(),
+          repeatCount: 0,
+          results: [],
+          maxRepeats: schedule.maxRepeats || schedule.repeatEvery ? void 0 : 1
+        };
+        this.updateNextRunTime(campaign);
+        this.campaigns.set(campaignId, campaign);
+        if (campaign.schedule.type === "recurring" && campaign.schedule.repeatEvery) {
+          this.scheduleRecurringCampaign(campaign, io);
+        } else if (campaign.schedule.type === "once" && campaign.schedule.startTime) {
+          this.scheduleOneTimeCampaign(campaign, io);
+        }
+        io.emit("campaign-scheduled", {
+          campaignId,
+          name,
+          schedule: campaign.schedule,
+          nextRun: campaign.nextRun,
+          message: `Campaign "${name}" scheduled successfully`
+        });
+        return campaign;
+      }
+      static async getScheduledCampaigns() {
+        return Array.from(this.campaigns.values());
+      }
+      static async getCampaignById(campaignId) {
+        return this.campaigns.get(campaignId);
+      }
+      static async cancelCampaign(campaignId, io) {
+        const campaign = this.campaigns.get(campaignId);
+        if (!campaign) {
+          return false;
+        }
+        if (campaign.currentJob) {
+          campaign.currentJob.stop();
+          campaign.currentJob = void 0;
+        }
+        const abortController = this.activeOperations.get(campaignId);
+        if (abortController) {
+          abortController.abort();
+          this.activeOperations.delete(campaignId);
+        }
+        campaign.status = "cancelled";
+        campaign.updatedAt = /* @__PURE__ */ new Date();
+        io.emit("campaign-cancelled", {
+          campaignId,
+          name: campaign.name,
+          message: `Campaign "${campaign.name}" cancelled successfully`
+        });
+        return true;
+      }
+      static async pauseCampaign(campaignId, io) {
+        const campaign = this.campaigns.get(campaignId);
+        if (!campaign || campaign.status !== "scheduled") {
+          return false;
+        }
+        if (campaign.currentJob) {
+          campaign.currentJob.stop();
+          campaign.currentJob = void 0;
+        }
+        campaign.status = "paused";
+        campaign.updatedAt = /* @__PURE__ */ new Date();
+        io.emit("campaign-paused", {
+          campaignId,
+          name: campaign.name,
+          message: `Campaign "${campaign.name}" paused successfully`
+        });
+        return true;
+      }
+      static async resumeCampaign(campaignId, io) {
+        const campaign = this.campaigns.get(campaignId);
+        if (!campaign || campaign.status !== "paused") {
+          return false;
+        }
+        campaign.status = "scheduled";
+        this.updateNextRunTime(campaign);
+        if (campaign.schedule.type === "recurring" && campaign.schedule.repeatEvery) {
+          this.scheduleRecurringCampaign(campaign, io);
+        }
+        campaign.updatedAt = /* @__PURE__ */ new Date();
+        io.emit("campaign-resumed", {
+          campaignId,
+          name: campaign.name,
+          nextRun: campaign.nextRun,
+          message: `Campaign "${campaign.name}" resumed successfully`
+        });
+        return true;
+      }
+      static updateNextRunTime(campaign) {
+        const now = /* @__PURE__ */ new Date();
+        if (campaign.schedule.type === "once") {
+          if (campaign.schedule.startTime && campaign.schedule.startTime > now) {
+            campaign.nextRun = campaign.schedule.startTime;
+          } else {
+            campaign.nextRun = now;
+          }
+        } else if (campaign.schedule.type === "recurring" && campaign.schedule.repeatEvery) {
+          if (campaign.lastRun) {
+            campaign.nextRun = new Date(campaign.lastRun.getTime() + campaign.schedule.repeatEvery * 60 * 60 * 1e3);
+          } else {
+            campaign.nextRun = now;
+          }
+        }
+        if (campaign.maxRepeats && campaign.repeatCount >= campaign.maxRepeats) {
+          campaign.nextRun = void 0;
+          campaign.status = "completed";
+        }
+        if (campaign.schedule.endTime && campaign.nextRun && campaign.nextRun > campaign.schedule.endTime) {
+          campaign.nextRun = void 0;
+          campaign.status = "completed";
+        }
+      }
+      static scheduleRecurringCampaign(campaign, io) {
+        if (campaign.currentJob) {
+          campaign.currentJob.stop();
+        }
+        const hours = campaign.schedule.repeatEvery || 1;
+        const cronExpression = `0 */${hours} * * *`;
+        campaign.currentJob = node_cron_1.default.schedule(cronExpression, async () => {
+          await this.executeCampaign(campaign, io);
+        }, {
+          timezone: "UTC"
+        });
+      }
+      static scheduleOneTimeCampaign(campaign, io) {
+        if (campaign.currentJob) {
+          campaign.currentJob.stop();
+        }
+        const executeTime = campaign.schedule.startTime || /* @__PURE__ */ new Date();
+        const delay2 = executeTime.getTime() - Date.now();
+        if (delay2 > 0) {
+          setTimeout(async () => {
+            await this.executeCampaign(campaign, io);
+          }, delay2);
+        } else {
+          this.executeCampaign(campaign, io);
+        }
+      }
+      static async executeCampaign(campaign, io) {
+        if (campaign.status === "cancelled" || campaign.status === "completed") {
+          return;
+        }
+        campaign.status = "running";
+        campaign.lastRun = /* @__PURE__ */ new Date();
+        campaign.repeatCount++;
+        campaign.updatedAt = /* @__PURE__ */ new Date();
+        const repeatResult = {
+          repeatNumber: campaign.repeatCount,
+          startTime: /* @__PURE__ */ new Date(),
+          status: "running",
+          sent: 0,
+          failed: 0,
+          total: campaign.groups.length
+        };
+        campaign.results.push(repeatResult);
+        io.emit("campaign-repeat-start", {
+          campaignId: campaign.id,
+          repeatNumber: campaign.repeatCount,
+          maxRepeats: campaign.maxRepeats,
+          total: campaign.groups.length,
+          message: `Campaign "${campaign.name}" - Repeat ${campaign.repeatCount} started`
+        });
+        try {
+          const abortController = new AbortController();
+          this.activeOperations.set(campaign.id, abortController);
+          const result = await TelegramController_1.default.executeScheduledCampaign(campaign.accountId, campaign.groups, campaign.message, campaign.file, campaign.config, io, `${campaign.id}-repeat-${campaign.repeatCount}`, abortController.signal);
+          repeatResult.endTime = /* @__PURE__ */ new Date();
+          repeatResult.status = "completed";
+          repeatResult.sent = result.sent?.length || 0;
+          repeatResult.failed = result.failed?.length || 0;
+          io.emit("campaign-repeat-complete", {
+            campaignId: campaign.id,
+            repeatNumber: campaign.repeatCount,
+            result: {
+              sent: repeatResult.sent,
+              failed: repeatResult.failed,
+              total: repeatResult.total
+            },
+            message: `Campaign "${campaign.name}" - Repeat ${campaign.repeatCount} completed`
+          });
+          this.activeOperations.delete(campaign.id);
+          if (campaign.schedule.type === "once") {
+            campaign.status = "completed";
+          } else {
+            campaign.status = "scheduled";
+            this.updateNextRunTime(campaign);
+            if (campaign.nextRun && campaign.schedule.type === "recurring") {
+              this.scheduleRecurringCampaign(campaign, io);
+            }
+          }
+        } catch (error) {
+          repeatResult.endTime = /* @__PURE__ */ new Date();
+          repeatResult.status = "failed";
+          repeatResult.error = error.message;
+          io.emit("campaign-repeat-error", {
+            campaignId: campaign.id,
+            repeatNumber: campaign.repeatCount,
+            error: error.message,
+            message: `Campaign "${campaign.name}" - Repeat ${campaign.repeatCount} failed`
+          });
+          this.activeOperations.delete(campaign.id);
+          campaign.status = "scheduled";
+          this.updateNextRunTime(campaign);
+        }
+        campaign.updatedAt = /* @__PURE__ */ new Date();
+      }
+      static async getCampaignStatistics(campaignId) {
+        const campaign = this.campaigns.get(campaignId);
+        if (!campaign) {
+          throw new Error("Campaign not found");
+        }
+        const totalSent = campaign.results.reduce((sum, result) => sum + result.sent, 0);
+        const totalFailed = campaign.results.reduce((sum, result) => sum + result.failed, 0);
+        const totalProcessed = totalSent + totalFailed;
+        return {
+          campaignId: campaign.id,
+          name: campaign.name,
+          status: campaign.status,
+          createdAt: campaign.createdAt,
+          updatedAt: campaign.updatedAt,
+          lastRun: campaign.lastRun,
+          nextRun: campaign.nextRun,
+          repeatCount: campaign.repeatCount,
+          maxRepeats: campaign.maxRepeats,
+          schedule: campaign.schedule,
+          statistics: {
+            totalSent,
+            totalFailed,
+            totalProcessed,
+            successRate: totalProcessed > 0 ? totalSent / totalProcessed * 100 : 0,
+            repeats: campaign.results.length
+          },
+          results: campaign.results.map((result) => ({
+            repeatNumber: result.repeatNumber,
+            startTime: result.startTime,
+            endTime: result.endTime,
+            status: result.status,
+            sent: result.sent,
+            failed: result.failed,
+            total: result.total,
+            error: result.error
+          }))
+        };
+      }
+    };
+    CampaignSchedulerController.campaigns = /* @__PURE__ */ new Map();
+    CampaignSchedulerController.activeOperations = /* @__PURE__ */ new Map();
+    exports2.default = CampaignSchedulerController;
+  }
+});
+
 // dist/src/routes/telegramRoutes.js
 var require_telegramRoutes = __commonJS({
   "dist/src/routes/telegramRoutes.js"(exports2) {
@@ -365536,6 +367427,7 @@ var require_telegramRoutes = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     var express_1 = __importDefault3(require_express2());
     var TelegramController_1 = __importDefault3(require_TelegramController());
+    var CampaignSchedulerController_1 = __importDefault3(require_CampaignSchedulerController());
     var telegramRoutes = (io) => {
       const router = express_1.default.Router();
       router.post("/logins", async (req, res) => {
@@ -365793,6 +367685,94 @@ var require_telegramRoutes = __commonJS({
           });
         }
       });
+      router.post("/scheduled-campaigns", async (req, res) => {
+        try {
+          const campaign = await CampaignSchedulerController_1.default.createScheduledCampaign(req, io);
+          res.status(200).json({ message: "Campaign scheduled successfully", campaign });
+        } catch (error) {
+          console.error("Create scheduled campaign error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to schedule campaign"
+          });
+        }
+      });
+      router.get("/scheduled-campaigns", async (req, res) => {
+        try {
+          const campaigns = await CampaignSchedulerController_1.default.getScheduledCampaigns();
+          res.status(200).json(campaigns);
+        } catch (error) {
+          console.error("Get scheduled campaigns error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to get scheduled campaigns"
+          });
+        }
+      });
+      router.get("/scheduled-campaigns/:id", async (req, res) => {
+        try {
+          const campaign = await CampaignSchedulerController_1.default.getCampaignById(req.params.id);
+          if (!campaign) {
+            return res.status(404).json({ error: "Campaign not found" });
+          }
+          res.status(200).json(campaign);
+        } catch (error) {
+          console.error("Get scheduled campaign error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to get scheduled campaign"
+          });
+        }
+      });
+      router.delete("/scheduled-campaigns/:id", async (req, res) => {
+        try {
+          await CampaignSchedulerController_1.default.cancelCampaign(req.params.id, io);
+          res.status(200).json({ message: "Campaign cancelled successfully" });
+        } catch (error) {
+          console.error("Cancel scheduled campaign error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to cancel campaign"
+          });
+        }
+      });
+      router.post("/scheduled-campaigns/:id/pause", async (req, res) => {
+        try {
+          await CampaignSchedulerController_1.default.pauseCampaign(req.params.id, io);
+          res.status(200).json({ message: "Campaign paused successfully" });
+        } catch (error) {
+          console.error("Pause scheduled campaign error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to pause campaign"
+          });
+        }
+      });
+      router.post("/scheduled-campaigns/:id/resume", async (req, res) => {
+        try {
+          await CampaignSchedulerController_1.default.resumeCampaign(req.params.id, io);
+          res.status(200).json({ message: "Campaign resumed successfully" });
+        } catch (error) {
+          console.error("Resume scheduled campaign error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to resume campaign"
+          });
+        }
+      });
+      router.post("/cancel-running-campaign", async (req, res) => {
+        try {
+          const { campaignId } = req.body;
+          if (!campaignId) {
+            return res.status(400).json({ error: "Campaign ID is required" });
+          }
+          const cancelled = await TelegramController_1.default.cancelRunningCampaign(campaignId);
+          if (cancelled) {
+            res.status(200).json({ message: "Campaign cancelled successfully" });
+          } else {
+            res.status(404).json({ error: "Campaign not found or already completed" });
+          }
+        } catch (error) {
+          console.error("Cancel running campaign error:", error);
+          res.status(500).json({
+            error: error instanceof Error ? error.message : "Failed to cancel campaign"
+          });
+        }
+      });
       return router;
     };
     exports2.default = telegramRoutes;
@@ -365842,6 +367822,9 @@ var require_api = __commonJS({
         origin: process.env.NODE_ENV === "production" ? ["https://yourdomain.com"] : "*",
         methods: ["GET", "POST"]
       }
+    });
+    TelegramController_1.default.restoreConnectedAccounts(io).catch((err2) => {
+      console.error("Failed to restore Telegram accounts:", err2);
     });
     app.use((0, cors_1.default)({
       origin: process.env.NODE_ENV === "production" ? ["https://yourdomain.com"] : "*",

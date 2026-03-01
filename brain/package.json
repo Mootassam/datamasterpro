@@ -28,8 +28,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:prod": "node dist/src/server.js",
     "start": "nodemon --watch \"src/**/*.ts\" -e ts,json --exec \"ts-node --transpile-only ./src/server.ts\"",
-  "bundle": "node build-bundle.js",
-  "pkg": "npm run build && npm run bundle && pkg bundle.js --compress Brotli --targets node18-win-x64 --output ../backend.exe"
+    "bundle": "node build-bundle.js",
+    "pkg": "npm run build && npm run bundle && pkg bundle.js --compress Brotli --targets node18-win-x64 --output ../backend.exe"
   },
   "author": "",
   "license": "ISC",
@@ -53,6 +53,7 @@
     "mongodb": "^5.6.0",
     "mongoose": "5.10.6",
     "multer": "^1.4.5-lts.1",
+    "node-cron": "^4.2.1",
     "node-schedule": "^2.1.1",
     "nodemailer": "^7.0.5",
     "nodemon": "^2.0.22",

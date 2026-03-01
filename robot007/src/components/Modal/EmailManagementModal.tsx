@@ -122,7 +122,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
               <div key={account.id} className="email-account-card">
                 <div className="account-badge">
                   <div className="account-avatar">
-                    {account.name.charAt(0).toUpperCase()}
+                    {(account.name ? account.name.toString().charAt(0) : '?').toUpperCase()}
                   </div>
                 </div>
 

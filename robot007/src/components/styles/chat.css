@@ -301,6 +301,19 @@
   font-size: 0.95rem;
 }
 
+.setting-item .repeat-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.setting-item .repeat-input-group input {
+  flex: 1;
+}
+
+.setting-item .repeat-input-group select {
+  width: 100px;
+}
+
 .launch-btn {
   width: 100%;
   padding: 16px;
@@ -606,24 +619,13 @@
   align-items: center;
   border-bottom: 1px solid #e2e8f0;
   background: white;
+  flex-shrink: 0;
 }
 
-.refresh-btn {
-  background: transparent;
-  border: 1px solid #e2e8f0;
-  padding: 6px 12px;
-  border-radius: 6px;
-  color: #64748b;
-  font-size: 0.9rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.refresh-btn:hover {
-  border-color: #cbd5e1;
-  color: #334155;
+.groups-grid-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .groups-grid {

@@ -631,6 +631,40 @@ export const cancelTelegramOperation = createAsyncThunk(
   }
 );
 
+export const cancelScheduledCampaign = createAsyncThunk(
+  "telegram/cancelScheduledCampaign",
+  async (campaignId: string, { dispatch }) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      await TelegramServices.cancelScheduledCampaign(campaignId);
+      return true;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to cancel scheduled campaign"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+    }
+  }
+);
+
+export const cancelRunningCampaign = createAsyncThunk(
+  "telegram/cancelRunningCampaign",
+  async (campaignId: string, { dispatch }) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      await TelegramServices.cancelRunningCampaign(campaignId);
+      return true;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to cancel running campaign"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+    }
+  }
+);
+
 // Error handling actions
 export const clearTelegramError = () => (dispatch) => {
   dispatch(resetTelegramError());

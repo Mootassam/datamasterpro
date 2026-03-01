@@ -22,6 +22,12 @@ const emailPersistConfig = {
   storage,
 };
 
+const generatePersistConfig = {
+  key: "generate",
+  storage,
+  whitelist: ["favorites"],
+};
+
 const telegramPersistConfig = {
   key: "telegram",
   storage,
@@ -32,11 +38,12 @@ const persistedConnectionReducer = persistReducer(persistConfig, connectionReduc
 const persistedProxyReducer = persistReducer(proxyPersistConfig, proxyReducer);
 const persistedEmailReducer = persistReducer(emailPersistConfig, emailReducer);
 const persistedTelegramReducer = persistReducer(telegramPersistConfig, telegramReducer);
+const persistedGenerateReducer = persistReducer(generatePersistConfig, generateReducer);
 
 const store = configureStore({
   reducer: {
-    generate: generateReducer, // This reducer is not persisted
-    connection: persistedConnectionReducer, // This reducer is persisted
+    generate: persistedGenerateReducer,
+    connection: persistedConnectionReducer,
     proxy: persistedProxyReducer,
     email: persistedEmailReducer,
     telegram: persistedTelegramReducer

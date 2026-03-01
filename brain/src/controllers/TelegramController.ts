@@ -8,6 +8,7 @@ import fs from 'fs';
 import streamifier from "streamifier";
 import csvParser from "csv-parser";
 import { Readable } from 'stream';
+import cron from 'node-cron';
 import schedule from 'node-schedule';
 const upload: Multer = multer({ storage: multer.memoryStorage() });
 const API_ID = 29214492;
@@ -88,7 +89,7 @@ class TelegramController {
     }
     return sessionPath;
   }
-  private static async initializeAccount(phoneNumber: string, io: Server): Promise<TelegramAccount> {
+  private static async initializeAccount(phoneNumber: string, io: Server, restoreConnected: boolean = false): Promise<TelegramAccount> {
     const id = phoneNumber.replace(/\D/g, '');
     const sessionPath = this.getSessionPath(id);
    
@@ -96,6 +97,8 @@ class TelegramController {
     let dcId: number | undefined;
     let serverAddress: string | undefined;
     let port: number | undefined;
+    let sessionExists = false;
+    
     if (fs.existsSync(`${sessionPath}.json`)) {
       try {
         const sessionData = fs.readFileSync(`${sessionPath}.json`, 'utf8');
@@ -105,6 +108,7 @@ class TelegramController {
           dcId = session.dcId;
           serverAddress = session.serverAddress;
           port = session.port;
+          sessionExists = true;
         }
       } catch (error :any) {
         console.warn('Error reading session file, creating new session');
@@ -131,10 +135,33 @@ class TelegramController {
           return true;
         };
       }
+      
+      // Try to restore connection if session exists and restoreConnected is true
+      let isConnected = false;
+      let accountName = undefined;
+      if (sessionExists && restoreConnected) {
+        try {
+          // Try to get user info to verify the session is still valid
+          const user = await mtproto.call('users.getFullUser', {
+            id: {
+              _: 'inputUserSelf'
+            }
+          });
+          if (user && user.users && user.users.length > 0) {
+            isConnected = true;
+            accountName = user.users[0].first_name || user.users[0].username || phoneNumber;
+            console.log(`Restored connection for account ${id}`);
+          }
+        } catch (error: any) {
+          console.warn(`Could not restore session for ${id}:`, error.message || 'Session may be expired');
+        }
+      }
+      
       const account: TelegramAccount = {
         id,
         phoneNumber,
-        connected: false,
+        name: accountName,
+        connected: isConnected,
         mtproto,
         authKey,
         dcId,
@@ -146,6 +173,43 @@ class TelegramController {
     } catch (error :any) {
       this.displayError(error, io);
       throw error;
+    }
+  }
+
+  // Restore all connected accounts from saved sessions
+  static async restoreConnectedAccounts(io: Server): Promise<void> {
+    let sessionDir: string;
+    
+    if ((process as any).pkg) {
+      const homeDir = os.homedir();
+      sessionDir = path.join(homeDir, '.telegram-toolkit', 'sessions');
+    } else {
+      sessionDir = path.join(__dirname, '..', 'telegram_auth');
+    }
+    
+    if (!fs.existsSync(sessionDir)) {
+      console.log('No sessions directory found');
+      return;
+    }
+    
+    const files = fs.readdirSync(sessionDir).filter(f => f.endsWith('.json') && f.startsWith('session-'));
+    
+    for (const file of files) {
+      const phoneNumber = file.replace('session-', '').replace('.json', '');
+      try {
+        const account = await this.initializeAccount(phoneNumber, io, true);
+        if (account.connected) {
+          io.emit("client-connect", {
+            accountId: account.id,
+            phoneNumber: account.phoneNumber,
+            name: account.name,
+            timestamp: new Date().toISOString()
+          });
+          console.log(`Restored Telegram account: ${account.phoneNumber}`);
+        }
+      } catch (error) {
+        console.warn(`Failed to restore account ${phoneNumber}:`, error);
+      }
     }
   }
   static async joinGroup(req: Request, io: Server): Promise<any> {
@@ -2126,8 +2190,15 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
   static async sendBulkMessages(req: Request, io: Server): Promise<MessageResult> {
     return this.sendMessages(req, io);
   }
+  private static activeCampaigns = new Map<string, { 
+      abortController: AbortController; 
+      repeatCount: number; 
+      startTime: Date;
+      job?: any;
+  }>();
+
   static async sendBulkMessagesToGroups(req: Request, io: Server): Promise<any> {
-      const { accountId, groups, message, config } = req.body;
+      const { accountId, groups, message, config, campaignId: providedCampaignId } = req.body;
       const file = (req as any).file;
      
       if (!accountId || !groups) {
@@ -2151,41 +2222,136 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
           }
       }
 
-      const campaignId = `campaign-${Date.now()}`;
+      const campaignId = providedCampaignId || `campaign-${Date.now()}`;
+      
+      // Create abort controller for this campaign
+      const abortController = new AbortController();
+      this.activeCampaigns.set(campaignId, {
+          abortController,
+          repeatCount: 1,
+          startTime: new Date()
+      });
 
       // Handle Recurrence
       if (parsedConfig.repeatEvery && Number(parsedConfig.repeatEvery) > 0) {
-          const repeatHours = Number(parsedConfig.repeatEvery);
-          const jobName = `recurring-${campaignId}`;
+          const repeatInterval = Number(parsedConfig.repeatEvery);
+          const repeatUnit = parsedConfig.repeatUnit || 'hours';
+          const maxRepeats = parsedConfig.maxRepeats ? Number(parsedConfig.maxRepeats) : undefined;
           
-          // Schedule future runs (every X hours)
-          schedule.scheduleJob(jobName, `0 0 */${repeatHours} * * *`, async () => {
-              console.log(`Running recurring campaign ${jobName}`);
+          let cronExpression = '';
+          if (repeatUnit === 'minutes') {
+              cronExpression = `*/${repeatInterval} * * * *`;
+          } else {
+              cronExpression = `0 */${repeatInterval} * * *`;
+          }
+
+          console.log(`Scheduling recurring campaign with cron: ${cronExpression}`);
+          
+          const job = cron.schedule(cronExpression, async () => {
+              console.log(`Running recurring campaign ${campaignId}`);
               try {
-                  await TelegramController.executeGroupCampaign(account, groupList, message, file, parsedConfig, io, jobName);
+                  // Update repeat count
+                  const existingCampaign = this.activeCampaigns.get(campaignId);
+                  if (existingCampaign) {
+                      existingCampaign.repeatCount++;
+                      
+                      // Check if we've reached max repeats
+                      if (maxRepeats && existingCampaign.repeatCount > maxRepeats) {
+                          console.log(`Campaign ${campaignId} reached max repeats (${maxRepeats}), cancelling`);
+                          if (existingCampaign.job) existingCampaign.job.stop();
+                          io.emit("campaign-repeat-complete", {
+                              campaignId,
+                              repeatNumber: existingCampaign.repeatCount - 1,
+                              maxRepeats: maxRepeats,
+                              message: `Campaign "${campaignId}" completed ${maxRepeats} repeats`
+                          });
+                          return;
+                      }
+                      
+                      // Emit campaign-repeat-start event for frontend tracking
+                      io.emit("campaign-repeat-start", {
+                          campaignId,
+                          repeatNumber: existingCampaign.repeatCount,
+                          maxRepeats: maxRepeats,
+                          total: groupList.length,
+                          message: `Campaign repeat ${existingCampaign.repeatCount} started`
+                      });
+                  }
+                  
+                  await TelegramController.executeGroupCampaign(
+                      account, 
+                      groupList, 
+                      message, 
+                      file, 
+                      parsedConfig, 
+                      io, 
+                      campaignId,
+                      abortController
+                  );
+                  
+                  // Emit campaign-repeat-complete after execution
+                  io.emit("campaign-repeat-complete", {
+                      campaignId,
+                      repeatNumber: existingCampaign?.repeatCount || 1,
+                      maxRepeats: maxRepeats,
+                      message: `Campaign repeat completed`
+                  });
               } catch (error) {
-                  console.error(`Recurring campaign ${jobName} failed:`, error);
+                  console.error(`Recurring campaign ${campaignId} failed:`, error);
               }
           });
+
+          // Store job in active campaigns
+          const campaignEntry = this.activeCampaigns.get(campaignId);
+          if (campaignEntry) {
+              campaignEntry.job = job;
+          }
           
           io.emit("campaign-scheduled", {
-              jobName,
-              repeatEvery: repeatHours,
-              message: `Campaign scheduled to repeat every ${repeatHours} hours`
+              campaignId,
+              repeatEvery: repeatInterval,
+              repeatUnit: repeatUnit,
+              maxRepeats: maxRepeats,
+              message: maxRepeats 
+                  ? `Campaign scheduled to repeat every ${repeatInterval} ${repeatUnit}, max ${maxRepeats} times`
+                  : `Campaign scheduled to repeat every ${repeatInterval} ${repeatUnit}`
           });
       }
 
       // Execute immediately
-      return await this.executeGroupCampaign(account, groupList, message, file, parsedConfig, io, campaignId);
+      return await this.executeGroupCampaign(
+          account, 
+          groupList, 
+          message, 
+          file, 
+          parsedConfig, 
+          io, 
+          campaignId,
+          abortController
+      );
   }
 
-  private static async executeGroupCampaign(account: TelegramAccount, groupList: any[], message: string, file: any, config: any, io: Server, campaignId?: string): Promise<any> {
+  private static async executeGroupCampaign(account: TelegramAccount, groupList: any[], message: string, file: any, config: any, io: Server, campaignId: string, abortController?: AbortController): Promise<any> {
       const mtproto = account.mtproto;
       const result: { sent: string[], failed: { id: string, error: string }[] } = { sent: [], failed: [] };
+      
+      // Get current repeat count from active campaigns
+      const currentCampaign = this.activeCampaigns.get(campaignId);
+      const repeatCount = currentCampaign?.repeatCount || 1;
+      
+      // Emit campaign-repeat-start event for the first execution
+      io.emit("campaign-repeat-start", {
+          campaignId,
+          repeatNumber: repeatCount,
+          maxRepeats: config?.maxRepeats ? Number(config.maxRepeats) : undefined,
+          total: groupList.length,
+          message: `Campaign repeat ${repeatCount} started`
+      });
       
       io.emit("campaign-start", { 
           campaignId, 
           total: groupList.length,
+          repeatCount: repeatCount,
           message: "Starting campaign..."
       });
      
@@ -2208,8 +2374,17 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
       }
      
       for (let i = 0; i < groupList.length; i++) {
+          // Check for cancellation
+          if (abortController?.signal?.aborted) {
+              io.emit("campaign-cancelled", {
+                  campaignId,
+                  processed: i,
+                  message: "Campaign cancelled by user"
+              });
+              return { sent: result.sent, failed: result.failed };
+          }
+          
           const group = groupList[i];
-          // Check for cancellation (if we implement abort controller later)
           
           try {
               const peer = {
@@ -2242,6 +2417,7 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
                   processed: i + 1,
                   sent: result.sent.length,
                   failed: result.failed.length,
+                  repeatCount: repeatCount,
                   lastAction: { type: 'success', groupName: group.name || group.title || group.id }
               });
               
@@ -2255,6 +2431,7 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
                   processed: i + 1,
                   sent: result.sent.length,
                   failed: result.failed.length,
+                  repeatCount: repeatCount,
                   lastAction: { type: 'error', groupName: group.name || group.title || group.id, error: errorMessage }
               });
 
@@ -2456,6 +2633,23 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
   }
   static async getScheduledMessages(): Promise<ScheduledMessage[]> {
     return this.scheduledMessages;
+  }
+  static async cancelRunningCampaign(campaignId: string): Promise<boolean> {
+      const campaign = this.activeCampaigns.get(campaignId);
+      if (!campaign) {
+          return false;
+      }
+      
+      // Stop the cron job if it exists
+      if (campaign.job) {
+          campaign.job.stop();
+      }
+
+      // Abort the current operation
+      campaign.abortController.abort();
+      this.activeCampaigns.delete(campaignId);
+      
+      return true;
   }
   static async cancelScheduledMessage(req: Request, io: Server): Promise<boolean> {
     const { messageId } = req.body;
@@ -2683,6 +2877,155 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
       message: errorMessage,
       action: action
     });
+  }
+
+  static async executeScheduledCampaign(
+    accountId: string,
+    groupList: any[],
+    message: string,
+    file: any,
+    config: any,
+    io: Server,
+    campaignId?: string,
+    abortSignal?: AbortSignal
+  ): Promise<any> {
+    const account = await this.getAccountById(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+      throw new Error("Account not connected");
+    }
+
+    const mtproto = account.mtproto;
+    const result: { sent: string[], failed: { id: string, error: string }[] } = { sent: [], failed: [] };
+    
+    io.emit("scheduled-campaign-start", { 
+      campaignId, 
+      total: groupList.length,
+      message: "Starting scheduled campaign..."
+    });
+
+    let inputMedia: any = null;
+    if (file) {
+      try {
+        const uploadedFile = await this.uploadFile(mtproto, file, account.id, io);
+        inputMedia = {
+          _: 'inputMediaUploadedPhoto',
+          file: uploadedFile,
+          ttl_seconds: 0
+        };
+      } catch (e: any) {
+        console.error("Failed to upload file:", e);
+        io.emit("scheduled-campaign-log", { type: "error", message: `Failed to upload file: ${e.message}`, campaignId });
+        if (!message) throw new Error("Failed to upload file and no text message provided");
+      }
+    }
+
+    for (let i = 0; i < groupList.length; i++) {
+      // Check for cancellation
+      if (abortSignal?.aborted) {
+        io.emit("scheduled-campaign-cancelled", { 
+          campaignId, 
+          processed: i,
+          message: "Campaign cancelled by user"
+        });
+        break;
+      }
+
+      const group = groupList[i];
+      
+      // Extract repeat count from campaignId (format: campaignId-repeat-X)
+      const repeatMatch = campaignId?.match(/-repeat-(\d+)$/);
+      const repeatNum = repeatMatch ? parseInt(repeatMatch[1]) : 1;
+      
+      try {
+        const peer = {
+          _: 'inputPeerChannel',
+          channel_id: group.id,
+          access_hash: group.access_hash
+        };
+        
+        if (inputMedia) {
+          await this.callWithDcMigration(mtproto, 'messages.sendMedia', {
+            peer: peer,
+            media: inputMedia,
+            message: message || '',
+            random_id: Math.floor(Math.random() * 1000000000)
+          }, 0, account.id, io);
+        } else {
+          await this.callWithDcMigration(mtproto, 'messages.sendMessage', {
+            peer: peer,
+            message: message,
+            random_id: Math.floor(Math.random() * 1000000000)
+          }, 0, account.id, io);
+        }
+        
+        (result.sent as any[]).push(group.id);
+        
+        // Real-time update
+        io.emit("scheduled-campaign-progress", {
+          campaignId,
+          total: groupList.length,
+          processed: i + 1,
+          sent: result.sent.length,
+          failed: result.failed.length,
+          repeatCount: repeatNum,
+          lastAction: { type: 'success', groupName: group.name || group.title || group.id }
+        });
+        
+      } catch (e: any) {
+        const errorMessage = e.message || "Unknown error";
+        (result.failed as { id: any; error: string }[]).push({ id: group.id, error: errorMessage });
+        
+        io.emit("scheduled-campaign-progress", {
+          campaignId,
+          total: groupList.length,
+          processed: i + 1,
+          sent: result.sent.length,
+          failed: result.failed.length,
+          repeatCount: repeatNum,
+          lastAction: { type: 'error', groupName: group.name || group.title || group.id, error: errorMessage }
+        });
+
+        if (errorMessage.includes('FLOOD_WAIT')) {
+          const floodMatch = errorMessage.match(/FLOOD_WAIT_(\d+)/);
+          if (floodMatch) {
+            const seconds = parseInt(floodMatch[1], 10);
+            const waitTime = (seconds + 5) * 1000;
+            
+            io.emit("scheduled-campaign-log", { 
+              type: "warning", 
+              message: `Flood wait detected. Pausing for ${seconds + 5} seconds to prevent ban...`, 
+              campaignId 
+            });
+            
+            // Wait out the flood limit
+            await new Promise(r => setTimeout(r, waitTime));
+            
+            // Retry this group
+            i--; 
+            continue;
+          }
+          io.emit("scheduled-campaign-log", { type: "warning", message: `Rate limited on group ${group.name}: ${errorMessage}`, campaignId });
+        } else if (errorMessage.includes('PEER_FLOOD')) {
+          const waitTime = 5 * 60 * 1000; // 5 minutes
+          io.emit("scheduled-campaign-log", { 
+            type: "warning", 
+            message: `Peer Flood (Spam Limit) detected. Pausing for 5 minutes to restore account health...`, 
+            campaignId 
+          });
+          await new Promise(r => setTimeout(r, waitTime));
+          i--; // Retry this group
+          continue;
+        }
+      }
+      
+      // Delay
+      const delay = config?.delayBetweenMessages !== undefined ? Number(config.delayBetweenMessages) : 2000;
+      const randomDelay = config?.randomDelay ? Math.floor(Math.random() * 1000) : 0;
+      await new Promise(r => setTimeout(r, delay + randomDelay));
+    }
+    
+    io.emit("scheduled-campaign-complete", { result, campaignId });
+    return result;
   }
 }
 export default TelegramController;

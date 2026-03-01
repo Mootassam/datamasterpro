@@ -59,6 +59,22 @@
   font-weight: 500;
 }
 
+.clear-favorites-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #fed7d7;
+  background: #fff5f5;
+  color: #c53030;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-favorites-btn:hover {
+  background: #feb2b2;
+  color: #742a2a;
+}
+
 .filter-icon {
   font-size: 0.9rem;
 }

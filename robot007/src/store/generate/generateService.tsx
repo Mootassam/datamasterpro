@@ -124,6 +124,19 @@ export const sendwhatsAppMessage = async (
   return response.data;
 };
 
+export const sendSingleWhatsAppMessage = async (
+  phoneNumber: string,
+  message: string
+) => {
+  const response = await authAxios.post("/message", {
+    time: 0,
+    messages: [{ text: message }],
+    phoneNumbers: [phoneNumber],
+    useRandomDelay: false,
+  });
+  return response.data;
+};
+
 export const sendTelegramMessage = async (
   time: any,
   messages: any,

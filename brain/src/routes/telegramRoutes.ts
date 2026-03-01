@@ -1,5 +1,6 @@
 import express, { Request, Response, Router } from "express";
 import TelegramController from "../controllers/TelegramController";
+import CampaignSchedulerController from "../controllers/CampaignSchedulerController";
 
 const telegramRoutes = (io) => {
   const router: Router = express.Router();
@@ -302,6 +303,109 @@ const telegramRoutes = (io) => {
       console.error("Cancel operation error:", error);
       res.status(500).json({ 
         error: error instanceof Error ? error.message : "Failed to cancel operation" 
+      });
+    }
+  });
+
+  // Campaign Scheduler Routes
+  // Create scheduled campaign
+  router.post("/scheduled-campaigns", async (req: Request, res: Response) => {
+    try {
+      const campaign = await CampaignSchedulerController.createScheduledCampaign(req as any, io);
+      res.status(200).json({ message: "Campaign scheduled successfully", campaign });
+    } catch (error) {
+      console.error("Create scheduled campaign error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to schedule campaign" 
+      });
+    }
+  });
+
+  // Get all scheduled campaigns
+  router.get("/scheduled-campaigns", async (req: Request, res: Response) => {
+    try {
+      const campaigns = await CampaignSchedulerController.getScheduledCampaigns();
+      res.status(200).json(campaigns);
+    } catch (error) {
+      console.error("Get scheduled campaigns error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to get scheduled campaigns" 
+      });
+    }
+  });
+
+  // Get specific scheduled campaign
+  router.get("/scheduled-campaigns/:id", async (req: Request, res: Response) => {
+    try {
+      const campaign = await CampaignSchedulerController.getCampaignById(req.params.id);
+      if (!campaign) {
+        return res.status(404).json({ error: "Campaign not found" });
+      }
+      res.status(200).json(campaign);
+    } catch (error) {
+      console.error("Get scheduled campaign error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to get scheduled campaign" 
+      });
+    }
+  });
+
+  // Cancel scheduled campaign
+  router.delete("/scheduled-campaigns/:id", async (req: Request, res: Response) => {
+    try {
+      await CampaignSchedulerController.cancelCampaign(req.params.id, io);
+      res.status(200).json({ message: "Campaign cancelled successfully" });
+    } catch (error) {
+      console.error("Cancel scheduled campaign error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to cancel campaign" 
+      });
+    }
+  });
+
+  // Pause scheduled campaign
+  router.post("/scheduled-campaigns/:id/pause", async (req: Request, res: Response) => {
+    try {
+      await CampaignSchedulerController.pauseCampaign(req.params.id, io);
+      res.status(200).json({ message: "Campaign paused successfully" });
+    } catch (error) {
+      console.error("Pause scheduled campaign error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to pause campaign" 
+      });
+    }
+  });
+
+  // Resume scheduled campaign
+  router.post("/scheduled-campaigns/:id/resume", async (req: Request, res: Response) => {
+    try {
+      await CampaignSchedulerController.resumeCampaign(req.params.id, io);
+      res.status(200).json({ message: "Campaign resumed successfully" });
+    } catch (error) {
+      console.error("Resume scheduled campaign error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to resume campaign" 
+      });
+    }
+  });
+
+  // Cancel running campaign
+  router.post("/cancel-running-campaign", async (req: Request, res: Response) => {
+    try {
+      const { campaignId } = req.body;
+      if (!campaignId) {
+        return res.status(400).json({ error: "Campaign ID is required" });
+      }
+      const cancelled = await TelegramController.cancelRunningCampaign(campaignId);
+      if (cancelled) {
+        res.status(200).json({ message: "Campaign cancelled successfully" });
+      } else {
+        res.status(404).json({ error: "Campaign not found or already completed" });
+      }
+    } catch (error) {
+      console.error("Cancel running campaign error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to cancel campaign" 
       });
     }
   });

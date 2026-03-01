@@ -132,9 +132,9 @@ const AccountPickerModal: React.FC<AccountPickerModalProps> = ({
                   />
                 ) : (
                   <div className="account-selector__avatar-fallback">
-                    {activeService === "telegram" && account.name
-                      ? account.name.charAt(0).toUpperCase()
-                      : account.phoneNumber.charAt(0).toUpperCase()}
+                    {(activeService === "telegram" && account.name
+                      ? account.name
+                      : account.phoneNumber).toString().charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>

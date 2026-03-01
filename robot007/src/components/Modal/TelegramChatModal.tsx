@@ -137,6 +137,9 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
   // Scheduling State
   const [scheduleType, setScheduleType] = useState<"once" | "recurring">("once");
   const [repeatHours, setRepeatHours] = useState<number>(1);
+  const [repeatUnit, setRepeatUnit] = useState<"hours" | "minutes">("hours");
+  const [maxRepeats, setMaxRepeats] = useState<number | undefined>(undefined);
+  const [repeatStats, setRepeatStats] = useState<{ current: number; max?: number } | null>(null);
   const [campaignProgress, setCampaignProgress] = useState<any>(null);
   const [toasts, setToasts] = useState<{ id: string; message: string; type: 'success' | 'error' | 'info' }[]>([]);
 
@@ -189,6 +192,23 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
       const handleScheduled = (data: any) => {
           setIsSending(false);
           addToast(data.message, 'success');
+          // If this is a recurring campaign, set up initial repeat stats
+          if (data.repeatEvery) {
+              setRepeatStats({ 
+                  current: 0, 
+                  max: data.maxRepeats 
+              });
+          }
+      };
+
+      const handleCampaignRepeatStart = (data: any) => {
+        if (data.repeatNumber !== undefined) {
+          setRepeatStats({ current: data.repeatNumber, max: data.maxRepeats });
+        }
+      };
+
+      const handleCampaignRepeatComplete = (_data: any) => {
+        // Keep repeat stats visible until next repeat starts
       };
 
       const handleJoinStart = (data: any) => {
@@ -209,6 +229,8 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
       socket.on("campaign-progress", handleProgress);
       socket.on("campaign-complete", handleComplete);
       socket.on("campaign-scheduled", handleScheduled);
+      socket.on("campaign-repeat-start", handleCampaignRepeatStart);
+      socket.on("campaign-repeat-complete", handleCampaignRepeatComplete);
       socket.on("join-start", handleJoinStart);
       socket.on("join-progress", handleJoinProgress);
       socket.on("join-complete", handleJoinComplete);
@@ -218,6 +240,8 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
         socket.off("campaign-progress", handleProgress);
         socket.off("campaign-complete", handleComplete);
         socket.off("campaign-scheduled", handleScheduled);
+        socket.off("campaign-repeat-start", handleCampaignRepeatStart);
+        socket.off("campaign-repeat-complete", handleCampaignRepeatComplete);
         socket.off("join-start", handleJoinStart);
         socket.off("join-progress", handleJoinProgress);
         socket.off("join-complete", handleJoinComplete);
@@ -370,7 +394,9 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
             config: {
                 delayBetweenMessages: delay * 1000,
                 randomDelay: useRandomDelay,
-                repeatEvery: scheduleType === 'recurring' ? repeatHours : undefined
+                repeatEvery: scheduleType === 'recurring' ? repeatHours : undefined,
+                repeatUnit: scheduleType === 'recurring' ? repeatUnit : undefined,
+                maxRepeats: scheduleType === 'recurring' ? maxRepeats : undefined
             },
             file: attachment || undefined
         }));
@@ -1131,7 +1157,25 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
                 </div>
 
                 <div className="campaign-settings">
-                  <h4><FiClock /> Velocity & Schedule</h4>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <h4 style={{ margin: 0 }}><FiClock /> Velocity & Schedule</h4>
+                    {repeatStats && (
+                      <div style={{ 
+                        padding: '4px 12px', 
+                        background: '#dbeafe', 
+                        borderRadius: '20px', 
+                        color: '#1e40af', 
+                        fontSize: '0.8rem', 
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}>
+                        <span className="animate-spin">🔄</span>
+                        Repeats: {repeatStats.current}{repeatStats.max ? ` / ${repeatStats.max}` : ""}
+                      </div>
+                    )}
+                  </div>
                   <div className="settings-grid">
                     <div className="setting-item">
                       <label>Delay (seconds)</label>
@@ -1145,18 +1189,73 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
                       </select>
                     </div>
                     {scheduleType === 'recurring' && (
-                        <div className="setting-item">
-                            <label>Repeat Every (Hours)</label>
-                            <input 
-                                type="number" 
-                                min="1" 
-                                value={repeatHours} 
-                                onChange={(e) => setRepeatHours(Number(e.target.value))} 
-                            />
-                        </div>
+                        <>
+                            <div className="setting-item">
+                                <label>Repeat Every</label>
+                                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                    <input 
+                                        type="number" 
+                                        min="1" 
+                                        style={{ width: '80px' }}
+                                        value={repeatHours} 
+                                        onChange={(e) => setRepeatHours(Number(e.target.value))} 
+                                    />
+                                    <select 
+                                        value={repeatUnit}
+                                        onChange={(e) => setRepeatUnit(e.target.value as "hours" | "minutes")}
+                                        style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                                    >
+                                        <option value="hours">Hours</option>
+                                        <option value="minutes">Minutes</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="setting-item">
+                                <label>Max Repeats (optional)</label>
+                                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                    <input 
+                                        type="number" 
+                                        min="1" 
+                                        placeholder="Unlimited"
+                                        style={{ width: '80px' }}
+                                        value={maxRepeats || ''} 
+                                        onChange={(e) => setMaxRepeats(e.target.value ? Number(e.target.value) : undefined)} 
+                                    />
+                                    <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                        times (leave empty for unlimited)
+                                    </span>
+                                </div>
+                            </div>
+                        </>
                     )}
                   </div>
                 </div>
+
+                {/* Repeat Stats - Show when campaign is scheduled or running */}
+                {repeatStats && (
+                    <div style={{ 
+                        marginTop: '20px', 
+                        padding: '16px', 
+                        background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', 
+                        borderRadius: '12px', 
+                        border: '2px solid #3b82f6',
+                        boxShadow: '0 4px 6px rgba(59, 130, 246, 0.1)'
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <span style={{ fontSize: '2rem' }}>🔄</span>
+                                <div>
+                                    <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e40af' }}>
+                                        Repeat #{repeatStats.current}{repeatStats.max ? ` of ${repeatStats.max}` : ""}
+                                    </div>
+                                    <div style={{ fontSize: '0.85rem', color: '#3b82f6' }}>
+                                        {repeatStats.max ? `${repeatStats.max - repeatStats.current} remaining` : "Indefinite repetitions"}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {campaignProgress && (
                     <div className="campaign-progress-bar" style={{ marginTop: '20px', padding: '15px', background: '#f8fafc', borderRadius: '8px' }}>
@@ -1166,16 +1265,36 @@ const TelegramChatModal: React.FC<TelegramChatModalProps> = ({
                         </div>
                         <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
                             <div style={{ 
-                                width: `${(campaignProgress.processed / campaignProgress.total) * 100}%`, 
+                                width: `${(campaignProgress?.processed / campaignProgress?.total) * 100}%`, 
                                 height: '100%', 
                                 background: '#3b82f6',
                                 transition: 'width 0.3s ease'
                             }}></div>
                         </div>
+                        {repeatStats && (
+                            <div style={{ 
+                                marginTop: '12px', 
+                                padding: '12px 16px', 
+                                background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', 
+                                borderRadius: '8px', 
+                                fontSize: '0.95rem', 
+                                color: '#1e40af',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                boxShadow: '0 2px 4px rgba(59, 130, 246, 0.1)'
+                            }}>
+                                <span style={{ fontSize: '1.2rem' }}>🔄</span>
+                                <span>Repeat #{repeatStats.current}{repeatStats.max ? ` of ${repeatStats.max}` : ''}</span>
+                            </div>
+                        )}
+                        {campaignProgress && (
                         <div style={{ display: 'flex', gap: '15px', marginTop: '10px', fontSize: '0.9rem' }}>
                             <span style={{ color: '#16a34a' }}>✓ Sent: {campaignProgress.sent}</span>
                             <span style={{ color: '#dc2626' }}>✗ Failed: {campaignProgress.failed}</span>
                         </div>
+                        )}
                         {campaignProgress.lastAction && (
                             <div style={{ marginTop: '5px', fontSize: '0.8rem', color: '#64748b' }}>
                                 {campaignProgress.lastAction.type === 'error' 

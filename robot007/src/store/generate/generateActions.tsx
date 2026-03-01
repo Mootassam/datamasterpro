@@ -39,6 +39,7 @@ import {
   setListAccounts,
   setListGroups,
   setALLLoading,
+  addNumberWithPhoto,
 } from "./generateReducer";
 import Toast from "../../shared/Message/Toast";
 import {
@@ -171,6 +172,9 @@ export const checkphonedetail = createAsyncThunk<void, string>(
       thunkAPI.dispatch(setLoadingphone(true));
       const response = await getDetail(numbers);
       thunkAPI.dispatch(setphonedetails(response));
+      if (response?.profilePicUrl && response?.sanitizedNumber) {
+        thunkAPI.dispatch(addNumberWithPhoto(response.sanitizedNumber));
+      }
       thunkAPI.dispatch(setLoadingphone(false));
       thunkAPI.dispatch(setShowContact(true));
     } catch (error) {

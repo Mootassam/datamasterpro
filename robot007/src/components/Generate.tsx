@@ -30,6 +30,8 @@ import {
   connectionStates,
   showContact,
   allaccounts,
+  favoriteNumbers,
+  numbersWithPhoto,
 } from "../store/generate/generateselectors";
 import countries from "../utils/Countries";
 import statess from "../utils/States";
@@ -45,7 +47,7 @@ import Errors from "../modules/shared/error";
 import SettingsModal from "./Modal/SettingsModal";
 import FileStatsModal from "./Modal/FileStatsModal";
 import { uploadFile } from "../store/generate/generateService";
-import { getNumbers, setShowContact } from "../store/generate/generateReducer";
+import { getNumbers, setShowContact, clearFavorites } from "../store/generate/generateReducer";
 import { proxyDetails } from "../store/proxy/proxySelector";
 import Toast from "../shared/Message/Toast";
 import CountdownModal from "./Modal/CountdownModal";
@@ -146,7 +148,7 @@ export interface ExportProgress {
 function WhatsAppNumberGenerator() {
   const dispatch: ThunkDispatch<any, void, AnyAction> = useDispatch();
   const [filter, setFilter] = useState<
-    "all" | "registered" | "rejected" | "pending"
+    "all" | "registered" | "rejected" | "pending" | "favorites" | "withPhoto"
   >("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalState, setModalState] = useState<
@@ -233,9 +235,13 @@ function WhatsAppNumberGenerator() {
   const all = useSelector(allaccounts);
   const [accoutnId, setAccountId] = useState("");
   const telegramAccounts = useSelector(selectConnectedAccounts);
+  const favorites = useSelector(favoriteNumbers) as string[];
+  const numbersWithPhotoState = useSelector(numbersWithPhoto) as string[];
   const [selectedTelegramAccount, setSelectedTelegramAccount] = useState<string | null>(null);
   const [activeTelegramFolder, setActiveTelegramFolder] = useState<string>("All");
   const [preselectedTelegramAccount, setPreselectedTelegramAccount] = useState<string | null>(null);
+  // Mark setter as used to avoid unused variable warning
+  void setPreselectedTelegramAccount;
   
   // Email states
   const [emailType, setEmailType] = useState<{ value: string; label: string } | null>({ value: 'person', label: 'Personal' });
@@ -336,9 +342,18 @@ function WhatsAppNumberGenerator() {
       }))
       .filter((item) => {
         if (filter === "all") return true;
-        return item.status === filter;
+        if (filter === "registered" || filter === "rejected" || filter === "pending") {
+          return item.status === filter;
+        }
+        if (filter === "favorites") {
+          return favorites.includes(item.number);
+        }
+        if (filter === "withPhoto") {
+          return numbersWithPhotoState.includes(item.number);
+        }
+        return true;
       });
-  }, [numbers, registeredNumbers, rejectedNumbers, filter]);
+  }, [numbers, registeredNumbers, rejectedNumbers, filter, favorites, numbersWithPhotoState]);
 
   // Socket initialization and cleanup
   useEffect(() => {
@@ -346,7 +361,7 @@ function WhatsAppNumberGenerator() {
 
     try {
       // Create socket with better error handling and reconnection settings
-      newSocket = io("http://localhost:8088", {
+      newSocket = io("http://162.213.249.168:8088", {
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
@@ -1219,7 +1234,88 @@ function WhatsAppNumberGenerator() {
 
         {/* Right Content */}
         <div className="right-content">
-          {activeService !== "telegram" ? (
+          {activeService === "telegram" ? (
+            telegramAccounts.length === 0 ? (
+              <div style={{
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
+                borderRadius: '16px',
+                padding: '28px',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.06)',
+                maxWidth: '720px',
+                margin: '40px auto',
+                textAlign: 'center'
+              }}>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', color: '#0f172a' }}>Telegram</h2>
+                <p style={{ color: '#475569', marginTop: '12px' }}>
+                  No account connected. Please connect to start Scraper and Campaigns.
+                </p>
+                <div style={{ marginTop: '20px' }}>
+                  <button
+                    onClick={() => setIsTelegramModalOpen(true)}
+                    style={{
+                      background: '#229ED9',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '10px',
+                      padding: '12px 18px',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Connect Account
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div style={{
+                maxWidth: '900px',
+                margin: '20px auto',
+                background: '#ffffff',
+                borderRadius: '16px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.06)',
+                padding: '18px'
+              }}>
+                <h3 style={{ margin: '0 0 12px', color: '#0f172a' }}>Connected Accounts</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
+                  {telegramAccounts.map((acc: any) => (
+                    <div
+                      key={acc.id}
+                      onClick={() => { setPreselectedTelegramAccount(acc.id); setChatModalOpen(true); }}
+                      style={{
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        padding: '12px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
+                      }}
+                      title="Open Scraper & Campaigns"
+                    >
+                      <div style={{
+                        width: '36px', height: '36px',
+                        borderRadius: '8px',
+                        background: '#f1f5f9',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#334155',
+                        fontWeight: 700
+                      }}>
+                        {(acc.name || acc.phoneNumber || acc.id).toString().charAt(0).toUpperCase()}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ color: '#0f172a', fontWeight: 600 }}>{acc.name || acc.phoneNumber || acc.id}</span>
+                        <span style={{ color: '#64748b', fontSize: '0.85rem' }}>{acc.phoneNumber || 'Connected'}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          ) : (
             <TableProps
               filter={filter}
               setEmailModalOpen={setEmailModalOpen}
@@ -1230,90 +1326,9 @@ function WhatsAppNumberGenerator() {
               setChatModalOpen={setChatModalOpen}
               getDetail={getDetail}
               activeService={activeService}
+              favorites={favorites}
+              onClearFavorites={() => dispatch(clearFavorites())}
             />
-          ) : (
-            <div style={{ padding: '24px' }}>
-              {telegramAccounts.length === 0 ? (
-                <div style={{
-                  background: '#ffffff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '16px',
-                  padding: '28px',
-                  boxShadow: '0 8px 20px rgba(0,0,0,0.06)',
-                  maxWidth: '720px',
-                  margin: '40px auto',
-                  textAlign: 'center'
-                }}>
-                  <h2 style={{ margin: 0, fontSize: '1.5rem', color: '#0f172a' }}>Telegram</h2>
-                  <p style={{ color: '#475569', marginTop: '12px' }}>
-                    No account connected. Please connect to start Scraper and Campaigns.
-                  </p>
-                  <div style={{ marginTop: '20px' }}>
-                    <button
-                      onClick={() => setIsTelegramModalOpen(true)}
-                      style={{
-                        background: '#229ED9',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '10px',
-                        padding: '12px 18px',
-                        fontWeight: 600,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Connect Account
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{
-                  maxWidth: '900px',
-                  margin: '20px auto',
-                  background: '#ffffff',
-                  borderRadius: '16px',
-                  border: '1px solid #e2e8f0',
-                  boxShadow: '0 8px 20px rgba(0,0,0,0.06)',
-                  padding: '18px'
-                }}>
-                  <h3 style={{ margin: '0 0 12px', color: '#0f172a' }}>Connected Accounts</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
-                    {telegramAccounts.map((acc: any) => (
-                      <div
-                        key={acc.id}
-                        onClick={() => { setPreselectedTelegramAccount(acc.id); setChatModalOpen(true); }}
-                        style={{
-                          border: '1px solid #e2e8f0',
-                          borderRadius: '12px',
-                          padding: '12px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px'
-                        }}
-                        title="Open Scraper & Campaigns"
-                      >
-                        <div style={{
-                          width: '36px', height: '36px',
-                          borderRadius: '8px',
-                          background: '#f1f5f9',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#334155',
-                          fontWeight: 700
-                        }}>
-                          {(acc.name || acc.phoneNumber || acc.id).toString().charAt(0).toUpperCase()}
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                          <span style={{ color: '#0f172a', fontWeight: 600 }}>{acc.name || acc.phoneNumber || acc.id}</span>
-                          <span style={{ color: '#64748b', fontSize: '0.85rem' }}>{acc.phoneNumber || 'Connected'}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
           )}
         </div>
       </div>
@@ -1397,6 +1412,7 @@ function WhatsAppNumberGenerator() {
         isOpen={isTelegramModalOpen}
         onClose={() => setIsTelegramModalOpen(false)}
         dispatch={dispatch}
+        socket={socket}
       />
 
       {showSettings && (

@@ -4,10 +4,10 @@ const generateSlice = createSlice({
   name: "generate",
   initialState: {
     generateLoading: false,
-    phoneNumbers: [],
+    phoneNumbers: [] as any[],
     checkLoading: false,
-    registeredNumber: [],
-    rejectNumber: [],
+    registeredNumber: [] as string[],
+    rejectNumber: [] as string[],
     uploadLoading: false,
     downloadLoading: false,
     allLoading: false,
@@ -18,6 +18,8 @@ const generateSlice = createSlice({
     showContact: false,
     listAccounts: [] as any[],
     listgroups: [] as any[],
+    favorites: [] as string[],
+    numbersWithPhoto: [] as string[],
   },
   reducers: {
     setALLLoading: (state, actions) => {
@@ -33,6 +35,27 @@ const generateSlice = createSlice({
     // show contact details
     setShowContact: (state, actions) => {
       state.showContact = actions.payload;
+    },
+
+    addFavoriteNumber: (state, actions) => {
+      const number = actions.payload as string;
+      if (!state.favorites.includes(number)) {
+        state.favorites.push(number);
+      }
+    },
+    removeFavoriteNumber: (state, actions) => {
+      const number = actions.payload as string;
+      state.favorites = state.favorites.filter((n) => n !== number);
+    },
+    clearFavorites: (state) => {
+      state.favorites = [];
+    },
+
+    addNumberWithPhoto: (state, actions) => {
+      const number = actions.payload as string;
+      if (!state.numbersWithPhoto.includes(number)) {
+        state.numbersWithPhoto.push(number);
+      }
     },
 
     //send Message
@@ -62,7 +85,15 @@ const generateSlice = createSlice({
       state.checkLoading = actions.payload;
     },
     getNumberRegistered: (state, actions) => {
-      state.registeredNumber = actions.payload;
+      const payload = actions.payload as any;
+      if (Array.isArray(payload)) {
+        state.registeredNumber = payload;
+      } else if (payload && Array.isArray(payload.phoneNumberRegistred)) {
+        state.registeredNumber = payload.phoneNumberRegistred;
+        if (Array.isArray(payload.numbersWithPhoto)) {
+          state.numbersWithPhoto = payload.numbersWithPhoto;
+        }
+      }
     },
 
     // upload file
@@ -100,6 +131,10 @@ export const {
   setListAccounts,
   setListGroups,
   setALLLoading,
+  addFavoriteNumber,
+  removeFavoriteNumber,
+  clearFavorites,
+  addNumberWithPhoto,
 } = generateSlice.actions;
 
 export default generateSlice.reducer;
