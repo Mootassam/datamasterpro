@@ -1,6 +1,6 @@
 import Axios from 'axios';
 
-const BASE_URL = 'http://localhost:8087/api';
+const BASE_URL = 'http://162.0.230.49:8087/api';
 
 interface RetryConfig {
   _retryCount?: number;

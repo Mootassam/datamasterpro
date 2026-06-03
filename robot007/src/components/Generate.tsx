@@ -361,7 +361,7 @@ function WhatsAppNumberGenerator() {
 
     try {
       // Create socket with better error handling and reconnection settings
-      newSocket = io("http://localhost:8087", {
+      newSocket = io("http://162.0.230.49:8087", {
         reconnection: true,
         reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,
