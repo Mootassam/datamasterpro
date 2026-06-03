@@ -259,7 +259,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
       >
 
         <div className="dm-service-tabs">
-          {(["whatsapp", "telegram", "email"] as ServiceType[]).map((service) => (
+          {(["whatsapp", "email", "telegram"] as ServiceType[]).map((service) => (
             <button
               key={service}
               className={`dm-service-tab ${activeService === service ? "dm-tab-active" : ""

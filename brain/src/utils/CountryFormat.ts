@@ -2187,4 +2187,48 @@ const CountrFormat = {
 
 
 };
+// ─────────────────────────────────────────────────────────────────
+// Validation wrapper — ensures every generated number is a valid
+// mobile / fixed-or-mobile phone number according to libphonenumber-js.
+// Falls back to the raw result if no valid number is found in 25 tries.
+// ─────────────────────────────────────────────────────────────────
+const MOBILE_TYPES = new Set(['MOBILE', 'FIXED_LINE_OR_MOBILE']);
+
+function wrapValidated(
+  fn: (carrier: string) => string
+): (carrier: string) => string {
+  return (carrier: string): string => {
+    // First attempt
+    const first = fn(carrier);
+    if (!first || first === 'NoPhoneNumber') return first;
+
+    const isValid = (raw: string): boolean => {
+      try {
+        const parsed = parsePhoneNumberFromString('+' + raw);
+        if (!parsed || !parsed.isValid()) return false;
+        const type = parsed.getType();
+        return !type || MOBILE_TYPES.has(type);
+      } catch {
+        return false;
+      }
+    };
+
+    if (isValid(first)) return first;
+
+    for (let i = 0; i < 24; i++) {
+      const num = fn(carrier);
+      if (!num || num === 'NoPhoneNumber') return num;
+      if (isValid(num)) return num;
+    }
+
+    return first; // fallback — structural format at least
+  };
+}
+
+// Apply validation to every country generator
+(Object.keys(CountrFormat) as Array<keyof typeof CountrFormat>).forEach((key) => {
+  const original = CountrFormat[key] as (carrier: string) => string;
+  CountrFormat[key] = wrapValidated(original) as any;
+});
+
 export default CountrFormat;

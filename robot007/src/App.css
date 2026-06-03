@@ -1511,6 +1511,8 @@ body {
   display: flex;
   flex: 1;
   overflow: hidden;
+  height: calc(100vh - 70px);
+  min-height: 0;
 }
 
 /* Sidebar */
@@ -1518,16 +1520,18 @@ body {
   width: 350px;
   background: var(--white);
   border-right: 1px solid var(--light-gray);
-  padding: 1.5rem;
   overflow-y: auto;
+  flex-shrink: 0;
 }
 
-/* Right Content */
+/* Right Content — must be a flex column so AutoSizer gets a real height */
 .right-content {
   flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
-  background-color: var(--light);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  background-color: #f1f5f9;
 }
 
 .content-header {

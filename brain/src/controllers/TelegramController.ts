@@ -3027,5 +3027,256 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
     io.emit("scheduled-campaign-complete", { result, campaignId });
     return result;
   }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Folder Management  (uses callWithDcMigration for proper error handling)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /** Helper — extract a clean string from any error (MTProto or standard) */
+  private static extractErrorMessage(err: any): string {
+    if (!err) return 'Unknown error';
+    if (err.error_message) return String(err.error_message);
+    if (err.message) return String(err.message);
+    try { return JSON.stringify(err); } catch { return 'Unknown error'; }
+  }
+
+  /**
+   * Create a new Telegram folder (dialog filter) and optionally add peers to it.
+   */
+  static async createFolder(accountId: string, folderName: string, peerIds: string[], io?: Server): Promise<any> {
+    const account = this.accounts.get(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+      throw new Error("Account not connected. Please reconnect first.");
+    }
+    const mtproto = account.mtproto;
+
+    try {
+      // Get existing filters to find the next free ID
+      const existingFilters: any = await this.callWithDcMigration(mtproto, 'messages.getDialogFilters', {}, 0, accountId, io);
+      const filters: any[] = Array.isArray(existingFilters) ? existingFilters : (existingFilters.filters || []);
+      const usedIds = filters.filter((f: any) => f._ === 'dialogFilter').map((f: any) => Number(f.id));
+      let nextId = 2;
+      while (usedIds.includes(nextId)) nextId++;
+
+      // Build include_peers — use only basic chat/channel peer refs without access_hash problems
+      const includePeers: any[] = [];
+      if (peerIds.length > 0) {
+        const groups = await this.getGroupsForAccount(account, io);
+        for (const pid of peerIds) {
+          const g = groups.find((gr: any) => gr.id?.toString() === pid.toString());
+          if (!g) continue;
+          const numId = Number(g.id);
+          if (g.type === 'channel') {
+            includePeers.push({ _: 'inputPeerChannel', channel_id: numId, access_hash: Number(g.access_hash || 0) });
+          } else {
+            includePeers.push({ _: 'inputPeerChat', chat_id: numId });
+          }
+        }
+      }
+
+      await this.callWithDcMigration(mtproto, 'messages.updateDialogFilter', {
+        flags: 1, // bit 0 set = filter present
+        id: nextId,
+        filter: {
+          _: 'dialogFilter',
+          flags: 0,
+          id: nextId,
+          title: folderName,
+          pinned_peers: [],
+          include_peers: includePeers,
+          exclude_peers: [],
+        },
+      }, 0, accountId, io);
+
+      return { success: true, filterId: nextId, folderName, addedPeers: includePeers.length };
+    } catch (err: any) {
+      throw new Error(this.extractErrorMessage(err));
+    }
+  }
+
+  /**
+   * Move selected peers into an existing folder.
+   */
+  static async moveChatsToFolder(accountId: string, filterId: number, peerIds: string[], io?: Server): Promise<any> {
+    const account = this.accounts.get(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+      throw new Error("Account not connected. Please reconnect first.");
+    }
+    const mtproto = account.mtproto;
+
+    try {
+      const existingFilters: any = await this.callWithDcMigration(mtproto, 'messages.getDialogFilters', {}, 0, accountId, io);
+      const filters: any[] = Array.isArray(existingFilters) ? existingFilters : (existingFilters.filters || []);
+      const filter = filters.find((f: any) => f._ === 'dialogFilter' && Number(f.id) === filterId);
+      if (!filter) throw new Error(`Folder ID ${filterId} not found`);
+
+      const groups = await this.getGroupsForAccount(account, io);
+      const newPeers: any[] = [];
+      for (const pid of peerIds) {
+        const g = groups.find((gr: any) => gr.id?.toString() === pid.toString());
+        if (!g) continue;
+        const numId = Number(g.id);
+        if (g.type === 'channel') {
+          newPeers.push({ _: 'inputPeerChannel', channel_id: numId, access_hash: Number(g.access_hash || 0) });
+        } else {
+          newPeers.push({ _: 'inputPeerChat', chat_id: numId });
+        }
+      }
+
+      // Deduplicate
+      const existingIds = new Set((filter.include_peers || []).map((p: any) => p.channel_id || p.chat_id || p.user_id));
+      const deduplicated = [...(filter.include_peers || [])];
+      for (const p of newPeers) {
+        const pid = p.channel_id || p.chat_id;
+        if (!existingIds.has(pid)) { deduplicated.push(p); existingIds.add(pid); }
+      }
+
+      await this.callWithDcMigration(mtproto, 'messages.updateDialogFilter', {
+        flags: 1,
+        id: filterId,
+        filter: { ...filter, include_peers: deduplicated },
+      }, 0, accountId, io);
+
+      return { success: true, filterId, addedPeers: newPeers.length };
+    } catch (err: any) {
+      throw new Error(this.extractErrorMessage(err));
+    }
+  }
+
+  /**
+   * Delete a folder (dialog filter) by ID.
+   */
+  static async deleteFolder(accountId: string, filterId: number, io?: Server): Promise<any> {
+    const account = this.accounts.get(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+      throw new Error("Account not connected. Please reconnect first.");
+    }
+    try {
+      // flags = 0 means no filter field → Telegram deletes the filter
+      await this.callWithDcMigration(account.mtproto, 'messages.updateDialogFilter', {
+        flags: 0,
+        id: filterId,
+      }, 0, accountId, io);
+      return { success: true, filterId };
+    } catch (err: any) {
+      throw new Error(this.extractErrorMessage(err));
+    }
+  }
+
+  /**
+   * Archive specific chats (move to Telegram archive, folder_id=1).
+   */
+  static async archiveChats(accountId: string, peerIds: string[], io?: Server): Promise<any> {
+    const account = this.accounts.get(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+      throw new Error("Account not connected. Please reconnect first.");
+    }
+    const mtproto = account.mtproto;
+
+    try {
+      const groups = await this.getGroupsForAccount(account, io);
+      const folderPeers: any[] = [];
+
+      for (const pid of peerIds) {
+        const g = groups.find((gr: any) => gr.id?.toString() === pid.toString());
+        if (!g) continue;
+        const numId = Number(g.id);
+        const peer = g.type === 'channel'
+          ? { _: 'inputPeerChannel', channel_id: numId, access_hash: Number(g.access_hash || 0) }
+          : { _: 'inputPeerChat', chat_id: numId };
+        folderPeers.push({ _: 'inputFolderPeer', peer, folder_id: 1 });
+      }
+
+      if (folderPeers.length === 0) return { success: true, archived: 0 };
+
+      await this.callWithDcMigration(mtproto, 'folders.editPeerFolders', { folder_peers: folderPeers }, 0, accountId, io);
+      return { success: true, archived: folderPeers.length };
+    } catch (err: any) {
+      throw new Error(this.extractErrorMessage(err));
+    }
+  }
+
+  /**
+   * Archive ALL groups and channels — only private user chats remain in inbox.
+   */
+  static async archiveAllGroupsAndChannels(accountId: string, io?: Server): Promise<any> {
+    const account = this.accounts.get(accountId);
+    if (!account || !account.mtproto || !account.connected) {
+      throw new Error("Account not connected. Please reconnect first.");
+    }
+    const mtproto = account.mtproto;
+
+    try {
+      // Fetch dialogs
+      let allDialogs: any[] = [];
+      let offsetId = 0, offsetDate = 0;
+      let offsetPeer: any = { _: 'inputPeerEmpty' };
+
+      for (let page = 0; page < 20; page++) {
+        const result: any = await this.callWithDcMigration(mtproto, 'messages.getDialogs', {
+          offset_date: offsetDate,
+          offset_id: offsetId,
+          offset_peer: offsetPeer,
+          limit: 100,
+          hash: 0,
+        }, 0, accountId, io);
+
+        const dialogs = result.dialogs || [];
+        allDialogs = allDialogs.concat(dialogs);
+        if (dialogs.length < 100) break;
+        const last = dialogs[dialogs.length - 1];
+        const lastMsg = (result.messages || []).find((m: any) => m.id === last.top_message);
+        offsetDate = lastMsg?.date || 0;
+        offsetId = last.top_message || 0;
+        offsetPeer = last.peer;
+      }
+
+      const groupChannelDialogs = allDialogs.filter((d: any) =>
+        d.peer?._ === 'peerChat' || d.peer?._ === 'peerChannel'
+      );
+
+      if (groupChannelDialogs.length === 0) return { success: true, archived: 0 };
+
+      const folderPeers: any[] = groupChannelDialogs.map((d: any) => {
+        if (d.peer?._ === 'peerChat') {
+          return { _: 'inputFolderPeer', peer: { _: 'inputPeerChat', chat_id: d.peer.chat_id }, folder_id: 1 };
+        }
+        return { _: 'inputFolderPeer', peer: { _: 'inputPeerChannel', channel_id: d.peer.channel_id, access_hash: 0 }, folder_id: 1 };
+      });
+
+      // Archive in batches of 100
+      for (let i = 0; i < folderPeers.length; i += 100) {
+        await this.callWithDcMigration(mtproto, 'folders.editPeerFolders', { folder_peers: folderPeers.slice(i, i + 100) }, 0, accountId, io);
+        if (i + 100 < folderPeers.length) await new Promise(r => setTimeout(r, 400));
+      }
+
+      return { success: true, archived: folderPeers.length };
+    } catch (err: any) {
+      throw new Error(this.extractErrorMessage(err));
+    }
+  }
+
+  /** Fetch all groups/channels for an account using the existing dialog approach */
+  private static async getGroupsForAccount(account: TelegramAccount, io?: Server): Promise<any[]> {
+    try {
+      const mtproto = account.mtproto!;
+      const result: any = await this.callWithDcMigration(mtproto, 'messages.getDialogs', {
+        offset_date: 0, offset_id: 0,
+        offset_peer: { _: 'inputPeerEmpty' },
+        limit: 200, hash: 0,
+      }, 0, account.id, io);
+
+      return (result.chats || []).map((c: any) => ({
+        id: String(c.id),
+        name: c.title || c.username || String(c.id),
+        type: c._ === 'channel' ? 'channel' : 'chat',
+        username: c.username,
+        access_hash: c.access_hash !== undefined ? String(c.access_hash) : '0',
+      }));
+    } catch {
+      return [];
+    }
+  }
+
 }
 export default TelegramController;

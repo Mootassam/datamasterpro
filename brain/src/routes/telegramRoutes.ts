@@ -410,6 +410,83 @@ const telegramRoutes = (io) => {
     }
   });
 
+  // ── Folder Management ────────────────────────────────────────────────────────
+
+  // Create a new folder (dialog filter)
+  router.post("/create-folder", async (req: Request, res: Response) => {
+    try {
+      const { accountId, folderName, peerIds = [] } = req.body;
+      if (!accountId || !folderName) {
+        return res.status(400).json({ error: "accountId and folderName are required" });
+      }
+      const result = await TelegramController.createFolder(accountId, folderName, peerIds, io);
+      res.status(200).json(result);
+    } catch (error: any) {
+      console.error("Create folder error:", error);
+      res.status(500).json({ error: String(error?.message || error) });
+    }
+  });
+
+  // Move chats into an existing folder
+  router.post("/move-to-folder", async (req: Request, res: Response) => {
+    try {
+      const { accountId, filterId, peerIds } = req.body;
+      if (!accountId || filterId == null || !Array.isArray(peerIds)) {
+        return res.status(400).json({ error: "accountId, filterId and peerIds are required" });
+      }
+      const result = await TelegramController.moveChatsToFolder(accountId, Number(filterId), peerIds, io);
+      res.status(200).json(result);
+    } catch (error: any) {
+      console.error("Move to folder error:", error);
+      res.status(500).json({ error: String(error?.message || error) });
+    }
+  });
+
+  // Delete a folder (dialog filter)
+  router.post("/delete-folder", async (req: Request, res: Response) => {
+    try {
+      const { accountId, filterId } = req.body;
+      if (!accountId || filterId == null) {
+        return res.status(400).json({ error: "accountId and filterId are required" });
+      }
+      const result = await TelegramController.deleteFolder(accountId, Number(filterId), io);
+      res.status(200).json(result);
+    } catch (error: any) {
+      console.error("Delete folder error:", error);
+      res.status(500).json({ error: String(error?.message || error) });
+    }
+  });
+
+  // Archive a specific list of chats
+  router.post("/archive-chats", async (req: Request, res: Response) => {
+    try {
+      const { accountId, peerIds } = req.body;
+      if (!accountId || !Array.isArray(peerIds)) {
+        return res.status(400).json({ error: "accountId and peerIds are required" });
+      }
+      const result = await TelegramController.archiveChats(accountId, peerIds, io);
+      res.status(200).json(result);
+    } catch (error: any) {
+      console.error("Archive chats error:", error);
+      res.status(500).json({ error: String(error?.message || error) });
+    }
+  });
+
+  // Archive ALL groups and channels (keep only private chats)
+  router.post("/archive-groups-channels", async (req: Request, res: Response) => {
+    try {
+      const { accountId } = req.body;
+      if (!accountId) {
+        return res.status(400).json({ error: "accountId is required" });
+      }
+      const result = await TelegramController.archiveAllGroupsAndChannels(accountId, io);
+      res.status(200).json(result);
+    } catch (error: any) {
+      console.error("Archive all groups error:", error);
+      res.status(500).json({ error: String(error?.message || error) });
+    }
+  });
+
   return router;
 };
 

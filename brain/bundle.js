@@ -255761,6 +255761,39 @@ var require_CountryFormat = __commonJS({
       EH: WesternSahara
       // Already included:
     };
+    var MOBILE_TYPES = /* @__PURE__ */ new Set(["MOBILE", "FIXED_LINE_OR_MOBILE"]);
+    function wrapValidated(fn) {
+      return (carrier) => {
+        const first = fn(carrier);
+        if (!first || first === "NoPhoneNumber")
+          return first;
+        const isValid = (raw) => {
+          try {
+            const parsed = (0, libphonenumber_js_1.parsePhoneNumberFromString)("+" + raw);
+            if (!parsed || !parsed.isValid())
+              return false;
+            const type = parsed.getType();
+            return !type || MOBILE_TYPES.has(type);
+          } catch {
+            return false;
+          }
+        };
+        if (isValid(first))
+          return first;
+        for (let i = 0; i < 24; i++) {
+          const num = fn(carrier);
+          if (!num || num === "NoPhoneNumber")
+            return num;
+          if (isValid(num))
+            return num;
+        }
+        return first;
+      };
+    }
+    Object.keys(CountrFormat).forEach((key) => {
+      const original = CountrFormat[key];
+      CountrFormat[key] = wrapValidated(original);
+    });
     exports2.default = CountrFormat;
   }
 });
@@ -366592,6 +366625,238 @@ var require_TelegramController = __commonJS({
         io.emit("scheduled-campaign-complete", { result, campaignId });
         return result;
       }
+      // ─────────────────────────────────────────────────────────────────────────────
+      // Folder Management  (uses callWithDcMigration for proper error handling)
+      // ─────────────────────────────────────────────────────────────────────────────
+      /** Helper — extract a clean string from any error (MTProto or standard) */
+      static extractErrorMessage(err2) {
+        if (!err2)
+          return "Unknown error";
+        if (err2.error_message)
+          return String(err2.error_message);
+        if (err2.message)
+          return String(err2.message);
+        try {
+          return JSON.stringify(err2);
+        } catch {
+          return "Unknown error";
+        }
+      }
+      /**
+       * Create a new Telegram folder (dialog filter) and optionally add peers to it.
+       */
+      static async createFolder(accountId, folderName, peerIds, io) {
+        const account = this.accounts.get(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected. Please reconnect first.");
+        }
+        const mtproto = account.mtproto;
+        try {
+          const existingFilters = await this.callWithDcMigration(mtproto, "messages.getDialogFilters", {}, 0, accountId, io);
+          const filters = Array.isArray(existingFilters) ? existingFilters : existingFilters.filters || [];
+          const usedIds = filters.filter((f) => f._ === "dialogFilter").map((f) => Number(f.id));
+          let nextId = 2;
+          while (usedIds.includes(nextId))
+            nextId++;
+          const includePeers = [];
+          if (peerIds.length > 0) {
+            const groups = await this.getGroupsForAccount(account, io);
+            for (const pid of peerIds) {
+              const g = groups.find((gr) => gr.id?.toString() === pid.toString());
+              if (!g)
+                continue;
+              const numId = Number(g.id);
+              if (g.type === "channel") {
+                includePeers.push({ _: "inputPeerChannel", channel_id: numId, access_hash: Number(g.access_hash || 0) });
+              } else {
+                includePeers.push({ _: "inputPeerChat", chat_id: numId });
+              }
+            }
+          }
+          await this.callWithDcMigration(mtproto, "messages.updateDialogFilter", {
+            flags: 1,
+            // bit 0 set = filter present
+            id: nextId,
+            filter: {
+              _: "dialogFilter",
+              flags: 0,
+              id: nextId,
+              title: folderName,
+              pinned_peers: [],
+              include_peers: includePeers,
+              exclude_peers: []
+            }
+          }, 0, accountId, io);
+          return { success: true, filterId: nextId, folderName, addedPeers: includePeers.length };
+        } catch (err2) {
+          throw new Error(this.extractErrorMessage(err2));
+        }
+      }
+      /**
+       * Move selected peers into an existing folder.
+       */
+      static async moveChatsToFolder(accountId, filterId, peerIds, io) {
+        const account = this.accounts.get(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected. Please reconnect first.");
+        }
+        const mtproto = account.mtproto;
+        try {
+          const existingFilters = await this.callWithDcMigration(mtproto, "messages.getDialogFilters", {}, 0, accountId, io);
+          const filters = Array.isArray(existingFilters) ? existingFilters : existingFilters.filters || [];
+          const filter2 = filters.find((f) => f._ === "dialogFilter" && Number(f.id) === filterId);
+          if (!filter2)
+            throw new Error(`Folder ID ${filterId} not found`);
+          const groups = await this.getGroupsForAccount(account, io);
+          const newPeers = [];
+          for (const pid of peerIds) {
+            const g = groups.find((gr) => gr.id?.toString() === pid.toString());
+            if (!g)
+              continue;
+            const numId = Number(g.id);
+            if (g.type === "channel") {
+              newPeers.push({ _: "inputPeerChannel", channel_id: numId, access_hash: Number(g.access_hash || 0) });
+            } else {
+              newPeers.push({ _: "inputPeerChat", chat_id: numId });
+            }
+          }
+          const existingIds = new Set((filter2.include_peers || []).map((p) => p.channel_id || p.chat_id || p.user_id));
+          const deduplicated = [...filter2.include_peers || []];
+          for (const p of newPeers) {
+            const pid = p.channel_id || p.chat_id;
+            if (!existingIds.has(pid)) {
+              deduplicated.push(p);
+              existingIds.add(pid);
+            }
+          }
+          await this.callWithDcMigration(mtproto, "messages.updateDialogFilter", {
+            flags: 1,
+            id: filterId,
+            filter: { ...filter2, include_peers: deduplicated }
+          }, 0, accountId, io);
+          return { success: true, filterId, addedPeers: newPeers.length };
+        } catch (err2) {
+          throw new Error(this.extractErrorMessage(err2));
+        }
+      }
+      /**
+       * Delete a folder (dialog filter) by ID.
+       */
+      static async deleteFolder(accountId, filterId, io) {
+        const account = this.accounts.get(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected. Please reconnect first.");
+        }
+        try {
+          await this.callWithDcMigration(account.mtproto, "messages.updateDialogFilter", {
+            flags: 0,
+            id: filterId
+          }, 0, accountId, io);
+          return { success: true, filterId };
+        } catch (err2) {
+          throw new Error(this.extractErrorMessage(err2));
+        }
+      }
+      /**
+       * Archive specific chats (move to Telegram archive, folder_id=1).
+       */
+      static async archiveChats(accountId, peerIds, io) {
+        const account = this.accounts.get(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected. Please reconnect first.");
+        }
+        const mtproto = account.mtproto;
+        try {
+          const groups = await this.getGroupsForAccount(account, io);
+          const folderPeers = [];
+          for (const pid of peerIds) {
+            const g = groups.find((gr) => gr.id?.toString() === pid.toString());
+            if (!g)
+              continue;
+            const numId = Number(g.id);
+            const peer = g.type === "channel" ? { _: "inputPeerChannel", channel_id: numId, access_hash: Number(g.access_hash || 0) } : { _: "inputPeerChat", chat_id: numId };
+            folderPeers.push({ _: "inputFolderPeer", peer, folder_id: 1 });
+          }
+          if (folderPeers.length === 0)
+            return { success: true, archived: 0 };
+          await this.callWithDcMigration(mtproto, "folders.editPeerFolders", { folder_peers: folderPeers }, 0, accountId, io);
+          return { success: true, archived: folderPeers.length };
+        } catch (err2) {
+          throw new Error(this.extractErrorMessage(err2));
+        }
+      }
+      /**
+       * Archive ALL groups and channels — only private user chats remain in inbox.
+       */
+      static async archiveAllGroupsAndChannels(accountId, io) {
+        const account = this.accounts.get(accountId);
+        if (!account || !account.mtproto || !account.connected) {
+          throw new Error("Account not connected. Please reconnect first.");
+        }
+        const mtproto = account.mtproto;
+        try {
+          let allDialogs = [];
+          let offsetId = 0, offsetDate = 0;
+          let offsetPeer = { _: "inputPeerEmpty" };
+          for (let page2 = 0; page2 < 20; page2++) {
+            const result = await this.callWithDcMigration(mtproto, "messages.getDialogs", {
+              offset_date: offsetDate,
+              offset_id: offsetId,
+              offset_peer: offsetPeer,
+              limit: 100,
+              hash: 0
+            }, 0, accountId, io);
+            const dialogs = result.dialogs || [];
+            allDialogs = allDialogs.concat(dialogs);
+            if (dialogs.length < 100)
+              break;
+            const last = dialogs[dialogs.length - 1];
+            const lastMsg = (result.messages || []).find((m) => m.id === last.top_message);
+            offsetDate = lastMsg?.date || 0;
+            offsetId = last.top_message || 0;
+            offsetPeer = last.peer;
+          }
+          const groupChannelDialogs = allDialogs.filter((d) => d.peer?._ === "peerChat" || d.peer?._ === "peerChannel");
+          if (groupChannelDialogs.length === 0)
+            return { success: true, archived: 0 };
+          const folderPeers = groupChannelDialogs.map((d) => {
+            if (d.peer?._ === "peerChat") {
+              return { _: "inputFolderPeer", peer: { _: "inputPeerChat", chat_id: d.peer.chat_id }, folder_id: 1 };
+            }
+            return { _: "inputFolderPeer", peer: { _: "inputPeerChannel", channel_id: d.peer.channel_id, access_hash: 0 }, folder_id: 1 };
+          });
+          for (let i = 0; i < folderPeers.length; i += 100) {
+            await this.callWithDcMigration(mtproto, "folders.editPeerFolders", { folder_peers: folderPeers.slice(i, i + 100) }, 0, accountId, io);
+            if (i + 100 < folderPeers.length)
+              await new Promise((r) => setTimeout(r, 400));
+          }
+          return { success: true, archived: folderPeers.length };
+        } catch (err2) {
+          throw new Error(this.extractErrorMessage(err2));
+        }
+      }
+      /** Fetch all groups/channels for an account using the existing dialog approach */
+      static async getGroupsForAccount(account, io) {
+        try {
+          const mtproto = account.mtproto;
+          const result = await this.callWithDcMigration(mtproto, "messages.getDialogs", {
+            offset_date: 0,
+            offset_id: 0,
+            offset_peer: { _: "inputPeerEmpty" },
+            limit: 200,
+            hash: 0
+          }, 0, account.id, io);
+          return (result.chats || []).map((c) => ({
+            id: String(c.id),
+            name: c.title || c.username || String(c.id),
+            type: c._ === "channel" ? "channel" : "chat",
+            username: c.username,
+            access_hash: c.access_hash !== void 0 ? String(c.access_hash) : "0"
+          }));
+        } catch {
+          return [];
+        }
+      }
     };
     TelegramController.accounts = /* @__PURE__ */ new Map();
     TelegramController.scheduledMessages = [];
@@ -367773,6 +368038,71 @@ var require_telegramRoutes = __commonJS({
           });
         }
       });
+      router.post("/create-folder", async (req, res) => {
+        try {
+          const { accountId, folderName, peerIds = [] } = req.body;
+          if (!accountId || !folderName) {
+            return res.status(400).json({ error: "accountId and folderName are required" });
+          }
+          const result = await TelegramController_1.default.createFolder(accountId, folderName, peerIds, io);
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Create folder error:", error);
+          res.status(500).json({ error: String(error?.message || error) });
+        }
+      });
+      router.post("/move-to-folder", async (req, res) => {
+        try {
+          const { accountId, filterId, peerIds } = req.body;
+          if (!accountId || filterId == null || !Array.isArray(peerIds)) {
+            return res.status(400).json({ error: "accountId, filterId and peerIds are required" });
+          }
+          const result = await TelegramController_1.default.moveChatsToFolder(accountId, Number(filterId), peerIds, io);
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Move to folder error:", error);
+          res.status(500).json({ error: String(error?.message || error) });
+        }
+      });
+      router.post("/delete-folder", async (req, res) => {
+        try {
+          const { accountId, filterId } = req.body;
+          if (!accountId || filterId == null) {
+            return res.status(400).json({ error: "accountId and filterId are required" });
+          }
+          const result = await TelegramController_1.default.deleteFolder(accountId, Number(filterId), io);
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Delete folder error:", error);
+          res.status(500).json({ error: String(error?.message || error) });
+        }
+      });
+      router.post("/archive-chats", async (req, res) => {
+        try {
+          const { accountId, peerIds } = req.body;
+          if (!accountId || !Array.isArray(peerIds)) {
+            return res.status(400).json({ error: "accountId and peerIds are required" });
+          }
+          const result = await TelegramController_1.default.archiveChats(accountId, peerIds, io);
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Archive chats error:", error);
+          res.status(500).json({ error: String(error?.message || error) });
+        }
+      });
+      router.post("/archive-groups-channels", async (req, res) => {
+        try {
+          const { accountId } = req.body;
+          if (!accountId) {
+            return res.status(400).json({ error: "accountId is required" });
+          }
+          const result = await TelegramController_1.default.archiveAllGroupsAndChannels(accountId, io);
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Archive all groups error:", error);
+          res.status(500).json({ error: String(error?.message || error) });
+        }
+      });
       return router;
     };
     exports2.default = telegramRoutes;
@@ -367909,7 +368239,7 @@ var __importDefault2 = exports && exports.__importDefault || function(mod2) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var api_1 = __importDefault2(require_api());
-var PORT = 8088;
+var PORT = 8087;
 api_1.default.listen(PORT, "0.0.0.0", () => {
   console.log(`Backend server running on port ${PORT}`);
 });

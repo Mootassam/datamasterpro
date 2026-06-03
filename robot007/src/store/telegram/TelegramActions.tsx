@@ -665,6 +665,135 @@ export const cancelRunningCampaign = createAsyncThunk(
   }
 );
 
+// ─── Folder / Archive actions ─────────────────────────────────────────────────
+
+/**
+ * Create a new Telegram folder, optionally pre-loading it with selected peers.
+ */
+export const createTelegramFolder = createAsyncThunk(
+  "telegram/createFolder",
+  async (
+    { accountId, folderName, peerIds = [] }: { accountId: string; folderName: string; peerIds?: string[] },
+    { dispatch }
+  ) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      dispatch(setCurrentOperation(`Creating folder "${folderName}"...`));
+      const result = await TelegramServices.createTelegramFolder(accountId, folderName, peerIds);
+      // Refresh folders so the new one appears in the sidebar
+      const filters = await TelegramServices.getDialogFilters(accountId);
+      dispatch(setDialogFilters(filters));
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to create folder"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+      dispatch(setCurrentOperation(null));
+    }
+  }
+);
+
+/**
+ * Move selected groups/channels into an existing folder.
+ */
+export const moveChatsToFolder = createAsyncThunk(
+  "telegram/moveChatsToFolder",
+  async (
+    { accountId, filterId, peerIds }: { accountId: string; filterId: number; peerIds: string[] },
+    { dispatch }
+  ) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      dispatch(setCurrentOperation("Moving chats to folder..."));
+      const result = await TelegramServices.moveTelegramChatsToFolder(accountId, filterId, peerIds);
+      // Refresh folders
+      const filters = await TelegramServices.getDialogFilters(accountId);
+      dispatch(setDialogFilters(filters));
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to move chats to folder"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+      dispatch(setCurrentOperation(null));
+    }
+  }
+);
+
+/**
+ * Archive a specific list of groups/channels.
+ */
+export const archiveTelegramChats = createAsyncThunk(
+  "telegram/archiveChats",
+  async (
+    { accountId, peerIds }: { accountId: string; peerIds: string[] },
+    { dispatch }
+  ) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      dispatch(setCurrentOperation(`Archiving ${peerIds.length} chats...`));
+      const result = await TelegramServices.archiveTelegramChats(accountId, peerIds);
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to archive chats"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+      dispatch(setCurrentOperation(null));
+    }
+  }
+);
+
+/**
+ * Archive ALL groups and channels — leaves only private conversations visible.
+ */
+export const archiveAllGroupsAndChannels = createAsyncThunk(
+  "telegram/archiveAllGroupsChannels",
+  async ({ accountId }: { accountId: string }, { dispatch }) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      dispatch(setCurrentOperation("Archiving all groups & channels..."));
+      const result = await TelegramServices.archiveAllGroupsAndChannels(accountId);
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to archive groups/channels"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+      dispatch(setCurrentOperation(null));
+    }
+  }
+);
+
+/**
+ * Delete a Telegram folder (dialog filter) by ID.
+ */
+export const deleteTelegramFolder = createAsyncThunk(
+  "telegram/deleteFolder",
+  async ({ accountId, filterId }: { accountId: string; filterId: number }, { dispatch }) => {
+    try {
+      dispatch(setTelegramLoading(true));
+      dispatch(setCurrentOperation("Deleting folder..."));
+      const result = await TelegramServices.deleteTelegramFolder(accountId, filterId);
+      const filters = await TelegramServices.getDialogFilters(accountId);
+      dispatch(setDialogFilters(filters));
+      return result;
+    } catch (error: any) {
+      Errors.handle(error);
+      dispatch(setTelegramError(error.message || "Failed to delete folder"));
+      throw error;
+    } finally {
+      dispatch(setTelegramLoading(false));
+      dispatch(setCurrentOperation(null));
+    }
+  }
+);
+
 // Error handling actions
 export const clearTelegramError = () => (dispatch) => {
   dispatch(resetTelegramError());

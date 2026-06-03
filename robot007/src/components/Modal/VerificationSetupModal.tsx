@@ -7,6 +7,8 @@ import {
   FiSearch,
   FiUsers,
   FiX,
+  FiEye,
+  FiEyeOff,
 } from "react-icons/fi";
 
 interface Account {
@@ -57,14 +59,15 @@ const AccountPickerModal: React.FC<AccountPickerModalProps> = ({
   activeService,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [visibleNumbers, setVisibleNumbers] = useState<Set<string>>(new Set());
 
   // Combine both account types with a type indicator
   const allAccounts = [
-    ...(activeService === "whatsapp" 
-      ? accounts.map(acc => ({ ...acc, __type: "whatsapp" })) 
+    ...(activeService === "whatsapp"
+      ? accounts.map(acc => ({ ...acc, __type: "whatsapp" }))
       : []),
-    ...(activeService === "telegram" 
-      ? telegramAccounts.map(acc => ({ ...acc, __type: "telegram" })) 
+    ...(activeService === "telegram"
+      ? telegramAccounts.map(acc => ({ ...acc, __type: "telegram" }))
       : []),
   ];
 
@@ -81,6 +84,19 @@ const AccountPickerModal: React.FC<AccountPickerModalProps> = ({
       ? selectedAccounts.filter((id) => id !== accountId)
       : [...selectedAccounts, accountId];
     onSelect(newSelection);
+  };
+
+  const toggleNumberVisibility = (e: React.MouseEvent, accountId: string) => {
+    e.stopPropagation(); // Prevent account selection when clicking the eye
+    setVisibleNumbers(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(accountId)) {
+        newSet.delete(accountId);
+      } else {
+        newSet.add(accountId);
+      }
+      return newSet;
+    });
   };
 
   if (!isOpen) return null;
@@ -102,8 +118,8 @@ const AccountPickerModal: React.FC<AccountPickerModalProps> = ({
           <input
             type="text"
             placeholder={
-              activeService === "telegram" 
-                ? "Search by name or phone number..." 
+              activeService === "telegram"
+                ? "Search by name or phone number..."
                 : "Search by phone number..."
             }
             value={searchTerm}
@@ -134,7 +150,8 @@ const AccountPickerModal: React.FC<AccountPickerModalProps> = ({
                   <div className="account-selector__avatar-fallback">
                     {(activeService === "telegram" && account.name
                       ? account.name
-                      : account.phoneNumber).toString().charAt(0).toUpperCase()}
+                      : account.phoneNumber
+                    ).toString().charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
@@ -146,7 +163,21 @@ const AccountPickerModal: React.FC<AccountPickerModalProps> = ({
                   </span>
                 )}
                 <span className="account-selector__phone">
-                  {account.phoneNumber}
+                  {/* Eye toggle in front of the number */}
+                  <span
+                    className="phone-toggle-icon"
+                    onClick={(e) => toggleNumberVisibility(e, account.id)}
+                    title={visibleNumbers.has(account.id) ? "Hide number" : "Show number"}
+                  >
+                    {visibleNumbers.has(account.id) ? (
+                      <FiEyeOff size={16} />
+                    ) : (
+                      <FiEye size={16} />
+                    )}
+                  </span>
+                  {visibleNumbers.has(account.id)
+                    ? account.phoneNumber
+                    : "*********"}
                 </span>
                 <span
                   className={`account-selector__platform account-selector__platform--${

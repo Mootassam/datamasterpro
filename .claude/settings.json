@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /d d:\\\\datamasterpro)",
+      "Bash(powershell -Command \"Get-ChildItem -Recurse -Depth 3 | Select-Object FullName | Format-Table -AutoSize\")",
+      "Bash(npx tsc *)",
+      "Bash(Get-ChildItem -Path \"d:\\\\datamasterpro\\\\brain\\\\src\\\\routes\" -Force)",
+      "Bash(git checkout *)"
+    ]
+  }
+}

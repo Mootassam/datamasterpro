@@ -205,7 +205,8 @@ export const sendBulkMessagesToTelegramGroups = async (
   groups: Array<{ id: string; access_hash?: string; title?: string; username?: string }>,
   message: string,
   config?: any,
-  imageFile?: File
+  imageFile?: File,
+  additionalAttachments?: File[]
 ) => {
   const formData = new FormData();
   formData.append("accountId", accountId);
@@ -213,6 +214,14 @@ export const sendBulkMessagesToTelegramGroups = async (
   formData.append("message", message);
   if (config) formData.append("config", JSON.stringify(config));
   if (imageFile) formData.append("file", imageFile);
+  
+  // Add additional attachments if provided
+  if (additionalAttachments && additionalAttachments.length > 0) {
+    additionalAttachments.forEach((file, index) => {
+      formData.append(`attachment_${index}`, file);
+    });
+  }
+  
   const response = await authAxios.post("/telegram/send-messages-to-groups", formData, {
     headers: {
       "Content-Type": "multipart/form-data"
@@ -259,6 +268,79 @@ export const joinBulkGroups = async (
     accountId,
     groups,
     config
+  });
+  return response.data;
+};
+
+// ─── Folder management ────────────────────────────────────────────────────────
+
+/**
+ * Create a new Telegram folder (dialog filter).
+ * @param peerIds  Optional list of group/channel IDs to include immediately.
+ */
+export const createTelegramFolder = async (
+  accountId: string,
+  folderName: string,
+  peerIds: string[] = []
+) => {
+  const response = await authAxios.post("/telegram/create-folder", {
+    accountId,
+    folderName,
+    peerIds,
+  });
+  return response.data;
+};
+
+/**
+ * Move selected groups/channels into an existing folder (dialog filter).
+ * @param filterId  The folder's id (from getDialogFilters).
+ * @param peerIds   List of group/channel IDs to add.
+ */
+export const moveTelegramChatsToFolder = async (
+  accountId: string,
+  filterId: number,
+  peerIds: string[]
+) => {
+  const response = await authAxios.post("/telegram/move-to-folder", {
+    accountId,
+    filterId,
+    peerIds,
+  });
+  return response.data;
+};
+
+/**
+ * Archive a specific list of chats (move to Telegram Archive folder_id=1).
+ */
+export const archiveTelegramChats = async (
+  accountId: string,
+  peerIds: string[]
+) => {
+  const response = await authAxios.post("/telegram/archive-chats", {
+    accountId,
+    peerIds,
+  });
+  return response.data;
+};
+
+/**
+ * Archive ALL groups and channels — keeps only private user conversations.
+ * Returns counts of archived items.
+ */
+export const archiveAllGroupsAndChannels = async (accountId: string) => {
+  const response = await authAxios.post("/telegram/archive-groups-channels", {
+    accountId,
+  });
+  return response.data;
+};
+
+/**
+ * Delete (remove) a Telegram folder by its filter ID.
+ */
+export const deleteTelegramFolder = async (accountId: string, filterId: number) => {
+  const response = await authAxios.post("/telegram/delete-folder", {
+    accountId,
+    filterId,
   });
   return response.data;
 };

@@ -361,11 +361,13 @@ function WhatsAppNumberGenerator() {
 
     try {
       // Create socket with better error handling and reconnection settings
-      newSocket = io("http://159.198.47.173:8087", {
-        reconnectionAttempts: 5,
+      newSocket = io("http://localhost:8087", {
+        reconnection: true,
+        reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,
-        reconnectionDelayMax: 5000,
-        timeout: 10000,
+        reconnectionDelayMax: 8000,
+        timeout: 20000,
+        transports: ["websocket", "polling"],
       });
 
       setSocket(newSocket);
@@ -380,7 +382,7 @@ function WhatsAppNumberGenerator() {
             running.
           </p>
         </div>,
-        { autoClose: 8000 }
+        { autoClose: 8000, toastId: "conn-err" }
       );
       return;
     }
@@ -482,11 +484,10 @@ function WhatsAppNumberGenerator() {
     };
 
     const handleScanQrCode = (data: any) => {
-      if (stateConnetion !== "connected") {
-        setQrcode(data.qr);
-        setAccountId(data.accountId);
-        setDisplayQr(true);
-      }
+      // Always show the QR code — never block on stale Redux state
+      setQrcode(data.qr);
+      setAccountId(data.accountId);
+      setDisplayQr(true);
     };
 
     const handleClientConnect = (data: any) => {
@@ -672,19 +673,26 @@ function WhatsAppNumberGenerator() {
     // Only set up event listeners if socket was successfully created
     if (newSocket) {
       // Connection events
-      newSocket.on("connect", handleConnect);
+      newSocket.on("connect", () => {
+        handleConnect();
+        // Dismiss any standing connection-error toast when we reconnect
+        toast.dismiss("conn-err");
+      });
       newSocket.on("connect_error", (error) => {
         console.error("Socket connection error:", error);
-        toast.error(
-          <div className="custom-toast fatal-error">
-            <strong>Connection Error</strong>
-            <p>
-              Failed to connect to the server. Please check if the server is
-              running.
-            </p>
-          </div>,
-          { autoClose: 8000 }
-        );
+        // Use a fixed toastId so only ONE toast is ever shown, never a stack
+        if (!toast.isActive("conn-err")) {
+          toast.error(
+            <div className="custom-toast fatal-error">
+              <strong>Connection Error</strong>
+              <p>
+                Failed to connect to the server. Please check if the server is
+                running.
+              </p>
+            </div>,
+            { autoClose: 8000, toastId: "conn-err" }
+          );
+        }
       });
 
       newSocket.on("disconnect", (reason) => {
@@ -733,20 +741,23 @@ function WhatsAppNumberGenerator() {
     newSocket.on("success", handleSuccess);
     // Only set up event listeners if socket was successfully created
     if (newSocket) {
-      // Connection events
+      // Connection events — second block (kept for compatibility; toastId prevents duplicate toasts)
       newSocket.on("connect", handleConnect);
       newSocket.on("connect_error", (error) => {
         console.error("Socket connection error:", error);
-        toast.error(
-          <div className="custom-toast fatal-error">
-            <strong>Connection Error</strong>
-            <p>
-              Failed to connect to the server. Please check if the server is
-              running.
-            </p>
-          </div>,
-          { autoClose: 8000 }
-        );
+        // toastId ensures only ONE error notification is ever shown — no stacking
+        if (!toast.isActive("conn-err")) {
+          toast.error(
+            <div className="custom-toast fatal-error">
+              <strong>Connection Error</strong>
+              <p>
+                Failed to connect to the server. Please check if the server is
+                running.
+              </p>
+            </div>,
+            { autoClose: 8000, toastId: "conn-err" }
+          );
+        }
       });
 
       newSocket.on("disconnect", (reason) => {

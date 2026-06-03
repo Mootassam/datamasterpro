@@ -1,301 +1,92 @@
+/* ═══════════════════════════════════════════════════
+   DataMaster Pro  |  Main Layout
+   ═══════════════════════════════════════════════════ */
+
+/* Shared design tokens — used across all modules */
+:root {
+  --p:       #2563EB;  /* primary blue */
+  --p-h:     #1D4ED8;  /* primary hover */
+  --p-lt:    #EFF6FF;  /* primary tint */
+  --p-dim:   #DBEAFE;  /* primary dim */
+  --ok:      #059669;  /* success */
+  --ok-lt:   #ECFDF5;
+  --warn:    #D97706;  /* warning */
+  --warn-lt: #FFFBEB;
+  --err:     #DC2626;  /* error */
+  --err-lt:  #FEF2F2;
+
+  --bg:      #F1F5F9;  /* page background */
+  --surf:    #FFFFFF;  /* card surface */
+  --surf2:   #F8FAFC;  /* secondary surface */
+  --border:  #E2E8F0;
+  --border2: #CBD5E1;
+
+  --txt:     #0F172A;  /* primary text */
+  --txt2:    #475569;  /* secondary text */
+  --txt3:    #94A3B8;  /* muted text */
+
+  --r-sm:  6px;
+  --r-md:  10px;
+  --r-lg:  14px;
+  --r-xl:  18px;
+  --r-pill:9999px;
+
+  --sh-sm: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+  --sh-md: 0 4px 16px rgba(15,23,42,.08);
+  --sh-lg: 0 8px 32px rgba(15,23,42,.10);
+
+  --t: 0.18s ease;
+}
+
+/* ── Root wrapper ───────────────────────────────── */
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+/* ── Main two-column layout ─────────────────────── */
 .app__generate {
   display: flex;
-  gap: 80px;
+  height: calc(100dvh - 70px);
+  overflow: hidden;
+  background: #f1f5f9;
+  gap: 0;
 }
 
-.generate {
-  display: flex;
-  flex-direction: column;
-}
-
-.generate__form {
-  margin-top: 20px;
-  padding: 20px;
-  margin-left: 20px;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  width: 495px;
-  gap: 10px;
-  height: calc(100% - 1%);
-}
-
-.form__group {
-  padding-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.form__group > label {
-  color: #384f5e;
-  font-size: medium;
-}
-
-input {
-  padding: 8px 5px;
-}
-
-textarea {
-  height: 150px;
-  line-height: 1.8;
-  padding: 8px 20px;
-}
-
-button {
-  border: 0;
-  padding: 10px;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-label {
-  font-size: 20px;
-}
-
-.generate__table {
-  margin-top: 20px;
-  width: 100%;
-  padding: 20px;
-  background-color: #fff;
-  height: 95dvh;
-  overflow-y: scroll;
-}
-
-table {
-  width: 100%;
-  padding: 10px 15px;
-  border-collapse: collapse;
-}
-
-td {
-  padding: 10px;
-  border: 1px solid #000;
-}
-
-.done {
-  font-size: large;
-  font-weight: 700;
-  display: flex;
-}
-
-.success {
-  display: flex;
-  gap: 20px;
-  background-color: rgb(70, 213, 104);
-  color: white;
-  font-weight: bold;
-}
-.error {
-  display: flex;
-  gap: 20px;
-  background-color: rgb(211, 24, 14);
-  color: white;
-  font-weight: bold;
-  opacity: 0.7;
-}
-.waiting {
-  background-color: #fff;
-}
-
-.title {
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-  font-size: 17px;
-  font-weight: bold;
-}
-
-.phonenumber {
-  color: #000;
-  font-size: large;
-  font-weight: bold;
-}
-
-/* styling the spinner  */
-
+/* ── Utility spinners ───────────────────────────── */
 .spinner {
   width: 18px;
   height: 18px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  border: 3px solid var(--border);
+  border-top-color: var(--p);
   border-radius: 50%;
-  animation: spin 1s infinite linear;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+  animation: spin 0.75s linear infinite;
+  flex-shrink: 0;
 }
 
 .spinner__big {
-  margin: auto;
-  margin-top: 10px;
-  display: grid;
-  place-items: center;
-  width: 129px;
-  height: 129px;
-  border: 4px solid #f3f3f3;
+  width: 56px;
+  height: 56px;
+  border: 4px solid var(--border);
+  border-top-color: var(--p);
   border-radius: 50%;
-  cursor: pointer;
-}
-
-.spinner__big:hover {
-  background-color: #384f5e;
-}
-
-span {
-  font-size: 40px;
-}
-.start,
-.telgram {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-}
-
-.start:hover {
-  /* background-color: rgb(0, 159, 18); */
-}
-.telgram:hover {
-  background-color: #23aaeb;
-}
-.stop:hover {
-  background-color: rgb(156, 144, 144);
-  color: white;
-}
-
-select {
-  padding: 8px 20px;
-  font-size: 15px;
-}
-select option {
-  padding: 10px;
-  background-color: #fff;
-  color: #333;
-}
-
-.sub__title {
-  font-size: 18px;
-  text-align: center;
-}
-
-.section__customer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.upload {
-  width: 100%;
-  border: 0;
-  background-color: #e9e3e3;
-}
-
-.generate__buttons {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.customer__reply {
-  padding-top: 34px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.total__text {
-  font-size: x-large;
-}
-.pink {
-  background-color: blueviolet;
-  color: white;
-  padding: 10px 10px;
-}
-
-.total__number {
-  font-size: xx-large;
-}
-
-.reply__group {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: center;
-}
-
-.qr__abosulte {
-  position: absolute;
+  animation: spin 0.75s linear infinite;
   margin: auto;
-  left: 0;
-  right: 0;
-  display: grid;
-  place-items: center;
-  background-color: #fff;
-  z-index: 1;
-  top: 50%;
-  bottom: 50%;
-  width: 600px;
-  height: 450px;
-  border-radius: 20px;
-}
-.close {
-  position: absolute;
-  top: 15px;
-  background-color: red;
-  padding: 7px 10px;
-  color: white;
-  font-weight: 700;
-  font-size: 20px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-label {
-  font-size: 25px;
-}
-input {
-  padding: 10px 20px;
 }
 
-.download__csv {
-  font-size: 14px;
-  font-weight: bold;
-  border: 0;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-.upload__file {
-  background-color: rgb(48 119 162 / 81%);
-  color: white;
-  font-weight: bold;
-}
+/* ── Legacy class shims (keep old HTML working) ─── */
+.generate__form  { display: none; }
+.generate__table { display: none; }
 
-.__registered {
-  background-color: rgb(99, 174, 99);
-  padding: 10px;
-  color: white;
-  font-weight: bold;
-}
-
-.upload__button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 26px;
-}
-
-.error {
-  color: red;
-  background-color: #fff;
-}
-
-.done__ {
-  background-color: greenyellow;
-  padding: 10px 10px;
-  color: rgb(206, 90, 90);
-  font-weight: bold;
-}
+.success { background: var(--ok-lt);   color: var(--ok);   }
+.error   { background: var(--err-lt);  color: var(--err);  }
+.waiting { background: var(--surf2);   color: var(--txt2); }
