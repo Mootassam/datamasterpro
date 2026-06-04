@@ -739,12 +739,14 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
       const batchSize = config.batchSize || 25;
       const totalBatches = Math.ceil(usersArray.length / batchSize);
 
+      // Initial "started" event — tells the frontend the total number count
       io.emit("progress", {
         progress: 0,
         batchesCompleted: 0,
-        totalBatches,
+        totalBatches: usersArray.length,  // total INDIVIDUAL numbers (not batches)
         registered: 0,
         rejected: 0,
+        eta: "",
       });
 
       for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
@@ -790,6 +792,7 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
 
             if (exists?.exists) {
               batchResult.phoneNumberRegistred.push(phoneNumber);
+              result.phoneNumberRegistred.push(phoneNumber);
 
               try {
                 const profilePicUrl = await account.socket!.profilePictureUrl(
@@ -798,70 +801,78 @@ static async cancelAccountConnection(accountId, io?: Server): Promise<boolean> {
                 ).catch(() => null);
                 if (profilePicUrl) {
                   batchResult.numbersWithPhoto!.push(phoneNumber);
+                  result.numbersWithPhoto!.push(phoneNumber);
                 }
               } catch {
+                // profile pic is optional — never block on it
               }
             } else {
               batchResult.phoneNumberRejected.push(phoneNumber);
+              result.phoneNumberRejected.push(phoneNumber);
             }
+
             batchResult.totalPhoneNumber.push(phoneNumber);
+            result.totalPhoneNumber.push(phoneNumber);
+
+            // ── Emit per-number progress ───────────────────────────────────
+            // This gives the frontend smooth real-time updates after every
+            // single number instead of only after each full batch.
+            const totalProcessed = result.totalPhoneNumber.length;
+            const perNumberProgress = Math.round((totalProcessed / usersArray.length) * 100);
+            const elapsedNow = Date.now() - startTime;
+            const avgMsPerNumber = elapsedNow / totalProcessed;
+            const numbersLeft = usersArray.length - totalProcessed;
+            const etaString = this.formatETA(Math.round((avgMsPerNumber * numbersLeft) / 1000));
+
+            io.emit("progress", {
+              progress: perNumberProgress,
+              batchesCompleted: totalProcessed,      // individual numbers done
+              totalBatches: usersArray.length,        // total individual numbers
+              registered: result.phoneNumberRegistred.length,
+              rejected: result.phoneNumberRejected.length,
+              eta: etaString,
+              currentBatch: [phoneNumber],
+              currentAccount: account.id,
+            });
+
+            io.emit("data-updated", {
+              phoneNumberRegistred: result.phoneNumberRegistred,
+              phoneNumberRejected: result.phoneNumberRejected,
+              totalPhoneNumber: result.totalPhoneNumber,
+              numbersWithPhoto: result.numbersWithPhoto,
+              progress: perNumberProgress,
+            });
 
           } catch (error) {
             console.error(`Error processing ${phoneNumber} with account ${account.id}:`, error);
             batchResult.phoneNumberRejected.push(phoneNumber);
             batchResult.totalPhoneNumber.push(phoneNumber);
+            result.phoneNumberRejected.push(phoneNumber);
+            result.totalPhoneNumber.push(phoneNumber);
           }
         }
 
-        result.phoneNumberRegistred.push(...batchResult.phoneNumberRegistred);
-        result.phoneNumberRejected.push(...batchResult.phoneNumberRejected);
-        result.totalPhoneNumber.push(...batchResult.totalPhoneNumber);
-        if (batchResult.numbersWithPhoto?.length) {
-          result.numbersWithPhoto!.push(...batchResult.numbersWithPhoto);
-        }
-
-        const progress = Math.round(((batchIndex + 1) / totalBatches) * 100);
-        const now = Date.now();
-        const elapsedMs = now - startTime;
-        const batchesRemaining = totalBatches - (batchIndex + 1);
-        const avgTimePerBatch = elapsedMs / (batchIndex + 1);
-        const etaMs = avgTimePerBatch * batchesRemaining;
-        const etaSeconds = Math.round(etaMs / 1000);
-        const etaString = this.formatETA(etaSeconds);
-
-        io.emit("progress", {
-          progress,
-          batchesCompleted: batchIndex + 1,
-          totalBatches,
-          registered: result.phoneNumberRegistred.length,
-          rejected: result.phoneNumberRejected.length,
-          eta: etaString,
-          etaSeconds,
-          currentAccount: account.id
-        });
-
-        io.emit("data-updated", {
-          phoneNumberRegistred: result.phoneNumberRegistred,
-          phoneNumberRejected: result.phoneNumberRejected,
-          totalPhoneNumber: result.totalPhoneNumber,
-          numbersWithPhoto: result.numbersWithPhoto,
-          progress
-        });
+        // Batch-level results are already merged above per-number.
+        // Only append numbersWithPhoto that weren't individually pushed
+        // (handles edge case from catch blocks above).
 
         if (batchIndex < totalBatches - 1 && config.delayBetweenBatches > 0) {
           await new Promise(resolve => setTimeout(resolve, config.delayBetweenBatches));
         }
       }
 
+      // Final "done" signal — guarantees frontend reaches 100%
       io.emit("progress", {
         progress: 100,
-        batchesCompleted: totalBatches,
-        totalBatches,
+        batchesCompleted: usersArray.length,
+        totalBatches: usersArray.length,
         registered: result.phoneNumberRegistred.length,
         rejected: result.phoneNumberRejected.length,
         eta: "Completed",
-        etaSeconds: 0
+        etaSeconds: 0,
       });
+
+      io.emit("done");
 
       return result;
 

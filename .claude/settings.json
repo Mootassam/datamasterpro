@@ -5,7 +5,9 @@
       "Bash(powershell -Command \"Get-ChildItem -Recurse -Depth 3 | Select-Object FullName | Format-Table -AutoSize\")",
       "Bash(npx tsc *)",
       "Bash(Get-ChildItem -Path \"d:\\\\datamasterpro\\\\brain\\\\src\\\\routes\" -Force)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(Get-ChildItem -Path \"d:\\\\datamasterpro\\\\brain\\\\src\\\\api\\\\phone\" -File)",
+      "Bash(Select-Object -ExpandProperty FullName)"
     ]
   }
 }

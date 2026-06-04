@@ -299,6 +299,21 @@ function WhatsAppNumberGenerator() {
   };
 
   const handleStartVerification = (config) => {
+    // Reset all progress state before starting a new verification run
+    // so stale data from a previous run never bleeds through
+    setProgressData({
+      batches: 0,
+      progress: 0,
+      total: 0,
+      currentBatch: [],
+      registeredCount: 0,
+      rejectedCount: 0,
+      eta: "",
+    });
+    setRegisteredNumbers([]);
+    setRejectedNumbers([]);
+    setTotalNumbers([]);
+    setModalOpen(true);
     setVerificationConfig(config);
     setModalState("progress");
     handleCheckNumbers(config);
@@ -361,7 +376,7 @@ function WhatsAppNumberGenerator() {
 
     try {
       // Create socket with better error handling and reconnection settings
-      newSocket = io("http://162.0.230.49:8087", {
+      newSocket = io("http://localhost:8087", {
         reconnection: true,
         reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,
@@ -543,21 +558,32 @@ function WhatsAppNumberGenerator() {
       isBlocked && toast.error(toastContent);
     };
 
-    // Enhanced progress handler
+    // ── Progress handler — robust against stale / backwards events ──────────
     const handleProgress = (data: any) => {
-      setProgressData((prev) => ({
-        ...prev,
-        batches: data.batchesCompleted,
-        progress: data.progress,
-        total: data.totalBatches,
-        currentBatch: data.currentBatch || [],
-        registeredCount: data.registered || 0,
-        rejectedCount: data.rejected || 0,
-        eta: data.eta,
-      }));
+      const incoming = data.progress ?? 0;
+      setProgressData((prev) => {
+        // Ignore any event that would move progress backwards.
+        // This protects against stale socket events arriving out-of-order
+        // after a reconnect, and against the old axios-retry bug that could
+        // restart verification and emit progress: 0 again.
+        if (incoming < prev.progress && prev.progress > 0 && prev.progress < 100) {
+          console.warn(`[progress] Ignoring backwards event ${incoming}% (was ${prev.progress}%)`);
+          return prev;
+        }
+        return {
+          batches: data.batchesCompleted ?? prev.batches,
+          progress: incoming,
+          // Never let totalBatches shrink — if backend restarts it might
+          // emit a smaller total; keep the largest value seen.
+          total: Math.max(data.totalBatches ?? 0, prev.total),
+          currentBatch: data.currentBatch ?? prev.currentBatch,
+          registeredCount: data.registered ?? prev.registeredCount,
+          rejectedCount: data.rejected ?? prev.rejectedCount,
+          eta: data.eta ?? prev.eta,
+        };
+      });
 
-      // Auto-open modal on first progress
-      if (!modalOpen && data.progress > 0) {
+      if (!modalOpen && incoming > 0) {
         setModalOpen(true);
       }
     };

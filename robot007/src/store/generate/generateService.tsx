@@ -100,10 +100,11 @@ export const getTelegramUser = async (UserId: any) => {
 };
 
 export const checkwhatsAppNumber = async (numbers: any, config) => {
-  const response = await authAxios.post("/save", {
-    users: numbers,
-    config,
-  });
+  // timeout: 0 means no timeout — verification of large number lists can
+  // take many minutes (numbers × delay per number).  A timeout would cause
+  // axios to retry and restart the verification from scratch, producing
+  // fake backwards progress on the frontend.
+  const response = await authAxios.post("/save", { users: numbers, config }, { timeout: 0 });
   return response.data;
 };
 

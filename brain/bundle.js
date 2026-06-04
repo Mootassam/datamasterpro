@@ -256689,9 +256689,11 @@ var require_phoneNumberController = __commonJS({
           io.emit("progress", {
             progress: 0,
             batchesCompleted: 0,
-            totalBatches,
+            totalBatches: usersArray.length,
+            // total INDIVIDUAL numbers (not batches)
             registered: 0,
-            rejected: 0
+            rejected: 0,
+            eta: ""
           });
           for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
             if (abortController.signal.aborted) {
@@ -256729,67 +256731,68 @@ var require_phoneNumberController = __commonJS({
                 const [exists] = Array.isArray(results) ? results : [];
                 if (exists?.exists) {
                   batchResult.phoneNumberRegistred.push(phoneNumber);
+                  result.phoneNumberRegistred.push(phoneNumber);
                   try {
                     const profilePicUrl = await account.socket.profilePictureUrl(jid, "image").catch(() => null);
                     if (profilePicUrl) {
                       batchResult.numbersWithPhoto.push(phoneNumber);
+                      result.numbersWithPhoto.push(phoneNumber);
                     }
                   } catch {
                   }
                 } else {
                   batchResult.phoneNumberRejected.push(phoneNumber);
+                  result.phoneNumberRejected.push(phoneNumber);
                 }
                 batchResult.totalPhoneNumber.push(phoneNumber);
+                result.totalPhoneNumber.push(phoneNumber);
+                const totalProcessed = result.totalPhoneNumber.length;
+                const perNumberProgress = Math.round(totalProcessed / usersArray.length * 100);
+                const elapsedNow = Date.now() - startTime;
+                const avgMsPerNumber = elapsedNow / totalProcessed;
+                const numbersLeft = usersArray.length - totalProcessed;
+                const etaString = this.formatETA(Math.round(avgMsPerNumber * numbersLeft / 1e3));
+                io.emit("progress", {
+                  progress: perNumberProgress,
+                  batchesCompleted: totalProcessed,
+                  // individual numbers done
+                  totalBatches: usersArray.length,
+                  // total individual numbers
+                  registered: result.phoneNumberRegistred.length,
+                  rejected: result.phoneNumberRejected.length,
+                  eta: etaString,
+                  currentBatch: [phoneNumber],
+                  currentAccount: account.id
+                });
+                io.emit("data-updated", {
+                  phoneNumberRegistred: result.phoneNumberRegistred,
+                  phoneNumberRejected: result.phoneNumberRejected,
+                  totalPhoneNumber: result.totalPhoneNumber,
+                  numbersWithPhoto: result.numbersWithPhoto,
+                  progress: perNumberProgress
+                });
               } catch (error) {
                 console.error(`Error processing ${phoneNumber} with account ${account.id}:`, error);
                 batchResult.phoneNumberRejected.push(phoneNumber);
                 batchResult.totalPhoneNumber.push(phoneNumber);
+                result.phoneNumberRejected.push(phoneNumber);
+                result.totalPhoneNumber.push(phoneNumber);
               }
             }
-            result.phoneNumberRegistred.push(...batchResult.phoneNumberRegistred);
-            result.phoneNumberRejected.push(...batchResult.phoneNumberRejected);
-            result.totalPhoneNumber.push(...batchResult.totalPhoneNumber);
-            if (batchResult.numbersWithPhoto?.length) {
-              result.numbersWithPhoto.push(...batchResult.numbersWithPhoto);
-            }
-            const progress = Math.round((batchIndex + 1) / totalBatches * 100);
-            const now = Date.now();
-            const elapsedMs = now - startTime;
-            const batchesRemaining = totalBatches - (batchIndex + 1);
-            const avgTimePerBatch = elapsedMs / (batchIndex + 1);
-            const etaMs = avgTimePerBatch * batchesRemaining;
-            const etaSeconds = Math.round(etaMs / 1e3);
-            const etaString = this.formatETA(etaSeconds);
-            io.emit("progress", {
-              progress,
-              batchesCompleted: batchIndex + 1,
-              totalBatches,
-              registered: result.phoneNumberRegistred.length,
-              rejected: result.phoneNumberRejected.length,
-              eta: etaString,
-              etaSeconds,
-              currentAccount: account.id
-            });
-            io.emit("data-updated", {
-              phoneNumberRegistred: result.phoneNumberRegistred,
-              phoneNumberRejected: result.phoneNumberRejected,
-              totalPhoneNumber: result.totalPhoneNumber,
-              numbersWithPhoto: result.numbersWithPhoto,
-              progress
-            });
             if (batchIndex < totalBatches - 1 && config.delayBetweenBatches > 0) {
               await new Promise((resolve) => setTimeout(resolve, config.delayBetweenBatches));
             }
           }
           io.emit("progress", {
             progress: 100,
-            batchesCompleted: totalBatches,
-            totalBatches,
+            batchesCompleted: usersArray.length,
+            totalBatches: usersArray.length,
             registered: result.phoneNumberRegistred.length,
             rejected: result.phoneNumberRejected.length,
             eta: "Completed",
             etaSeconds: 0
           });
+          io.emit("done");
           return result;
         } catch (error) {
           console.error("CRITICAL ERROR:", error);
