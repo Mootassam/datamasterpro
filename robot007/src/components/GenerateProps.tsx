@@ -11,7 +11,8 @@ import {
   FaFilter,
   FaCloudUploadAlt,
   FaFile,
-  FaClone
+  FaClone,
+  FaExchangeAlt
 } from "react-icons/fa";
 import { FiLoader } from "react-icons/fi";
 import Select from "react-select";
@@ -72,6 +73,137 @@ const GenerateProps = ({
   const [dupBusy, setDupBusy] = useState<boolean>(false);
   const [dupError, setDupError] = useState<string>("");
   const [dupDragging, setDupDragging] = useState<boolean>(false);
+
+  // ── File comparison state ──
+  const [cmpMainFile, setCmpMainFile] = useState<File | null>(null);
+  const [cmpNewFile, setCmpNewFile] = useState<File | null>(null);
+  const [cmpBusy, setCmpBusy] = useState<boolean>(false);
+  const [cmpError, setCmpError] = useState<string>("");
+  const [cmpDragMain, setCmpDragMain] = useState<boolean>(false);
+  const [cmpDragNew, setCmpDragNew] = useState<boolean>(false);
+  const [cmpResult, setCmpResult] = useState<{
+    mainTotal: number;
+    newTotal: number;
+    dupCount: number;
+    uniqueCount: number;
+    dupText: string;
+    uniqueText: string;
+  } | null>(null);
+
+  // Download a pre-joined text blob directly (used for very large result sets)
+  const downloadText = (text: string, name: string, count: number) => {
+    if (!text) return;
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+    link.href = url;
+    link.download = `${name}_${count}_${stamp}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // Build an off-main-thread Web Worker that compares two large lists.
+  // Running in a worker keeps the UI responsive even for millions of numbers.
+  const buildCompareWorker = (): Worker => {
+    const code = `
+      self.onmessage = function (e) {
+        try {
+          var mainText = e.data.mainText || "";
+          var newText  = e.data.newText  || "";
+          var splitRe  = /[\\r\\n,;]+/;
+
+          // Build a Set of main numbers → O(1) lookups
+          var mainSet = new Set();
+          var mp = mainText.split(splitRe);
+          for (var i = 0; i < mp.length; i++) {
+            var v = mp[i].trim();
+            if (v) mainSet.add(v);
+          }
+
+          // Walk the new file once; dedupe within itself too
+          var seen = new Set();
+          var dup = [];
+          var uniq = [];
+          var np = newText.split(splitRe);
+          for (var j = 0; j < np.length; j++) {
+            var n = np[j].trim();
+            if (!n || seen.has(n)) continue;
+            seen.add(n);
+            if (mainSet.has(n)) dup.push(n); else uniq.push(n);
+          }
+
+          self.postMessage({
+            ok: true,
+            mainTotal: mainSet.size,
+            newTotal: seen.size,
+            dupCount: dup.length,
+            uniqueCount: uniq.length,
+            dupText: dup.join("\\n"),
+            uniqueText: uniq.join("\\n")
+          });
+        } catch (err) {
+          self.postMessage({ ok: false, error: String(err && err.message || err) });
+        }
+      };
+    `;
+    const blob = new Blob([code], { type: "application/javascript" });
+    return new Worker(URL.createObjectURL(blob));
+  };
+
+  const readFileText = (f: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result || ""));
+      r.onerror = () => reject(new Error("Could not read file"));
+      r.readAsText(f);
+    });
+
+  const handleCompare = async () => {
+    setCmpError("");
+    setCmpResult(null);
+    if (!cmpMainFile || !cmpNewFile) {
+      setCmpError("Please upload both the Main Data file and the New Numbers file.");
+      return;
+    }
+    setCmpBusy(true);
+    try {
+      const [mainText, newText] = await Promise.all([
+        readFileText(cmpMainFile),
+        readFileText(cmpNewFile),
+      ]);
+
+      const worker = buildCompareWorker();
+      const result = await new Promise<any>((resolve, reject) => {
+        worker.onmessage = (e) => (e.data?.ok ? resolve(e.data) : reject(new Error(e.data?.error || "Comparison failed")));
+        worker.onerror = (e) => reject(new Error(e.message || "Worker error"));
+        worker.postMessage({ mainText, newText });
+      });
+      worker.terminate();
+
+      setCmpResult({
+        mainTotal: result.mainTotal,
+        newTotal: result.newTotal,
+        dupCount: result.dupCount,
+        uniqueCount: result.uniqueCount,
+        dupText: result.dupText,
+        uniqueText: result.uniqueText,
+      });
+    } catch (err: any) {
+      setCmpError(err?.message || "Comparison failed. Please try again.");
+    } finally {
+      setCmpBusy(false);
+    }
+  };
+
+  const validTextFile = (f: File | null | undefined): f is File =>
+    !!f && /\.(txt|csv)$/i.test(f.name);
+
+  const resetCompare = () => {
+    setCmpMainFile(null); setCmpNewFile(null); setCmpResult(null); setCmpError("");
+  };
 
   // Generic plain-text downloader (one item per line)
   const downloadList = (items: string[], name: string) => {
@@ -631,6 +763,153 @@ const GenerateProps = ({
                         <button className="dup-btn reset" onClick={resetDupChecker}>
                           Clear
                         </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* ── Compare Two Files ── */}
+                <div className="cmp-card">
+                  <div className="card-header">
+                    <FaExchangeAlt className="text-blue-500" />
+                    <h3>Compare Files</h3>
+                  </div>
+                  <p className="cmp-hint">
+                    Upload your <strong>Main Data</strong> and a <strong>New Numbers</strong> file.
+                    We'll find which numbers from the new file already exist in the main data —
+                    handles millions of numbers in seconds.
+                  </p>
+
+                  <div className="cmp-slots">
+                    {/* Main data slot */}
+                    <label
+                      className={`cmp-slot main ${cmpDragMain ? "dragging" : ""} ${cmpMainFile ? "has-file" : ""}`}
+                      onDragEnter={(e) => { e.preventDefault(); setCmpDragMain(true); }}
+                      onDragLeave={(e) => { e.preventDefault(); setCmpDragMain(false); }}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault(); setCmpDragMain(false);
+                        const f = e.dataTransfer.files?.[0];
+                        if (validTextFile(f)) { setCmpMainFile(f); setCmpError(""); } else setCmpError("Main file must be .txt or .csv");
+                      }}
+                    >
+                      <div className="cmp-slot-tag main">1 · MAIN DATA</div>
+                      {cmpMainFile ? (
+                        <div className="cmp-slot-inner">
+                          <FaCheckCircle className="text-green-500" />
+                          <span className="cmp-file-name">{cmpMainFile.name}</span>
+                        </div>
+                      ) : (
+                        <div className="cmp-slot-inner">
+                          <FaUpload className="cmp-up-icon" />
+                          <span>Existing list</span>
+                          <span className="cmp-sub">.txt / .csv</span>
+                        </div>
+                      )}
+                      <input
+                        type="file" accept=".txt,.csv" className="file-input"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (validTextFile(f)) { setCmpMainFile(f); setCmpError(""); } else if (f) setCmpError("Main file must be .txt or .csv");
+                        }}
+                      />
+                    </label>
+
+                    <div className="cmp-vs">VS</div>
+
+                    {/* New numbers slot */}
+                    <label
+                      className={`cmp-slot new ${cmpDragNew ? "dragging" : ""} ${cmpNewFile ? "has-file" : ""}`}
+                      onDragEnter={(e) => { e.preventDefault(); setCmpDragNew(true); }}
+                      onDragLeave={(e) => { e.preventDefault(); setCmpDragNew(false); }}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault(); setCmpDragNew(false);
+                        const f = e.dataTransfer.files?.[0];
+                        if (validTextFile(f)) { setCmpNewFile(f); setCmpError(""); } else setCmpError("New file must be .txt or .csv");
+                      }}
+                    >
+                      <div className="cmp-slot-tag new">2 · NEW NUMBERS</div>
+                      {cmpNewFile ? (
+                        <div className="cmp-slot-inner">
+                          <FaCheckCircle className="text-green-500" />
+                          <span className="cmp-file-name">{cmpNewFile.name}</span>
+                        </div>
+                      ) : (
+                        <div className="cmp-slot-inner">
+                          <FaUpload className="cmp-up-icon" />
+                          <span>List to check</span>
+                          <span className="cmp-sub">.txt / .csv</span>
+                        </div>
+                      )}
+                      <input
+                        type="file" accept=".txt,.csv" className="file-input"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (validTextFile(f)) { setCmpNewFile(f); setCmpError(""); } else if (f) setCmpError("New file must be .txt or .csv");
+                        }}
+                      />
+                    </label>
+                  </div>
+
+                  {cmpError && (
+                    <div className="upload-error">
+                      <FaTimesCircle />
+                      <span>{cmpError}</span>
+                    </div>
+                  )}
+
+                  <button
+                    className={`cmp-run-btn ${cmpBusy ? "loading" : ""}`}
+                    onClick={handleCompare}
+                    disabled={cmpBusy || !cmpMainFile || !cmpNewFile}
+                  >
+                    {cmpBusy ? (<><FiLoader className="animate-spin" /> Comparing…</>) : (<><FaExchangeAlt /> Compare Files</>)}
+                  </button>
+
+                  {cmpResult && (
+                    <>
+                      <div className="cmp-stats">
+                        <div className="cmp-stat main">
+                          <div className="cmp-stat-value">{cmpResult.mainTotal.toLocaleString()}</div>
+                          <div className="cmp-stat-label">Main Data</div>
+                        </div>
+                        <div className="cmp-stat new">
+                          <div className="cmp-stat-value">{cmpResult.newTotal.toLocaleString()}</div>
+                          <div className="cmp-stat-label">New (distinct)</div>
+                        </div>
+                        <div className="cmp-stat dupes">
+                          <div className="cmp-stat-value">{cmpResult.dupCount.toLocaleString()}</div>
+                          <div className="cmp-stat-label">Already Exist</div>
+                        </div>
+                        <div className="cmp-stat fresh">
+                          <div className="cmp-stat-value">{cmpResult.uniqueCount.toLocaleString()}</div>
+                          <div className="cmp-stat-label">Brand New</div>
+                        </div>
+                      </div>
+
+                      <div className="cmp-result-banner">
+                        {cmpResult.dupCount > 0
+                          ? <><FaTimesCircle /> {cmpResult.dupCount.toLocaleString()} number(s) from the new file already exist in the main data.</>
+                          : <><FaCheckCircle /> No overlap — every number in the new file is brand new.</>}
+                      </div>
+
+                      <div className="cmp-actions">
+                        <button
+                          className="cmp-btn fresh"
+                          onClick={() => downloadText(cmpResult.uniqueText, "brand_new", cmpResult.uniqueCount)}
+                          disabled={cmpResult.uniqueCount === 0}
+                        >
+                          <FaDownload /> Download Brand-New ({cmpResult.uniqueCount.toLocaleString()})
+                        </button>
+                        <button
+                          className="cmp-btn dupes"
+                          onClick={() => downloadText(cmpResult.dupText, "already_exist", cmpResult.dupCount)}
+                          disabled={cmpResult.dupCount === 0}
+                        >
+                          <FaDownload /> Download Already-Exist ({cmpResult.dupCount.toLocaleString()})
+                        </button>
+                        <button className="cmp-btn reset" onClick={resetCompare}>Clear</button>
                       </div>
                     </>
                   )}

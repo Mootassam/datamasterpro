@@ -448,6 +448,183 @@
 .dup-btn:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
 .dup-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* ── Compare Files ── */
+.cmp-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  transition: box-shadow 0.3s ease;
+}
+.cmp-card:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
+
+.cmp-hint {
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+/* Two upload slots side by side with a VS divider */
+.cmp-slots {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+.cmp-slot {
+  flex: 1;
+  position: relative;
+  display: block;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 16px 10px 14px;
+  text-align: center;
+  cursor: pointer;
+  background: #f8fafc;
+  transition: all 0.25s ease;
+  min-width: 0;
+}
+.cmp-slot.main:hover, .cmp-slot.main.dragging { border-color: #6366f1; background: #eef2ff; }
+.cmp-slot.new:hover,  .cmp-slot.new.dragging  { border-color: #0ea5e9; background: #f0f9ff; }
+.cmp-slot.has-file { border-color: #10b981; background: #ecfdf5; }
+
+.cmp-slot-tag {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+.cmp-slot-tag.main { background: #6366f1; }
+.cmp-slot-tag.new  { background: #0ea5e9; }
+
+.cmp-slot-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+.cmp-up-icon { font-size: 1.4rem; color: #94a3b8; }
+.cmp-sub { font-size: 0.7rem; color: #94a3b8; font-weight: 400; }
+.cmp-file-name {
+  font-weight: 700;
+  color: #047857;
+  font-size: 0.78rem;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cmp-vs {
+  align-self: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #94a3b8;
+  background: #f1f5f9;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cmp-run-btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(to right, #3b82f6, #6366f1);
+  transition: all 0.2s ease;
+}
+.cmp-run-btn:hover:not(:disabled) { opacity: 0.93; transform: translateY(-1px); }
+.cmp-run-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.cmp-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 18px 0 14px;
+}
+.cmp-stat {
+  position: relative;
+  padding: 14px;
+  border-radius: 10px;
+  text-align: center;
+  background: #f8fafc;
+  border: 1px solid #eef2f7;
+  overflow: hidden;
+}
+.cmp-stat::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.cmp-stat.main::before  { background: linear-gradient(to right, #6366f1, #818cf8); }
+.cmp-stat.new::before   { background: linear-gradient(to right, #0ea5e9, #38bdf8); }
+.cmp-stat.dupes::before { background: linear-gradient(to right, #f59e0b, #fbbf24); }
+.cmp-stat.fresh::before { background: linear-gradient(to right, #10b981, #34d399); }
+.cmp-stat-value { font-size: 1.45rem; font-weight: 800; color: #1e293b; line-height: 1; }
+.cmp-stat-label {
+  font-size: 0.7rem; color: #64748b; text-transform: uppercase;
+  letter-spacing: 0.04em; font-weight: 700; margin-top: 6px;
+}
+
+.cmp-result-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #b45309;
+  line-height: 1.4;
+}
+
+.cmp-actions { display: flex; flex-direction: column; gap: 8px; }
+.cmp-btn {
+  width: 100%;
+  padding: 11px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 0.86rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #fff;
+}
+.cmp-btn.fresh { background: linear-gradient(to right, #10b981, #34d399); }
+.cmp-btn.dupes { background: linear-gradient(to right, #f59e0b, #fbbf24); }
+.cmp-btn.reset { background: #f1f5f9; color: #475569; }
+.cmp-btn:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+.cmp-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
 /* Download All (.txt) button */
 .download-all-btn {
   flex: 1;
