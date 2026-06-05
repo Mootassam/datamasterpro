@@ -54,7 +54,9 @@ const GenerateProps = ({
   onCustomGenerate,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [activeTab, setActiveTab] = useState("generate"); // ['generate', 'stats', 'custom', 'osint']
+  // Toggle to re-enable the Generate & Custom tabs later (set to true).
+  const SHOW_GENERATE_TABS = false;
+  const [activeTab, setActiveTab] = useState(SHOW_GENERATE_TABS ? "generate" : "stats"); // ['generate', 'stats', 'custom', 'osint']
 
   // ── Custom pattern generator state ──
   const [customLength, setCustomLength] = useState<number>(10);
@@ -282,24 +284,28 @@ const GenerateProps = ({
         </h2>
         {activeService !== "osint" && (
           <div className="sidebar-tabs">
-            <button
-              className={`tab-btn ${activeTab === "generate" ? "active" : ""}`}
-              onClick={() => setActiveTab("generate")}
-            >
-              <FaDatabase className="mr-1" /> Generate
-            </button>
+            {SHOW_GENERATE_TABS && (
+              <button
+                className={`tab-btn ${activeTab === "generate" ? "active" : ""}`}
+                onClick={() => setActiveTab("generate")}
+              >
+                <FaDatabase className="mr-1" /> Generate
+              </button>
+            )}
             <button
               className={`tab-btn ${activeTab === "stats" ? "active" : ""}`}
               onClick={() => setActiveTab("stats")}
             >
               <FaFile className="mr-1" /> Upload
             </button>
-            <button
-              className={`tab-btn ${activeTab === "custom" ? "active" : ""}`}
-              onClick={() => setActiveTab("custom")}
-            >
-              <FaPhone className="mr-1" /> Custom
-            </button>
+            {SHOW_GENERATE_TABS && (
+              <button
+                className={`tab-btn ${activeTab === "custom" ? "active" : ""}`}
+                onClick={() => setActiveTab("custom")}
+              >
+                <FaPhone className="mr-1" /> Custom
+              </button>
+            )}
           </div>
         )}
       </div>

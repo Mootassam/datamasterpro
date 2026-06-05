@@ -255813,21 +255813,21 @@ var require_phoneNumberGenerator = __commonJS({
         const much = req.body.much;
         const state = req.body.state;
         const carrier = req.body.carrier.value;
-        const phoneNumbers = [];
+        const target = Number(much) || 0;
         const formatFunction = CountryFormat_1.default[countryCode];
         if (!formatFunction) {
           throw new Error("Invalid country code or format function");
         }
-        for (let i = 0; i < much; i++) {
-          let phoneNumber;
-          if (countryCode === "US" || countryCode === "CA") {
-            phoneNumber = await formatFunction(state);
-          } else {
-            phoneNumber = await formatFunction(carrier);
-          }
-          phoneNumbers.push(phoneNumber);
+        const unique = /* @__PURE__ */ new Set();
+        const maxAttempts = Math.max(target * 50, 1e3);
+        let attempts = 0;
+        while (unique.size < target && attempts < maxAttempts) {
+          attempts++;
+          const phoneNumber = countryCode === "US" || countryCode === "CA" ? await formatFunction(state) : await formatFunction(carrier);
+          if (phoneNumber)
+            unique.add(String(phoneNumber));
         }
-        return phoneNumbers;
+        return Array.from(unique);
       }
     };
     exports2.default = PhoneNumberGenerator;
@@ -323760,11 +323760,17 @@ var require_EmailController = __commonJS({
        * @returns {string[]} Array of generated emails.
        */
       static generate(count, culture, gender, type = "person", provider = "all") {
-        const emails = [];
-        for (let i = 0; i < count; i++) {
-          emails.push(EmailFormat_1.default.generateName(culture, gender, type, provider));
+        const target = Number(count) || 0;
+        const unique = /* @__PURE__ */ new Set();
+        const maxAttempts = Math.max(target * 50, 1e3);
+        let attempts = 0;
+        while (unique.size < target && attempts < maxAttempts) {
+          attempts++;
+          const email = EmailFormat_1.default.generateName(culture, gender, type, provider);
+          if (email)
+            unique.add(String(email));
         }
-        return emails;
+        return Array.from(unique);
       }
       /**
        * Creates a nodemailer transport for an email account
