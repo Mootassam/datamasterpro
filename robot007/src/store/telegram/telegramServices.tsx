@@ -1,5 +1,43 @@
 import authAxios from "../../modules/shared/axios";
 
+// ── Multi-account task engine ────────────────────────────────────────────────
+export type TgTaskType = "join" | "scrape" | "campaign" | "discover" | "import" | "export";
+
+export const startAccountTask = async (
+  accountId: string,
+  type: TgTaskType,
+  label: string,
+  payload: any
+) => {
+  const response = await authAxios.post("/telegram/tasks/start", { accountId, type, label, payload });
+  return response.data;
+};
+
+export const getAccountTasks = async (accountId: string) => {
+  const response = await authAxios.get(`/telegram/tasks/${accountId}`);
+  return response.data;
+};
+
+export const getAllAccountTasks = async () => {
+  const response = await authAxios.get("/telegram/tasks");
+  return response.data;
+};
+
+export const cancelAccountTask = async (accountId: string, taskId: string) => {
+  const response = await authAxios.post("/telegram/tasks/cancel", { accountId, taskId });
+  return response.data;
+};
+
+export const pauseAccountTask = async (accountId: string, taskId: string) => {
+  const response = await authAxios.post("/telegram/tasks/pause", { accountId, taskId });
+  return response.data;
+};
+
+export const resumeAccountTask = async (accountId: string, taskId: string) => {
+  const response = await authAxios.post("/telegram/tasks/resume", { accountId, taskId });
+  return response.data;
+};
+
 // Account management
 export const getTelegramAccounts = async () => {
   const response = await authAxios.get("/telegram/accounts");

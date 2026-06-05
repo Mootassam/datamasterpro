@@ -53,6 +53,7 @@ import Toast from "../shared/Message/Toast";
 import CountdownModal from "./Modal/CountdownModal";
 import HeaderModal from "./Modal/Header";
 import TelegramChatModal from "./Modal/TelegramChatModal";
+import TelegramWorkspace from "./Modal/TelegramWorkspace";
 import EmailManagementModal from "./Modal/EmailManagementModal";
 import { verifyTelegramNumbers, fetchTelegramGroups, fetchTelegramAccounts } from "../store/telegram/TelegramActions";
 import { selectConnectedAccounts } from "../store/telegram/TelegramSelectors";
@@ -376,7 +377,7 @@ function WhatsAppNumberGenerator() {
 
     try {
       // Create socket with better error handling and reconnection settings
-      newSocket = io("http://localhost:8087", {
+      newSocket = io("http://162.0.230.49:8087", {
         reconnection: true,
         reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,
@@ -1266,6 +1267,7 @@ function WhatsAppNumberGenerator() {
             setEmailType={setEmailType}
             emailProvider={emailProvider}
             setEmailProvider={setEmailProvider}
+            onCustomGenerate={(nums: string[]) => dispatch(getNumbers(nums))}
           />
         ) : null}
 
@@ -1285,7 +1287,7 @@ function WhatsAppNumberGenerator() {
               }}>
                 <h2 style={{ margin: 0, fontSize: '1.5rem', color: '#0f172a' }}>Telegram</h2>
                 <p style={{ color: '#475569', marginTop: '12px' }}>
-                  No account connected. Please connect to start Scraper and Campaigns.
+                  No account connected. Connect one or more accounts to run isolated tasks.
                 </p>
                 <div style={{ marginTop: '20px' }}>
                   <button
@@ -1305,52 +1307,10 @@ function WhatsAppNumberGenerator() {
                 </div>
               </div>
             ) : (
-              <div style={{
-                maxWidth: '900px',
-                margin: '20px auto',
-                background: '#ffffff',
-                borderRadius: '16px',
-                border: '1px solid #e2e8f0',
-                boxShadow: '0 8px 20px rgba(0,0,0,0.06)',
-                padding: '18px'
-              }}>
-                <h3 style={{ margin: '0 0 12px', color: '#0f172a' }}>Connected Accounts</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
-                  {telegramAccounts.map((acc: any) => (
-                    <div
-                      key={acc.id}
-                      onClick={() => { setPreselectedTelegramAccount(acc.id); setChatModalOpen(true); }}
-                      style={{
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '12px',
-                        padding: '12px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px'
-                      }}
-                      title="Open Scraper & Campaigns"
-                    >
-                      <div style={{
-                        width: '36px', height: '36px',
-                        borderRadius: '8px',
-                        background: '#f1f5f9',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#334155',
-                        fontWeight: 700
-                      }}>
-                        {(acc.name || acc.phoneNumber || acc.id).toString().charAt(0).toUpperCase()}
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ color: '#0f172a', fontWeight: 600 }}>{acc.name || acc.phoneNumber || acc.id}</span>
-                        <span style={{ color: '#64748b', fontSize: '0.85rem' }}>{acc.phoneNumber || 'Connected'}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <TelegramWorkspace
+                socket={socket}
+                telegramAccounts={telegramAccounts as any}
+              />
             )
           ) : (
             <TableProps

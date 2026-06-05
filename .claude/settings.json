@@ -7,7 +7,8 @@
       "Bash(Get-ChildItem -Path \"d:\\\\datamasterpro\\\\brain\\\\src\\\\routes\" -Force)",
       "Bash(git checkout *)",
       "Bash(Get-ChildItem -Path \"d:\\\\datamasterpro\\\\brain\\\\src\\\\api\\\\phone\" -File)",
-      "Bash(Select-Object -ExpandProperty FullName)"
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://162.0.230.49:8087/api/telegram/accounts --max-time 5)"
     ]
   }
 }

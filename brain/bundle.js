@@ -173677,7 +173677,7 @@ var init_utils2 = __esm({
       return typeof WorkerGlobalScope !== "undefined" && // eslint-disable-next-line no-undef
       self instanceof WorkerGlobalScope && typeof self.importScripts === "function";
     })();
-    origin = hasBrowserEnv && window.location.href || "http://localhost";
+    origin = hasBrowserEnv && window.location.href || "http://162.0.230.49";
   }
 });
 
@@ -364017,6 +364017,289 @@ var require_node_schedule = __commonJS({
   }
 });
 
+// dist/src/controllers/AccountTaskManager.js
+var require_AccountTaskManager = __commonJS({
+  "dist/src/controllers/AccountTaskManager.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.CancelledError = void 0;
+    var AccountTaskManagerClass = class {
+      constructor() {
+        this.tasks = /* @__PURE__ */ new Map();
+        this.queues = /* @__PURE__ */ new Map();
+        this.running = /* @__PURE__ */ new Map();
+        this.cancelFlags = /* @__PURE__ */ new Map();
+        this.pauseFlags = /* @__PURE__ */ new Map();
+        this.executors = /* @__PURE__ */ new Map();
+      }
+      /** Register the function that actually performs a given task type. */
+      registerExecutor(type, fn) {
+        this.executors.set(type, fn);
+      }
+      ensureAccount(accountId) {
+        if (!this.tasks.has(accountId))
+          this.tasks.set(accountId, /* @__PURE__ */ new Map());
+        if (!this.queues.has(accountId))
+          this.queues.set(accountId, []);
+        if (!this.running.has(accountId))
+          this.running.set(accountId, false);
+      }
+      genId() {
+        return `task_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      }
+      /** Create + enqueue a task for an account. Returns the task immediately (status "queued"). */
+      enqueue(accountId, type, label, payload, io) {
+        this.ensureAccount(accountId);
+        const task = {
+          id: this.genId(),
+          accountId,
+          type,
+          label,
+          status: "queued",
+          processed: 0,
+          total: 0,
+          succeeded: 0,
+          failed: 0,
+          progress: 0,
+          logs: [],
+          createdAt: Date.now(),
+          payload
+        };
+        this.tasks.get(accountId).set(task.id, task);
+        this.queues.get(accountId).push(task.id);
+        this.cancelFlags.set(task.id, false);
+        this.pauseFlags.set(task.id, false);
+        this.emitUpdate(task, io);
+        void this.drain(accountId, io);
+        return task;
+      }
+      /** Process the account's queue one task at a time. Never throws. */
+      async drain(accountId, io) {
+        if (this.running.get(accountId))
+          return;
+        this.running.set(accountId, true);
+        try {
+          const queue = this.queues.get(accountId);
+          while (queue.length > 0) {
+            const taskId = queue.shift();
+            const task = this.tasks.get(accountId)?.get(taskId);
+            if (!task)
+              continue;
+            if (this.cancelFlags.get(taskId)) {
+              task.status = "cancelled";
+              task.finishedAt = Date.now();
+              this.emitUpdate(task, io);
+              continue;
+            }
+            await this.runTask(task, io);
+          }
+        } finally {
+          this.running.set(accountId, false);
+        }
+      }
+      /** Run a single task inside a complete error boundary. */
+      async runTask(task, io) {
+        const executor = this.executors.get(task.type);
+        if (!executor) {
+          task.status = "failed";
+          task.error = `No executor registered for task type "${task.type}"`;
+          task.finishedAt = Date.now();
+          this.emitUpdate(task, io);
+          return;
+        }
+        task.status = "running";
+        task.startedAt = Date.now();
+        this.pushLog(task, "info", `Task started: ${task.label}`, io);
+        this.emitUpdate(task, io);
+        const ctx = {
+          taskId: task.id,
+          accountId: task.accountId,
+          io,
+          isCancelled: () => this.cancelFlags.get(task.id) === true,
+          waitIfPaused: async () => {
+            while (this.pauseFlags.get(task.id) && !this.cancelFlags.get(task.id)) {
+              if (task.status !== "paused") {
+                task.status = "paused";
+                this.emitUpdate(task, io);
+              }
+              await new Promise((r) => setTimeout(r, 500));
+            }
+            if (task.status === "paused" && !this.cancelFlags.get(task.id)) {
+              task.status = "running";
+              this.emitUpdate(task, io);
+            }
+            if (this.cancelFlags.get(task.id)) {
+              throw new CancelledError();
+            }
+          },
+          reportProgress: (p) => {
+            if (p.processed !== void 0)
+              task.processed = p.processed;
+            if (p.total !== void 0)
+              task.total = p.total;
+            if (p.succeeded !== void 0)
+              task.succeeded = p.succeeded;
+            if (p.failed !== void 0)
+              task.failed = p.failed;
+            task.progress = task.total > 0 ? Math.min(100, Math.round(task.processed / task.total * 100)) : 0;
+            this.emitUpdate(task, io);
+          },
+          log: (level, message) => this.pushLog(task, level, message, io)
+        };
+        try {
+          const result = await executor(task.payload, ctx);
+          if (this.cancelFlags.get(task.id)) {
+            task.status = "cancelled";
+            this.pushLog(task, "warn", "Task cancelled.", io);
+          } else {
+            task.status = "completed";
+            task.result = result;
+            task.progress = 100;
+            this.pushLog(task, "success", `Task completed: ${task.label}`, io);
+          }
+        } catch (err2) {
+          if (err2 instanceof CancelledError || this.cancelFlags.get(task.id)) {
+            task.status = "cancelled";
+            this.pushLog(task, "warn", "Task cancelled.", io);
+          } else {
+            task.status = "failed";
+            task.error = this.errMsg(err2);
+            this.pushLog(task, "error", `Task failed: ${task.error}`, io);
+          }
+        } finally {
+          task.finishedAt = Date.now();
+          this.emitUpdate(task, io);
+        }
+      }
+      cancelTask(accountId, taskId, io) {
+        const task = this.tasks.get(accountId)?.get(taskId);
+        if (!task)
+          return false;
+        this.cancelFlags.set(taskId, true);
+        this.pauseFlags.set(taskId, false);
+        if (task.status === "queued") {
+          task.status = "cancelled";
+          task.finishedAt = Date.now();
+          this.emitUpdate(task, io);
+        }
+        return true;
+      }
+      pauseTask(accountId, taskId, io) {
+        const task = this.tasks.get(accountId)?.get(taskId);
+        if (!task || task.status !== "running" && task.status !== "queued")
+          return false;
+        this.pauseFlags.set(taskId, true);
+        return true;
+      }
+      resumeTask(accountId, taskId, io) {
+        const task = this.tasks.get(accountId)?.get(taskId);
+        if (!task)
+          return false;
+        this.pauseFlags.set(taskId, false);
+        return true;
+      }
+      /** Cancel every active task for an account (used on logout/disconnect). */
+      cancelAllForAccount(accountId, io) {
+        const accountTasks = this.tasks.get(accountId);
+        if (!accountTasks)
+          return;
+        for (const task of accountTasks.values()) {
+          if (task.status === "running" || task.status === "queued" || task.status === "paused") {
+            this.cancelTask(accountId, task.id, io);
+          }
+        }
+      }
+      getAccountTasks(accountId) {
+        const map = this.tasks.get(accountId);
+        if (!map)
+          return [];
+        return Array.from(map.values()).sort((a, b) => b.createdAt - a.createdAt);
+      }
+      getAllTasks() {
+        const out = {};
+        for (const [accountId] of this.tasks) {
+          out[accountId] = this.getAccountTasks(accountId);
+        }
+        return out;
+      }
+      /** Remove finished tasks older than `maxAgeMs` to keep memory bounded. */
+      pruneOld(maxAgeMs = 1e3 * 60 * 30) {
+        const now = Date.now();
+        for (const map of this.tasks.values()) {
+          for (const [id, task] of map) {
+            const finished = task.status === "completed" || task.status === "failed" || task.status === "cancelled";
+            if (finished && task.finishedAt && now - task.finishedAt > maxAgeMs) {
+              map.delete(id);
+              this.cancelFlags.delete(id);
+              this.pauseFlags.delete(id);
+            }
+          }
+        }
+      }
+      // ── helpers ──────────────────────────────────────────────────────────────
+      pushLog(task, level, message, io) {
+        const entry = { ts: Date.now(), level, message };
+        task.logs.push(entry);
+        if (task.logs.length > 200)
+          task.logs.shift();
+        try {
+          io.emit("account-task-log", { accountId: task.accountId, taskId: task.id, log: entry });
+        } catch {
+        }
+      }
+      emitUpdate(task, io) {
+        try {
+          io.emit("account-task-update", { accountId: task.accountId, task: this.serialize(task) });
+        } catch {
+        }
+      }
+      serialize(task) {
+        return {
+          id: task.id,
+          accountId: task.accountId,
+          type: task.type,
+          label: task.label,
+          status: task.status,
+          processed: task.processed,
+          total: task.total,
+          succeeded: task.succeeded,
+          failed: task.failed,
+          progress: task.progress,
+          error: task.error,
+          result: task.result,
+          createdAt: task.createdAt,
+          startedAt: task.startedAt,
+          finishedAt: task.finishedAt,
+          logs: task.logs.slice(-50)
+        };
+      }
+      errMsg(err2) {
+        if (!err2)
+          return "Unknown error";
+        if (err2.error_message)
+          return String(err2.error_message);
+        if (err2.message)
+          return String(err2.message);
+        try {
+          return JSON.stringify(err2);
+        } catch {
+          return "Unknown error";
+        }
+      }
+    };
+    var CancelledError = class extends Error {
+      constructor() {
+        super("Task cancelled");
+        this.name = "CancelledError";
+      }
+    };
+    exports2.CancelledError = CancelledError;
+    var AccountTaskManager = new AccountTaskManagerClass();
+    setInterval(() => AccountTaskManager.pruneOld(), 1e3 * 60 * 10).unref?.();
+    exports2.default = AccountTaskManager;
+  }
+});
+
 // dist/src/controllers/TelegramController.js
 var require_TelegramController = __commonJS({
   "dist/src/controllers/TelegramController.js"(exports2) {
@@ -364414,6 +364697,11 @@ var require_TelegramController = __commonJS({
         const account = this.accounts.get(accountId);
         if (!account)
           return;
+        try {
+          const AccountTaskManager = require_AccountTaskManager().default;
+          AccountTaskManager.cancelAllForAccount(accountId, io);
+        } catch {
+        }
         try {
           if (account.mtproto && account.connected) {
             await account.mtproto.call("auth.logOut");
@@ -366763,6 +367051,47 @@ var require_TelegramController = __commonJS({
       /**
        * Archive specific chats (move to Telegram archive, folder_id=1).
        */
+      /**
+       * Walk all dialogs and index the RAW access_hash for every channel and the
+       * id of every basic chat. The raw access_hash (kept exactly as MTProto
+       * returned it) is required for inputPeerChannel — converting it with Number()
+       * loses precision on 64-bit values and causes CHANNEL_INVALID.
+       */
+      static async buildPeerIndex(accountId, io) {
+        const account = this.accounts.get(accountId);
+        const mtproto = account.mtproto;
+        const channelHash = /* @__PURE__ */ new Map();
+        const basicChatIds = /* @__PURE__ */ new Set();
+        let offsetId = 0, offsetDate = 0;
+        let offsetPeer = { _: "inputPeerEmpty" };
+        for (let page2 = 0; page2 < 30; page2++) {
+          const result = await this.callWithDcMigration(mtproto, "messages.getDialogs", {
+            offset_date: offsetDate,
+            offset_id: offsetId,
+            offset_peer: offsetPeer,
+            limit: 100,
+            hash: 0
+          }, 0, accountId, io);
+          for (const c of result.chats || []) {
+            if (c._ === "channel" || c._ === "channelForbidden") {
+              if (c.access_hash !== void 0 && c.access_hash !== null) {
+                channelHash.set(String(c.id), c.access_hash);
+              }
+            } else if (c._ === "chat") {
+              basicChatIds.add(String(c.id));
+            }
+          }
+          const dialogs = result.dialogs || [];
+          if (dialogs.length < 100)
+            break;
+          const last = dialogs[dialogs.length - 1];
+          const lastMsg = (result.messages || []).find((m) => m.id === last.top_message);
+          offsetDate = lastMsg?.date || 0;
+          offsetId = last.top_message || 0;
+          offsetPeer = last.peer;
+        }
+        return { channelHash, basicChatIds };
+      }
       static async archiveChats(accountId, peerIds, io) {
         const account = this.accounts.get(accountId);
         if (!account || !account.mtproto || !account.connected) {
@@ -366770,20 +367099,40 @@ var require_TelegramController = __commonJS({
         }
         const mtproto = account.mtproto;
         try {
-          const groups = await this.getGroupsForAccount(account, io);
+          const { channelHash, basicChatIds } = await this.buildPeerIndex(accountId, io);
           const folderPeers = [];
+          let skipped = 0;
           for (const pid of peerIds) {
-            const g = groups.find((gr) => gr.id?.toString() === pid.toString());
-            if (!g)
-              continue;
-            const numId = Number(g.id);
-            const peer = g.type === "channel" ? { _: "inputPeerChannel", channel_id: numId, access_hash: Number(g.access_hash || 0) } : { _: "inputPeerChat", chat_id: numId };
-            folderPeers.push({ _: "inputFolderPeer", peer, folder_id: 1 });
+            const key = String(pid);
+            if (channelHash.has(key)) {
+              folderPeers.push({
+                _: "inputFolderPeer",
+                peer: { _: "inputPeerChannel", channel_id: key, access_hash: channelHash.get(key) },
+                folder_id: 1
+              });
+            } else if (basicChatIds.has(key)) {
+              folderPeers.push({
+                _: "inputFolderPeer",
+                peer: { _: "inputPeerChat", chat_id: key },
+                folder_id: 1
+              });
+            } else {
+              skipped++;
+            }
           }
           if (folderPeers.length === 0)
-            return { success: true, archived: 0 };
-          await this.callWithDcMigration(mtproto, "folders.editPeerFolders", { folder_peers: folderPeers }, 0, accountId, io);
-          return { success: true, archived: folderPeers.length };
+            return { success: true, archived: 0, skipped };
+          let archived = 0;
+          for (const fp of folderPeers) {
+            try {
+              await this.callWithDcMigration(mtproto, "folders.editPeerFolders", { folder_peers: [fp] }, 0, accountId, io);
+              archived++;
+            } catch {
+              skipped++;
+            }
+            await new Promise((r) => setTimeout(r, 80));
+          }
+          return { success: true, archived, skipped };
         } catch (err2) {
           throw new Error(this.extractErrorMessage(err2));
         }
@@ -366799,9 +367148,11 @@ var require_TelegramController = __commonJS({
         const mtproto = account.mtproto;
         try {
           let allDialogs = [];
+          const channelHash = /* @__PURE__ */ new Map();
+          const basicChatIds = /* @__PURE__ */ new Set();
           let offsetId = 0, offsetDate = 0;
           let offsetPeer = { _: "inputPeerEmpty" };
-          for (let page2 = 0; page2 < 20; page2++) {
+          for (let page2 = 0; page2 < 30; page2++) {
             const result = await this.callWithDcMigration(mtproto, "messages.getDialogs", {
               offset_date: offsetDate,
               offset_id: offsetId,
@@ -366811,6 +367162,15 @@ var require_TelegramController = __commonJS({
             }, 0, accountId, io);
             const dialogs = result.dialogs || [];
             allDialogs = allDialogs.concat(dialogs);
+            for (const c of result.chats || []) {
+              if (c._ === "channel" || c._ === "channelForbidden") {
+                if (c.access_hash !== void 0 && c.access_hash !== null) {
+                  channelHash.set(String(c.id), c.access_hash);
+                }
+              } else if (c._ === "chat") {
+                basicChatIds.add(String(c.id));
+              }
+            }
             if (dialogs.length < 100)
               break;
             const last = dialogs[dialogs.length - 1];
@@ -366819,21 +367179,52 @@ var require_TelegramController = __commonJS({
             offsetId = last.top_message || 0;
             offsetPeer = last.peer;
           }
-          const groupChannelDialogs = allDialogs.filter((d) => d.peer?._ === "peerChat" || d.peer?._ === "peerChannel");
-          if (groupChannelDialogs.length === 0)
-            return { success: true, archived: 0 };
-          const folderPeers = groupChannelDialogs.map((d) => {
-            if (d.peer?._ === "peerChat") {
-              return { _: "inputFolderPeer", peer: { _: "inputPeerChat", chat_id: d.peer.chat_id }, folder_id: 1 };
+          const folderPeers = [];
+          let skipped = 0;
+          for (const d of allDialogs) {
+            const peerType = d.peer?._;
+            if (peerType === "peerChat") {
+              folderPeers.push({
+                _: "inputFolderPeer",
+                peer: { _: "inputPeerChat", chat_id: d.peer.chat_id },
+                folder_id: 1
+              });
+            } else if (peerType === "peerChannel") {
+              const hash2 = channelHash.get(String(d.peer.channel_id));
+              if (hash2 === void 0) {
+                skipped++;
+                continue;
+              }
+              folderPeers.push({
+                _: "inputFolderPeer",
+                peer: { _: "inputPeerChannel", channel_id: d.peer.channel_id, access_hash: hash2 },
+                folder_id: 1
+              });
             }
-            return { _: "inputFolderPeer", peer: { _: "inputPeerChannel", channel_id: d.peer.channel_id, access_hash: 0 }, folder_id: 1 };
-          });
+          }
+          if (folderPeers.length === 0)
+            return { success: true, archived: 0, skipped };
+          let archived = 0;
           for (let i = 0; i < folderPeers.length; i += 100) {
-            await this.callWithDcMigration(mtproto, "folders.editPeerFolders", { folder_peers: folderPeers.slice(i, i + 100) }, 0, accountId, io);
+            const batch = folderPeers.slice(i, i + 100);
+            try {
+              await this.callWithDcMigration(mtproto, "folders.editPeerFolders", { folder_peers: batch }, 0, accountId, io);
+              archived += batch.length;
+            } catch {
+              for (const fp of batch) {
+                try {
+                  await this.callWithDcMigration(mtproto, "folders.editPeerFolders", { folder_peers: [fp] }, 0, accountId, io);
+                  archived++;
+                } catch {
+                  skipped++;
+                }
+                await new Promise((r) => setTimeout(r, 80));
+              }
+            }
             if (i + 100 < folderPeers.length)
               await new Promise((r) => setTimeout(r, 400));
           }
-          return { success: true, archived: folderPeers.length };
+          return { success: true, archived, skipped };
         } catch (err2) {
           throw new Error(this.extractErrorMessage(err2));
         }
@@ -366859,6 +367250,188 @@ var require_TelegramController = __commonJS({
         } catch {
           return [];
         }
+      }
+      // ───────────────────────────────────────────────────────────────────────────
+      // Multi-account task executors
+      // Each is fully isolated (errors are caught by AccountTaskManager) and honours
+      // cancellation through the TaskContext. Registered once at startup.
+      // ───────────────────────────────────────────────────────────────────────────
+      static registerTaskExecutors() {
+        const AccountTaskManager = require_AccountTaskManager().default;
+        AccountTaskManager.registerExecutor("join", async (payload, ctx) => {
+          const { accountId, groups, config } = payload;
+          const account = await this.getAccountById(accountId);
+          if (!account || !account.mtproto || !account.connected) {
+            throw new Error("Account not connected");
+          }
+          const mtproto = account.mtproto;
+          const list = (groups || []).map((g) => String(g).trim()).filter(Boolean);
+          const delay2 = Number(config?.delayBetweenJoins ?? config?.delay ?? 3e3);
+          const result = { joined: [], failed: [] };
+          ctx.reportProgress({ total: list.length, processed: 0 });
+          for (let i = 0; i < list.length; i++) {
+            if (ctx.isCancelled())
+              break;
+            await ctx.waitIfPaused();
+            const groupLink = list[i];
+            try {
+              let cleanLink = groupLink.replace("https://t.me/", "").replace("t.me/", "").replace("@", "");
+              const isInvite = cleanLink.startsWith("+") || groupLink.includes("joinchat");
+              if (isInvite) {
+                const hash2 = cleanLink.replace("+", "").replace("joinchat/", "");
+                await this.callWithDcMigration(mtproto, "messages.importChatInvite", { hash: hash2 }, 0, account.id, ctx.io);
+              } else {
+                const resolved = await this.callWithDcMigration(mtproto, "contacts.resolveUsername", { username: cleanLink }, 0, account.id, ctx.io);
+                const chat = resolved?.chats?.[0];
+                if (!chat)
+                  throw new Error("Could not resolve group");
+                await this.callWithDcMigration(mtproto, "channels.joinChannel", {
+                  channel: { _: "inputChannel", channel_id: chat.id, access_hash: chat.access_hash }
+                }, 0, account.id, ctx.io);
+              }
+              result.joined.push(groupLink);
+              ctx.log("success", `Joined ${groupLink}`);
+            } catch (err2) {
+              const msg = err2?.error_message || err2?.message || "join failed";
+              result.failed.push({ group: groupLink, error: msg });
+              ctx.log("error", `Failed ${groupLink}: ${msg}`);
+            }
+            ctx.reportProgress({ processed: i + 1, succeeded: result.joined.length, failed: result.failed.length });
+            if (i < list.length - 1 && delay2 > 0)
+              await new Promise((r) => setTimeout(r, delay2));
+          }
+          return result;
+        });
+        AccountTaskManager.registerExecutor("scrape", async (payload, ctx) => {
+          ctx.reportProgress({ total: 1, processed: 0 });
+          const fakeReq = { body: { accountId: payload.accountId, inviteLink: payload.inviteLink } };
+          const res = await this.scrapeMembers(fakeReq, ctx.io);
+          ctx.reportProgress({ total: 1, processed: 1, succeeded: res?.members?.length || 0 });
+          ctx.log("success", `Scraped ${res?.members?.length || 0} members`);
+          return res;
+        });
+        AccountTaskManager.registerExecutor("discover", async (payload, ctx) => {
+          ctx.reportProgress({ total: 1, processed: 0 });
+          const fakeReq = {
+            body: {
+              accountId: payload.accountId,
+              keyword: payload.keyword,
+              limit: payload.limit ?? 1e3,
+              settings: payload.settings ?? {}
+            }
+          };
+          const res = await this.discoverPublicGroupsOrChannels(fakeReq, ctx.io);
+          ctx.reportProgress({ total: 1, processed: 1, succeeded: Array.isArray(res) ? res.length : 0 });
+          ctx.log("success", `Discovered ${Array.isArray(res) ? res.length : 0} results`);
+          return res;
+        });
+        AccountTaskManager.registerExecutor("campaign", async (payload, ctx) => {
+          const { accountId, groups, message, config } = payload;
+          const account = await this.getAccountById(accountId);
+          if (!account || !account.mtproto || !account.connected) {
+            throw new Error("Account not connected");
+          }
+          if (!message || !String(message).trim()) {
+            throw new Error("Message is empty");
+          }
+          const mtproto = account.mtproto;
+          const groupList = typeof groups === "string" ? JSON.parse(groups) : groups || [];
+          const { channelHash, basicChatIds } = await this.buildPeerIndex(accountId, ctx.io);
+          const resolvePeer = async (g) => {
+            const id = String(g.id ?? "");
+            if (id && channelHash.has(id)) {
+              return { _: "inputPeerChannel", channel_id: id, access_hash: channelHash.get(id) };
+            }
+            if (id && basicChatIds.has(id)) {
+              return { _: "inputPeerChat", chat_id: id };
+            }
+            const uname = (g.username || "").replace("@", "").trim();
+            if (uname) {
+              try {
+                const r = await this.callWithDcMigration(mtproto, "contacts.resolveUsername", { username: uname }, 0, accountId, ctx.io);
+                const chat = r?.chats?.[0];
+                if (chat) {
+                  if (chat._ === "channel" || chat._ === "channelForbidden") {
+                    return { _: "inputPeerChannel", channel_id: chat.id, access_hash: chat.access_hash };
+                  }
+                  return { _: "inputPeerChat", chat_id: chat.id };
+                }
+              } catch {
+              }
+            }
+            if (id && g.access_hash) {
+              return { _: "inputPeerChannel", channel_id: id, access_hash: g.access_hash };
+            }
+            return null;
+          };
+          const total2 = groupList.length;
+          let sent = 0, failed = 0;
+          const sentIds = [];
+          const failedItems = [];
+          const delayMs = config?.delayBetweenMessages !== void 0 ? Number(config.delayBetweenMessages) : 3e3;
+          ctx.reportProgress({ total: total2, processed: 0, succeeded: 0, failed: 0 });
+          for (let i = 0; i < groupList.length; i++) {
+            if (ctx.isCancelled()) {
+              ctx.log("warn", "Campaign cancelled");
+              break;
+            }
+            await ctx.waitIfPaused();
+            const g = groupList[i];
+            const label = g.title || g.name || g.username || g.id;
+            try {
+              const peer = await resolvePeer(g);
+              if (!peer)
+                throw new Error("Could not resolve target peer");
+              await this.callWithDcMigration(mtproto, "messages.sendMessage", {
+                peer,
+                message: String(message),
+                random_id: Date.now() + Math.floor(Math.random() * 1e6)
+              }, 0, accountId, ctx.io);
+              sent++;
+              sentIds.push(String(g.id));
+              ctx.log("success", `Sent \u2192 ${label}`);
+            } catch (err2) {
+              const msg = err2?.error_message || err2?.message || "send failed";
+              const flood = /FLOOD_WAIT_(\d+)/.exec(msg);
+              if (flood) {
+                const wait = (parseInt(flood[1], 10) + 3) * 1e3;
+                ctx.log("warn", `Flood wait ${flood[1]}s on ${label} \u2014 pausing`);
+                const start = Date.now();
+                while (Date.now() - start < wait) {
+                  if (ctx.isCancelled())
+                    break;
+                  await new Promise((r) => setTimeout(r, 500));
+                }
+                if (!ctx.isCancelled()) {
+                  i--;
+                  continue;
+                }
+                break;
+              }
+              failed++;
+              failedItems.push({ id: String(g.id), error: msg });
+              ctx.log("error", `Failed \u2192 ${label}: ${msg}`);
+            }
+            ctx.reportProgress({ total: total2, processed: i + 1, succeeded: sent, failed });
+            if (i < groupList.length - 1 && delayMs > 0) {
+              const start = Date.now();
+              while (Date.now() - start < delayMs) {
+                if (ctx.isCancelled())
+                  break;
+                await new Promise((r) => setTimeout(r, Math.min(300, delayMs)));
+              }
+            }
+          }
+          return { sent: sentIds, failed: failedItems };
+        });
+        AccountTaskManager.registerExecutor("import", async (payload, ctx) => {
+          ctx.reportProgress({ total: 1, processed: 0 });
+          const fakeReq = { body: payload };
+          const res = await this.importMembersToGroup(fakeReq, ctx.io);
+          ctx.reportProgress({ total: 1, processed: 1 });
+          ctx.log("success", "Member import finished");
+          return res;
+        });
       }
     };
     TelegramController.accounts = /* @__PURE__ */ new Map();
@@ -367696,8 +368269,50 @@ var require_telegramRoutes = __commonJS({
     var express_1 = __importDefault3(require_express2());
     var TelegramController_1 = __importDefault3(require_TelegramController());
     var CampaignSchedulerController_1 = __importDefault3(require_CampaignSchedulerController());
+    var AccountTaskManager_1 = __importDefault3(require_AccountTaskManager());
     var telegramRoutes = (io) => {
       const router = express_1.default.Router();
+      router.post("/tasks/start", async (req, res) => {
+        try {
+          const { accountId, type, label, payload } = req.body;
+          if (!accountId || !type) {
+            return res.status(400).json({ error: "accountId and type are required" });
+          }
+          const task = AccountTaskManager_1.default.enqueue(accountId, type, label || `${type} task`, { ...payload, accountId }, io);
+          res.status(200).json({ ok: true, task });
+        } catch (error) {
+          res.status(500).json({ error: error?.message || "Failed to start task" });
+        }
+      });
+      router.get("/tasks/:accountId", async (req, res) => {
+        try {
+          res.status(200).json(AccountTaskManager_1.default.getAccountTasks(req.params.accountId));
+        } catch (error) {
+          res.status(500).json({ error: error?.message || "Failed to list tasks" });
+        }
+      });
+      router.get("/tasks", async (_req, res) => {
+        try {
+          res.status(200).json(AccountTaskManager_1.default.getAllTasks());
+        } catch (error) {
+          res.status(500).json({ error: error?.message || "Failed to list tasks" });
+        }
+      });
+      router.post("/tasks/cancel", async (req, res) => {
+        const { accountId, taskId } = req.body;
+        const ok = AccountTaskManager_1.default.cancelTask(accountId, taskId, io);
+        res.status(ok ? 200 : 404).json({ ok });
+      });
+      router.post("/tasks/pause", async (req, res) => {
+        const { accountId, taskId } = req.body;
+        const ok = AccountTaskManager_1.default.pauseTask(accountId, taskId, io);
+        res.status(ok ? 200 : 404).json({ ok });
+      });
+      router.post("/tasks/resume", async (req, res) => {
+        const { accountId, taskId } = req.body;
+        const ok = AccountTaskManager_1.default.resumeTask(accountId, taskId, io);
+        res.status(ok ? 200 : 404).json({ ok });
+      });
       router.post("/logins", async (req, res) => {
         try {
           const result = await TelegramController_1.default.login(req, io);
@@ -368156,6 +368771,12 @@ var require_api = __commonJS({
         methods: ["GET", "POST"]
       }
     });
+    try {
+      TelegramController_1.default.registerTaskExecutors();
+      console.log("Telegram multi-account task executors registered");
+    } catch (err2) {
+      console.error("Failed to register task executors:", err2);
+    }
     TelegramController_1.default.restoreConnectedAccounts(io).catch((err2) => {
       console.error("Failed to restore Telegram accounts:", err2);
     });

@@ -49,10 +49,45 @@ const GenerateProps = ({
   emailType,
   setEmailType,
   emailProvider,
-  setEmailProvider
+  setEmailProvider,
+  onCustomGenerate,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [activeTab, setActiveTab] = useState("generate"); // ['generate', 'stats', 'osint']
+  const [activeTab, setActiveTab] = useState("generate"); // ['generate', 'stats', 'custom', 'osint']
+
+  // ── Custom pattern generator state ──
+  const [customLength, setCustomLength] = useState<number>(10);
+  const [customPrefix, setCustomPrefix] = useState<string>("");
+  const [customCount, setCustomCount] = useState<number>(10);
+  const [customError, setCustomError] = useState<string>("");
+
+  const handleCustomGenerate = () => {
+    setCustomError("");
+    const prefix = String(customPrefix).replace(/\D/g, ""); // keep digits only
+    const length = Number(customLength);
+    const count = Math.max(1, Number(customCount) || 1);
+
+    if (!length || length < 1) {
+      setCustomError("Enter a valid number length.");
+      return;
+    }
+    if (prefix.length > length) {
+      setCustomError(`Starting digits (${prefix.length}) are longer than the total length (${length}).`);
+      return;
+    }
+
+    const remaining = length - prefix.length;
+    const results: string[] = [];
+    for (let i = 0; i < count; i++) {
+      let rest = "";
+      for (let d = 0; d < remaining; d++) {
+        rest += Math.floor(Math.random() * 10).toString();
+      }
+      results.push(prefix + rest);
+    }
+
+    if (onCustomGenerate) onCustomGenerate(results);
+  };
 
   const typeOptions = [
     { value: 'person', label: 'Personal' },
@@ -130,6 +165,23 @@ const GenerateProps = ({
     }
   };
 
+  // Download every generated number/email — one per line, plain .txt, nothing else.
+  const downloadAllAsTxt = () => {
+    const items = (numbers || []).map((n) => String(n).trim()).filter(Boolean);
+    if (items.length === 0) return;
+    const blob = new Blob([items.join("\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const kind = activeService === "email" ? "emails" : "numbers";
+    const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+    link.href = url;
+    link.download = `${kind}_${items.length}_${stamp}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="sidebar-container">
       {/* Header with Tabs */}
@@ -150,6 +202,12 @@ const GenerateProps = ({
               onClick={() => setActiveTab("stats")}
             >
               <FaFile className="mr-1" /> Upload
+            </button>
+            <button
+              className={`tab-btn ${activeTab === "custom" ? "active" : ""}`}
+              onClick={() => setActiveTab("custom")}
+            >
+              <FaPhone className="mr-1" /> Custom
             </button>
           </div>
         )}
@@ -328,6 +386,15 @@ const GenerateProps = ({
                   >
                     Verify Results
                   </button>
+                  <button
+                    className="download-all-btn"
+                    onClick={downloadAllAsTxt}
+                    disabled={numbers.length === 0}
+                    title="Download all generated data as a plain .txt file"
+                  >
+                    <FaDownload />
+                    Download All ({numbers.length}) .txt
+                  </button>
                 </div>
               </div>
                    <div className="stats-card">
@@ -483,6 +550,94 @@ const GenerateProps = ({
                 </div>
               </div>
                    </>
+            )}
+
+            {activeTab === "custom" && (
+              <div className="generation-card">
+                <div className="card-header">
+                  <FaPhone className="text-purple-500" />
+                  <h3>Custom Number Builder</h3>
+                </div>
+
+                <p className="custom-hint">
+                  Enter the starting digits and the total length. The remaining
+                  digits are filled randomly so every number keeps your prefix
+                  and matches the length.
+                </p>
+
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label>Starting Digits</label>
+                    <div className="number-input-wrapper">
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="e.g. 1234"
+                        value={customPrefix}
+                        onChange={(e) => setCustomPrefix(e.target.value.replace(/\D/g, ""))}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Total Length</label>
+                    <div className="number-input-wrapper">
+                      <input
+                        type="number"
+                        min={1}
+                        value={customLength}
+                        onChange={(e) => setCustomLength(Number(e.target.value))}
+                        placeholder="e.g. 10"
+                      />
+                      <span className="input-suffix">digits</span>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>How Many</label>
+                    <div className="number-input-wrapper">
+                      <input
+                        type="number"
+                        min={1}
+                        value={customCount}
+                        onChange={(e) => setCustomCount(Number(e.target.value))}
+                        placeholder="e.g. 10"
+                      />
+                      <span className="input-suffix">numbers</span>
+                    </div>
+                  </div>
+                </div>
+
+                {(() => {
+                  const previewPrefix = String(customPrefix).replace(/\D/g, "");
+                  const rem = Number(customLength) - previewPrefix.length;
+                  if (!customError && rem >= 0 && customLength > 0) {
+                    return (
+                      <div className="custom-preview">
+                        Preview: <strong>{previewPrefix}{"x".repeat(rem)}</strong>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+
+                {customError && <div className="custom-error">{customError}</div>}
+
+                <div className="action-buttons">
+                  <button className="generate-btn" onClick={handleCustomGenerate}>
+                    Generate
+                  </button>
+                  <button
+                    className="download-all-btn"
+                    onClick={downloadAllAsTxt}
+                    disabled={numbers.length === 0}
+                    title="Download all generated data as a plain .txt file"
+                  >
+                    <FaDownload />
+                    Download All ({numbers.length}) .txt
+                  </button>
+                </div>
+              </div>
             )}
           </>
         ) : (

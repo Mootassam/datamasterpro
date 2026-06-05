@@ -1,9 +1,66 @@
 import express, { Request, Response, Router } from "express";
 import TelegramController from "../controllers/TelegramController";
 import CampaignSchedulerController from "../controllers/CampaignSchedulerController";
+import AccountTaskManager from "../controllers/AccountTaskManager";
 
 const telegramRoutes = (io) => {
   const router: Router = express.Router();
+
+  // ── Multi-account task engine ──────────────────────────────────────────────
+  // Enqueue a task for a specific account (isolated, parallel across accounts).
+  router.post("/tasks/start", async (req: Request, res: Response) => {
+    try {
+      const { accountId, type, label, payload } = req.body;
+      if (!accountId || !type) {
+        return res.status(400).json({ error: "accountId and type are required" });
+      }
+      const task = AccountTaskManager.enqueue(
+        accountId,
+        type,
+        label || `${type} task`,
+        { ...payload, accountId },
+        io
+      );
+      res.status(200).json({ ok: true, task });
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message || "Failed to start task" });
+    }
+  });
+
+  // List all tasks for an account
+  router.get("/tasks/:accountId", async (req: Request, res: Response) => {
+    try {
+      res.status(200).json(AccountTaskManager.getAccountTasks(req.params.accountId));
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message || "Failed to list tasks" });
+    }
+  });
+
+  // List tasks for every account
+  router.get("/tasks", async (_req: Request, res: Response) => {
+    try {
+      res.status(200).json(AccountTaskManager.getAllTasks());
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message || "Failed to list tasks" });
+    }
+  });
+
+  // Cancel / pause / resume a specific task
+  router.post("/tasks/cancel", async (req: Request, res: Response) => {
+    const { accountId, taskId } = req.body;
+    const ok = AccountTaskManager.cancelTask(accountId, taskId, io);
+    res.status(ok ? 200 : 404).json({ ok });
+  });
+  router.post("/tasks/pause", async (req: Request, res: Response) => {
+    const { accountId, taskId } = req.body;
+    const ok = AccountTaskManager.pauseTask(accountId, taskId, io);
+    res.status(ok ? 200 : 404).json({ ok });
+  });
+  router.post("/tasks/resume", async (req: Request, res: Response) => {
+    const { accountId, taskId } = req.body;
+    const ok = AccountTaskManager.resumeTask(accountId, taskId, io);
+    res.status(ok ? 200 : 404).json({ ok });
+  });
 
   // Login route - Send verification code
   router.post("/logins", async (req: Request, res: Response) => {

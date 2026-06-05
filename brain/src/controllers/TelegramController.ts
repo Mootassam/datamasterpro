@@ -465,6 +465,11 @@ class TelegramController {
   static async logout(accountId: string, io: Server): Promise<void> {
     const account = this.accounts.get(accountId);
     if (!account) return;
+    // Cancel any running/queued tasks for this account so nothing keeps running
+    try {
+      const AccountTaskManager = require("./AccountTaskManager").default;
+      AccountTaskManager.cancelAllForAccount(accountId, io);
+    } catch {/* non-fatal */}
     try {
       if (account.mtproto && account.connected) {
         await account.mtproto.call('auth.logOut');
@@ -3166,6 +3171,55 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
   /**
    * Archive specific chats (move to Telegram archive, folder_id=1).
    */
+  /**
+   * Walk all dialogs and index the RAW access_hash for every channel and the
+   * id of every basic chat. The raw access_hash (kept exactly as MTProto
+   * returned it) is required for inputPeerChannel — converting it with Number()
+   * loses precision on 64-bit values and causes CHANNEL_INVALID.
+   */
+  private static async buildPeerIndex(accountId: string, io?: Server): Promise<{
+    channelHash: Map<string, any>;
+    basicChatIds: Set<string>;
+  }> {
+    const account = this.accounts.get(accountId);
+    const mtproto = account!.mtproto;
+    const channelHash = new Map<string, any>();
+    const basicChatIds = new Set<string>();
+
+    let offsetId = 0, offsetDate = 0;
+    let offsetPeer: any = { _: 'inputPeerEmpty' };
+
+    for (let page = 0; page < 30; page++) {
+      const result: any = await this.callWithDcMigration(mtproto, 'messages.getDialogs', {
+        offset_date: offsetDate,
+        offset_id: offsetId,
+        offset_peer: offsetPeer,
+        limit: 100,
+        hash: 0,
+      }, 0, accountId, io);
+
+      for (const c of (result.chats || [])) {
+        if (c._ === 'channel' || c._ === 'channelForbidden') {
+          if (c.access_hash !== undefined && c.access_hash !== null) {
+            channelHash.set(String(c.id), c.access_hash);
+          }
+        } else if (c._ === 'chat') {
+          basicChatIds.add(String(c.id));
+        }
+      }
+
+      const dialogs = result.dialogs || [];
+      if (dialogs.length < 100) break;
+      const last = dialogs[dialogs.length - 1];
+      const lastMsg = (result.messages || []).find((m: any) => m.id === last.top_message);
+      offsetDate = lastMsg?.date || 0;
+      offsetId = last.top_message || 0;
+      offsetPeer = last.peer;
+    }
+
+    return { channelHash, basicChatIds };
+  }
+
   static async archiveChats(accountId: string, peerIds: string[], io?: Server): Promise<any> {
     const account = this.accounts.get(accountId);
     if (!account || !account.mtproto || !account.connected) {
@@ -3174,23 +3228,43 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
     const mtproto = account.mtproto;
 
     try {
-      const groups = await this.getGroupsForAccount(account, io);
+      const { channelHash, basicChatIds } = await this.buildPeerIndex(accountId, io);
       const folderPeers: any[] = [];
+      let skipped = 0;
 
       for (const pid of peerIds) {
-        const g = groups.find((gr: any) => gr.id?.toString() === pid.toString());
-        if (!g) continue;
-        const numId = Number(g.id);
-        const peer = g.type === 'channel'
-          ? { _: 'inputPeerChannel', channel_id: numId, access_hash: Number(g.access_hash || 0) }
-          : { _: 'inputPeerChat', chat_id: numId };
-        folderPeers.push({ _: 'inputFolderPeer', peer, folder_id: 1 });
+        const key = String(pid);
+        if (channelHash.has(key)) {
+          folderPeers.push({
+            _: 'inputFolderPeer',
+            peer: { _: 'inputPeerChannel', channel_id: key, access_hash: channelHash.get(key) },
+            folder_id: 1,
+          });
+        } else if (basicChatIds.has(key)) {
+          folderPeers.push({
+            _: 'inputFolderPeer',
+            peer: { _: 'inputPeerChat', chat_id: key },
+            folder_id: 1,
+          });
+        } else {
+          skipped++;
+        }
       }
 
-      if (folderPeers.length === 0) return { success: true, archived: 0 };
+      if (folderPeers.length === 0) return { success: true, archived: 0, skipped };
 
-      await this.callWithDcMigration(mtproto, 'folders.editPeerFolders', { folder_peers: folderPeers }, 0, accountId, io);
-      return { success: true, archived: folderPeers.length };
+      let archived = 0;
+      for (const fp of folderPeers) {
+        try {
+          await this.callWithDcMigration(mtproto, 'folders.editPeerFolders', { folder_peers: [fp] }, 0, accountId, io);
+          archived++;
+        } catch {
+          skipped++;
+        }
+        await new Promise(r => setTimeout(r, 80));
+      }
+
+      return { success: true, archived, skipped };
     } catch (err: any) {
       throw new Error(this.extractErrorMessage(err));
     }
@@ -3207,12 +3281,17 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
     const mtproto = account.mtproto;
 
     try {
-      // Fetch dialogs
+      // Fetch dialogs AND the chat objects (which carry the access_hash we need)
       let allDialogs: any[] = [];
+      // channel_id -> access_hash  (string keys to avoid BigInt mismatch)
+      const channelHash: Map<string, any> = new Map();
+      // chat_id set for basic groups
+      const basicChatIds: Set<string> = new Set();
+
       let offsetId = 0, offsetDate = 0;
       let offsetPeer: any = { _: 'inputPeerEmpty' };
 
-      for (let page = 0; page < 20; page++) {
+      for (let page = 0; page < 30; page++) {
         const result: any = await this.callWithDcMigration(mtproto, 'messages.getDialogs', {
           offset_date: offsetDate,
           offset_id: offsetId,
@@ -3223,6 +3302,18 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
 
         const dialogs = result.dialogs || [];
         allDialogs = allDialogs.concat(dialogs);
+
+        // Index every chat/channel object so we can resolve its access_hash later
+        for (const c of (result.chats || [])) {
+          if (c._ === 'channel' || c._ === 'channelForbidden') {
+            if (c.access_hash !== undefined && c.access_hash !== null) {
+              channelHash.set(String(c.id), c.access_hash);
+            }
+          } else if (c._ === 'chat') {
+            basicChatIds.add(String(c.id));
+          }
+        }
+
         if (dialogs.length < 100) break;
         const last = dialogs[dialogs.length - 1];
         const lastMsg = (result.messages || []).find((m: any) => m.id === last.top_message);
@@ -3231,26 +3322,55 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
         offsetPeer = last.peer;
       }
 
-      const groupChannelDialogs = allDialogs.filter((d: any) =>
-        d.peer?._ === 'peerChat' || d.peer?._ === 'peerChannel'
-      );
-
-      if (groupChannelDialogs.length === 0) return { success: true, archived: 0 };
-
-      const folderPeers: any[] = groupChannelDialogs.map((d: any) => {
-        if (d.peer?._ === 'peerChat') {
-          return { _: 'inputFolderPeer', peer: { _: 'inputPeerChat', chat_id: d.peer.chat_id }, folder_id: 1 };
+      // Build folder peers using the REAL access_hash for channels
+      const folderPeers: any[] = [];
+      let skipped = 0;
+      for (const d of allDialogs) {
+        const peerType = d.peer?._;
+        if (peerType === 'peerChat') {
+          folderPeers.push({
+            _: 'inputFolderPeer',
+            peer: { _: 'inputPeerChat', chat_id: d.peer.chat_id },
+            folder_id: 1,
+          });
+        } else if (peerType === 'peerChannel') {
+          const hash = channelHash.get(String(d.peer.channel_id));
+          if (hash === undefined) { skipped++; continue; } // no access_hash -> can't archive
+          folderPeers.push({
+            _: 'inputFolderPeer',
+            peer: { _: 'inputPeerChannel', channel_id: d.peer.channel_id, access_hash: hash },
+            folder_id: 1,
+          });
         }
-        return { _: 'inputFolderPeer', peer: { _: 'inputPeerChannel', channel_id: d.peer.channel_id, access_hash: 0 }, folder_id: 1 };
-      });
+        // peerUser (private chats) are intentionally left untouched
+      }
 
-      // Archive in batches of 100
+      if (folderPeers.length === 0) return { success: true, archived: 0, skipped };
+
+      // Archive in batches. If a batch fails (one bad peer), fall back to
+      // archiving each peer individually so one error never blocks the rest.
+      let archived = 0;
       for (let i = 0; i < folderPeers.length; i += 100) {
-        await this.callWithDcMigration(mtproto, 'folders.editPeerFolders', { folder_peers: folderPeers.slice(i, i + 100) }, 0, accountId, io);
+        const batch = folderPeers.slice(i, i + 100);
+        try {
+          await this.callWithDcMigration(mtproto, 'folders.editPeerFolders', { folder_peers: batch }, 0, accountId, io);
+          archived += batch.length;
+        } catch {
+          // Isolate failures — archive peers one at a time
+          for (const fp of batch) {
+            try {
+              await this.callWithDcMigration(mtproto, 'folders.editPeerFolders', { folder_peers: [fp] }, 0, accountId, io);
+              archived++;
+            } catch {
+              skipped++;
+            }
+            await new Promise(r => setTimeout(r, 80));
+          }
+        }
         if (i + 100 < folderPeers.length) await new Promise(r => setTimeout(r, 400));
       }
 
-      return { success: true, archived: folderPeers.length };
+      return { success: true, archived, skipped };
     } catch (err: any) {
       throw new Error(this.extractErrorMessage(err));
     }
@@ -3276,6 +3396,211 @@ static async saveUsers(req: Request, io: Server): Promise<PhoneNumberResult> {
     } catch {
       return [];
     }
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Multi-account task executors
+  // Each is fully isolated (errors are caught by AccountTaskManager) and honours
+  // cancellation through the TaskContext. Registered once at startup.
+  // ───────────────────────────────────────────────────────────────────────────
+  static registerTaskExecutors() {
+    // Lazy import to avoid circular dependency at module load
+    const AccountTaskManager = require("./AccountTaskManager").default;
+
+    // ── JOIN groups ──
+    AccountTaskManager.registerExecutor("join", async (payload: any, ctx: any) => {
+      const { accountId, groups, config } = payload;
+      const account = await this.getAccountById(accountId);
+      if (!account || !account.mtproto || !account.connected) {
+        throw new Error("Account not connected");
+      }
+      const mtproto = account.mtproto;
+      const list: string[] = (groups || []).map((g: string) => String(g).trim()).filter(Boolean);
+      const delay = Number(config?.delayBetweenJoins ?? config?.delay ?? 3000);
+      const result = { joined: [] as string[], failed: [] as { group: string; error: string }[] };
+
+      ctx.reportProgress({ total: list.length, processed: 0 });
+
+      for (let i = 0; i < list.length; i++) {
+        if (ctx.isCancelled()) break;
+        await ctx.waitIfPaused();
+
+        const groupLink = list[i];
+        try {
+          let cleanLink = groupLink.replace("https://t.me/", "").replace("t.me/", "").replace("@", "");
+          const isInvite = cleanLink.startsWith("+") || groupLink.includes("joinchat");
+
+          if (isInvite) {
+            const hash = cleanLink.replace("+", "").replace("joinchat/", "");
+            await this.callWithDcMigration(mtproto, "messages.importChatInvite", { hash }, 0, account.id, ctx.io);
+          } else {
+            const resolved = await this.callWithDcMigration(mtproto, "contacts.resolveUsername", { username: cleanLink }, 0, account.id, ctx.io);
+            const chat = resolved?.chats?.[0];
+            if (!chat) throw new Error("Could not resolve group");
+            await this.callWithDcMigration(mtproto, "channels.joinChannel", {
+              channel: { _: "inputChannel", channel_id: chat.id, access_hash: chat.access_hash },
+            }, 0, account.id, ctx.io);
+          }
+          result.joined.push(groupLink);
+          ctx.log("success", `Joined ${groupLink}`);
+        } catch (err: any) {
+          const msg = err?.error_message || err?.message || "join failed";
+          result.failed.push({ group: groupLink, error: msg });
+          ctx.log("error", `Failed ${groupLink}: ${msg}`);
+        }
+        ctx.reportProgress({ processed: i + 1, succeeded: result.joined.length, failed: result.failed.length });
+        if (i < list.length - 1 && delay > 0) await new Promise((r) => setTimeout(r, delay));
+      }
+      return result;
+    });
+
+    // ── SCRAPE members (one-shot) ──
+    AccountTaskManager.registerExecutor("scrape", async (payload: any, ctx: any) => {
+      ctx.reportProgress({ total: 1, processed: 0 });
+      const fakeReq: any = { body: { accountId: payload.accountId, inviteLink: payload.inviteLink } };
+      const res = await this.scrapeMembers(fakeReq, ctx.io);
+      ctx.reportProgress({ total: 1, processed: 1, succeeded: res?.members?.length || 0 });
+      ctx.log("success", `Scraped ${res?.members?.length || 0} members`);
+      return res;
+    });
+
+    // ── DISCOVER groups (one-shot) ──
+    AccountTaskManager.registerExecutor("discover", async (payload: any, ctx: any) => {
+      ctx.reportProgress({ total: 1, processed: 0 });
+      const fakeReq: any = {
+        body: {
+          accountId: payload.accountId,
+          keyword: payload.keyword,
+          limit: payload.limit ?? 1000,
+          settings: payload.settings ?? {},
+        },
+      };
+      const res = await this.discoverPublicGroupsOrChannels(fakeReq, ctx.io);
+      ctx.reportProgress({ total: 1, processed: 1, succeeded: Array.isArray(res) ? res.length : 0 });
+      ctx.log("success", `Discovered ${Array.isArray(res) ? res.length : 0} results`);
+      return res;
+    });
+
+    // ── CAMPAIGN (send messages to groups) ──
+    AccountTaskManager.registerExecutor("campaign", async (payload: any, ctx: any) => {
+      const { accountId, groups, message, config } = payload;
+      const account = await this.getAccountById(accountId);
+      if (!account || !account.mtproto || !account.connected) {
+        throw new Error("Account not connected");
+      }
+      if (!message || !String(message).trim()) {
+        throw new Error("Message is empty");
+      }
+      const mtproto = account.mtproto;
+      const groupList: any[] = typeof groups === "string" ? JSON.parse(groups) : (groups || []);
+
+      // Resolve correct peers (channel vs basic chat) with the REAL access_hash.
+      // The hashes coming from the frontend can be stringified/stale, so we
+      // re-index live from the account's dialogs — same fix as archiving.
+      const { channelHash, basicChatIds } = await this.buildPeerIndex(accountId, ctx.io);
+
+      const resolvePeer = async (g: any): Promise<any | null> => {
+        const id = String(g.id ?? "");
+        if (id && channelHash.has(id)) {
+          return { _: "inputPeerChannel", channel_id: id, access_hash: channelHash.get(id) };
+        }
+        if (id && basicChatIds.has(id)) {
+          return { _: "inputPeerChat", chat_id: id };
+        }
+        // Fallback: resolve by username if we have one
+        const uname = (g.username || "").replace("@", "").trim();
+        if (uname) {
+          try {
+            const r = await this.callWithDcMigration(mtproto, "contacts.resolveUsername", { username: uname }, 0, accountId, ctx.io);
+            const chat = r?.chats?.[0];
+            if (chat) {
+              if (chat._ === "channel" || chat._ === "channelForbidden") {
+                return { _: "inputPeerChannel", channel_id: chat.id, access_hash: chat.access_hash };
+              }
+              return { _: "inputPeerChat", chat_id: chat.id };
+            }
+          } catch {/* fall through */}
+        }
+        // Last resort: use whatever the frontend sent (may still work for channels)
+        if (id && g.access_hash) {
+          return { _: "inputPeerChannel", channel_id: id, access_hash: g.access_hash };
+        }
+        return null;
+      };
+
+      const total = groupList.length;
+      let sent = 0, failed = 0;
+      const sentIds: string[] = [];
+      const failedItems: { id: string; error: string }[] = [];
+      const delayMs = config?.delayBetweenMessages !== undefined ? Number(config.delayBetweenMessages) : 3000;
+
+      ctx.reportProgress({ total, processed: 0, succeeded: 0, failed: 0 });
+
+      for (let i = 0; i < groupList.length; i++) {
+        if (ctx.isCancelled()) { ctx.log("warn", "Campaign cancelled"); break; }
+        await ctx.waitIfPaused();
+
+        const g = groupList[i];
+        const label = g.title || g.name || g.username || g.id;
+        try {
+          const peer = await resolvePeer(g);
+          if (!peer) throw new Error("Could not resolve target peer");
+
+          await this.callWithDcMigration(mtproto, "messages.sendMessage", {
+            peer,
+            message: String(message),
+            random_id: Date.now() + Math.floor(Math.random() * 1000000),
+          }, 0, accountId, ctx.io);
+
+          sent++;
+          sentIds.push(String(g.id));
+          ctx.log("success", `Sent → ${label}`);
+        } catch (err: any) {
+          const msg = err?.error_message || err?.message || "send failed";
+
+          // Handle flood-wait: pause this account's task, then retry the group
+          const flood = /FLOOD_WAIT_(\d+)/.exec(msg);
+          if (flood) {
+            const wait = (parseInt(flood[1], 10) + 3) * 1000;
+            ctx.log("warn", `Flood wait ${flood[1]}s on ${label} — pausing`);
+            const start = Date.now();
+            while (Date.now() - start < wait) {
+              if (ctx.isCancelled()) break;
+              await new Promise((r) => setTimeout(r, 500));
+            }
+            if (!ctx.isCancelled()) { i--; continue; } // retry same group
+            break;
+          }
+
+          failed++;
+          failedItems.push({ id: String(g.id), error: msg });
+          ctx.log("error", `Failed → ${label}: ${msg}`);
+        }
+
+        ctx.reportProgress({ total, processed: i + 1, succeeded: sent, failed });
+
+        // Interruptible delay between sends (so cancel responds quickly)
+        if (i < groupList.length - 1 && delayMs > 0) {
+          const start = Date.now();
+          while (Date.now() - start < delayMs) {
+            if (ctx.isCancelled()) break;
+            await new Promise((r) => setTimeout(r, Math.min(300, delayMs)));
+          }
+        }
+      }
+
+      return { sent: sentIds, failed: failedItems };
+    });
+
+    // ── IMPORT members (one-shot) ──
+    AccountTaskManager.registerExecutor("import", async (payload: any, ctx: any) => {
+      ctx.reportProgress({ total: 1, processed: 0 });
+      const fakeReq: any = { body: payload };
+      const res = await this.importMembersToGroup(fakeReq, ctx.io);
+      ctx.reportProgress({ total: 1, processed: 1 });
+      ctx.log("success", "Member import finished");
+      return res;
+    });
   }
 
 }

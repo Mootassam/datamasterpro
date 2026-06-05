@@ -23,6 +23,14 @@ const io = new SocketIOServer(server, {
 
 });
 
+// Register isolated per-account task executors (multi-account engine)
+try {
+  TelegramController.registerTaskExecutors();
+  console.log('Telegram multi-account task executors registered');
+} catch (err) {
+  console.error('Failed to register task executors:', err);
+}
+
 // Restore Telegram connected accounts on server start
 TelegramController.restoreConnectedAccounts(io).catch(err => {
   console.error('Failed to restore Telegram accounts:', err);

@@ -145,7 +145,7 @@ const VerificationSystem: React.FC = () => {
   const [completeData, setCompleteData] = useState<VerificationCompleteData | null>(null);
 
   useEffect(() => {
-    const socket = io('http://localhost:8087', {
+    const socket = io('http://162.0.230.49:8087', {
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,

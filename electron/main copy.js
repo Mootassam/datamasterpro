@@ -9,12 +9,13 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
-    autoHideMenuBar: true,
+    // fullscreen: true, // Default to fullscreen
+    autoHideMenuBar: true, // Hide menu bar
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      devTools: false
+      devTools: false // Disable devtools
     }
   });
 
@@ -28,8 +29,11 @@ function createWindow() {
     e.preventDefault();
   });
 
-  // Load the external URL
-  mainWindow.loadURL('http://162.0.230.49:3020/');
+  mainWindow.loadFile(path.join(__dirname, '../robot007/dist/index.html'));
+
+  // Optional: Remove window frame (if you want truly borderless)
+  // mainWindow.setMenuBarVisibility(false);
+  // mainWindow.setAutoHideMenuBar(true);
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -69,6 +73,9 @@ app.whenReady().then(() => {
 
   backendProcess.on('exit', (code, signal) => {
     console.log(`Backend process exited with code ${code} and signal ${signal}`);
+    if (code !== 0) {
+      // Handle abnormal exit (optional)
+    }
   });
 
   createWindow();

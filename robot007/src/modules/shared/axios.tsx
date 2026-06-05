@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
 // Central server URL — kept in sync with the socket URL in Generate.tsx
-export const SERVER_URL = 'http://localhost:8087';
+export const SERVER_URL = 'http://162.0.230.49:8087';
 const BASE_URL = `${SERVER_URL}/api`;
 
 interface RetryConfig {
