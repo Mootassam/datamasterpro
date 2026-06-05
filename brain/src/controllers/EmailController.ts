@@ -457,11 +457,20 @@ class EmailController {
      * @returns {string[]} Array of generated emails.
      */
     static generate(count, culture, gender, type = 'person', provider = 'all'): string[] {
-        const emails: string[] = [];
-        for (let i = 0; i < count; i++) {
-            emails.push(EmailFormats.generateName(culture, gender, type as "person" | "company", provider));
+        const target = Number(count) || 0;
+        // Use a Set so the same email address is never returned twice.
+        const unique = new Set<string>();
+        const maxAttempts = Math.max(target * 50, 1000); // avoid infinite loops
+        let attempts = 0;
+
+        while (unique.size < target && attempts < maxAttempts) {
+            attempts++;
+            const email = EmailFormats.generateName(
+                culture, gender, type as "person" | "company", provider
+            );
+            if (email) unique.add(String(email));
         }
-        return emails;
+        return Array.from(unique);
     }
     
     /**

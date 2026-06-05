@@ -10,7 +10,8 @@ import {
   FaGlobe,
   FaFilter,
   FaCloudUploadAlt,
-  FaFile
+  FaFile,
+  FaClone
 } from "react-icons/fa";
 import { FiLoader } from "react-icons/fi";
 import Select from "react-select";
@@ -61,6 +62,84 @@ const GenerateProps = ({
   const [customCount, setCustomCount] = useState<number>(10);
   const [customError, setCustomError] = useState<string>("");
 
+  // ── Duplicate checker state ──
+  const [dupFileName, setDupFileName] = useState<string>("");
+  const [dupTotal, setDupTotal] = useState<number>(0);
+  const [dupUnique, setDupUnique] = useState<string[]>([]);       // deduplicated list (each value once)
+  const [dupDuplicates, setDupDuplicates] = useState<string[]>([]); // distinct values that appeared 2+ times
+  const [dupBusy, setDupBusy] = useState<boolean>(false);
+  const [dupError, setDupError] = useState<string>("");
+  const [dupDragging, setDupDragging] = useState<boolean>(false);
+
+  // Generic plain-text downloader (one item per line)
+  const downloadList = (items: string[], name: string) => {
+    if (!items || items.length === 0) return;
+    const blob = new Blob([items.join("\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+    link.href = url;
+    link.download = `${name}_${items.length}_${stamp}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const analyzeDuplicates = (text: string, fileName: string) => {
+    setDupError("");
+    // Split on newlines / commas / semicolons / whitespace, keep digit-bearing entries
+    const lines = text
+      .split(/[\r\n,;]+/)
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0);
+
+    if (lines.length === 0) {
+      setDupError("The file is empty or has no readable entries.");
+      setDupTotal(0); setDupUnique([]); setDupDuplicates([]); setDupFileName("");
+      return;
+    }
+
+    const counts = new Map<string, number>();
+    for (const item of lines) {
+      counts.set(item, (counts.get(item) || 0) + 1);
+    }
+
+    const uniqueList = Array.from(counts.keys());                       // each value once
+    const duplicateList = uniqueList.filter((k) => (counts.get(k) || 0) > 1);
+
+    setDupFileName(fileName);
+    setDupTotal(lines.length);
+    setDupUnique(uniqueList);
+    setDupDuplicates(duplicateList);
+  };
+
+  const handleDupFileSelected = (selected: File | null | undefined) => {
+    if (!selected) return;
+    const okType = /\.(txt|csv)$/i.test(selected.name);
+    if (!okType) {
+      setDupError("Please upload a .txt or .csv file.");
+      return;
+    }
+    setDupBusy(true);
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        analyzeDuplicates(String(reader.result || ""), selected.name);
+      } catch {
+        setDupError("Could not read the file. Please try again.");
+      } finally {
+        setDupBusy(false);
+      }
+    };
+    reader.onerror = () => { setDupError("Could not read the file."); setDupBusy(false); };
+    reader.readAsText(selected);
+  };
+
+  const resetDupChecker = () => {
+    setDupFileName(""); setDupTotal(0); setDupUnique([]); setDupDuplicates([]); setDupError("");
+  };
+
   const handleCustomGenerate = () => {
     setCustomError("");
     const prefix = String(customPrefix).replace(/\D/g, ""); // keep digits only
@@ -77,16 +156,28 @@ const GenerateProps = ({
     }
 
     const remaining = length - prefix.length;
-    const results: string[] = [];
-    for (let i = 0; i < count; i++) {
+
+    // Maximum distinct numbers possible for this prefix+length (10^remaining)
+    const maxPossible = Math.pow(10, remaining);
+    if (count > maxPossible) {
+      setCustomError(`Only ${maxPossible.toLocaleString()} unique numbers are possible for this prefix and length.`);
+      return;
+    }
+
+    // Use a Set so no number is ever duplicated
+    const unique = new Set<string>();
+    const maxAttempts = Math.max(count * 50, 1000);
+    let attempts = 0;
+    while (unique.size < count && attempts < maxAttempts) {
+      attempts++;
       let rest = "";
       for (let d = 0; d < remaining; d++) {
         rest += Math.floor(Math.random() * 10).toString();
       }
-      results.push(prefix + rest);
+      unique.add(prefix + rest);
     }
 
-    if (onCustomGenerate) onCustomGenerate(results);
+    if (onCustomGenerate) onCustomGenerate(Array.from(unique));
   };
 
   const typeOptions = [
@@ -439,6 +530,106 @@ const GenerateProps = ({
 
             {activeTab === "stats" && (
               <>
+                {/* ── Duplicate Checker ── */}
+                <div className="dup-card">
+                  <div className="card-header">
+                    <FaClone className="text-purple-500" />
+                    <h3>Duplicate Checker</h3>
+                  </div>
+                  <p className="dup-hint">
+                    Upload a <strong>.txt</strong> or <strong>.csv</strong> list of numbers.
+                    We'll find duplicates and let you download a clean (unique) list
+                    or just the duplicated ones.
+                  </p>
+
+                  <label
+                    className={`dup-dropzone ${dupDragging ? "dragging" : ""} ${dupFileName ? "has-file" : ""}`}
+                    onDragEnter={(e) => { e.preventDefault(); setDupDragging(true); }}
+                    onDragLeave={(e) => { e.preventDefault(); setDupDragging(false); }}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setDupDragging(false);
+                      handleDupFileSelected(e.dataTransfer.files?.[0]);
+                    }}
+                  >
+                    {dupBusy ? (
+                      <div className="dup-drop-inner">
+                        <FiLoader className="animate-spin" />
+                        <span>Analyzing…</span>
+                      </div>
+                    ) : dupFileName ? (
+                      <div className="dup-drop-inner">
+                        <FaCheckCircle className="text-green-500" />
+                        <span className="dup-file-name">{dupFileName}</span>
+                        <span className="dup-relink">Click to choose another file</span>
+                      </div>
+                    ) : (
+                      <div className="dup-drop-inner">
+                        <FaUpload className="dup-up-icon" />
+                        <span>Drag & drop, or click to browse</span>
+                        <span className="dup-sub">.txt or .csv — one number per line</span>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept=".txt,.csv"
+                      className="file-input"
+                      onChange={(e) => handleDupFileSelected(e.target.files?.[0])}
+                    />
+                  </label>
+
+                  {dupError && (
+                    <div className="upload-error">
+                      <FaTimesCircle />
+                      <span>{dupError}</span>
+                    </div>
+                  )}
+
+                  {dupTotal > 0 && (
+                    <>
+                      <div className="dup-stats">
+                        <div className="dup-stat total">
+                          <div className="dup-stat-value">{dupTotal.toLocaleString()}</div>
+                          <div className="dup-stat-label">Total Lines</div>
+                        </div>
+                        <div className="dup-stat unique">
+                          <div className="dup-stat-value">{dupUnique.length.toLocaleString()}</div>
+                          <div className="dup-stat-label">Unique</div>
+                        </div>
+                        <div className="dup-stat dupes">
+                          <div className="dup-stat-value">{dupDuplicates.length.toLocaleString()}</div>
+                          <div className="dup-stat-label">Duplicated</div>
+                        </div>
+                        <div className="dup-stat removed">
+                          <div className="dup-stat-value">{(dupTotal - dupUnique.length).toLocaleString()}</div>
+                          <div className="dup-stat-label">Removed</div>
+                        </div>
+                      </div>
+
+                      <div className="dup-actions">
+                        <button
+                          className="dup-btn unique"
+                          onClick={() => downloadList(dupUnique, "unique")}
+                          disabled={dupUnique.length === 0}
+                        >
+                          <FaDownload /> Download Unique ({dupUnique.length})
+                        </button>
+                        <button
+                          className="dup-btn dupes"
+                          onClick={() => downloadList(dupDuplicates, "duplicates")}
+                          disabled={dupDuplicates.length === 0}
+                        >
+                          <FaDownload /> Download Duplicates ({dupDuplicates.length})
+                        </button>
+                        <button className="dup-btn reset" onClick={resetDupChecker}>
+                          Clear
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+
                   <div className="upload-card">
               <div className="card-header">
                 <FaCloudUploadAlt className="text-blue-500" />
@@ -470,7 +661,7 @@ const GenerateProps = ({
                     type="file"
                     className="file-input"
                     onChange={handleFileChange}
-                    accept=".csv"
+                    accept=".csv,.txt"
                   />
                 </label>
                 {fileError && (

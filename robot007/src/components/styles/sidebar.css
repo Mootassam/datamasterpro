@@ -320,6 +320,134 @@
   font-weight: 500;
 }
 
+/* ── Duplicate Checker ── */
+.dup-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  transition: box-shadow 0.3s ease;
+}
+.dup-card:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
+
+.dup-hint {
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.dup-dropzone {
+  display: block;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 22px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: #f8fafc;
+  position: relative;
+}
+.dup-dropzone:hover { border-color: #8b5cf6; background: #faf5ff; }
+.dup-dropzone.dragging {
+  border-color: #8b5cf6;
+  background: #f3e8ff;
+  transform: scale(1.01);
+}
+.dup-dropzone.has-file { border-color: #10b981; background: #ecfdf5; }
+
+.dup-drop-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.dup-up-icon { font-size: 1.8rem; color: #94a3b8; }
+.dup-sub, .dup-relink { font-size: 0.76rem; color: #94a3b8; font-weight: 400; }
+.dup-file-name {
+  font-weight: 700;
+  color: #047857;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Stat grid */
+.dup-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 18px 0 16px;
+}
+.dup-stat {
+  position: relative;
+  padding: 14px;
+  border-radius: 10px;
+  text-align: center;
+  background: #f8fafc;
+  border: 1px solid #eef2f7;
+  overflow: hidden;
+}
+.dup-stat::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.dup-stat.total::before   { background: linear-gradient(to right, #3b82f6, #6366f1); }
+.dup-stat.unique::before  { background: linear-gradient(to right, #10b981, #34d399); }
+.dup-stat.dupes::before   { background: linear-gradient(to right, #f59e0b, #fbbf24); }
+.dup-stat.removed::before { background: linear-gradient(to right, #ef4444, #f87171); }
+
+.dup-stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1;
+}
+.dup-stat-label {
+  font-size: 0.72rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+/* Download/clear buttons */
+.dup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dup-btn {
+  width: 100%;
+  padding: 11px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #fff;
+}
+.dup-btn.unique { background: linear-gradient(to right, #10b981, #34d399); }
+.dup-btn.dupes  { background: linear-gradient(to right, #f59e0b, #fbbf24); }
+.dup-btn.reset {
+  background: #f1f5f9;
+  color: #475569;
+}
+.dup-btn:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+.dup-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
 /* Download All (.txt) button */
 .download-all-btn {
   flex: 1;

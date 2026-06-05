@@ -5,23 +5,29 @@ class PhoneNumberGenerator {
     const much = req.body.much;
     const state = req.body.state;
     const carrier = req.body.carrier.value
-    const phoneNumbers: string[] = [];
+    const target = Number(much) || 0;
     const formatFunction = CountryFormat[countryCode];
     if (!formatFunction) {
       throw new Error("Invalid country code or format function");
     }
-    for (let i = 0; i < much; i++) {
-      let phoneNumber;
-      if (countryCode === "US" || countryCode === "CA") {
-        // Only pass state for the US
-        phoneNumber = await formatFunction(state);
-      } else {
-        // For other countries, just use the country code (no state)
-        phoneNumber = await formatFunction(carrier);
-      }
-      phoneNumbers.push(phoneNumber);
+
+    // Use a Set so the same number is never returned twice.
+    const unique = new Set<string>();
+    // Safety cap: stop trying after many misses so we never loop forever
+    // when the available key-space is smaller than the requested amount.
+    const maxAttempts = Math.max(target * 50, 1000);
+    let attempts = 0;
+
+    while (unique.size < target && attempts < maxAttempts) {
+      attempts++;
+      const phoneNumber =
+        countryCode === "US" || countryCode === "CA"
+          ? await formatFunction(state)   // pass area code for US/CA
+          : await formatFunction(carrier); // pass carrier for other countries
+      if (phoneNumber) unique.add(String(phoneNumber));
     }
-    return phoneNumbers;
+
+    return Array.from(unique);
   }
 }
 

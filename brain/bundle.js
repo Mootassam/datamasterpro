@@ -173677,7 +173677,7 @@ var init_utils2 = __esm({
       return typeof WorkerGlobalScope !== "undefined" && // eslint-disable-next-line no-undef
       self instanceof WorkerGlobalScope && typeof self.importScripts === "function";
     })();
-    origin = hasBrowserEnv && window.location.href || "http://162.0.230.49";
+    origin = hasBrowserEnv && window.location.href || "http://localhost";
   }
 });
 
